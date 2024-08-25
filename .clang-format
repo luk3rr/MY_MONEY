@@ -2,7 +2,7 @@
 Language:        Java
 # BasedOnStyle:  LLVM
 AccessModifierOffset: 0
-IndentAccessModifiers: true
+IndentAccessModifiers: false
 AlignAfterOpenBracket: Align
 SeparateDefinitionBlocks: Always   # Only support since clang-format 14
 AlignConsecutiveAssignments: true
@@ -48,7 +48,7 @@ BreakBeforeTernaryOperators: true
 # BreakConstructorInitializers: BeforeColon
 # BreakInheritanceList: AfterComma
 PackConstructorInitializers: Never
-BreakAfterJavaFieldAnnotations: false
+BreakAfterJavaFieldAnnotations: true
 BreakStringLiterals: true
 ColumnLimit:     88
 CommentPragmas:  '^ IWYU pragma:'
