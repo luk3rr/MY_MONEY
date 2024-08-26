@@ -25,11 +25,11 @@ public class Transfer
     private Long m_id;
 
     @ManyToOne
-    @JoinColumn(name = "sender_wallet", referencedColumnName = "wallet_id")
+    @JoinColumn(name = "sender_wallet", referencedColumnName = "name")
     private Wallet m_senderWallet;
 
     @ManyToOne
-    @JoinColumn(name = "receiver_wallet", referencedColumnName = "wallet_id")
+    @JoinColumn(name = "receiver_wallet", referencedColumnName = "name")
     private Wallet m_receiverWallet;
 
     @Column(name = "date", nullable = false)

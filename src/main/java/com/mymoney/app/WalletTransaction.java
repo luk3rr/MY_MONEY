@@ -34,7 +34,7 @@ public class WalletTransaction
     private Long m_id;
 
     @ManyToOne
-    @JoinColumn(name = "wallet", referencedColumnName = "wallet_id")
+    @JoinColumn(name = "wallet", referencedColumnName = "name")
     private Wallet m_wallet;
 
     @ManyToOne
