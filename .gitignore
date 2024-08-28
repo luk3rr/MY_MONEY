@@ -18,3 +18,6 @@ buildNumber.properties
 
 # Database files
 *.db
+
+# log files
+*.log
