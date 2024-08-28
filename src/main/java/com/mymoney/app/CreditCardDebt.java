@@ -15,6 +15,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+/**
+ * Represents a credit card debt
+ * A credit card debt is a debt that is associated with a credit card
+ */
 @Entity
 @Table(name = "credit_card_debt")
 public class CreditCardDebt
@@ -41,9 +45,19 @@ public class CreditCardDebt
     @Column(name = "description")
     private String m_description;
 
-    // Default constructor for JPA
+    /**
+     * Default constructor for JPA
+     */
     public CreditCardDebt() { }
 
+    /**
+     * Constructor for CreditCardDebt
+     * @param creditCard The credit card of the debt
+     * @param category The category of the debt
+     * @param date The date of the debt
+     * @param totalAmount The total amount of the debt
+     * @param description The description of the debt
+     */
     public CreditCardDebt(Long       id,
                           CreditCard creditCard,
                           Category   category,
@@ -51,67 +65,110 @@ public class CreditCardDebt
                           Double     totalAmount,
                           String     description)
     {
-        this.m_id          = id;
-        this.m_creditCard  = creditCard;
-        this.m_category    = category;
-        this.m_date        = date;
-        this.m_totalAmount = totalAmount;
-        this.m_description = description;
+        m_id          = id;
+        m_creditCard  = creditCard;
+        m_category    = category;
+        m_date        = date;
+        m_totalAmount = totalAmount;
+        m_description = description;
     }
 
-    // Getters and Setters
+    /**
+     * Get the id of the debt
+     * @return The id of the debt
+     */
     public Long GetId()
     {
-        return this.m_id;
+        return m_id;
     }
 
+    /**
+     * Get the credit card of the debt
+     * @return The credit card of the debt
+     */
     public CreditCard GetCreditCard()
     {
-        return this.m_creditCard;
+        return m_creditCard;
     }
 
+    /**
+     * Get the category of the debt
+     * @return The category of the debt
+     */
     public Category GetCategory()
     {
-        return this.m_category;
+        return m_category;
     }
 
+    /**
+     * Get the date of the debt
+     * @return The date of the debt
+     */
     public String GetDate()
     {
-        return this.m_date;
+        return m_date;
     }
 
+    /**
+     * Get the total amount of the debt
+     * @return The total amount of the debt
+     */
     public Double GetTotalAmount()
     {
-        return this.m_totalAmount;
+        return m_totalAmount;
     }
 
+    /**
+     * Get the description of the debt
+     * @return The description of the debt
+     */
     public String GetDescription()
     {
-        return this.m_description;
+        return m_description;
     }
 
+    /**
+     * Set the credit card of the debt
+     * @param creditCard The new credit card of the debt
+     */
     public void SetCreditCard(CreditCard creditCard)
     {
-        this.m_creditCard = creditCard;
+        m_creditCard = creditCard;
     }
 
+    /**
+     * Set the category of the debt
+     * @param category The new category of the debt
+     */
     public void SetCategory(Category category)
     {
-        this.m_category = category;
+        m_category = category;
     }
 
+    /**
+     * Set the date of the debt
+     * @param date The new date of the debt
+     */
     public void SetDate(String date)
     {
-        this.m_date = date;
+        m_date = date;
     }
 
+    /**
+     * Set the total amount of the debt
+     * @param totalAmount The new total amount of the debt
+     */
     public void SetTotalAmount(Double totalAmount)
     {
-        this.m_totalAmount = totalAmount;
+        m_totalAmount = totalAmount;
     }
 
+    /**
+     * Set the description of the debt
+     * @param description The new description of the debt
+     */
     public void SetDescription(String description)
     {
-        this.m_description = description;
+        m_description = description;
     }
 }

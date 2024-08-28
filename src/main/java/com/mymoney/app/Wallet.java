@@ -22,30 +22,53 @@ public class Wallet
     @Column(name = "balance", nullable = false)
     private Double m_balance;
 
-    // Empty constructor for JPA
+    /**
+     * Default constructor for JPA
+     */
     public Wallet() { }
 
+    /**
+     * Constructor for Wallet
+     * @param name The name of the wallet
+     * @param balance The balance of the wallet
+     */
     public Wallet(String name, Double balance)
     {
-        this.m_name    = name;
-        this.m_balance = balance;
+        m_name    = name;
+        m_balance = balance;
     }
 
+    /**
+     * Get the name of the wallet
+     * @return The name of the wallet
+     */
     public String GetName()
     {
         return m_name;
     }
 
+    /**
+     * Set the name of the wallet
+     * @param name The new name of the wallet
+     */
     public void SetName(String name)
     {
         m_name = name;
     }
 
+    /**
+     * Get the balance of the wallet
+     * @return The balance of the wallet
+     */
     public Double GetBalance()
     {
         return m_balance;
     }
 
+    /**
+     * Set the balance of the wallet
+     * @param balance The new balance of the wallet
+     */
     public void SetBalance(Double balance)
     {
         m_balance = balance;

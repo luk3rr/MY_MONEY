@@ -17,13 +17,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-// Enum for the transaction type
+/**
+ * ENUM that represents the type of a transaction
+ */
 enum TransactionType
 {
     INCOME,
     OUTCOME
 }
 
+/**
+ * Represents a transaction in a wallet
+ */
 @Entity
 @Table(name = "wallet_transaction")
 public class WalletTransaction
@@ -39,7 +44,7 @@ public class WalletTransaction
 
     @ManyToOne
     @JoinColumn(name = "category", referencedColumnName = "category_id")
-    private Category category;
+    private Category m_category;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
@@ -54,75 +59,128 @@ public class WalletTransaction
     @Column(name = "description")
     private String m_description;
 
-    // Default constructor for JPA
+    /**
+     * Default constructor for JPA
+     */
     public WalletTransaction() { }
 
+    /**
+     * Constructor for WalletTransaction
+     * @param wallet The wallet that the transaction belongs to
+     * @param category The category of the transaction
+     * @param date The date of the transaction
+     * @param description A description of the transaction
+     * @param amount The amount of the transaction
+     */
     public WalletTransaction(Wallet   wallet,
                              Category category,
                              String   date,
                              String   description,
                              Double   amount)
     {
-        this.m_wallet      = wallet;
-        this.category      = category;
-        this.m_date        = date;
-        this.m_description = description;
-        this.m_amount      = amount;
+        m_wallet      = wallet;
+        m_category      = category;
+        m_date        = date;
+        m_description = description;
+        m_amount      = amount;
     }
 
-    // Getters and Setters
+    /**
+     * Get the transaction id
+     * @return The transaction id
+     */
     public Long GetId()
     {
         return m_id;
     }
 
+    /**
+     * Get the wallet that the transaction belongs to
+     * @return The wallet that the transaction belongs to
+     */
     public Wallet GetWallet()
     {
         return m_wallet;
     }
 
+    /**
+     * Get the category of the transaction
+     * @return The category of the transaction
+     */
     public Category GetCategory()
     {
-        return category;
+        return m_category;
     }
 
+    /**
+     * Get the type of the transaction
+     * @return The type of the transaction
+     */
     public String GetDate()
     {
         return m_date;
     }
 
+    /**
+     * Get the description of the transaction
+     * @return The description of the transaction
+     */
     public String GetDescription()
     {
         return m_description;
     }
 
+    /**
+     * Get the amount of the transaction
+     * @return The amount of the transaction
+     */
     public Double GetAmount()
     {
         return m_amount;
     }
 
+    /**
+     * Set the wallet that the transaction belongs to
+     * @param wallet The wallet that the transaction belongs to
+     */
     public void SetWallet(Wallet wallet)
     {
-        this.m_wallet = wallet;
+        m_wallet = wallet;
     }
 
+    /**
+     * Set the category of the transaction
+     * @param category The category of the transaction
+     */
     public void SetCategory(Category category)
     {
-        this.category = category;
+        m_category = category;
     }
 
+    /**
+     * Set the type of the transaction
+     * @param type The type of the transaction
+     */
     public void SetDate(String date)
     {
-        this.m_date = date;
+        m_date = date;
     }
 
+    /**
+     * Set the description of the transaction
+     * @param description The description of the transaction
+     */
     public void SetDescription(String description)
     {
-        this.m_description = description;
+        m_description = description;
     }
 
+    /**
+     * Set the amount of the transaction
+     * @param amount The amount of the transaction
+     */
     public void SetAmount(Double amount)
     {
-        this.m_amount = amount;
+        m_amount = amount;
     }
 }

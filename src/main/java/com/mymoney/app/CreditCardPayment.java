@@ -15,6 +15,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+/**
+ * Represents a credit card payment
+ * A credit card payment is a payment made to a credit card debt
+ */
 @Entity
 @Table(name = "credit_card_payment")
 public class CreditCardPayment
@@ -41,75 +45,128 @@ public class CreditCardPayment
     @Column(name = "installment", nullable = false)
     private Short m_installment;
 
-    // Default constructor for JPA
+    /**
+     * Default constructor for JPA
+     */
     public CreditCardPayment() { }
 
+    /**
+     * Constructor for CreditCardPayment
+     * @param wallet The wallet that made the payment
+     * @param debtId The credit card debt that was paid
+     * @param date The date of the payment
+     * @param amount The amount paid
+     * @param installment The installment of the payment
+     */
     public CreditCardPayment(Wallet         wallet,
                              CreditCardDebt debtId,
                              String         date,
                              Double         amount,
                              Short          installment)
     {
-        this.m_wallet         = wallet;
-        this.m_creditCardDebt = debtId;
-        this.m_date           = date;
-        this.m_amount         = amount;
-        this.m_installment    = installment;
+        m_wallet         = wallet;
+        m_creditCardDebt = debtId;
+        m_date           = date;
+        m_amount         = amount;
+        m_installment    = installment;
     }
 
-    // Getters and Setters
+    /**
+     * Get the payment id
+     * @return The payment id
+     */
     public Long GetId()
     {
-        return this.m_id;
+        return m_id;
     }
 
+    /**
+     * Get the wallet that made the payment
+     * @return The wallet that made the payment
+     */
     public Wallet GetWallet()
     {
-        return this.m_wallet;
+        return m_wallet;
     }
 
+    /**
+     * Get the credit card debt that was paid
+     * @return The credit card debt that was paid
+     */
     public CreditCardDebt GetCreditCardDebt()
     {
-        return this.m_creditCardDebt;
+        return m_creditCardDebt;
     }
 
+    /**
+     * Get the date of the payment
+     * @return The date of the payment
+     */
     public String GetDate()
     {
-        return this.m_date;
+        return m_date;
     }
 
+    /**
+     * Get the amount paid
+     * @return The amount paid
+     */
     public Double GetAmount()
     {
-        return this.m_amount;
+        return m_amount;
     }
 
+    /**
+     * Get the installment of the payment
+     * @return The installment of the payment
+     */
     public Short GetInstallment()
     {
-        return this.m_installment;
+        return m_installment;
     }
 
+    /**
+     * Set the wallet that made the payment
+     * @param wallet The wallet that made the payment
+     */
     public void SetWallet(Wallet wallet)
     {
-        this.m_wallet = wallet;
+        m_wallet = wallet;
     }
 
+    /**
+     * Set the credit card debt that was paid
+     * @param debtId The credit card debt that was paid
+     */
     public void SetCreditCardDebt(CreditCardDebt debtId)
     {
-        this.m_creditCardDebt = debtId;
+        m_creditCardDebt = debtId;
     }
 
+    /**
+     * Set the date of the payment
+     * @param date The date of the payment
+     */
     public void SetDate(String date)
     {
-        this.m_date = date;
+        m_date = date;
     }
 
+    /**
+     * Set the amount paid
+     * @param amount The amount paid
+     */
     public void SetAmount(Double amount)
     {
-        this.m_amount = amount;
+        m_amount = amount;
     }
 
+    /**
+     * Set the installment of the payment
+     * @param installment The installment of the payment
+     */
     public void SetInstallment(Short installment)
     {
-        this.m_installment = installment;
+        m_installment = installment;
     }
 }

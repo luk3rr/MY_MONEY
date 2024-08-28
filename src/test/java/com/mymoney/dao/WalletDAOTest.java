@@ -9,70 +9,66 @@ package com.mymoney.dao;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import java.io.File;
+
+import com.mymoney.app.Wallet;
+import com.mymoney.util.Constants;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import com.mymoney.app.Wallet;
-
+/**
+ * Test class for WalletDAO
+ */
 public class WalletDAOTest
 {
-
-    private static EntityManagerFactory entityManagerFactory;
-    private static EntityManager        entityManager;
-    private static WalletDAO            walletDAO;
+    private static WalletDAO walletDAO;
 
     @BeforeAll
-    public static void setUp()
+    public static void SetUp()
     {
-        entityManagerFactory = Persistence.createEntityManagerFactory("my_money");
-        entityManager        = entityManagerFactory.createEntityManager();
-        walletDAO            = new WalletDAO(entityManager);
+        // Delete the test database file if it exists before running the tests
+        File dbFile = new File(Constants.DB_TEST_FILE);
+        if (dbFile.exists())
+        {
+            dbFile.delete();
+        }
+
+        walletDAO = WalletDAO.GetInstance(Constants.ENTITY_MANAGER_TEST);
     }
 
+    @AfterAll
+    public static void TearDown()
+    { }
+
     @Test
-    public void testSaveAndFindWallet()
+    public void TestSaveAndFindWallet()
     {
         Wallet wallet = new Wallet("My Wallet", 100.0);
-        walletDAO.save(wallet);
-        Wallet foundWallet = walletDAO.find(wallet.GetName());
+        walletDAO.Save(wallet);
+        Wallet foundWallet = walletDAO.Find(wallet.GetName());
         assertNotNull(foundWallet, "The wallet should be found");
     }
 
     @Test
-    public void testUpdateWallet()
+    public void TestUpdateWallet()
     {
         Wallet wallet = new Wallet("Update Wallet", 200.0);
-        walletDAO.save(wallet);
+        walletDAO.Save(wallet);
         wallet.SetBalance(300.0);
-        walletDAO.update(wallet);
-        Wallet updatedWallet = walletDAO.find(wallet.GetName());
+        walletDAO.Update(wallet);
+        Wallet updatedWallet = walletDAO.Find(wallet.GetName());
         assertNotNull(updatedWallet, "The wallet should be updated");
     }
 
     @Test
-    public void testDeleteWallet()
+    public void TestDeleteWallet()
     {
         Wallet wallet = new Wallet("Delete Wallet", 400.0);
-        walletDAO.save(wallet);
-        walletDAO.delete(wallet);
-        Wallet deletedWallet = walletDAO.find(wallet.GetName());
+        walletDAO.Save(wallet);
+        walletDAO.Delete(wallet);
+        Wallet deletedWallet = walletDAO.Find(wallet.GetName());
         assertNull(deletedWallet, "The wallet should be deleted");
-    }
-
-    @AfterAll
-    public static void tearDown()
-    {
-        if (entityManager != null)
-        {
-            entityManager.close();
-        }
-        if (entityManagerFactory != null)
-        {
-            entityManagerFactory.close();
-        }
     }
 }

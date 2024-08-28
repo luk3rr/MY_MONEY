@@ -13,6 +13,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/*
+ * Represents a category of expenses and incomes
+ */
 @Entity
 @Table(name = "category")
 public class Category
@@ -23,27 +26,44 @@ public class Category
     private Short m_id;
 
     @Column(name = "name", nullable = false)
-    public String m_name;
+    private String m_name;
 
-    // Default constructor for JPA
+    /**
+     * Default constructor for JPA
+     */
     public Category() { }
 
+    /**
+     * Constructor for Category
+     * @param name The name of the category
+     */
     public Category(String name)
     {
         this.m_name = name;
     }
 
-    // Getters and Setters
+    /**
+     * Get the category id
+     * @return The category id
+     */
     public Short GetId()
     {
         return m_id;
     }
 
+    /**
+     * Get the category name
+     * @return The category name
+     */
     public String GetName()
     {
         return m_name;
     }
 
+    /**
+     * Set the category name
+     * @param name The category name
+     */
     public void SetName(String name)
     {
         m_name = name;
