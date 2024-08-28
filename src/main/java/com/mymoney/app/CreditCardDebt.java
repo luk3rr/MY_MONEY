@@ -6,6 +6,7 @@
 
 package com.mymoney.app;
 
+import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,15 +30,15 @@ public class CreditCardDebt
     private Long m_id;
 
     @ManyToOne
-    @JoinColumn(name = "credit_card", referencedColumnName = "name")
+    @JoinColumn(name = "crc_name", referencedColumnName = "name")
     private CreditCard m_creditCard;
 
     @ManyToOne
-    @JoinColumn(name = "category", referencedColumnName = "category_id")
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
     private Category m_category;
 
     @Column(name = "date", nullable = false)
-    private String m_date;
+    private LocalDate m_date;
 
     @Column(name = "total_amount", nullable = false)
     private Double m_totalAmount;
@@ -61,7 +62,7 @@ public class CreditCardDebt
     public CreditCardDebt(Long       id,
                           CreditCard creditCard,
                           Category   category,
-                          String     date,
+                          LocalDate  date,
                           Double     totalAmount,
                           String     description)
     {
@@ -104,7 +105,7 @@ public class CreditCardDebt
      * Get the date of the debt
      * @return The date of the debt
      */
-    public String GetDate()
+    public LocalDate GetDate()
     {
         return m_date;
     }
@@ -149,7 +150,7 @@ public class CreditCardDebt
      * Set the date of the debt
      * @param date The new date of the debt
      */
-    public void SetDate(String date)
+    public void SetDate(LocalDate date)
     {
         m_date = date;
     }

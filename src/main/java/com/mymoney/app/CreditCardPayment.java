@@ -6,6 +6,7 @@
 
 package com.mymoney.app;
 
+import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,7 +38,7 @@ public class CreditCardPayment
     private CreditCardDebt m_creditCardDebt;
 
     @Column(name = "date", nullable = false)
-    private String m_date;
+    private LocalDate m_date;
 
     @Column(name = "amount", nullable = false)
     private Double m_amount;
@@ -60,7 +61,7 @@ public class CreditCardPayment
      */
     public CreditCardPayment(Wallet         wallet,
                              CreditCardDebt debtId,
-                             String         date,
+                             LocalDate      date,
                              Double         amount,
                              Short          installment)
     {
@@ -102,7 +103,7 @@ public class CreditCardPayment
      * Get the date of the payment
      * @return The date of the payment
      */
-    public String GetDate()
+    public LocalDate GetDate()
     {
         return m_date;
     }
@@ -147,7 +148,7 @@ public class CreditCardPayment
      * Set the date of the payment
      * @param date The date of the payment
      */
-    public void SetDate(String date)
+    public void SetDate(LocalDate date)
     {
         m_date = date;
     }

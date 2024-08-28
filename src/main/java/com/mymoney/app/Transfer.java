@@ -6,6 +6,8 @@
 
 package com.mymoney.app;
 
+import java.time.LocalDate;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,13 +38,13 @@ public class Transfer
     private Wallet m_receiverWallet;
 
     @Column(name = "date", nullable = false)
-    private String m_date;
-
-    @Column(name = "description")
-    private String m_description;
+    private LocalDate m_date;
 
     @Column(name = "amount", nullable = false)
     private Double m_amount;
+
+    @Column(name = "description")
+    private String m_description;
 
     /**
      * Default constructor for JPA
@@ -57,11 +59,11 @@ public class Transfer
      * @param description A description of the transfer
      * @param amount The amount transferred
      */
-    public Transfer(Wallet senderWallet,
-                    Wallet receiverWallet,
-                    String date,
-                    String description,
-                    Double amount)
+    public Transfer(Wallet    senderWallet,
+                    Wallet    receiverWallet,
+                    LocalDate date,
+                    String    description,
+                    Double    amount)
     {
         m_senderWallet   = senderWallet;
         m_receiverWallet = receiverWallet;
@@ -101,7 +103,7 @@ public class Transfer
      * Get the date of the transfer
      * @return The date of the transfer
      */
-    public String GetDate()
+    public LocalDate GetDate()
     {
         return m_date;
     }
@@ -146,7 +148,7 @@ public class Transfer
      * Set the date of the transfer
      * @param date The date of the transfer
      */
-    public void SetDate(String date)
+    public void SetDate(LocalDate date)
     {
         m_date = date;
     }

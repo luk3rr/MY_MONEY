@@ -6,6 +6,7 @@
 
 package com.mymoney.app;
 
+import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -43,7 +44,7 @@ public class WalletTransaction
     private Wallet m_wallet;
 
     @ManyToOne
-    @JoinColumn(name = "category", referencedColumnName = "category_id")
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
     private Category m_category;
 
     @Enumerated(EnumType.STRING)
@@ -51,7 +52,7 @@ public class WalletTransaction
     private TransactionType m_type;
 
     @Column(name = "date", nullable = false)
-    private String m_date;
+    private LocalDate m_date;
 
     @Column(name = "amount", nullable = false)
     private Double m_amount;
@@ -72,14 +73,14 @@ public class WalletTransaction
      * @param description A description of the transaction
      * @param amount The amount of the transaction
      */
-    public WalletTransaction(Wallet   wallet,
-                             Category category,
-                             String   date,
-                             String   description,
-                             Double   amount)
+    public WalletTransaction(Wallet    wallet,
+                             Category  category,
+                             LocalDate date,
+                             String    description,
+                             Double    amount)
     {
         m_wallet      = wallet;
-        m_category      = category;
+        m_category    = category;
         m_date        = date;
         m_description = description;
         m_amount      = amount;
@@ -116,7 +117,7 @@ public class WalletTransaction
      * Get the type of the transaction
      * @return The type of the transaction
      */
-    public String GetDate()
+    public LocalDate GetDate()
     {
         return m_date;
     }
@@ -161,7 +162,7 @@ public class WalletTransaction
      * Set the type of the transaction
      * @param type The type of the transaction
      */
-    public void SetDate(String date)
+    public void SetDate(LocalDate date)
     {
         m_date = date;
     }
