@@ -73,38 +73,4 @@ public class Wallet
     {
         m_balance = balance;
     }
-
-    /**
-     * Add income to the wallet
-     * @param amount The amount of the income
-     * @throws IllegalArgumentException If the amount is negative
-     */
-    public void AddIncome(Double amount)
-    {
-        // TODO: Write tests for this method
-        // TODO: Implement the logic for adding WalletTransaction
-        if (amount < 0)
-        {
-            throw new IllegalArgumentException("Income amount must be positive");
-        }
-
-        m_balance += amount;
-    }
-
-    /**
-     * Add expense to the wallet
-     * @param amount The amount of the expense
-     * @throws IllegalArgumentException If the amount is negative
-     */
-    public void AddExpense(Double amount)
-    {
-        // TODO: Write tests for this method
-        // TODO: Implement the logic for adding WalletTransaction
-        if (amount < 0)
-        {
-            throw new IllegalArgumentException("Expense amount must be positive");
-        }
-
-        m_balance -= amount;
-    }
 }

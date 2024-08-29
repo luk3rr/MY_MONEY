@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
  */
 public class WalletDAOTest
 {
-    private static WalletDAO walletDAO;
+    private static WalletDAO m_walletDAO;
 
     @BeforeAll
     public static void SetUp()
@@ -37,14 +37,14 @@ public class WalletDAOTest
             dbFile.delete();
         }
 
-        walletDAO = WalletDAO.GetInstance(Constants.ENTITY_MANAGER_TEST);
+        m_walletDAO = WalletDAO.GetInstance(Constants.ENTITY_MANAGER_TEST);
     }
 
     @BeforeEach
     public void ResetDatabase()
     {
         // Ensure that the test database is reset before each test
-        if (!walletDAO.ResetTestDatabase())
+        if (!m_walletDAO.ResetTable())
         {
             throw new RuntimeException("Error resetting the test database");
         }
@@ -59,9 +59,9 @@ public class WalletDAOTest
     {
         Wallet wallet = new Wallet("My Wallet", 100.0);
 
-        walletDAO.Save(wallet);
+        assertTrue(m_walletDAO.Save(wallet), "The wallet should be saved");
 
-        Wallet foundWallet = walletDAO.Find(wallet.GetName());
+        Wallet foundWallet = m_walletDAO.Find(wallet.GetName());
         assertNotNull(foundWallet, "The wallet should be found");
     }
 
@@ -71,8 +71,8 @@ public class WalletDAOTest
         Wallet wallet1 = new Wallet("Wallet 3", 700.0);
         Wallet wallet2 = new Wallet("Wallet 3", 800.0);
 
-        assertTrue(walletDAO.Save(wallet1), "The first wallet should be saved");
-        assertFalse(walletDAO.Save(wallet2), "The second wallet should not be saved");
+        assertTrue(m_walletDAO.Save(wallet1), "The first wallet should be saved");
+        assertFalse(m_walletDAO.Save(wallet2), "The second wallet should not be saved");
     }
 
     @Test
@@ -80,12 +80,13 @@ public class WalletDAOTest
     {
         Wallet wallet = new Wallet("Update Wallet", 200.0);
 
-        walletDAO.Save(wallet);
+        assertTrue(m_walletDAO.Save(wallet), "The wallet should be saved");
 
         wallet.SetBalance(300.0);
-        walletDAO.Update(wallet);
 
-        Wallet updatedWallet = walletDAO.Find(wallet.GetName());
+        assertTrue(m_walletDAO.Update(wallet), "The wallet should be updated");
+
+        Wallet updatedWallet = m_walletDAO.Find(wallet.GetName());
 
         assertEquals(updatedWallet.GetBalance(),
                      300.0,
@@ -97,10 +98,10 @@ public class WalletDAOTest
     {
         Wallet wallet = new Wallet("Delete Wallet", 400.0);
 
-        walletDAO.Save(wallet);
-        walletDAO.Delete(wallet);
+        assertTrue(m_walletDAO.Save(wallet), "The wallet should be saved");
+        assertTrue(m_walletDAO.Delete(wallet), "The wallet should be deleted");
 
-        Wallet deletedWallet = walletDAO.Find(wallet.GetName());
+        Wallet deletedWallet = m_walletDAO.Find(wallet.GetName());
         assertNull(deletedWallet, "The wallet should be deleted");
     }
 
@@ -108,10 +109,12 @@ public class WalletDAOTest
     public void TestDeleteInvalidWallet()
     {
         Wallet invalidWallet = new Wallet("Invalid Wallet", 500.0);
-        // The wallet is not saved in the database
-        walletDAO.Delete(invalidWallet);
 
-        Wallet deletedWallet = walletDAO.Find(invalidWallet.GetName());
+        // The wallet is not saved in the database
+        assertFalse(m_walletDAO.Delete(invalidWallet),
+                    "The wallet should not be deleted");
+
+        Wallet deletedWallet = m_walletDAO.Find(invalidWallet.GetName());
 
         assertNull(deletedWallet, "The wallet should not be deleted");
     }
@@ -122,9 +125,9 @@ public class WalletDAOTest
         Wallet wallet1 = new Wallet("Wallet 1", 500.0);
         Wallet wallet2 = new Wallet("Wallet 2", 600.0);
 
-        walletDAO.Save(wallet1);
-        walletDAO.Save(wallet2);
+        assertTrue(m_walletDAO.Save(wallet1), "The first wallet should be saved");
+        assertTrue(m_walletDAO.Save(wallet2), "The second wallet should be saved");
 
-        assertEquals(walletDAO.GetAll().size(), 2, "There should be two wallets");
+        assertEquals(m_walletDAO.GetAll().size(), 2, "There should be two wallets");
     }
 }

@@ -65,23 +65,26 @@ public class WalletDAO
             m_entityManager.getTransaction().begin();
             m_entityManager.persist(wallet);
             m_entityManager.getTransaction().commit();
+
+            m_logger.info("Wallet with name " + wallet.GetName() +
+                          " saved successfully");
         }
         catch (EntityExistsException e)
         {
             m_entityManager.getTransaction().rollback();
 
-            m_logger.severe("Wallet already exists in the database");
+            m_logger.severe("Wallet with name " + wallet.GetName() +
+                            " already exists in the database");
             return false;
         }
 
-        m_logger.info("Wallet saved successfully");
         return true;
     }
 
     /**
      * Find a wallet by its name
      * @param name The name of the wallet
-     * @return The wallet found
+     * @return The wallet with the given name or null if it does not exist
      */
     public Wallet Find(String name)
     {
@@ -91,23 +94,65 @@ public class WalletDAO
     /**
      * Update a wallet in the database
      * @param wallet The wallet to be updated
+     * @return True if the wallet was updated, false otherwise
      */
-    public void Update(Wallet wallet)
+    public boolean Update(Wallet wallet)
     {
-        m_entityManager.getTransaction().begin();
-        m_entityManager.merge(wallet);
-        m_entityManager.getTransaction().commit();
+        try
+        {
+            m_entityManager.getTransaction().begin();
+            m_entityManager.merge(wallet);
+            m_entityManager.getTransaction().commit();
+
+            m_logger.info("Wallet with name " + wallet.GetName() +
+                          " updated successfully");
+        }
+        catch (Exception e)
+        {
+            m_entityManager.getTransaction().rollback();
+
+            m_logger.severe("Error updating wallet with name " + wallet.GetName() +
+                            ": " + e.getMessage());
+            return false;
+        }
+
+        return true;
     }
 
     /**
      * Delete a wallet from the database
      * @param wallet The wallet to be deleted
+     * @return True if the wallet was deleted, false otherwise
      */
-    public void Delete(Wallet wallet)
+    public boolean Delete(Wallet wallet)
     {
-        m_entityManager.getTransaction().begin();
-        m_entityManager.remove(wallet);
-        m_entityManager.getTransaction().commit();
+        try
+        {
+            Wallet walletToDelete = Find(wallet.GetName());
+
+            if (walletToDelete == null)
+            {
+                m_logger.warning("Wallet with name " + wallet.GetName() + " not found");
+                return false;
+            }
+
+            m_entityManager.getTransaction().begin();
+            m_entityManager.remove(walletToDelete);
+            m_entityManager.getTransaction().commit();
+
+            m_logger.info("Wallet with name " + wallet.GetName() +
+                          " deleted successfully");
+        }
+        catch (Exception e)
+        {
+            m_entityManager.getTransaction().rollback();
+
+            m_logger.severe("Error deleting wallet with name " + wallet.GetName() +
+                            ": " + e.getMessage());
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -121,11 +166,11 @@ public class WalletDAO
     }
 
     /**
-     * Reset the test database
-     * @return True if the database was cleaned, false otherwise
+     * Reset the table Wallet in the test database
+     * @return True if the table was reset, false otherwise
      * @note This method is only for testing purposes
      */
-    public boolean ResetTestDatabase()
+    public boolean ResetTable()
     {
         // Check if entityManagerName is the test entity manager
         if (!m_entityManager.getEntityManagerFactory()
@@ -149,7 +194,7 @@ public class WalletDAO
         {
             m_entityManager.getTransaction().rollback();
 
-            m_logger.severe("Error resetting the test database: " + e.getMessage());
+            m_logger.severe("Error resetting table Wallet: " + e.getMessage());
             return false;
         }
 
