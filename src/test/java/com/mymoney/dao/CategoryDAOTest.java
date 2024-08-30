@@ -96,20 +96,34 @@ public class CategoryDAOTest
     }
 
     @Test
-    public void TestDeleteCategory()
+    public void TestDeleteValidCategory()
     {
         Category category = new Category("My Category");
-        assertTrue(m_categoryDAO.Save(category), "The category should be saved");
 
+        assertTrue(m_categoryDAO.Save(category), "The category should be saved");
         assertTrue(m_categoryDAO.Delete(category.GetId()),
                    "The category should be deleted");
 
         Category foundCategory = m_categoryDAO.Find(category.GetId());
+        assertNull(foundCategory, "The category should be deleted");
+    }
+
+    @Test
+    public void TestDeleteInvalidCategory()
+    {
+        Category category = new Category("My Category");
+
+        // The category is not saved in the database
+        assertFalse(m_categoryDAO.Delete(category.GetId()),
+                    "The category should not be deleted");
+
+        Category foundCategory = m_categoryDAO.Find(category.GetId());
+
         assertNull(foundCategory, "The category should not be found");
     }
 
     @Test
-    public void TestFindAllCategories()
+    public void TestGetAllCategories()
     {
         Category category1 = new Category("Category 1");
         Category category2 = new Category("Category 2");

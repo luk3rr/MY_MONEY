@@ -1,12 +1,12 @@
 /*
- * Filename: WalletDAO.java
- * Created on: August 26, 2024
+ * Filename: CreditCardDAO.java
+ * Created on: August 30, 2024
  * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
  */
 
 package com.mymoney.dao;
 
-import com.mymoney.app.Wallet;
+import com.mymoney.app.CreditCard;
 import com.mymoney.util.Constants;
 import com.mymoney.util.LoggerConfig;
 import java.util.List;
@@ -17,18 +17,18 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 /**
- * Data Access Object for Wallet
+ * Data Access Object for CreditCard
  */
-public class WalletDAO
+public class CreditCardDAO
 {
-    private static WalletDAO    m_instance; // Singleton instance
-    private EntityManager       m_entityManager;
-    private static final Logger m_logger = LoggerConfig.GetLogger();
+    private static CreditCardDAO m_instance; // Singleton instance
+    private EntityManager        m_entityManager;
+    private static final Logger  m_logger = LoggerConfig.GetLogger();
 
     /**
      * Default constructor for JPA
      */
-    public WalletDAO(String entityManagerName)
+    public CreditCardDAO(String entityManagerName)
     {
         EntityManagerFactory entityManagerFactory =
             Persistence.createEntityManagerFactory(entityManagerName);
@@ -40,40 +40,40 @@ public class WalletDAO
     }
 
     /**
-     * Get the singleton instance of WalletDAO
-     * @return The singleton instance of WalletDAO
+     * Get the singleton instance of CreditCardDAO
+     * @return The singleton instance of CreditCardDAO
      */
-    public static WalletDAO GetInstance(String entityManagerName)
+    public static CreditCardDAO GetInstance(String entityManagerName)
     {
         if (m_instance == null)
         {
-            m_instance = new WalletDAO(entityManagerName);
+            m_instance = new CreditCardDAO(entityManagerName);
         }
 
         return m_instance;
     }
 
     /**
-     * Save a wallet in the database
-     * @param wallet The wallet to be saved
-     * @return True if the wallet was saved, false otherwise
+     * Save a credit card in the database
+     * @param creditCard The credit card to be saved
+     * @return True if the credit card was saved, false otherwise
      */
-    public boolean Save(Wallet wallet)
+    public boolean Save(CreditCard creditCard)
     {
         try
         {
             m_entityManager.getTransaction().begin();
-            m_entityManager.persist(wallet);
+            m_entityManager.persist(creditCard);
             m_entityManager.getTransaction().commit();
 
-            m_logger.info("Wallet with name " + wallet.GetName() +
+            m_logger.info("CreditCard with name " + creditCard.GetName() +
                           " saved successfully");
         }
         catch (EntityExistsException e)
         {
             m_entityManager.getTransaction().rollback();
 
-            m_logger.severe("Wallet with name " + wallet.GetName() +
+            m_logger.severe("CreditCard with name " + creditCard.GetName() +
                             " already exists in the database");
             return false;
         }
@@ -82,37 +82,38 @@ public class WalletDAO
     }
 
     /**
-     * Find a wallet by its name
-     * @param name The name of the wallet
-     * @return The wallet with the given name or null if it does not exist
+     * Find a credit card by its name
+     * @param name The name of the credit card
+     * @return The credit card with the given name
      */
-    public Wallet Find(String name)
+    public CreditCard Find(String name)
     {
-        return m_entityManager.find(Wallet.class, name);
+        return m_entityManager.find(CreditCard.class, name);
     }
 
     /**
-     * Update a wallet in the database
-     * @param wallet The wallet to be updated
-     * @return True if the wallet was updated, false otherwise
+     * Update a credit card in the database
+     * @param creditCard The credit card to be updated
+     * @return True if the credit card was updated, false otherwise
      */
-    public boolean Update(Wallet wallet)
+    public boolean Update(CreditCard creditCard)
     {
         try
         {
             m_entityManager.getTransaction().begin();
-            m_entityManager.merge(wallet);
+            m_entityManager.merge(creditCard);
             m_entityManager.getTransaction().commit();
 
-            m_logger.info("Wallet with name " + wallet.GetName() +
+            m_logger.info("CreditCard with name " + creditCard.GetName() +
                           " updated successfully");
         }
         catch (Exception e)
         {
             m_entityManager.getTransaction().rollback();
 
-            m_logger.severe("Error updating wallet with name " + wallet.GetName() +
-                            ": " + e.getMessage());
+            m_logger.severe("Error updating credit card with name " +
+                            creditCard.GetName() + ": " + e.getMessage());
+
             return false;
         }
 
@@ -120,34 +121,36 @@ public class WalletDAO
     }
 
     /**
-     * Delete a wallet from the database
-     * @param wallet The wallet to be deleted
-     * @return True if the wallet was deleted, false otherwise
+     * Delete a credit card from the database
+     * @param name The name of the credit card to be deleted
+     * @return True if the credit card was deleted, false otherwise
      */
     public boolean Delete(String name)
     {
         try
         {
-            Wallet walletToDelete = Find(name);
 
-            if (walletToDelete == null)
+            CreditCard creditCard = Find(name);
+
+            if (creditCard == null)
             {
-                m_logger.warning("Wallet with name " + name + " not found");
+                m_logger.severe("CreditCard with name " + name + " not found");
                 return false;
             }
 
             m_entityManager.getTransaction().begin();
-            m_entityManager.remove(walletToDelete);
+            m_entityManager.remove(creditCard);
             m_entityManager.getTransaction().commit();
 
-            m_logger.info("Wallet with name " + name + " deleted successfully");
+            m_logger.info("CreditCard with name " + name + " deleted successfully");
         }
         catch (Exception e)
         {
             m_entityManager.getTransaction().rollback();
 
-            m_logger.severe("Error deleting wallet with name " + name + ": " +
+            m_logger.severe("Error deleting credit card with name " + name + ": " +
                             e.getMessage());
+
             return false;
         }
 
@@ -155,19 +158,20 @@ public class WalletDAO
     }
 
     /**
-     * Get all wallets from the database
-     * @return All wallets from the database
+     * Get all credit cards in the database
+     * @return A list with all credit cards in the database
      */
-    public List<Wallet> GetAll()
+    public List<CreditCard> GetAll()
     {
-        return m_entityManager.createQuery("SELECT w FROM Wallet w", Wallet.class)
+        return m_entityManager
+            .createQuery("SELECT c FROM CreditCard c", CreditCard.class)
             .getResultList();
     }
 
     /**
-     * Reset the table Wallet in the test database
+     * Reset the table CreditCard in the test database
      * @return True if the table was reset, false otherwise
-     * @note This method is only for testing purposes
+     * @note This method is used for testing purposes only
      */
     public boolean ResetTable()
     {
@@ -186,14 +190,14 @@ public class WalletDAO
         try
         {
             m_entityManager.getTransaction().begin();
-            m_entityManager.createQuery("DELETE FROM Wallet").executeUpdate();
+            m_entityManager.createQuery("DELETE FROM CreditCard").executeUpdate();
             m_entityManager.getTransaction().commit();
         }
         catch (Exception e)
         {
             m_entityManager.getTransaction().rollback();
 
-            m_logger.severe("Error resetting table Wallet: " + e.getMessage());
+            m_logger.severe("Error resetting the table CreditCard: " + e.getMessage());
             return false;
         }
 

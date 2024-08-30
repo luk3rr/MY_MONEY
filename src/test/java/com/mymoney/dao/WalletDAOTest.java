@@ -99,7 +99,8 @@ public class WalletDAOTest
         Wallet wallet = new Wallet("Delete Wallet", 400.0);
 
         assertTrue(m_walletDAO.Save(wallet), "The wallet should be saved");
-        assertTrue(m_walletDAO.Delete(wallet), "The wallet should be deleted");
+        assertTrue(m_walletDAO.Delete(wallet.GetName()),
+                   "The wallet should be deleted");
 
         Wallet deletedWallet = m_walletDAO.Find(wallet.GetName());
         assertNull(deletedWallet, "The wallet should be deleted");
@@ -111,7 +112,7 @@ public class WalletDAOTest
         Wallet invalidWallet = new Wallet("Invalid Wallet", 500.0);
 
         // The wallet is not saved in the database
-        assertFalse(m_walletDAO.Delete(invalidWallet),
+        assertFalse(m_walletDAO.Delete(invalidWallet.GetName()),
                     "The wallet should not be deleted");
 
         Wallet deletedWallet = m_walletDAO.Find(invalidWallet.GetName());
@@ -120,7 +121,7 @@ public class WalletDAOTest
     }
 
     @Test
-    public void TestFindAllWallets()
+    public void TestGetAllWallets()
     {
         Wallet wallet1 = new Wallet("Wallet 1", 500.0);
         Wallet wallet2 = new Wallet("Wallet 2", 600.0);
