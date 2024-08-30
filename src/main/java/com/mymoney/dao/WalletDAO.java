@@ -71,7 +71,10 @@ public class WalletDAO
         }
         catch (EntityExistsException e)
         {
-            m_entityManager.getTransaction().rollback();
+            if (m_entityManager.getTransaction().isActive())
+            {
+                m_entityManager.getTransaction().rollback();
+            }
 
             m_logger.severe("Wallet with name " + wallet.GetName() +
                             " already exists in the database");
@@ -109,7 +112,10 @@ public class WalletDAO
         }
         catch (Exception e)
         {
-            m_entityManager.getTransaction().rollback();
+            if (m_entityManager.getTransaction().isActive())
+            {
+                m_entityManager.getTransaction().rollback();
+            }
 
             m_logger.severe("Error updating wallet with name " + wallet.GetName() +
                             ": " + e.getMessage());
@@ -144,7 +150,10 @@ public class WalletDAO
         }
         catch (Exception e)
         {
-            m_entityManager.getTransaction().rollback();
+            if (m_entityManager.getTransaction().isActive())
+            {
+                m_entityManager.getTransaction().rollback();
+            }
 
             m_logger.severe("Error deleting wallet with name " + name + ": " +
                             e.getMessage());
@@ -188,10 +197,14 @@ public class WalletDAO
             m_entityManager.getTransaction().begin();
             m_entityManager.createQuery("DELETE FROM Wallet").executeUpdate();
             m_entityManager.getTransaction().commit();
+            m_entityManager.clear(); // Clear the persistence context
         }
         catch (Exception e)
         {
-            m_entityManager.getTransaction().rollback();
+            if (m_entityManager.getTransaction().isActive())
+            {
+                m_entityManager.getTransaction().rollback();
+            }
 
             m_logger.severe("Error resetting table Wallet: " + e.getMessage());
             return false;

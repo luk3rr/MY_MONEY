@@ -70,7 +70,10 @@ public class CategoryDAO
         }
         catch (Exception e)
         {
-            m_entityManager.getTransaction().rollback();
+            if (m_entityManager.getTransaction().isActive())
+            {
+                m_entityManager.getTransaction().rollback();
+            }
 
             m_logger.severe("Error saving category with id " + category.GetId() + ": " +
                             e.getMessage());
@@ -108,7 +111,10 @@ public class CategoryDAO
         }
         catch (Exception e)
         {
-            m_entityManager.getTransaction().rollback();
+            if (m_entityManager.getTransaction().isActive())
+            {
+                m_entityManager.getTransaction().rollback();
+            }
 
             m_logger.severe("Error updating category with id " + category.GetId() +
                             ": " + e.getMessage());
@@ -143,7 +149,10 @@ public class CategoryDAO
         }
         catch (Exception e)
         {
-            m_entityManager.getTransaction().rollback();
+            if (m_entityManager.getTransaction().isActive())
+            {
+                m_entityManager.getTransaction().rollback();
+            }
 
             m_logger.severe("Error deleting category with id " + id + ": " +
                             e.getMessage());
@@ -187,10 +196,14 @@ public class CategoryDAO
             m_entityManager.getTransaction().begin();
             m_entityManager.createQuery("DELETE FROM Category").executeUpdate();
             m_entityManager.getTransaction().commit();
+            m_entityManager.clear(); // Clear the persistence context
         }
         catch (Exception e)
         {
-            m_entityManager.getTransaction().rollback();
+            if (m_entityManager.getTransaction().isActive())
+            {
+                m_entityManager.getTransaction().rollback();
+            }
 
             m_logger.severe("Error resetting table Category: " + e.getMessage());
             return false;

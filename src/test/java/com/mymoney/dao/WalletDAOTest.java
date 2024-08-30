@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.mymoney.app.Wallet;
 import com.mymoney.util.Constants;
-import java.io.File;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,13 +29,6 @@ public class WalletDAOTest
     @BeforeAll
     public static void SetUp()
     {
-        // Delete the test database file if it exists before running the tests
-        File dbFile = new File(Constants.DB_TEST_FILE);
-        if (dbFile.exists())
-        {
-            dbFile.delete();
-        }
-
         m_walletDAO = WalletDAO.GetInstance(Constants.ENTITY_MANAGER_TEST);
     }
 

@@ -59,14 +59,12 @@ public class CreditCardDebt
      * @param totalAmount The total amount of the debt
      * @param description The description of the debt
      */
-    public CreditCardDebt(Long       id,
-                          CreditCard creditCard,
+    public CreditCardDebt(CreditCard creditCard,
                           Category   category,
                           LocalDate  date,
                           Double     totalAmount,
                           String     description)
     {
-        m_id          = id;
         m_creditCard  = creditCard;
         m_category    = category;
         m_date        = date;

@@ -1,12 +1,12 @@
 /*
- * Filename: CreditCardDAO.java
+ * Filename: CreditCardDebtDAO.java
  * Created on: August 30, 2024
  * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
  */
 
 package com.mymoney.dao;
 
-import com.mymoney.app.CreditCard;
+import com.mymoney.app.CreditCardDebt;
 import com.mymoney.util.Constants;
 import com.mymoney.util.LoggerConfig;
 import java.util.List;
@@ -17,18 +17,18 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 /**
- * Data Access Object for CreditCard
+ * Data Access Object for CreditCardDebt
  */
-public class CreditCardDAO
+public class CreditCardDebtDAO
 {
-    private static CreditCardDAO m_instance; // Singleton instance
-    private EntityManager        m_entityManager;
-    private static final Logger  m_logger = LoggerConfig.GetLogger();
+    private static CreditCardDebtDAO m_instance; // Singleton instance
+    private EntityManager            m_entityManager;
+    private static final Logger      m_logger = LoggerConfig.GetLogger();
 
     /**
      * Default constructor for JPA
      */
-    public CreditCardDAO(String entityManagerName)
+    public CreditCardDebtDAO(String entityManagerName)
     {
         EntityManagerFactory entityManagerFactory =
             Persistence.createEntityManagerFactory(entityManagerName);
@@ -40,44 +40,44 @@ public class CreditCardDAO
     }
 
     /**
-     * Get the singleton instance of CreditCardDAO
-     * @return The singleton instance of CreditCardDAO
+     * Get the singleton instance of CreditCardDebtDAO
+     * @return The singleton instance of CreditCardDebtDAO
      */
-    public static CreditCardDAO GetInstance(String entityManagerName)
+    public static CreditCardDebtDAO GetInstance(String entityManagerName)
     {
         if (m_instance == null)
         {
-            m_instance = new CreditCardDAO(entityManagerName);
+            m_instance = new CreditCardDebtDAO(entityManagerName);
         }
 
         return m_instance;
     }
 
     /**
-     * Save a credit card in the database
-     * @param creditCard The credit card to be saved
-     * @return True if the credit card was saved, false otherwise
+     * Save a credit card debt in the database
+     * @param creditCardDebt The credit card debt to be saved
+     * @return True if the credit card debt was saved, false otherwise
      */
-    public boolean Save(CreditCard creditCard)
+    public boolean Save(CreditCardDebt creditCardDebt)
     {
         try
         {
             m_entityManager.getTransaction().begin();
-            m_entityManager.persist(creditCard);
+            m_entityManager.persist(creditCardDebt);
             m_entityManager.getTransaction().commit();
 
-            m_logger.info("CreditCard with name " + creditCard.GetName() +
+            m_logger.info("Credit card debt with id: " + creditCardDebt.GetId() +
                           " saved successfully");
         }
-        catch (EntityExistsException e)
+        catch (Exception e)
         {
             if (m_entityManager.getTransaction().isActive())
             {
                 m_entityManager.getTransaction().rollback();
             }
 
-            m_logger.severe("CreditCard with name " + creditCard.GetName() +
-                            " already exists in the database");
+            m_logger.severe("Error saving credit card debt: " + e.getMessage());
+
             return false;
         }
 
@@ -85,29 +85,29 @@ public class CreditCardDAO
     }
 
     /**
-     * Find a credit card by its name
-     * @param name The name of the credit card
-     * @return The credit card with the given name
+     * Find a credit card debt in the database
+     * @param id The id of the credit card debt to be found
+     * @return The credit card debt if it was found, null otherwise
      */
-    public CreditCard Find(String name)
+    public CreditCardDebt Find(Long id)
     {
-        return m_entityManager.find(CreditCard.class, name);
+        return m_entityManager.find(CreditCardDebt.class, id);
     }
 
     /**
-     * Update a credit card in the database
-     * @param creditCard The credit card to be updated
-     * @return True if the credit card was updated, false otherwise
+     * Update a credit card debt in the database
+     * @param creditCardDebt The credit card debt to be updated
+     * @return True if the credit card debt was updated, false otherwise
      */
-    public boolean Update(CreditCard creditCard)
+    public boolean Update(CreditCardDebt creditCardDebt)
     {
         try
         {
             m_entityManager.getTransaction().begin();
-            m_entityManager.merge(creditCard);
+            m_entityManager.merge(creditCardDebt);
             m_entityManager.getTransaction().commit();
 
-            m_logger.info("CreditCard with name " + creditCard.GetName() +
+            m_logger.info("Credit card debt with id: " + creditCardDebt.GetId() +
                           " updated successfully");
         }
         catch (Exception e)
@@ -117,9 +117,7 @@ public class CreditCardDAO
                 m_entityManager.getTransaction().rollback();
             }
 
-            m_logger.severe("Error updating credit card with name " +
-                            creditCard.GetName() + ": " + e.getMessage());
-
+            m_logger.severe("Error updating credit card debt: " + e.getMessage());
             return false;
         }
 
@@ -127,28 +125,27 @@ public class CreditCardDAO
     }
 
     /**
-     * Delete a credit card from the database
-     * @param name The name of the credit card to be deleted
-     * @return True if the credit card was deleted, false otherwise
+     * Delete a credit card debt from the database
+     * @param creditCardDebt The credit card debt to be deleted
+     * @return True if the credit card debt was deleted, false otherwise
      */
-    public boolean Delete(String name)
+    public boolean Delete(Long id)
     {
         try
         {
+            CreditCardDebt creditCardDebtToDelete = Find(id);
 
-            CreditCard creditCard = Find(name);
-
-            if (creditCard == null)
+            if (creditCardDebtToDelete == null)
             {
-                m_logger.severe("CreditCard with name " + name + " not found");
+                m_logger.warning("Credit card debt with id: " + id + " not found");
                 return false;
             }
 
             m_entityManager.getTransaction().begin();
-            m_entityManager.remove(creditCard);
+            m_entityManager.remove(creditCardDebtToDelete);
             m_entityManager.getTransaction().commit();
 
-            m_logger.info("CreditCard with name " + name + " deleted successfully");
+            m_logger.info("Credit card debt with id: " + id + " deleted successfully");
         }
         catch (Exception e)
         {
@@ -157,9 +154,8 @@ public class CreditCardDAO
                 m_entityManager.getTransaction().rollback();
             }
 
-            m_logger.severe("Error deleting credit card with name " + name + ": " +
+            m_logger.severe("Error deleting credit card debt with id: " + id + ": " +
                             e.getMessage());
-
             return false;
         }
 
@@ -167,20 +163,20 @@ public class CreditCardDAO
     }
 
     /**
-     * Get all credit cards in the database
-     * @return A list with all credit cards in the database
+     * Get all credit card debts from the database
+     * @return A list with all credit card debts
      */
-    public List<CreditCard> GetAll()
+    public List<CreditCardDebt> GetAll()
     {
         return m_entityManager
-            .createQuery("SELECT c FROM CreditCard c", CreditCard.class)
+            .createQuery("SELECT c FROM CreditCardDebt c", CreditCardDebt.class)
             .getResultList();
     }
 
     /**
-     * Reset the table CreditCard in the test database
+     * Reset the table CreditCardDebt in the test database
      * @return True if the table was reset, false otherwise
-     * @note This method is used for testing purposes only
+     * @note This method is used only for testing purposes
      */
     public boolean ResetTable()
     {
@@ -199,7 +195,7 @@ public class CreditCardDAO
         try
         {
             m_entityManager.getTransaction().begin();
-            m_entityManager.createQuery("DELETE FROM CreditCard").executeUpdate();
+            m_entityManager.createQuery("DELETE FROM CreditCardDebt").executeUpdate();
             m_entityManager.getTransaction().commit();
             m_entityManager.clear(); // Clear the persistence context
         }
@@ -210,7 +206,7 @@ public class CreditCardDAO
                 m_entityManager.getTransaction().rollback();
             }
 
-            m_logger.severe("Error resetting the table CreditCard: " + e.getMessage());
+            m_logger.severe("Error resetting table CreditCardDebt: " + e.getMessage());
             return false;
         }
 
