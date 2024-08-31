@@ -55,20 +55,20 @@ public class Transfer
      * @param senderWallet The wallet that sends the money
      * @param receiverWallet The wallet that receives the money
      * @param date The date of the transfer
-     * @param description A description of the transfer
      * @param amount The amount transferred
+     * @param description A description of the transfer
      */
     public Transfer(Wallet    senderWallet,
                     Wallet    receiverWallet,
                     LocalDate date,
-                    String    description,
-                    Double    amount)
+                    Double    amount,
+                    String    description)
     {
         m_senderWallet   = senderWallet;
         m_receiverWallet = receiverWallet;
         m_date           = date;
-        m_description    = description;
         m_amount         = amount;
+        m_description    = description;
     }
 
     /*
