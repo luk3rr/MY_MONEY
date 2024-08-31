@@ -79,7 +79,28 @@ public class CreditCardDebtDAOTest
 
     @AfterAll
     public static void TearDown()
-    { }
+    {
+        // Ensure that the test database is reset after all tests
+        if (!m_creditCardDebtDAO.ResetTable())
+        {
+            throw new RuntimeException(
+                "Error resetting table CreditCardDebt after all tests");
+        }
+
+        // Also reset the another tables used in the tests
+        // NOTE: This is necessary because the test database is shared among all tests
+        if (!CreditCardDAO.GetInstance(Constants.ENTITY_MANAGER_TEST).ResetTable())
+        {
+            throw new RuntimeException(
+                "Error resetting table CreditCard after all tests");
+        }
+
+        if (!CategoryDAO.GetInstance(Constants.ENTITY_MANAGER_TEST).ResetTable())
+        {
+            throw new RuntimeException(
+                "Error resetting table Category after all tests");
+        }
+    }
 
     @Test
     public void TestCreateAndFindCreditCardDebt()

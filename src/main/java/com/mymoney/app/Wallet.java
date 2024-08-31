@@ -11,6 +11,10 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * Represents a wallet
+ * A wallet is a container for money
+ */
 @Entity
 @Table(name = "wallet")
 public class Wallet

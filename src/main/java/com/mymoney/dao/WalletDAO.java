@@ -25,9 +25,6 @@ public class WalletDAO
     private EntityManager       m_entityManager;
     private static final Logger m_logger = LoggerConfig.GetLogger();
 
-    /**
-     * Default constructor for JPA
-     */
     public WalletDAO(String entityManagerName)
     {
         EntityManagerFactory entityManagerFactory =

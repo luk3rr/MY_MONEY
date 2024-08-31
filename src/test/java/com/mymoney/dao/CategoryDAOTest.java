@@ -44,7 +44,13 @@ public class CategoryDAOTest
 
     @AfterAll
     public static void TearDown()
-    { }
+    {
+        // Ensure that the test database is reset after all tests
+        if (!m_categoryDAO.ResetTable())
+        {
+            throw new RuntimeException("Error resetting the test database");
+        }
+    }
 
     @Test
     public void TestCreateAndFindCategory()

@@ -15,23 +15,23 @@ Execução dos testes:
 mvn test
 #+end_src
 ** TODOs
-*** TODO Criar classes DAO [4/7] [57%]
+*** TODO Criar classes DAO [5/7] [71%]
 - [X] WalletDAO
 - [X] CategoryDAO
 - [X] CreditCardDAO
 - [X] CreditCardDebtDAO
-- [ ] CreditCardPaymentDAO
+- [X] CreditCardPaymentDAO
 - [ ] WalletTransactionDAO
 - [ ] TransferDAO
 *** TODO Criar classes Services [0/2] [0%]
 - [ ] WalletService
 - [ ] CreditCardService
-*** TODO Implementar testes [4/9] [44%]
+*** TODO Implementar testes [5/9] [55%]
 - [X] WalletDAOTest
 - [X] CategoryDAOTest
 - [X] CreditCardDAOTest
 - [X] CreditCardDebtDAOTest
-- [ ] CreditCardPaymentDAOTest
+- [X] CreditCardPaymentDAOTest
 - [ ] WalletTransactionDAOTest
 - [ ] TransferDAOTest
 - [ ] WalletServiceTest

@@ -44,7 +44,13 @@ public class WalletDAOTest
 
     @AfterAll
     public static void TearDown()
-    { }
+    {
+        // Ensure that the test database is reset after all tests
+        if (!m_walletDAO.ResetTable())
+        {
+            throw new RuntimeException("Error resetting the test database");
+        }
+    }
 
     @Test
     public void TestCreateAndFindWallet()

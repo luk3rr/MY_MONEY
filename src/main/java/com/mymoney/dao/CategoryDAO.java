@@ -24,9 +24,6 @@ public class CategoryDAO
     private EntityManager       m_entityManager;
     private static final Logger m_logger = LoggerConfig.GetLogger();
 
-    /**
-     * Default constructor for JPA
-     */
     public CategoryDAO(String entityManagerName)
     {
         EntityManagerFactory entityManagerFactory =

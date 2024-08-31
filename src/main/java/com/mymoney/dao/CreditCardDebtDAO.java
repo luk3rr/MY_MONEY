@@ -24,9 +24,6 @@ public class CreditCardDebtDAO
     private EntityManager            m_entityManager;
     private static final Logger      m_logger = LoggerConfig.GetLogger();
 
-    /**
-     * Default constructor for JPA
-     */
     public CreditCardDebtDAO(String entityManagerName)
     {
         EntityManagerFactory entityManagerFactory =
@@ -75,7 +72,8 @@ public class CreditCardDebtDAO
                 m_entityManager.getTransaction().rollback();
             }
 
-            m_logger.severe("Error saving credit card debt: " + e.getMessage());
+            m_logger.severe("Error saving credit card debt with id: " +
+                            creditCardDebt.GetId() + ": " + e.getMessage());
 
             return false;
         }
@@ -107,7 +105,7 @@ public class CreditCardDebtDAO
             m_entityManager.getTransaction().commit();
 
             m_logger.info("Credit card debt with id: " + creditCardDebt.GetId() +
-                          " updated successfully");
+                          " was updated successfully");
         }
         catch (Exception e)
         {
@@ -116,7 +114,8 @@ public class CreditCardDebtDAO
                 m_entityManager.getTransaction().rollback();
             }
 
-            m_logger.severe("Error updating credit card debt: " + e.getMessage());
+            m_logger.severe("Error updating credit card debt with id: " +
+                            creditCardDebt.GetId() + ": " + e.getMessage());
             return false;
         }
 

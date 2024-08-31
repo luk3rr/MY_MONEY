@@ -25,9 +25,6 @@ public class CreditCardDAO
     private EntityManager        m_entityManager;
     private static final Logger  m_logger = LoggerConfig.GetLogger();
 
-    /**
-     * Default constructor for JPA
-     */
     public CreditCardDAO(String entityManagerName)
     {
         EntityManagerFactory entityManagerFactory =
