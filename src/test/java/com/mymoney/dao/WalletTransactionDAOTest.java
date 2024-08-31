@@ -12,9 +12,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.mymoney.app.Category;
-import com.mymoney.app.Wallet;
-import com.mymoney.app.WalletTransaction;
+import com.mymoney.app.entities.Category;
+import com.mymoney.app.entities.Wallet;
+import com.mymoney.app.entities.WalletTransaction;
 import com.mymoney.util.Constants;
 import com.mymoney.util.TransactionType;
 import java.time.LocalDate;

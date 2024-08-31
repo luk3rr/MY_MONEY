@@ -6,7 +6,7 @@
 
 package com.mymoney.dao;
 
-import com.mymoney.app.Wallet;
+import com.mymoney.app.entities.Wallet;
 import com.mymoney.util.Constants;
 import com.mymoney.util.LoggerConfig;
 import java.util.List;

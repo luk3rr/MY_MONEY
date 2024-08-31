@@ -6,7 +6,7 @@
 
 package com.mymoney.dao;
 
-import com.mymoney.app.CreditCardDebt;
+import com.mymoney.app.entities.CreditCardDebt;
 import com.mymoney.util.Constants;
 import com.mymoney.util.LoggerConfig;
 import java.util.List;

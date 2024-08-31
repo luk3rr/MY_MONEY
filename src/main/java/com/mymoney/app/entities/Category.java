@@ -4,7 +4,7 @@
  * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
  */
 
-package com.mymoney.app;
+package com.mymoney.app.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

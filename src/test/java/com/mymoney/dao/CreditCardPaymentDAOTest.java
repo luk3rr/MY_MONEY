@@ -12,11 +12,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.mymoney.app.Category;
-import com.mymoney.app.CreditCard;
-import com.mymoney.app.CreditCardDebt;
-import com.mymoney.app.CreditCardPayment;
-import com.mymoney.app.Wallet;
+import com.mymoney.app.entities.Category;
+import com.mymoney.app.entities.CreditCard;
+import com.mymoney.app.entities.CreditCardDebt;
+import com.mymoney.app.entities.CreditCardPayment;
+import com.mymoney.app.entities.Wallet;
 import com.mymoney.util.Constants;
 import java.time.LocalDate;
 import org.junit.jupiter.api.AfterAll;

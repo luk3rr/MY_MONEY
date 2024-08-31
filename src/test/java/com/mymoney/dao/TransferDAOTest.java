@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.mymoney.app.Transfer;
-import com.mymoney.app.Wallet;
+import com.mymoney.app.entities.Transfer;
+import com.mymoney.app.entities.Wallet;
 import com.mymoney.util.Constants;
 import java.time.LocalDate;
 import org.junit.jupiter.api.AfterAll;
