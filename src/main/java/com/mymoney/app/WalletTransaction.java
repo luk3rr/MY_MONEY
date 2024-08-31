@@ -6,6 +6,7 @@
 
 package com.mymoney.app;
 
+import com.mymoney.util.TransactionType;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,15 +18,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-/**
- * ENUM that represents the type of a transaction
- */
-enum TransactionType
-{
-    INCOME,
-    OUTCOME
-}
 
 /**
  * Represents a transaction in a wallet
@@ -69,21 +61,24 @@ public class WalletTransaction
      * Constructor for WalletTransaction
      * @param wallet The wallet that the transaction belongs to
      * @param category The category of the transaction
+     * @param type The type of the transaction
      * @param date The date of the transaction
-     * @param description A description of the transaction
      * @param amount The amount of the transaction
+     * @param description A description of the transaction
      */
-    public WalletTransaction(Wallet    wallet,
-                             Category  category,
-                             LocalDate date,
-                             String    description,
-                             Double    amount)
+    public WalletTransaction(Wallet          wallet,
+                             Category        category,
+                             TransactionType type,
+                             LocalDate       date,
+                             Double          amount,
+                             String          description)
     {
         m_wallet      = wallet;
         m_category    = category;
+        m_type        = type;
         m_date        = date;
-        m_description = description;
         m_amount      = amount;
+        m_description = description;
     }
 
     /**
@@ -141,6 +136,15 @@ public class WalletTransaction
     }
 
     /**
+     * Get the type of the transaction
+     * @return The type of the transaction
+     */
+    public TransactionType GetType()
+    {
+        return m_type;
+    }
+
+    /**
      * Set the wallet that the transaction belongs to
      * @param wallet The wallet that the transaction belongs to
      */
@@ -183,5 +187,14 @@ public class WalletTransaction
     public void SetAmount(Double amount)
     {
         m_amount = amount;
+    }
+
+    /**
+     * Set the type of the transaction
+     * @param type The type of the transaction
+     */
+    public void SetType(TransactionType type)
+    {
+        m_type = type;
     }
 }

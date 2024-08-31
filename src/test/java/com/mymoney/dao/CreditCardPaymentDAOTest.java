@@ -39,6 +39,9 @@ public class CreditCardPaymentDAOTest
     @BeforeAll
     public static void SetUp()
     {
+        m_creditCardPaymentDAO =
+            CreditCardPaymentDAO.GetInstance(Constants.ENTITY_MANAGER_TEST);
+
         // Create a CreditCard, Category, CreditCardDebt, LocalDate and Wallet to be
         // used in the tests
         m_creditCard = new CreditCard("TestCard", (short)1, 20.0);
@@ -62,9 +65,6 @@ public class CreditCardPaymentDAOTest
 
         assertTrue(creditCardDebtDAO.Save(m_creditCardDebt),
                    "The credit card debt should be saved");
-
-        m_creditCardPaymentDAO =
-            CreditCardPaymentDAO.GetInstance(Constants.ENTITY_MANAGER_TEST);
 
         m_wallet            = new Wallet("TestWallet", 100.0);
         WalletDAO walletDAO = WalletDAO.GetInstance(Constants.ENTITY_MANAGER_TEST);
