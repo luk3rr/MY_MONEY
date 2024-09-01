@@ -1,0 +1,12 @@
+# Config for production
+spring:
+  datasource:
+    url: jdbc:sqlite:data/data.db
+    driver-class-name: org.sqlite.JDBC
+    username: ''
+    password: ''
+  jpa:
+    database-platform: org.hibernate.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true

@@ -1,0 +1,12 @@
+# Config for testing
+spring:
+  datasource:
+    url: jdbc:sqlite:data/test.db
+    driver-class-name: org.sqlite.JDBC
+    username: ''
+    password: ''
+  jpa:
+    database-platform: org.hibernate.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
