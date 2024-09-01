@@ -35,4 +35,13 @@ mvn test
 - [X] WalletTransactionDAOTest
 - [X] TransferDAOTest
 - [ ] WalletServiceTest
+  - [ ] Registrar novas carteiras
+  - [ ] Apagar carteiras (soft delete e cascade)
+  - [ ] Transferência entre carteiras
+  - [ ] Registrar débitos
+  - [ ] Registrar créditos
+  - [ ] Registrar pagamentos de parcelas do cartão de crédito
 - [ ] CreditCardServiceTest
+  - [ ] Registrar novos cartões
+  - [ ] Apagar cartões
+  - [ ] Registrar compras no cartão de crédito e suas parcelas

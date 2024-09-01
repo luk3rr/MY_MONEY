@@ -8,6 +8,8 @@ package com.mymoney.app.entities;
 
 import com.mymoney.util.TransactionType;
 import java.time.LocalDate;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -31,7 +33,7 @@ public class WalletTransaction
     @Column(name = "transaction_id")
     private Long m_id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "wallet", referencedColumnName = "name")
     private Wallet m_wallet;
 

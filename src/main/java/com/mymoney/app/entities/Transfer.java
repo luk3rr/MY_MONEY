@@ -7,6 +7,8 @@
 package com.mymoney.app.entities;
 
 import java.time.LocalDate;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,11 +30,11 @@ public class Transfer
     @Column(name = "transfer_id")
     private Long m_id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "sender_wallet", referencedColumnName = "name")
     private Wallet m_senderWallet;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "receiver_wallet", referencedColumnName = "name")
     private Wallet m_receiverWallet;
 

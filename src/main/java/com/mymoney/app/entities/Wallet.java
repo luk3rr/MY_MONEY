@@ -26,6 +26,9 @@ public class Wallet
     @Column(name = "balance", nullable = false)
     private Double m_balance;
 
+    @Column(name = "archived", nullable = false)
+    private Boolean m_archived;
+
     /**
      * Default constructor for JPA
      */
@@ -38,8 +41,9 @@ public class Wallet
      */
     public Wallet(String name, Double balance)
     {
-        m_name    = name;
-        m_balance = balance;
+        m_name     = name;
+        m_balance  = balance;
+        m_archived = false;
     }
 
     /**
@@ -52,15 +56,6 @@ public class Wallet
     }
 
     /**
-     * Set the name of the wallet
-     * @param name The new name of the wallet
-     */
-    public void SetName(String name)
-    {
-        m_name = name;
-    }
-
-    /**
      * Get the balance of the wallet
      * @return The balance of the wallet
      */
@@ -70,11 +65,38 @@ public class Wallet
     }
 
     /**
+     * Get the archived status of the wallet
+     * @return True if the wallet is archived, false otherwise
+     */
+    public boolean IsArchived()
+    {
+        return m_archived;
+    }
+
+    /**
+     * Set the name of the wallet
+     * @param name The new name of the wallet
+     */
+    public void SetName(String name)
+    {
+        m_name = name;
+    }
+
+    /**
      * Set the balance of the wallet
      * @param balance The new balance of the wallet
      */
     public void SetBalance(Double balance)
     {
         m_balance = balance;
+    }
+
+    /**
+     * Set the archived status of the wallet
+     * @param archived The new archived status of the wallet
+     */
+    public void SetArchived(boolean archived)
+    {
+        m_archived = archived;
     }
 }
