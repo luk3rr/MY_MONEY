@@ -55,33 +55,41 @@ public class WalletService
     /**
      * Delete a wallet
      * @param name The name of the wallet to be deleted
-     * @param softDelete If true, the wallet will be soft deleted
      * @throws RuntimeException If the wallet does not exist
-     * @note If the wallet is soft deleted, it will not be removed from the database
-     * but it will be marked as archived and will not be used in the application. The
-     * wallet can be restored by setting the archived field to false.
      */
     @Transactional
-    public void DeleteWallet(String name, boolean softDelete)
+    public void DeleteWallet(String name)
     {
         Wallet wallet = m_walletRepository.findById(name).orElseThrow(
             ()
                 -> new RuntimeException("Wallet with name " + name +
                                         " not found and cannot be deleted"));
 
-        if (softDelete)
-        {
-            wallet.SetArchived(true);
-            m_walletRepository.save(wallet);
+        m_walletRepository.delete(wallet);
 
-            m_logger.info("Wallet " + name + " was soft deleted");
-        }
-        else
-        {
-            m_walletRepository.delete(wallet);
+        m_logger.info("Wallet " + name + " was permanently deleted");
+    }
 
-            m_logger.info("Wallet " + name + " was permanently deleted");
-        }
+    /**
+     * Archive a wallet
+     * @param name The name of the wallet
+     * @throws RuntimeException If the wallet does not exist
+     * @note This method is used to archive a wallet, which means that the wallet
+     * will not be deleted from the database, but it will not be used in the
+     * application anymore
+     */
+    @Transactional
+    public void ArchiveWallet(String name)
+    {
+        Wallet wallet = m_walletRepository.findById(name).orElseThrow(
+            ()
+                -> new RuntimeException("Wallet with name " + name +
+                                        " not found and cannot be deleted"));
+
+        wallet.SetArchived(true);
+        m_walletRepository.save(wallet);
+
+        m_logger.info("Wallet " + name + " was archived");
     }
 
     /**
