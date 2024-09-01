@@ -6,11 +6,15 @@
 
 package com.mymoney.service;
 
+import com.mymoney.app.entities.Category;
 import com.mymoney.app.entities.Transfer;
 import com.mymoney.app.entities.Wallet;
+import com.mymoney.app.entities.WalletTransaction;
 import com.mymoney.repositories.TransferRepository;
 import com.mymoney.repositories.WalletRepository;
+import com.mymoney.repositories.WalletTransactionRepository;
 import com.mymoney.util.LoggerConfig;
+import com.mymoney.util.TransactionType;
 import java.time.LocalDate;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,9 @@ public class WalletService
 
     @Autowired
     private TransferRepository m_transferRepository;
+
+    @Autowired
+    private WalletTransactionRepository m_walletTransactionRepository;
 
     private static final Logger m_logger = LoggerConfig.GetLogger();
 
@@ -169,5 +176,57 @@ public class WalletService
 
         m_logger.info("Transfer from " + senderName + " to " + receiverName + " of " +
                       amount + " was successful");
+    }
+
+    @Transactional
+    public void AddIncome(String    walletName,
+                          Category  category,
+                          LocalDate date,
+                          double    amount,
+                          String    description)
+    {
+        Wallet wallet =
+            m_walletRepository.findById(walletName)
+                .orElseThrow(()
+                                 -> new RuntimeException("Wallet with name " +
+                                                         walletName + " not found"));
+
+        m_walletTransactionRepository.save(new WalletTransaction(wallet,
+                                                                 category,
+                                                                 TransactionType.INCOME,
+                                                                 date,
+                                                                 amount,
+                                                                 description));
+
+        wallet.SetBalance(wallet.GetBalance() + amount);
+        m_walletRepository.save(wallet);
+
+        m_logger.info("Income of " + amount + " added to wallet " + walletName);
+    }
+
+    @Transactional
+    public void AddExpense(String    walletName,
+                           Category  category,
+                           LocalDate date,
+                           double    amount,
+                           String    description)
+    {
+        Wallet wallet =
+            m_walletRepository.findById(walletName)
+                .orElseThrow(()
+                                 -> new RuntimeException("Wallet with name " +
+                                                         walletName + " not found"));
+
+        m_walletTransactionRepository.save(new WalletTransaction(wallet,
+                                                                 category,
+                                                                 TransactionType.OUTCOME,
+                                                                 date,
+                                                                 amount,
+                                                                 description));
+
+        wallet.SetBalance(wallet.GetBalance() - amount);
+        m_walletRepository.save(wallet);
+
+        m_logger.info("Expense of " + amount + " added to wallet " + walletName);
     }
 }

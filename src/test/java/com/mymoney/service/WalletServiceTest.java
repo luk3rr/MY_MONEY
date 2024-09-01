@@ -14,11 +14,16 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.mymoney.app.entities.Category;
 import com.mymoney.app.entities.Transfer;
 import com.mymoney.app.entities.Wallet;
+import com.mymoney.app.entities.WalletTransaction;
+import com.mymoney.repositories.CategoryRepository;
 import com.mymoney.repositories.TransferRepository;
 import com.mymoney.repositories.WalletRepository;
+import com.mymoney.repositories.WalletTransactionRepository;
 import com.mymoney.util.Constants;
+import com.mymoney.util.TransactionType;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
@@ -40,6 +45,12 @@ public class WalletServiceTest
 
     @Mock
     private TransferRepository m_transferRepository;
+
+    @Mock
+    private CategoryRepository m_categoryRepository;
+
+    @Mock
+    private WalletTransactionRepository m_walletTransactionRepository;
 
     @InjectMocks
     private WalletService m_walletService;
@@ -352,5 +363,133 @@ public class WalletServiceTest
 
         // Verify that the transfer was not saved
         verify(m_transferRepository, never()).save(any(Transfer.class));
+    }
+
+    @Test
+    @DisplayName("Test if the income is added successfully")
+    public void TestAddIncome()
+    {
+        String    walletName    = "My Wallet";
+        double    walletBalance = 1000.0;
+        double    incomeAmount  = 500.0;
+        LocalDate date          = LocalDate.now();
+        Category  category      = new Category("Salary");
+        String    description   = "Income";
+
+        Wallet wallet = new Wallet(walletName, walletBalance);
+
+        when(m_walletRepository.findById(walletName)).thenReturn(Optional.of(wallet));
+        when(m_walletRepository.save(any(Wallet.class))).thenReturn(wallet);
+
+        when(m_walletTransactionRepository.save(any(WalletTransaction.class)))
+            .thenReturn(new WalletTransaction(wallet,
+                                              category,
+                                              TransactionType.INCOME,
+                                              date,
+                                              incomeAmount,
+                                              description));
+
+        m_walletService.AddIncome(walletName,
+                                  category,
+                                  date,
+                                  incomeAmount,
+                                  description);
+
+        // Check if the wallet balance was updated
+        verify(m_walletRepository).save(wallet);
+        assertEquals(walletBalance + incomeAmount,
+                     wallet.GetBalance(),
+                     Constants.EPSILON);
+    }
+
+    @Test
+    @DisplayName("Test if exception is thrown when the wallet to receive the income "
+                 + "does not exist")
+    public void
+    TestAddIncomeWalletDoesNotExist()
+    {
+        String    walletName   = "NonExistentWallet";
+        double    incomeAmount = 500.0;
+        LocalDate date         = LocalDate.now();
+        Category  category     = new Category("Salary");
+        String    description  = "Income";
+
+        when(m_walletRepository.findById(walletName)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class,
+                     ()
+                         -> m_walletService.AddIncome(walletName,
+                                                      category,
+                                                      date,
+                                                      incomeAmount,
+                                                      description));
+
+        // Verify that the income was not added
+        verify(m_walletTransactionRepository, never())
+            .save(any(WalletTransaction.class));
+    }
+
+    @Test
+    @DisplayName("Test if the expense is added successfully")
+    public void TestAddExpense()
+    {
+        String    walletName    = "My Wallet";
+        double    walletBalance = 1000.0;
+        double    expenseAmount = 500.0;
+        LocalDate date          = LocalDate.now();
+        Category  category      = new Category("Food");
+        String    description   = "Expense";
+
+        Wallet wallet = new Wallet(walletName, walletBalance);
+
+        when(m_walletRepository.findById(walletName)).thenReturn(Optional.of(wallet));
+        when(m_walletRepository.save(any(Wallet.class))).thenReturn(wallet);
+
+        when(m_walletTransactionRepository.save(any(WalletTransaction.class)))
+            .thenReturn(new WalletTransaction(wallet,
+                                              category,
+                                              TransactionType.OUTCOME,
+                                              date,
+                                              expenseAmount,
+                                              description));
+
+        m_walletService.AddExpense(walletName,
+                                   category,
+                                   date,
+                                   expenseAmount,
+                                   description);
+
+        // Check if the wallet balance was updated
+        verify(m_walletRepository).save(wallet);
+        assertEquals(walletBalance - expenseAmount,
+                     wallet.GetBalance(),
+                     Constants.EPSILON);
+    }
+
+    @Test
+    @DisplayName("Test if exception is thrown when the wallet to receive the expense "
+                 + "does not exist")
+    public void
+    TestAddExpenseWalletDoesNotExist()
+    {
+        String    walletName    = "NonExistentWallet";
+        double    expenseAmount = 500.0;
+        LocalDate date          = LocalDate.now();
+        Category  category      = new Category("Food");
+        String    description   = "Expense";
+
+        when(m_walletRepository.findById(walletName)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class,
+                     ()
+                         -> m_walletService.AddExpense(walletName,
+                                                       category,
+                                                       date,
+                                                       expenseAmount,
+                                                       description));
+
+        // Verify that the expense was not added
+        verify(m_walletTransactionRepository, never())
+            .save(any(WalletTransaction.class));
     }
 }
