@@ -17,36 +17,55 @@ import com.mymoney.app.entities.Wallet;
 import com.mymoney.repositories.TransferRepository;
 import com.mymoney.repositories.WalletRepository;
 import java.time.LocalDate;
-import java.util.Optional;
+import java.util.jar.Attributes.Name;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 @ExtendWith(MockitoExtension.class)
-@ActiveProfiles("test")
 public class WalletServiceTest
 {
     @Mock
     private WalletRepository m_walletRepository;
 
+    @Mock
+    private TransferRepository m_transferRepository;
+
     @InjectMocks
     private WalletService m_walletService;
 
-    @BeforeEach
-    public void SetUp()
+    @BeforeAll
+    public static void SetUp()
     {
-        MockitoAnnotations.openMocks(this);
+        MockitoAnnotations.openMocks(WalletServiceTest.class);
     }
 
+    @BeforeEach
+    public void BeforeEach()
+    { }
+
+    @DisplayName("Test if the wallet is created successfully")
     @Test
     public void TestCreateWallet()
-    { }
+    {
+        String walletName    = "My Wallet";
+        double walletBalance = 1000.0;
+
+        Wallet wallet = new Wallet(walletName, walletBalance);
+
+        when(m_walletRepository.existsById(walletName)).thenReturn(false);
+        when(m_walletRepository.save(any(Wallet.class))).thenReturn(wallet);
+
+        m_walletService.CreateWallet(walletName, walletBalance);
+
+        verify(m_walletRepository).save(any(Wallet.class));
+    }
 
     @Test
     public void TestDeleteWalletSoftDelete()

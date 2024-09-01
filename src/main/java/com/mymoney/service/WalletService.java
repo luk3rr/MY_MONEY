@@ -61,6 +61,7 @@ public class WalletService
      * but it will be marked as archived and will not be used in the application. The
      * wallet can be restored by setting the archived field to false.
      */
+    @Transactional
     public void DeleteWallet(String name, boolean softDelete)
     {
         Wallet wallet = m_walletRepository.findById(name).orElseThrow(

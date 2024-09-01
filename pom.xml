@@ -51,19 +51,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
       <artifactId>mockito-junit-jupiter</artifactId>
       <version>${mockito.version}</version>
     </dependency>
-    <!-- Byte Buddy -->
-    <dependency>
-      <groupId>net.bytebuddy</groupId>
-      <artifactId>byte-buddy</artifactId>
-      <version>1.14.5</version>
-    </dependency>
-    <!-- H2 Database (for testing) -->
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>${h2.version}</version>
-      <scope>test</scope>
-    </dependency>
     <!-- JUnit 5 -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
