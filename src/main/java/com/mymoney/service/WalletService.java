@@ -37,7 +37,7 @@ public class WalletService
      * Creates a new wallet
      * @param name The name of the wallet
      * @param balance The initial balance of the wallet
-     * @throws IllegalArgumentException If the wallet name is already in use
+     * @throws RuntimeException If the wallet name is already in use
      */
     @Transactional
     public void CreateWallet(String name, double balance)
