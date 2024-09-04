@@ -125,6 +125,8 @@ public class WalletService
      * @param description A description of the transfer
      * @throws RuntimeException If the sender and receiver wallets are the same
      * @throws RuntimeException If the amount to transfer is less than or equal to zero
+     * @throws RuntimeException If the sender wallet does not exist
+     * @throws RuntimeException If the receiver wallet does not exist
      * @throws RuntimeException If the sender wallet does not have enough balance
      * to transfer
      */
@@ -178,6 +180,15 @@ public class WalletService
                       amount + " was successful");
     }
 
+    /**
+     * Add an income to a wallet
+     * @param walletName The name of the wallet that receives the income
+     * @param category The category of the income
+     * @param date The date of the income
+     * @param amount The amount of the income
+     * @param description A description of the income
+     * @throws RuntimeException If the wallet does not exist
+     */
     @Transactional
     public void AddIncome(String    walletName,
                           Category  category,
@@ -204,6 +215,15 @@ public class WalletService
         m_logger.info("Income of " + amount + " added to wallet " + walletName);
     }
 
+    /**
+     * Add an expense to a wallet
+     * @param walletName The name of the wallet that receives the expense
+     * @param category The category of the expense
+     * @param date The date of the expense
+     * @param amount The amount of the expense
+     * @param description A description of the expense
+     * @throws RuntimeException If the wallet does not exist
+     */
     @Transactional
     public void AddExpense(String    walletName,
                            Category  category,

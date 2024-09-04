@@ -16,6 +16,8 @@ public final class Constants
     public static final String DB_TEST_FILE              = "data/test.db";
     public static final String LOG_FILE                  = "log/mymoney.log";
     public static final Double EPSILON                   = 1e-6;
+    public static final int    MAX_BILLING_DUE_DAY       = 28;
+    public static final Short  MAX_INSTALLMENTS          = 12 * 3;
 
     // Prevent instantiation
     private Constants() { }

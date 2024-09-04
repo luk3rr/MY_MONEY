@@ -30,7 +30,7 @@ public class CreditCardPayment
     private Long m_id;
 
     @ManyToOne
-    @JoinColumn(name = "wallet", referencedColumnName = "name")
+    @JoinColumn(name = "wallet", referencedColumnName = "name", nullable = true)
     private Wallet m_wallet;
 
     @ManyToOne
@@ -54,19 +54,37 @@ public class CreditCardPayment
     /**
      * Constructor for CreditCardPayment
      * @param wallet The wallet that made the payment
-     * @param debtId The credit card debt that was paid
+     * @param debt The credit card debt that was paid
      * @param date The date of the payment
      * @param amount The amount paid
      * @param installment The installment of the payment
      */
     public CreditCardPayment(Wallet         wallet,
-                             CreditCardDebt debtId,
+                             CreditCardDebt debt,
                              LocalDate      date,
                              Double         amount,
                              Short          installment)
     {
         m_wallet         = wallet;
-        m_creditCardDebt = debtId;
+        m_creditCardDebt = debt;
+        m_date           = date;
+        m_amount         = amount;
+        m_installment    = installment;
+    }
+
+    /**
+     * Constructor for CreditCardPayment
+     * @param debt The credit card debt that was paid
+     * @param date The date of the payment
+     * @param amount The amount paid
+     * @param installment The installment of the payment
+     */
+    public CreditCardPayment(CreditCardDebt debt,
+                             LocalDate      date,
+                             Double         amount,
+                             Short          installment)
+    {
+        m_creditCardDebt = debt;
         m_date           = date;
         m_amount         = amount;
         m_installment    = installment;
