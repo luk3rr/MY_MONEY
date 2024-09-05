@@ -28,7 +28,7 @@ public class Wallet
 
     @Column(name = "archived", nullable = false)
     private Boolean m_archived =
-        false; // Default value at creation on database is false
+        false; // Default value at creation in the database is false
 
     /**
      * Default constructor for JPA

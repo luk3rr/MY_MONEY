@@ -17,10 +17,11 @@ public interface CreditCardPaymentRepository
     extends JpaRepository<CreditCardPayment, Long> {
 
     /**
-     * Sums the total amount of payments made for all credit card's debts
-     * @return The total amount of payments made
+     * Get the total paid amount of a credit card
+     * @param creditCardName The name of the credit card
+     * @return The total paid amount of the credit card
      */
-    @Query("SELECT SUM(ccp.m_amount) "
+    @Query("SELECT COALESCE(SUM(ccp.m_amount), 0) "
            + "FROM CreditCardPayment ccp "
            + "JOIN ccp.m_creditCardDebt ccd "
            + "WHERE ccd.m_creditCard.m_name = :creditCardName "
