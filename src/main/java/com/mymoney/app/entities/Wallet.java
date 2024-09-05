@@ -27,7 +27,8 @@ public class Wallet
     private Double m_balance;
 
     @Column(name = "archived", nullable = false)
-    private Boolean m_archived = false;
+    private Boolean m_archived =
+        false; // Default value at creation on database is false
 
     /**
      * Default constructor for JPA
@@ -41,9 +42,8 @@ public class Wallet
      */
     public Wallet(String name, Double balance)
     {
-        m_name     = name;
-        m_balance  = balance;
-        m_archived = false;
+        m_name    = name;
+        m_balance = balance;
     }
 
     /**

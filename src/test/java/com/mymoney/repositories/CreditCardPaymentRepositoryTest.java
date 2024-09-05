@@ -32,7 +32,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Tests for the CreditCardPaymentRepository class with h2
+ * Tests for the CreditCardPaymentRepository class
  */
 @DataJpaTest
 @ExtendWith(SpringExtension.class)

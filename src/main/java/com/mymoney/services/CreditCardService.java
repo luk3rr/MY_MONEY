@@ -4,7 +4,7 @@
  * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
  */
 
-package com.mymoney.service;
+package com.mymoney.services;
 
 import com.mymoney.app.entities.Category;
 import com.mymoney.app.entities.CreditCard;
