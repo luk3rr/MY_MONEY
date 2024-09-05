@@ -1,0 +1,5 @@
+* User Stories
+Como um usuário, eu quero...
++ [ ] criar uma carteira para que eu possa registrar minhas transações
++ [ ] deletar carteiras que não uso
++ [ ] arquivar carteiras que não uso, pois gostaria de manter o seu histórico de transações para consultas futuras

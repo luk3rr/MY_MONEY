@@ -7,26 +7,10 @@ mvn compile
 
 Execução do programa (ainda em construção):
 #+begin_src sh
-mvn exec:java -Dexec.mainClass="com.mymoney.app.App"
+mvn exec:java -Dexec.mainClass="com.mymoney.app.MainApplication"
 #+end_src
 
 Execução dos testes:
 #+begin_src
 mvn test
 #+end_src
-** TODOs
-*** TODO Criar classes Services [1/2] [50%]
-- [X] WalletService
-- [ ] CreditCardService
-*** TODO Implementar testes [0/2] [0%]
-- [-] WalletServiceTest
-  - [X] Registrar novas carteiras
-  - [X] Apagar carteiras (soft delete e cascade)
-  - [X] Transferência entre carteiras
-  - [ ] Registrar débitos
-  - [ ] Registrar créditos
-  - [ ] Registrar pagamentos de parcelas do cartão de crédito
-- [ ] CreditCardServiceTest
-  - [ ] Registrar novos cartões
-  - [ ] Apagar cartões
-  - [ ] Registrar compras no cartão de crédito e suas parcelas
