@@ -6,10 +6,10 @@
 
 package com.mymoney.app.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 /**
  * Represents a wallet
@@ -27,7 +27,7 @@ public class Wallet
     private Double m_balance;
 
     @Column(name = "archived", nullable = false)
-    private Boolean m_archived;
+    private Boolean m_archived = false;
 
     /**
      * Default constructor for JPA
