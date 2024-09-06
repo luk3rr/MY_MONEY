@@ -118,13 +118,13 @@ public class CreditCardService
     }
 
     /**
-     * Register a debit on the credit card and its respective future payment
+     * Register a debt on the credit card and its respective future payment
      * @param creditCardName The name of the credit card
-     * @param category The category of the debit
-     * @param date The date of the debit
-     * @param value The value of the debit
-     * @param installment The number of installments of the debit
-     * @param description The description of the debit
+     * @param category The category of the debt
+     * @param date The date of the debt
+     * @param value The value of the debt
+     * @param installment The number of installments of the debt
+     * @param description The description of the debt
      * @throws RuntimeException If the credit card does not exist
      * @throws RuntimeException If the category does not exist
      * @throws RuntimeException If the value is negative
@@ -133,12 +133,12 @@ public class CreditCardService
      * @throws RuntimeException If the credit card does not have enough credit
      */
     @Transactional
-    public void RegisterDebit(String    creditCardName,
-                              Category  category,
-                              LocalDate date,
-                              double    value,
-                              int       installment,
-                              String    description)
+    public void RegisterDebt(String    creditCardName,
+                             Category  category,
+                             LocalDate date,
+                             double    value,
+                             int       installment,
+                             String    description)
     {
         CreditCard creditCard =
             m_creditCardRepository.findById(creditCardName)
@@ -170,7 +170,7 @@ public class CreditCardService
         {
             throw new RuntimeException(
                 "Credit card " + creditCardName +
-                " does not have enough credit to register debit");
+                " does not have enough credit to register debt");
         }
 
         CreditCardDebt debt =
@@ -193,7 +193,7 @@ public class CreditCardService
 
             m_creditCardPaymentRepository.save(payment);
 
-            m_logger.info("Payment of debit " + description + " on credit card " +
+            m_logger.info("Payment of debt " + description + " on credit card " +
                           creditCardName + " registered with value " +
                           installmentValue + " and due date " + paymentDate);
         }
