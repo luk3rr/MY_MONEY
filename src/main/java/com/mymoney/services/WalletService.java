@@ -182,7 +182,7 @@ public class WalletService
     }
 
     /**
-     * Add an income to a wallet
+     * Add an confirmed income to a wallet
      * @param walletName The name of the wallet that receives the income
      * @param category The category of the income
      * @param date The date of the income
@@ -191,11 +191,11 @@ public class WalletService
      * @throws RuntimeException If the wallet does not exist
      */
     @Transactional
-    public void AddIncome(String    walletName,
-                          Category  category,
-                          LocalDate date,
-                          double    amount,
-                          String    description)
+    public void AddConfirmedIncome(String    walletName,
+                                   Category  category,
+                                   LocalDate date,
+                                   double    amount,
+                                   String    description)
     {
         Wallet wallet =
             m_walletRepository.findById(walletName)
@@ -215,11 +215,46 @@ public class WalletService
         wallet.SetBalance(wallet.GetBalance() + amount);
         m_walletRepository.save(wallet);
 
-        m_logger.info("Income of " + amount + " added to wallet " + walletName);
+        m_logger.info("Confirmed income of " + amount + " added to wallet " +
+                      walletName);
     }
 
     /**
-     * Add an expense to a wallet
+     * Add an pending income to a wallet
+     * @param walletName The name of the wallet that receives the income
+     * @param category The category of the income
+     * @param date The date of the income
+     * @param amount The amount of the income
+     * @param description A description of the income
+     * @throws RuntimeException If the wallet does not exist
+     */
+    @Transactional
+    public void AddPendingIncome(String    walletName,
+                                 Category  category,
+                                 LocalDate date,
+                                 double    amount,
+                                 String    description)
+    {
+        Wallet wallet =
+            m_walletRepository.findById(walletName)
+                .orElseThrow(()
+                                 -> new RuntimeException("Wallet with name " +
+                                                         walletName + " not found"));
+
+        m_walletTransactionRepository.save(
+            new WalletTransaction(wallet,
+                                  category,
+                                  TransactionType.INCOME,
+                                  TransactionStatus.PENDING,
+                                  date,
+                                  amount,
+                                  description));
+
+        m_logger.info("Pending income of " + amount + " added to wallet " + walletName);
+    }
+
+    /**
+     * Add an confirmed expense to a wallet
      * @param walletName The name of the wallet that receives the expense
      * @param category The category of the expense
      * @param date The date of the expense
@@ -228,11 +263,11 @@ public class WalletService
      * @throws RuntimeException If the wallet does not exist
      */
     @Transactional
-    public void AddExpense(String    walletName,
-                           Category  category,
-                           LocalDate date,
-                           double    amount,
-                           String    description)
+    public void AddConfirmedExpense(String    walletName,
+                                    Category  category,
+                                    LocalDate date,
+                                    double    amount,
+                                    String    description)
     {
         Wallet wallet =
             m_walletRepository.findById(walletName)
@@ -256,6 +291,41 @@ public class WalletService
     }
 
     /**
+     * Add an pending expense to a wallet
+     * @param walletName The name of the wallet that receives the expense
+     * @param category The category of the expense
+     * @param date The date of the expense
+     * @param amount The amount of the expense
+     * @param description A description of the expense
+     * @throws RuntimeException If the wallet does not exist
+     */
+    @Transactional
+    public void AddPendingExpense(String    walletName,
+                                  Category  category,
+                                  LocalDate date,
+                                  double    amount,
+                                  String    description)
+    {
+        Wallet wallet =
+            m_walletRepository.findById(walletName)
+                .orElseThrow(()
+                                 -> new RuntimeException("Wallet with name " +
+                                                         walletName + " not found"));
+
+        m_walletTransactionRepository.save(
+            new WalletTransaction(wallet,
+                                  category,
+                                  TransactionType.OUTCOME,
+                                  TransactionStatus.PENDING,
+                                  date,
+                                  amount,
+                                  description));
+
+        m_logger.info("Pending expense of " + amount + " added to wallet " +
+                      walletName);
+    }
+
+    /**
      * Delete a transaction from a wallet
      * @param transactionId The id of the transaction to be removed
      * @throws RuntimeException If the transaction does not exist
@@ -272,17 +342,22 @@ public class WalletService
         Wallet wallet = transaction.GetWallet();
         double amount = transaction.GetAmount();
 
-        if (transaction.GetType() == TransactionType.INCOME)
+        // Update the wallet balance if the transaction is confirmed
+        if (transaction.GetStatus() == TransactionStatus.CONFIRMED)
         {
-            wallet.SetBalance(wallet.GetBalance() - amount);
-        }
-        else
-        {
-            wallet.SetBalance(wallet.GetBalance() + amount);
+            if (transaction.GetType() == TransactionType.INCOME)
+            {
+                wallet.SetBalance(wallet.GetBalance() - amount);
+            }
+            else
+            {
+                wallet.SetBalance(wallet.GetBalance() + amount);
+            }
+
+            m_walletRepository.save(wallet);
         }
 
         m_walletTransactionRepository.delete(transaction);
-        m_walletRepository.save(wallet);
 
         m_logger.info("Transaction " + transactionId + " deleted from wallet " +
                       wallet.GetName());
