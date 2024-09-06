@@ -1,0 +1,48 @@
+* TODO List
+** DONE Implementar criação de carteira [[id:us000][#us000]]
+- [X] Permitir criar uma nova carteira com um nome único
+- [X] Definir saldo inicial opcional
+- [X] Garantir que a carteira seja salva no banco de dados
+
+** DONE Implementar registro de despesas e receitas efetivas [[id:us001][#us001]]
+- [X] Atualizar saldo da carteira após o registro
+
+** TODO Implementar registro de despesas e receitas planejadas (futuras) [[id:us002][#us002]]
+- [ ] Permitir registrar transações futuras com valor, data e descrição
+- [ ] Marcar transação como planejada até a data de execução
+
+** TODO Implementar remoção de receita/despesa de uma carteira [[id:us003][#us003]]
+- [ ] Permitir remoção de uma receita/despesa
+- [ ] Atualizar saldo da conta após remoção
+
+** TODO Implementar funcionalidade de deletar carteiras sem transações [[id:us004][#us004]]
+- [ ] Verificar se a carteira tem transações antes de permitir a exclusão
+- [ ] Exibir mensagem de confirmação para deletar
+
+** DONE Implementar arquivamento de carteiras [[id:us005][#us005]]
+- [X] Permitir arquivar carteiras não utilizadas mantendo o histórico de transações
+
+** TODO Implementar orçamento mensal por categoria [[id:us006][#us006]]
+- [ ] Permitir definição de limite de orçamento mensal
+- [ ] Distribuir o orçamento entre categorias
+
+** TODO Implementar visualização das últimas transações [[id:us007][#us007]]
+- [ ] Obter últimas despesas a partir de uma quantidade de dias atrás
+- [ ] Obter últimas despesas por quantidade de resultados na consulta
+
+** DONE Implementar cadastro de cartão de crédito [[id:us008][#us008]]
+- [X] Definir limite de crédito do cartão
+- [X] Definir o dia de vencimento da fatura
+
+** TODO Implementar visualização de gastos por categoria [[id:us009][#us009]]
+- [ ] Exibir gasto mensal por categoria
+- [ ] Exibir orçamento mensal por categoria
+
+** TODO Implementar exclusão de cartão de crédito [[id:us010][#us010]]
+- [X] Implementar exclusão do cartão de crédito
+- [ ] Exibir contas pendentes associadas, se houver
+- [ ] Exibir mensagem de alerta de confirmação antes de apagar
+
+** DONE Implementar transferência de dinheiro entre carteiras [[id:us011][#us011]]
+** DONE Implementar consulta para saber o crédito ainda disponível em um determinado cartão de crédito [[id:us012][#us012]]
+** DONE Implementar registro de despesas em um determinado cartão de crédito [[id:us013][#us013]]

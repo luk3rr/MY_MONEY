@@ -1,5 +1,103 @@
 * User Stories
-Como um usuário, eu quero...
-+ [ ] criar uma carteira para que eu possa registrar minhas transações
-+ [ ] deletar carteiras que não uso
-+ [ ] arquivar carteiras que não uso, pois gostaria de manter o seu histórico de transações para consultas futuras
+** #us000 Como um usuário, eu quero criar uma carteira para que eu possa registrar minhas transações
+:PROPERTIES:
+:ID:       us000
+:END:
+- Critérios de aceitação:
+  - Deve ser possível criar uma nova carteira com um nome único.
+  - No ato da criação, deve ser possível definir o saldo inicial.
+
+** #us001 Como um usuário, eu quero registrar despesas e receitas efetivadas nas minhas carteiras
+:PROPERTIES:
+:ID:       us001
+:END:
+- Critérios de aceitação:
+  - Deve ser possível registrar uma despesa ou receita com valor, data e descrição.
+  - O saldo da carteira deve ser atualizado após cada registro.
+
+** #us002 Como um usuário, eu quero registrar despesas e receitas planejadas (futuras) nas minhas carteiras
+:PROPERTIES:
+:ID:       us002
+:END:
+- Critérios de aceitação:
+  - Deve ser possível registrar uma transação futura com valor, data e descrição.
+  - A transação futura deve ser marcada como planejada até a data de execução.
+
+** #us003 Como um usuário, eu quero poder remover uma receita/despesa a uma carteira
+:PROPERTIES:
+:ID:       us003
+:END:
+- Critérios de aceitação:
+  - Deve ser possível remover uma receita ou despesa.
+  - O saldo da conta deve ser atualizado automaticamente após a remoção.
+
+** #us004 Como um usuário, eu quero deletar carteiras que não uso
+:PROPERTIES:
+:ID:       us004
+:END:
+- Critérios de aceitação:
+  - Deve ser possível deletar carteiras sem transações.
+
+** #us005 Como um usuário, eu quero arquivar carteiras que não uso, pois gostaria de manter o seu histórico de transações para consultas futuras
+:PROPERTIES:
+:ID:       us005
+:END:
+- Critérios de aceitação:
+  - Deve ser possível arquivar uma carteira.
+  - A carteira arquivada deve manter todas as transações passadas.
+  - A carteira arquivada não deve ser exibida na lista principal, mas acessível em uma seção de arquivos.
+
+** #us006 Como um usuário, eu quero definir um orçamento mensal para organizar os gastos por categoria
+:PROPERTIES:
+:ID:       us006
+:END:
+- Critérios de aceitação:
+  - Definir o limite de orçamento mensal.
+  - Distribuir o orçamento em diferentes categorias.
+
+** #us007 Como um usuário, eu quero visualizar minhas últimas despesas para organizar meus pagamentos
+:PROPERTIES:
+:ID:       us007
+:END:
+- Critérios de aceitação:
+  - Exibir uma lista com as últimas despesas, valores e descrição/origem.
+  - Exibir a data limite/vencimento da conta a pagar.
+  - Exibir de qual cartão é a fatura.
+
+** #us008 Como um usuário, eu quero cadastrar um cartão para poder realizar pagamentos
+:PROPERTIES:
+:ID:       us008
+:END:
+- Critérios de aceitação:
+  - Definir o limite de crédito do cartão.
+  - Adicionar despesas vinculadas a cada cartão
+
+** #us009 Como um usuário, eu quero visualizar quanto gastei em cada categoria para organizar meus gastos
+:PROPERTIES:
+:ID:       us009
+:END:
+- Critérios de aceitação:
+  - Exibir o gasto mensal por categoria.
+  - Exibir o orçamento mensal por categoria.
+
+** #us010 Como um usuário, eu quero apagar um cartão de crédito
+:PROPERTIES:
+:ID:       us010
+:END:
+- Critérios de aceitação:
+  - Deve ser possível apagar um cartão de crédito.
+  - Exibir contas pendentes associadas ao cartão, se houver.
+  - Exibir uma mensagem de alerta de confirmação antes de apagar.
+
+** #us011 Como um usuário, eu quero poder transferir dinheiro entre carteiras
+:PROPERTIES:
+:ID:       us011
+:END:
+** #us012 Como um usuário, eu quero poder saber qual é o crédito ainda disponível em um determinado cartão de crédito
+:PROPERTIES:
+:ID:       us012
+:END:
+** #us013 Como um usuário, eu quero registrar despesas no cartão de crédito
+:PROPERTIES:
+:ID:       us013
+:END:
