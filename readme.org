@@ -7,7 +7,7 @@ mvn compile
 
 Execução do programa (ainda em construção):
 #+begin_src sh
-mvn exec:java -Dexec.mainClass="com.mymoney.app.MainApplication"
+mvn spring-boot:run
 #+end_src
 
 Execução dos testes:
