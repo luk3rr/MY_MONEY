@@ -138,7 +138,7 @@ public class WalletServiceTest
         m_wallet1ExpenseTransaction =
             CreateWalletTransaction(m_wallet1,
                                     m_category,
-                                    TransactionType.OUTCOME,
+                                    TransactionType.EXPENSE,
                                     TransactionStatus.CONFIRMED,
                                     m_date,
                                     m_expenseAmount,
@@ -503,7 +503,7 @@ public class WalletServiceTest
         when(m_walletTransactionRepository.save(any(WalletTransaction.class)))
             .thenReturn(new WalletTransaction(m_wallet1,
                                               m_category,
-                                              TransactionType.OUTCOME,
+                                              TransactionType.EXPENSE,
                                               TransactionStatus.CONFIRMED,
                                               m_date,
                                               m_expenseAmount,
@@ -534,7 +534,7 @@ public class WalletServiceTest
         when(m_walletTransactionRepository.save(any(WalletTransaction.class)))
             .thenReturn(new WalletTransaction(m_wallet1,
                                               m_category,
-                                              TransactionType.OUTCOME,
+                                              TransactionType.EXPENSE,
                                               TransactionStatus.PENDING,
                                               m_date,
                                               m_expenseAmount,

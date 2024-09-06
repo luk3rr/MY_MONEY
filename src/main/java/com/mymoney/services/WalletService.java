@@ -278,7 +278,7 @@ public class WalletService
         m_walletTransactionRepository.save(
             new WalletTransaction(wallet,
                                   category,
-                                  TransactionType.OUTCOME,
+                                  TransactionType.EXPENSE,
                                   TransactionStatus.CONFIRMED,
                                   date,
                                   amount,
@@ -315,7 +315,7 @@ public class WalletService
         m_walletTransactionRepository.save(
             new WalletTransaction(wallet,
                                   category,
-                                  TransactionType.OUTCOME,
+                                  TransactionType.EXPENSE,
                                   TransactionStatus.PENDING,
                                   date,
                                   amount,
@@ -387,7 +387,7 @@ public class WalletService
 
         Wallet wallet = transaction.GetWallet();
 
-        if (transaction.GetType() == TransactionType.OUTCOME)
+        if (transaction.GetType() == TransactionType.EXPENSE)
         {
             if (wallet.GetBalance() < transaction.GetAmount())
             {

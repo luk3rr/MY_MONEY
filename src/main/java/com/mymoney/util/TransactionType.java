@@ -12,5 +12,5 @@ package com.mymoney.util;
 public enum TransactionType
 {
     INCOME,
-    OUTCOME
+    EXPENSE
 }
