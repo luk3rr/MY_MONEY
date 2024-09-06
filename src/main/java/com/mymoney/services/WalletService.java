@@ -237,16 +237,50 @@ public class WalletService
                                  -> new RuntimeException("Wallet with name " +
                                                          walletName + " not found"));
 
-        m_walletTransactionRepository.save(new WalletTransaction(wallet,
-                                                                 category,
-                                                                 TransactionType.OUTCOME,
-                                                                 date,
-                                                                 amount,
-                                                                 description));
+        m_walletTransactionRepository.save(
+            new WalletTransaction(wallet,
+                                  category,
+                                  TransactionType.OUTCOME,
+                                  date,
+                                  amount,
+                                  description));
 
         wallet.SetBalance(wallet.GetBalance() - amount);
         m_walletRepository.save(wallet);
 
         m_logger.info("Expense of " + amount + " added to wallet " + walletName);
+    }
+
+    /**
+     * Delete a transaction from a wallet
+     * @param transactionId The id of the transaction to be removed
+     * @throws RuntimeException If the transaction does not exist
+     */
+    @Transactional
+    public void DeleteTransaction(Long transactionId)
+    {
+        WalletTransaction transaction =
+            m_walletTransactionRepository.findById(transactionId)
+                .orElseThrow(()
+                                 -> new RuntimeException("Transaction with id " +
+                                                         transactionId + " not found"));
+
+        Wallet wallet = transaction.GetWallet();
+        double amount = transaction.GetAmount();
+
+        if (transaction.GetType() == TransactionType.INCOME)
+        {
+            wallet.SetBalance(wallet.GetBalance() - amount);
+        }
+        else
+        {
+            wallet.SetBalance(wallet.GetBalance() + amount);
+        }
+
+        m_walletTransactionRepository.delete(transaction);
+        m_walletRepository.save(wallet);
+
+        m_logger.info("Transaction " + transactionId + " deleted from wallet " +
+                      wallet.GetName());
     }
 }

@@ -11,9 +11,8 @@
 - [ ] Permitir registrar transações futuras com valor, data e descrição
 - [ ] Marcar transação como planejada até a data de execução
 
-** TODO Implementar remoção de receita/despesa de uma carteira [[id:us003][#us003]]
-- [ ] Permitir remoção de uma receita/despesa
-- [ ] Atualizar saldo da conta após remoção
+** DONE Implementar remoção de receita/despesa de uma carteira [[id:us003][#us003]]
+- [X] Atualizar saldo da conta após remoção
 
 ** TODO Implementar funcionalidade de deletar carteiras sem transações [[id:us004][#us004]]
 - [ ] Verificar se a carteira tem transações antes de permitir a exclusão

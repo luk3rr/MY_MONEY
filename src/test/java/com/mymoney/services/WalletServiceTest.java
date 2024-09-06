@@ -492,4 +492,87 @@ public class WalletServiceTest
         verify(m_walletTransactionRepository, never())
             .save(any(WalletTransaction.class));
     }
+
+    @Test
+    @DisplayName("Test if the outcome transaction is deleted successfully")
+    public void TestDeleteOutcomeTransaction()
+    {
+        String    walletName    = "My Wallet";
+        double    walletBalance = 1000.0;
+        double    amount        = 500.0;
+        LocalDate date          = LocalDate.now();
+        Category  category      = new Category("Food");
+        String    description   = "Expense";
+
+        Wallet wallet = new Wallet(walletName, walletBalance);
+
+        WalletTransaction transaction = new WalletTransaction(wallet,
+                                                              category,
+                                                              TransactionType.OUTCOME,
+                                                              date,
+                                                              amount,
+                                                              description);
+
+        when(m_walletTransactionRepository.findById(transaction.GetId()))
+            .thenReturn(Optional.of(transaction));
+
+        m_walletService.DeleteTransaction(transaction.GetId());
+
+        // Check if the transaction was deleted
+        verify(m_walletTransactionRepository).delete(transaction);
+
+        // Check if the wallet balance was updated
+        verify(m_walletRepository).save(wallet);
+
+        assertEquals(walletBalance + amount, wallet.GetBalance(), Constants.EPSILON);
+    }
+
+    @Test
+    @DisplayName("Test if the income transaction is deleted successfully")
+    public void TestDeleteIncomeTransaction()
+    {
+        String    walletName    = "My Wallet";
+        double    walletBalance = 1000.0;
+        double    amount        = 500.0;
+        LocalDate date          = LocalDate.now();
+        Category  category      = new Category("Salary");
+        String    description   = "Income";
+
+        Wallet wallet = new Wallet(walletName, walletBalance);
+
+        WalletTransaction transaction = new WalletTransaction(wallet,
+                                                              category,
+                                                              TransactionType.INCOME,
+                                                              date,
+                                                              amount,
+                                                              description);
+
+        when(m_walletTransactionRepository.findById(transaction.GetId()))
+            .thenReturn(Optional.of(transaction));
+
+        m_walletService.DeleteTransaction(transaction.GetId());
+
+        // Check if the transaction was deleted
+        verify(m_walletTransactionRepository).delete(transaction);
+
+        // Check if the wallet balance was updated
+        verify(m_walletRepository).save(wallet);
+
+        assertEquals(walletBalance - amount, wallet.GetBalance(), Constants.EPSILON);
+    }
+
+    @Test
+    @DisplayName("Test if exception is thrown when the transaction to delete does not "
+                 + "exist")
+    public void
+    TestDeleteTransactionDoesNotExist()
+    {
+        Long transactionId = 1L;
+
+        when(m_walletTransactionRepository.findById(transactionId))
+            .thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class,
+                     () -> m_walletService.DeleteTransaction(transactionId));
+    }
 }
