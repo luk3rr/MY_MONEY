@@ -6,10 +6,10 @@
 
 package com.mymoney.services;
 
-import com.mymoney.app.entities.Category;
-import com.mymoney.app.entities.Transfer;
-import com.mymoney.app.entities.Wallet;
-import com.mymoney.app.entities.WalletTransaction;
+import com.mymoney.entities.Category;
+import com.mymoney.entities.Transfer;
+import com.mymoney.entities.Wallet;
+import com.mymoney.entities.WalletTransaction;
 import com.mymoney.repositories.TransferRepository;
 import com.mymoney.repositories.WalletRepository;
 import com.mymoney.repositories.WalletTransactionRepository;

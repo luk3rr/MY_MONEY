@@ -6,7 +6,7 @@
 
 package com.mymoney.repositories;
 
-import com.mymoney.app.entities.Transfer;
+import com.mymoney.entities.Transfer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

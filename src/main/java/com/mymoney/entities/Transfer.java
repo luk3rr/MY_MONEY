@@ -4,7 +4,7 @@
  * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
  */
 
-package com.mymoney.app.entities;
+package com.mymoney.entities;
 
 import java.time.LocalDate;
 

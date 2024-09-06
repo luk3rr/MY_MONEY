@@ -9,10 +9,10 @@ package com.mymoney.repositories;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.mymoney.app.MainApplication;
-import com.mymoney.app.entities.CreditCard;
-import com.mymoney.app.entities.CreditCardDebt;
-import com.mymoney.app.entities.CreditCardPayment;
-import com.mymoney.app.entities.Wallet;
+import com.mymoney.entities.CreditCard;
+import com.mymoney.entities.CreditCardDebt;
+import com.mymoney.entities.CreditCardPayment;
+import com.mymoney.entities.Wallet;
 import com.mymoney.util.Constants;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;

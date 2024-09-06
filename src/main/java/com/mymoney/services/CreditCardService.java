@@ -6,19 +6,16 @@
 
 package com.mymoney.services;
 
-import com.mymoney.app.entities.Category;
-import com.mymoney.app.entities.CreditCard;
-import com.mymoney.app.entities.CreditCardDebt;
-import com.mymoney.app.entities.CreditCardPayment;
-import com.mymoney.app.entities.Wallet;
+import com.mymoney.entities.Category;
+import com.mymoney.entities.CreditCard;
+import com.mymoney.entities.CreditCardDebt;
+import com.mymoney.entities.CreditCardPayment;
 import com.mymoney.repositories.CategoryRepository;
 import com.mymoney.repositories.CreditCardDebtRepository;
 import com.mymoney.repositories.CreditCardPaymentRepository;
 import com.mymoney.repositories.CreditCardRepository;
-import com.mymoney.repositories.WalletRepository;
 import com.mymoney.util.Constants;
 import com.mymoney.util.LoggerConfig;
-import com.mymoney.util.TransactionType;
 import java.time.LocalDate;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
