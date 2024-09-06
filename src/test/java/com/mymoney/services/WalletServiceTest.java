@@ -685,4 +685,116 @@ public class WalletServiceTest
                          -> m_walletService.DeleteTransaction(
                              m_wallet1IncomeTransaction.GetId()));
     }
+
+    @Test
+    @DisplayName("Test if the income transaction is confirmed successfully")
+    public void TestConfirmIncomeTransaction()
+    {
+        m_wallet1IncomeTransaction.SetStatus(TransactionStatus.PENDING);
+        Double previousBalance = m_wallet1.GetBalance();
+
+        when(m_walletTransactionRepository.findById(m_wallet1IncomeTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1IncomeTransaction));
+
+        m_walletService.ConfirmTransaction(m_wallet1IncomeTransaction.GetId());
+
+        // Check if the transaction was confirmed
+        verify(m_walletTransactionRepository).save(m_wallet1IncomeTransaction);
+        assertEquals(TransactionStatus.CONFIRMED,
+                     m_wallet1IncomeTransaction.GetStatus());
+
+        // Check if the wallet balance was updated
+        verify(m_walletRepository).save(m_wallet1);
+        assertEquals(previousBalance + m_incomeAmount,
+                     m_wallet1.GetBalance(),
+                     Constants.EPSILON);
+    }
+
+    @Test
+    @DisplayName("Test if the expense transaction is confirmed successfully")
+    public void TestConfirmExpenseTransaction()
+    {
+        m_wallet1ExpenseTransaction.SetStatus(TransactionStatus.PENDING);
+        Double previousBalance = m_wallet1.GetBalance();
+
+        when(
+            m_walletTransactionRepository.findById(m_wallet1ExpenseTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1ExpenseTransaction));
+
+        m_walletService.ConfirmTransaction(m_wallet1ExpenseTransaction.GetId());
+
+        // Check if the transaction was confirmed
+        verify(m_walletTransactionRepository).save(m_wallet1ExpenseTransaction);
+        assertEquals(TransactionStatus.CONFIRMED,
+                     m_wallet1ExpenseTransaction.GetStatus());
+
+        // Check if the wallet balance was updated
+        verify(m_walletRepository).save(m_wallet1);
+        assertEquals(previousBalance - m_expenseAmount,
+                     m_wallet1.GetBalance(),
+                     Constants.EPSILON);
+    }
+
+    @Test
+    @DisplayName("Test if exception is thrown when the transaction to confirm does not "
+                 + "exist")
+    public void
+    TestConfirmTransactionDoesNotExist()
+    {
+        when(m_walletTransactionRepository.findById(m_wallet1IncomeTransaction.GetId()))
+            .thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class,
+                     ()
+                         -> m_walletService.ConfirmTransaction(
+                             m_wallet1IncomeTransaction.GetId()));
+    }
+
+    @Test
+    @DisplayName("Test if the transaction already confirmed is not confirmed again")
+    public void TestConfirmTransactionAlreadyConfirmed()
+    {
+        when(m_walletTransactionRepository.findById(m_wallet1IncomeTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1IncomeTransaction));
+
+        assertThrows(RuntimeException.class,
+                     ()
+                         -> m_walletService.ConfirmTransaction(
+                             m_wallet1IncomeTransaction.GetId()));
+
+        // Check if the transaction was not confirmed
+        verify(m_walletTransactionRepository, never()).save(m_wallet1IncomeTransaction);
+
+        // Check if the wallet balance was not updated
+        verify(m_walletRepository, never()).save(m_wallet1);
+    }
+
+    @Test
+    @DisplayName("Test if the expense transaction is not confirmed when the wallet "
+                 + "balance is insufficient")
+    public void
+    TestConfirmExpenseInsufficientBalance()
+    {
+        m_wallet1ExpenseTransaction.SetStatus(TransactionStatus.PENDING);
+        m_wallet1ExpenseTransaction.SetAmount(m_wallet1.GetBalance() + 1);
+
+        when(
+            m_walletTransactionRepository.findById(m_wallet1ExpenseTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1ExpenseTransaction));
+
+        assertThrows(RuntimeException.class,
+                     ()
+                         -> m_walletService.ConfirmTransaction(
+                             m_wallet1ExpenseTransaction.GetId()));
+
+        // Check if the transaction was not confirmed
+        verify(m_walletTransactionRepository, never())
+            .save(m_wallet1ExpenseTransaction);
+
+        assertEquals(TransactionStatus.PENDING,
+                     m_wallet1ExpenseTransaction.GetStatus());
+
+        // Check if the wallet balance was not updated
+        verify(m_walletRepository, never()).save(m_wallet1);
+    }
 }

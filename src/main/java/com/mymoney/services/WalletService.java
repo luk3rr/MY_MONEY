@@ -362,4 +362,49 @@ public class WalletService
         m_logger.info("Transaction " + transactionId + " deleted from wallet " +
                       wallet.GetName());
     }
+
+    /**
+     * Confirm a pending transaction
+     * @param transactionId The id of the transaction to be confirmed
+     * @throws RuntimeException If the transaction does not exist
+     * @throws RuntimeException If the transaction is already confirmed
+     * @throws RuntimeException If wallet does not have enough balance to confirm
+     */
+    @Transactional
+    public void ConfirmTransaction(Long transactionId)
+    {
+        WalletTransaction transaction =
+            m_walletTransactionRepository.findById(transactionId)
+                .orElseThrow(()
+                                 -> new RuntimeException("Transaction with id " +
+                                                         transactionId + " not found"));
+
+        if (transaction.GetStatus() == TransactionStatus.CONFIRMED)
+        {
+            throw new RuntimeException("Transaction with id " + transactionId +
+                                       " is already confirmed");
+        }
+
+        Wallet wallet = transaction.GetWallet();
+
+        if (transaction.GetType() == TransactionType.OUTCOME)
+        {
+            if (wallet.GetBalance() < transaction.GetAmount())
+            {
+                throw new RuntimeException("Wallet " + wallet.GetName() +
+                                           " does not have enough balance to confirm transaction");
+            }
+
+            wallet.SetBalance(wallet.GetBalance() - transaction.GetAmount());
+        }
+        else
+        {
+            wallet.SetBalance(wallet.GetBalance() + transaction.GetAmount());
+        }
+
+        transaction.SetStatus(TransactionStatus.CONFIRMED);
+
+        m_walletRepository.save(wallet);
+        m_walletTransactionRepository.save(transaction);
+    }
 }

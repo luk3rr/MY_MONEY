@@ -22,8 +22,8 @@ Como um usuário, eu quero registrar despesas e receitas efetivadas nas minhas c
 Como um usuário, eu quero registrar despesas e receitas planejadas (futuras) nas minhas carteiras.
 
 ### Tarefas:
-- [ ] Permitir registrar transações futuras com valor, data e descrição.
-- [ ] Marcar transação como planejada até a data de execução.
+- [x] Marcar transação como pendente ou confirmada
+- [x] Confirmar transações pendentes
 
 ---
 
