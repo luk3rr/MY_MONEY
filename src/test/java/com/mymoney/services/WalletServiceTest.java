@@ -23,6 +23,7 @@ import com.mymoney.repositories.TransferRepository;
 import com.mymoney.repositories.WalletRepository;
 import com.mymoney.repositories.WalletTransactionRepository;
 import com.mymoney.util.Constants;
+import com.mymoney.util.TransactionStatus;
 import com.mymoney.util.TransactionType;
 import java.time.LocalDate;
 import java.util.Optional;
@@ -385,6 +386,7 @@ public class WalletServiceTest
             .thenReturn(new WalletTransaction(wallet,
                                               category,
                                               TransactionType.INCOME,
+                                              TransactionStatus.CONFIRMED,
                                               date,
                                               incomeAmount,
                                               description));
@@ -449,6 +451,7 @@ public class WalletServiceTest
             .thenReturn(new WalletTransaction(wallet,
                                               category,
                                               TransactionType.OUTCOME,
+                                              TransactionStatus.CONFIRMED,
                                               date,
                                               expenseAmount,
                                               description));
@@ -506,12 +509,14 @@ public class WalletServiceTest
 
         Wallet wallet = new Wallet(walletName, walletBalance);
 
-        WalletTransaction transaction = new WalletTransaction(wallet,
-                                                              category,
-                                                              TransactionType.OUTCOME,
-                                                              date,
-                                                              amount,
-                                                              description);
+        WalletTransaction transaction =
+            new WalletTransaction(wallet,
+                                  category,
+                                  TransactionType.OUTCOME,
+                                  TransactionStatus.CONFIRMED,
+                                  date,
+                                  amount,
+                                  description);
 
         when(m_walletTransactionRepository.findById(transaction.GetId()))
             .thenReturn(Optional.of(transaction));
@@ -540,12 +545,14 @@ public class WalletServiceTest
 
         Wallet wallet = new Wallet(walletName, walletBalance);
 
-        WalletTransaction transaction = new WalletTransaction(wallet,
-                                                              category,
-                                                              TransactionType.INCOME,
-                                                              date,
-                                                              amount,
-                                                              description);
+        WalletTransaction transaction =
+            new WalletTransaction(wallet,
+                                  category,
+                                  TransactionType.INCOME,
+                                  TransactionStatus.CONFIRMED,
+                                  date,
+                                  amount,
+                                  description);
 
         when(m_walletTransactionRepository.findById(transaction.GetId()))
             .thenReturn(Optional.of(transaction));

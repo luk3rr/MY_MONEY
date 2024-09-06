@@ -14,6 +14,7 @@ import com.mymoney.repositories.TransferRepository;
 import com.mymoney.repositories.WalletRepository;
 import com.mymoney.repositories.WalletTransactionRepository;
 import com.mymoney.util.LoggerConfig;
+import com.mymoney.util.TransactionStatus;
 import com.mymoney.util.TransactionType;
 import java.time.LocalDate;
 import java.util.logging.Logger;
@@ -202,12 +203,14 @@ public class WalletService
                                  -> new RuntimeException("Wallet with name " +
                                                          walletName + " not found"));
 
-        m_walletTransactionRepository.save(new WalletTransaction(wallet,
-                                                                 category,
-                                                                 TransactionType.INCOME,
-                                                                 date,
-                                                                 amount,
-                                                                 description));
+        m_walletTransactionRepository.save(
+            new WalletTransaction(wallet,
+                                  category,
+                                  TransactionType.INCOME,
+                                  TransactionStatus.CONFIRMED,
+                                  date,
+                                  amount,
+                                  description));
 
         wallet.SetBalance(wallet.GetBalance() + amount);
         m_walletRepository.save(wallet);
@@ -241,6 +244,7 @@ public class WalletService
             new WalletTransaction(wallet,
                                   category,
                                   TransactionType.OUTCOME,
+                                  TransactionStatus.CONFIRMED,
                                   date,
                                   amount,
                                   description));

@@ -6,9 +6,8 @@
 
 package com.mymoney.entities;
 
+import com.mymoney.util.TransactionStatus;
 import com.mymoney.util.TransactionType;
-import java.time.LocalDate;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 
 /**
  * Represents a transaction in a wallet
@@ -54,6 +54,10 @@ public class WalletTransaction
     @Column(name = "description")
     private String m_description;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private TransactionStatus m_status;
+
     /**
      * Default constructor for JPA
      */
@@ -68,16 +72,18 @@ public class WalletTransaction
      * @param amount The amount of the transaction
      * @param description A description of the transaction
      */
-    public WalletTransaction(Wallet          wallet,
-                             Category        category,
-                             TransactionType type,
-                             LocalDate       date,
-                             Double          amount,
-                             String          description)
+    public WalletTransaction(Wallet            wallet,
+                             Category          category,
+                             TransactionType   type,
+                             TransactionStatus status,
+                             LocalDate         date,
+                             Double            amount,
+                             String            description)
     {
         m_wallet      = wallet;
         m_category    = category;
         m_type        = type;
+        m_status      = status;
         m_date        = date;
         m_amount      = amount;
         m_description = description;
@@ -147,6 +153,15 @@ public class WalletTransaction
     }
 
     /**
+     * Get the status of the transaction
+     * @return The status of the transaction
+     */
+    public TransactionStatus GetStatus()
+    {
+        return m_status;
+    }
+
+    /**
      * Set the wallet that the transaction belongs to
      * @param wallet The wallet that the transaction belongs to
      */
@@ -198,5 +213,14 @@ public class WalletTransaction
     public void SetType(TransactionType type)
     {
         m_type = type;
+    }
+
+    /**
+     * Set the status of the transaction
+     * @param status The status of the transaction
+     */
+    public void SetStatus(TransactionStatus status)
+    {
+        m_status = status;
     }
 }

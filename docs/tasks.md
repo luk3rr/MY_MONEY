@@ -40,6 +40,7 @@ Como um usuário, eu quero poder remover uma receita/despesa de uma carteira.
 Como um usuário, eu quero deletar carteiras que não uso.
 
 ### Tarefas:
+- [x] Criar método para apagar a carteira no banco de dados
 - [ ] Verificar se a carteira tem transações antes de permitir a exclusão.
 - [ ] Exibir mensagem de confirmação para deletar.
 
@@ -81,11 +82,13 @@ Como um usuário, eu quero cadastrar um cartão de crédito para poder realizar 
 ---
 
 ## US 0010
-Como um usuário, eu quero visualizar quanto gastei em cada categoria para organizar meus gastos.
+Como um usuário, eu quero visualizar quanto gastei/recebi em cada categoria para organizar meus gastos.
 
 ### Tarefas:
 - [ ] Exibir gasto mensal por categoria.
-- [ ] Exibir orçamento mensal por categoria.
+- [ ] Exibir gasto anual por categoria.
+- [ ] Exibir receita mensal por categoria.
+- [ ] Exibir receita anual por categoria.
 
 ---
 
@@ -121,3 +124,10 @@ Como um usuário, eu quero registrar despesas no cartão de crédito.
 ### Tarefas:
 - [X] Implementar registro de despesas no cartão de crédito.
 
+---
+
+## US 0015
+Como um usuário, eu quero registrar transações recorrentes por período de dias e ter uma projeção de receitas/despesas mensal e anual
+
+### Tarefas:
+- [ ] Essas transações devem ser listada na projeção de fluxo de caixa de uma determinada carteira
