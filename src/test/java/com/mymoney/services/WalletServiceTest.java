@@ -56,6 +56,52 @@ public class WalletServiceTest
     @InjectMocks
     private WalletService m_walletService;
 
+    private Wallet            m_wallet1;
+    private Wallet            m_wallet2;
+    private Transfer          m_transfer12;
+    private WalletTransaction m_wallet1IncomeTransaction;
+    private WalletTransaction m_wallet1ExpenseTransaction;
+    private Category          m_category;
+    private LocalDate         m_date;
+    private Double            m_incomeAmount;
+    private Double            m_expenseAmount;
+    private Double            m_transferAmount;
+    private String            m_description = "";
+
+    private Wallet CreateWallet(String name, double balance)
+    {
+        Wallet wallet = new Wallet(name, balance);
+        return wallet;
+    }
+
+    private Transfer CreateTransfer(Wallet    sender,
+                                    Wallet    receiver,
+                                    LocalDate date,
+                                    double    amount,
+                                    String    description)
+    {
+        Transfer transfer = new Transfer(sender, receiver, date, amount, description);
+        return transfer;
+    }
+
+    private WalletTransaction CreateWalletTransaction(Wallet            wallet,
+                                                      Category          category,
+                                                      TransactionType   type,
+                                                      TransactionStatus status,
+                                                      LocalDate         date,
+                                                      double            amount,
+                                                      String            description)
+    {
+        WalletTransaction walletTransaction = new WalletTransaction(wallet,
+                                                                    category,
+                                                                    type,
+                                                                    status,
+                                                                    date,
+                                                                    amount,
+                                                                    description);
+        return walletTransaction;
+    }
+
     @BeforeAll
     public static void SetUp()
     {
@@ -64,29 +110,55 @@ public class WalletServiceTest
 
     @BeforeEach
     public void BeforeEach()
-    { }
+    {
+        m_incomeAmount   = 500.0;
+        m_expenseAmount  = 200.0;
+        m_transferAmount = 125.5;
+        m_date           = LocalDate.now();
+        m_category       = new Category("etc");
+
+        m_wallet1 = CreateWallet("Wallet1", 1000.0);
+        m_wallet2 = CreateWallet("Wallet2", 2000.0);
+
+        m_transfer12 = CreateTransfer(m_wallet1,
+                                      m_wallet2,
+                                      m_date,
+                                      m_transferAmount,
+                                      m_description);
+
+        m_wallet1IncomeTransaction =
+            CreateWalletTransaction(m_wallet1,
+                                    m_category,
+                                    TransactionType.INCOME,
+                                    TransactionStatus.CONFIRMED,
+                                    m_date,
+                                    m_incomeAmount,
+                                    m_description);
+
+        m_wallet1ExpenseTransaction =
+            CreateWalletTransaction(m_wallet1,
+                                    m_category,
+                                    TransactionType.OUTCOME,
+                                    TransactionStatus.CONFIRMED,
+                                    m_date,
+                                    m_expenseAmount,
+                                    m_description);
+    }
 
     @Test
     @DisplayName("Test if the wallet is created successfully")
     public void TestCreateWallet()
     {
-        String walletName    = "My Wallet";
-        double walletBalance = 1000.0;
-
-        Wallet wallet = new Wallet(walletName, walletBalance);
-
-        when(m_walletRepository.existsById(walletName)).thenReturn(false);
-        when(m_walletRepository.save(any(Wallet.class))).thenReturn(wallet);
-
-        m_walletService.CreateWallet(walletName, walletBalance);
+        m_walletService.CreateWallet(m_wallet1.GetName(), m_wallet1.GetBalance());
 
         // Capture the wallet object that was saved and check if the values are correct
         ArgumentCaptor<Wallet> walletCaptor = ArgumentCaptor.forClass(Wallet.class);
 
         verify(m_walletRepository).save(walletCaptor.capture());
 
-        assertEquals(walletName, walletCaptor.getValue().GetName());
-        assertEquals(walletBalance,
+        assertEquals(m_wallet1.GetName(), walletCaptor.getValue().GetName());
+
+        assertEquals(m_wallet1.GetBalance(),
                      walletCaptor.getValue().GetBalance(),
                      Constants.EPSILON);
     }
@@ -95,13 +167,12 @@ public class WalletServiceTest
     @DisplayName("Test if the wallet is not created when the name is already in use")
     public void TestCreateWalletAlreadyExists()
     {
-        String walletName    = "My Wallet";
-        double walletBalance = 1000.0;
-
-        when(m_walletRepository.existsById(walletName)).thenReturn(true);
+        when(m_walletRepository.existsById(m_wallet1.GetName())).thenReturn(true);
 
         assertThrows(RuntimeException.class,
-                     () -> m_walletService.CreateWallet(walletName, walletBalance));
+                     ()
+                         -> m_walletService.CreateWallet(m_wallet1.GetName(),
+                                                         m_wallet1.GetBalance()));
 
         // Verify that the wallet was not saved
         verify(m_walletRepository, never()).save(any(Wallet.class));
@@ -111,29 +182,24 @@ public class WalletServiceTest
     @DisplayName("Test if the wallet is deleted successfully")
     public void TestDeleteWallet()
     {
-        String walletName    = "My Wallet";
-        double walletBalance = 1000.0;
+        when(m_walletRepository.findById(m_wallet1.GetName()))
+            .thenReturn(Optional.of(m_wallet1));
 
-        Wallet wallet = new Wallet(walletName, walletBalance);
-
-        when(m_walletRepository.findById(walletName)).thenReturn(Optional.of(wallet));
-
-        m_walletService.DeleteWallet(walletName);
+        m_walletService.DeleteWallet(m_wallet1.GetName());
 
         // Verify that the wallet was deleted
-        verify(m_walletRepository).delete(wallet);
+        verify(m_walletRepository).delete(m_wallet1);
     }
 
     @Test
     @DisplayName("Test if the wallet is not deleted when it does not exist")
     public void TestDeleteWalletDoesNotExist()
     {
-        String walletName = "My Wallet";
-
-        when(m_walletRepository.findById(walletName)).thenReturn(Optional.empty());
+        when(m_walletRepository.findById(m_wallet1.GetName()))
+            .thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class,
-                     () -> m_walletService.DeleteWallet(walletName));
+                     () -> m_walletService.DeleteWallet(m_wallet1.GetName()));
 
         // Verify that the wallet was not deleted
         verify(m_walletRepository, never()).delete(any(Wallet.class));
@@ -143,19 +209,15 @@ public class WalletServiceTest
     @Test
     public void TestArchiveWallet()
     {
-        String walletName    = "My Wallet";
-        double walletBalance = 1000.0;
+        when(m_walletRepository.findById(m_wallet1.GetName()))
+            .thenReturn(Optional.of(m_wallet1));
+        when(m_walletRepository.save(any(Wallet.class))).thenReturn(m_wallet1);
 
-        Wallet wallet = new Wallet(walletName, walletBalance);
-
-        when(m_walletRepository.findById(walletName)).thenReturn(Optional.of(wallet));
-        when(m_walletRepository.save(any(Wallet.class))).thenReturn(wallet);
-
-        m_walletService.ArchiveWallet(walletName);
+        m_walletService.ArchiveWallet(m_wallet1.GetName());
 
         // Check if the wallet was archived
-        verify(m_walletRepository).save(wallet);
-        assertTrue(wallet.IsArchived());
+        verify(m_walletRepository).save(m_wallet1);
+        assertTrue(m_wallet1.IsArchived());
     }
 
     @Test
@@ -164,12 +226,11 @@ public class WalletServiceTest
     public void
     TestArchiveWalletDoesNotExist()
     {
-        String walletName = "NonExistentWallet";
-
-        when(m_walletRepository.findById(walletName)).thenReturn(Optional.empty());
+        when(m_walletRepository.findById(m_wallet1.GetName()))
+            .thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class,
-                     () -> m_walletService.ArchiveWallet(walletName));
+                     () -> m_walletService.ArchiveWallet(m_wallet1.GetName()));
 
         // Verify that the wallet was not archived
         verify(m_walletRepository, never()).save(any(Wallet.class));
@@ -179,21 +240,17 @@ public class WalletServiceTest
     @DisplayName("Test if the wallet balance is updated successfully")
     public void TestUpdateWalletBalance()
     {
-        String walletName    = "My Wallet";
-        double walletBalance = 1000.0;
-
-        Wallet wallet = new Wallet(walletName, walletBalance);
-
-        when(m_walletRepository.findById(walletName)).thenReturn(Optional.of(wallet));
-        when(m_walletRepository.save(any(Wallet.class))).thenReturn(wallet);
+        when(m_walletRepository.findById(m_wallet1.GetName()))
+            .thenReturn(Optional.of(m_wallet1));
+        when(m_walletRepository.save(any(Wallet.class))).thenReturn(m_wallet1);
 
         double newBalance = 2000.0;
 
-        m_walletService.UpdateWalletBalance(walletName, newBalance);
+        m_walletService.UpdateWalletBalance(m_wallet1.GetName(), newBalance);
 
         // Check if the wallet balance was updated
-        verify(m_walletRepository).save(wallet);
-        assertEquals(newBalance, wallet.GetBalance(), Constants.EPSILON);
+        verify(m_walletRepository).save(m_wallet1);
+        assertEquals(newBalance, m_wallet1.GetBalance(), Constants.EPSILON);
     }
 
     @Test
@@ -202,12 +259,12 @@ public class WalletServiceTest
     public void
     TestUpdateWalletBalanceDoesNotExist()
     {
-        String walletName = "NonExistentWallet";
+        when(m_walletRepository.findById(m_wallet1.GetName()))
+            .thenReturn(Optional.empty());
 
-        when(m_walletRepository.findById(walletName)).thenReturn(Optional.empty());
-
-        assertThrows(RuntimeException.class,
-                     () -> m_walletService.UpdateWalletBalance(walletName, 1000.0));
+        assertThrows(
+            RuntimeException.class,
+            () -> m_walletService.UpdateWalletBalance(m_wallet1.GetName(), 1000.0));
 
         // Verify that the wallet balance was not updated
         verify(m_walletRepository, never()).save(any(Wallet.class));
@@ -217,45 +274,37 @@ public class WalletServiceTest
     @DisplayName("Test if the money transfer is successful")
     public void TestTransferMoneySuccess()
     {
-        String    senderName      = "Sender";
-        String    receiverName    = "Receiver";
-        double    senderBalance   = 1000.0;
-        double    receiverBalance = 500.0;
-        double    transferAmount  = 200.0;
-        LocalDate date            = LocalDate.now();
+        Double m_senderPreviousBalance   = m_wallet1.GetBalance();
+        Double m_receiverPreviousBalance = m_wallet2.GetBalance();
 
-        Wallet sender   = new Wallet(senderName, senderBalance);
-        Wallet receiver = new Wallet(receiverName, receiverBalance);
+        when(m_walletRepository.findById(m_wallet1.GetName()))
+            .thenReturn(Optional.of(m_wallet1));
+        when(m_walletRepository.findById(m_wallet2.GetName()))
+            .thenReturn(Optional.of(m_wallet2));
 
-        when(m_walletRepository.findById(senderName)).thenReturn(Optional.of(sender));
-        when(m_walletRepository.findById(receiverName))
-            .thenReturn(Optional.of(receiver));
+        when(m_walletRepository.save(m_wallet1)).thenReturn(m_wallet1);
+        when(m_walletRepository.save(m_wallet2)).thenReturn(m_wallet2);
 
-        when(m_walletRepository.save(sender)).thenReturn(sender);
-        when(m_walletRepository.save(receiver)).thenReturn(receiver);
+        when(m_transferRepository.save(any(Transfer.class))).thenReturn(m_transfer12);
 
-        when(m_transferRepository.save(any(Transfer.class)))
-            .thenReturn(
-                new Transfer(sender, receiver, date, transferAmount, "description"));
-
-        m_walletService.TransferMoney(senderName,
-                                      receiverName,
-                                      date,
-                                      transferAmount,
-                                      "description");
+        m_walletService.TransferMoney(m_wallet1.GetName(),
+                                      m_wallet2.GetName(),
+                                      m_transfer12.GetDate(),
+                                      m_transfer12.GetAmount(),
+                                      m_transfer12.GetDescription());
 
         // Check if the sender and receiver balances were updated
-        verify(m_walletRepository).findById(senderName);
-        verify(m_walletRepository).findById(receiverName);
-        verify(m_walletRepository).save(sender);
-        verify(m_walletRepository).save(receiver);
+        verify(m_walletRepository).findById(m_wallet1.GetName());
+        verify(m_walletRepository).findById(m_wallet2.GetName());
+        verify(m_walletRepository).save(m_wallet1);
+        verify(m_walletRepository).save(m_wallet2);
 
-        assertEquals(senderBalance - transferAmount,
-                     sender.GetBalance(),
+        assertEquals(m_senderPreviousBalance - m_transferAmount,
+                     m_wallet1.GetBalance(),
                      Constants.EPSILON);
 
-        assertEquals(receiverBalance + transferAmount,
-                     receiver.GetBalance(),
+        assertEquals(m_receiverPreviousBalance + m_transferAmount,
+                     m_wallet2.GetBalance(),
                      Constants.EPSILON);
 
         // Check if the transfer was saved
@@ -264,9 +313,9 @@ public class WalletServiceTest
 
         verify(m_transferRepository).save(transferCaptor.capture());
 
-        assertEquals(sender, transferCaptor.getValue().GetSenderWallet());
-        assertEquals(receiver, transferCaptor.getValue().GetReceiverWallet());
-        assertEquals(transferAmount,
+        assertEquals(m_wallet1, transferCaptor.getValue().GetSenderWallet());
+        assertEquals(m_wallet2, transferCaptor.getValue().GetReceiverWallet());
+        assertEquals(m_transferAmount,
                      transferCaptor.getValue().GetAmount(),
                      Constants.EPSILON);
     }
@@ -275,20 +324,16 @@ public class WalletServiceTest
     @DisplayName("Test if exception is thrown when the sender wallet does not exist")
     public void TestTransferMoneySenderDoesNotExist()
     {
-        String    senderName     = "Sender";
-        String    receiverName   = "Receiver";
-        double    transferAmount = 200.0;
-        LocalDate date           = LocalDate.now();
-
-        when(m_walletRepository.findById(senderName)).thenReturn(Optional.empty());
+        when(m_walletRepository.findById(m_wallet1.GetName()))
+            .thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class,
                      ()
-                         -> m_walletService.TransferMoney(senderName,
-                                                          receiverName,
-                                                          date,
-                                                          transferAmount,
-                                                          "description"));
+                         -> m_walletService.TransferMoney(m_wallet1.GetName(),
+                                                          m_wallet2.GetName(),
+                                                          m_date,
+                                                          m_transferAmount,
+                                                          m_description));
 
         // Verify that the transfer was not saved
         verify(m_transferRepository, never()).save(any(Transfer.class));
@@ -298,24 +343,19 @@ public class WalletServiceTest
     @DisplayName("Test if exception is thrown when the receiver wallet does not exist")
     public void TestTransferMoneyReceiverDoesNotExist()
     {
-        String    senderName     = "Sender";
-        String    receiverName   = "Receiver";
-        double    senderBalance  = 1000.0;
-        double    transferAmount = 200.0;
-        LocalDate date           = LocalDate.now();
-
-        Wallet sender = new Wallet(senderName, senderBalance);
-
-        when(m_walletRepository.findById(senderName)).thenReturn(Optional.of(sender));
-        when(m_walletRepository.findById(receiverName)).thenReturn(Optional.empty());
+        when(m_walletRepository.findById(m_wallet1.GetName()))
+            .thenReturn(Optional.of(m_wallet1));
+        when(m_walletRepository.findById(m_wallet2.GetName()))
+            .thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class,
                      ()
-                         -> m_walletService.TransferMoney(senderName,
-                                                          receiverName,
-                                                          date,
-                                                          transferAmount,
-                                                          "description"));
+                         -> m_walletService.TransferMoney(m_wallet1.GetName(),
+                                                          m_wallet2.GetName(),
+                                                          m_date,
+                                                          m_transferAmount,
+                                                          m_description),
+                     "Receiver wallet does not exist");
 
         // Verify that the transfer was not saved
         verify(m_transferRepository, never()).save(any(Transfer.class));
@@ -327,17 +367,13 @@ public class WalletServiceTest
     public void
     TestTransferMoneySameWallet()
     {
-        String    senderName     = "Sender";
-        double    transferAmount = 200.0;
-        LocalDate date           = LocalDate.now();
-
         assertThrows(RuntimeException.class,
                      ()
-                         -> m_walletService.TransferMoney(senderName,
-                                                          senderName,
-                                                          date,
-                                                          transferAmount,
-                                                          "description"));
+                         -> m_walletService.TransferMoney(m_wallet1.GetName(),
+                                                          m_wallet1.GetName(),
+                                                          m_date,
+                                                          m_transferAmount,
+                                                          m_description));
 
         // Verify that the transfer was not saved
         verify(m_transferRepository, never()).save(any(Transfer.class));
@@ -349,18 +385,13 @@ public class WalletServiceTest
     public void
     TestTransferMoneyAmountZero()
     {
-        String    senderName     = "Sender";
-        String    receiverName   = "Receiver";
-        double    transferAmount = 0.0;
-        LocalDate date           = LocalDate.now();
-
         assertThrows(RuntimeException.class,
                      ()
-                         -> m_walletService.TransferMoney(senderName,
-                                                          receiverName,
-                                                          date,
-                                                          transferAmount,
-                                                          "description"));
+                         -> m_walletService.TransferMoney(m_wallet1.GetName(),
+                                                          m_wallet2.GetName(),
+                                                          m_date,
+                                                          0.0,
+                                                          m_description));
 
         // Verify that the transfer was not saved
         verify(m_transferRepository, never()).save(any(Transfer.class));
@@ -370,37 +401,31 @@ public class WalletServiceTest
     @DisplayName("Test if the confirmed income is added successfully")
     public void TestAddConfirmedIncome()
     {
-        String    walletName    = "My Wallet";
-        double    walletBalance = 1000.0;
-        double    incomeAmount  = 500.0;
-        LocalDate date          = LocalDate.now();
-        Category  category      = new Category("Salary");
-        String    description   = "Income";
+        Double previousBalance = m_wallet1.GetBalance();
 
-        Wallet wallet = new Wallet(walletName, walletBalance);
-
-        when(m_walletRepository.findById(walletName)).thenReturn(Optional.of(wallet));
-        when(m_walletRepository.save(any(Wallet.class))).thenReturn(wallet);
+        when(m_walletRepository.findById(m_wallet1.GetName()))
+            .thenReturn(Optional.of(m_wallet1));
+        when(m_walletRepository.save(m_wallet1)).thenReturn(m_wallet1);
 
         when(m_walletTransactionRepository.save(any(WalletTransaction.class)))
-            .thenReturn(new WalletTransaction(wallet,
-                                              category,
+            .thenReturn(new WalletTransaction(m_wallet1,
+                                              m_category,
                                               TransactionType.INCOME,
                                               TransactionStatus.CONFIRMED,
-                                              date,
-                                              incomeAmount,
-                                              description));
+                                              m_date,
+                                              m_incomeAmount,
+                                              m_description));
 
-        m_walletService.AddConfirmedIncome(walletName,
-                                           category,
-                                           date,
-                                           incomeAmount,
-                                           description);
+        m_walletService.AddConfirmedIncome(m_wallet1.GetName(),
+                                           m_category,
+                                           m_date,
+                                           m_incomeAmount,
+                                           m_description);
 
         // Check if the wallet balance was updated
-        verify(m_walletRepository).save(wallet);
-        assertEquals(walletBalance + incomeAmount,
-                     wallet.GetBalance(),
+        verify(m_walletRepository).save(m_wallet1);
+        assertEquals(previousBalance + m_incomeAmount,
+                     m_wallet1.GetBalance(),
                      Constants.EPSILON);
     }
 
@@ -408,35 +433,29 @@ public class WalletServiceTest
     @DisplayName("Test if the pending income is added successfully")
     public void TestAddPendingIncome()
     {
-        String    walletName    = "My Wallet";
-        double    walletBalance = 1000.0;
-        double    incomeAmount  = 500.0;
-        LocalDate date          = LocalDate.now();
-        Category  category      = new Category("Salary");
-        String    description   = "Income";
+        Double previousBalance = m_wallet1.GetBalance();
 
-        Wallet wallet = new Wallet(walletName, walletBalance);
-
-        when(m_walletRepository.findById(walletName)).thenReturn(Optional.of(wallet));
+        when(m_walletRepository.findById(m_wallet1.GetName()))
+            .thenReturn(Optional.of(m_wallet1));
 
         when(m_walletTransactionRepository.save(any(WalletTransaction.class)))
-            .thenReturn(new WalletTransaction(wallet,
-                                              category,
+            .thenReturn(new WalletTransaction(m_wallet1,
+                                              m_category,
                                               TransactionType.INCOME,
                                               TransactionStatus.PENDING,
-                                              date,
-                                              incomeAmount,
-                                              description));
+                                              m_date,
+                                              m_incomeAmount,
+                                              m_description));
 
-        m_walletService.AddPendingIncome(walletName,
-                                         category,
-                                         date,
-                                         incomeAmount,
-                                         description);
+        m_walletService.AddPendingIncome(m_wallet1.GetName(),
+                                         m_category,
+                                         m_date,
+                                         m_incomeAmount,
+                                         m_description);
 
         // Check if the wallet balance is the same
         verify(m_walletRepository, never()).save(any(Wallet.class));
-        assertEquals(walletBalance, wallet.GetBalance(), Constants.EPSILON);
+        assertEquals(previousBalance, m_wallet1.GetBalance(), Constants.EPSILON);
     }
 
     @Test
@@ -445,31 +464,26 @@ public class WalletServiceTest
     public void
     TestAddIncomeWalletDoesNotExist()
     {
-        String    walletName   = "NonExistentWallet";
-        double    incomeAmount = 500.0;
-        LocalDate date         = LocalDate.now();
-        Category  category     = new Category("Salary");
-        String    description  = "Income";
-
-        when(m_walletRepository.findById(walletName)).thenReturn(Optional.empty());
+        when(m_walletRepository.findById(m_wallet1.GetName()))
+            .thenReturn(Optional.empty());
 
         // Check for confirmed income
         assertThrows(RuntimeException.class,
                      ()
-                         -> m_walletService.AddConfirmedIncome(walletName,
-                                                               category,
-                                                               date,
-                                                               incomeAmount,
-                                                               description));
+                         -> m_walletService.AddConfirmedIncome(m_wallet1.GetName(),
+                                                               m_category,
+                                                               m_date,
+                                                               m_incomeAmount,
+                                                               m_description));
 
         // Check for pending income
         assertThrows(RuntimeException.class,
                      ()
-                         -> m_walletService.AddPendingIncome(walletName,
-                                                             category,
-                                                             date,
-                                                             incomeAmount,
-                                                             description));
+                         -> m_walletService.AddPendingIncome(m_wallet1.GetName(),
+                                                             m_category,
+                                                             m_date,
+                                                             m_incomeAmount,
+                                                             m_description));
 
         // Verify that the income was not added
         verify(m_walletTransactionRepository, never())
@@ -480,37 +494,31 @@ public class WalletServiceTest
     @DisplayName("Test if the confirmed expense is added successfully")
     public void TestAddConfirmedExpense()
     {
-        String    walletName    = "My Wallet";
-        double    walletBalance = 1000.0;
-        double    expenseAmount = 500.0;
-        LocalDate date          = LocalDate.now();
-        Category  category      = new Category("Food");
-        String    description   = "Expense";
+        Double previousBalance = m_wallet1.GetBalance();
 
-        Wallet wallet = new Wallet(walletName, walletBalance);
-
-        when(m_walletRepository.findById(walletName)).thenReturn(Optional.of(wallet));
-        when(m_walletRepository.save(any(Wallet.class))).thenReturn(wallet);
+        when(m_walletRepository.findById(m_wallet1.GetName()))
+            .thenReturn(Optional.of(m_wallet1));
+        when(m_walletRepository.save(m_wallet1)).thenReturn(m_wallet1);
 
         when(m_walletTransactionRepository.save(any(WalletTransaction.class)))
-            .thenReturn(new WalletTransaction(wallet,
-                                              category,
+            .thenReturn(new WalletTransaction(m_wallet1,
+                                              m_category,
                                               TransactionType.OUTCOME,
                                               TransactionStatus.CONFIRMED,
-                                              date,
-                                              expenseAmount,
-                                              description));
+                                              m_date,
+                                              m_expenseAmount,
+                                              m_description));
 
-        m_walletService.AddConfirmedExpense(walletName,
-                                            category,
-                                            date,
-                                            expenseAmount,
-                                            description);
+        m_walletService.AddConfirmedExpense(m_wallet1.GetName(),
+                                            m_category,
+                                            m_date,
+                                            m_expenseAmount,
+                                            m_description);
 
         // Check if the wallet balance was updated
-        verify(m_walletRepository).save(wallet);
-        assertEquals(walletBalance - expenseAmount,
-                     wallet.GetBalance(),
+        verify(m_walletRepository).save(m_wallet1);
+        assertEquals(previousBalance - m_expenseAmount,
+                     m_wallet1.GetBalance(),
                      Constants.EPSILON);
     }
 
@@ -518,35 +526,29 @@ public class WalletServiceTest
     @DisplayName("Test if the pending expense is added successfully")
     public void TestAddPendingExpense()
     {
-        String    walletName    = "My Wallet";
-        double    walletBalance = 1000.0;
-        double    expenseAmount = 500.0;
-        LocalDate date          = LocalDate.now();
-        Category  category      = new Category("Food");
-        String    description   = "Expense";
+        Double previousBalance = m_wallet1.GetBalance();
 
-        Wallet wallet = new Wallet(walletName, walletBalance);
-
-        when(m_walletRepository.findById(walletName)).thenReturn(Optional.of(wallet));
+        when(m_walletRepository.findById(m_wallet1.GetName()))
+            .thenReturn(Optional.of(m_wallet1));
 
         when(m_walletTransactionRepository.save(any(WalletTransaction.class)))
-            .thenReturn(new WalletTransaction(wallet,
-                                              category,
+            .thenReturn(new WalletTransaction(m_wallet1,
+                                              m_category,
                                               TransactionType.OUTCOME,
                                               TransactionStatus.PENDING,
-                                              date,
-                                              expenseAmount,
-                                              description));
+                                              m_date,
+                                              m_expenseAmount,
+                                              m_description));
 
-        m_walletService.AddPendingExpense(walletName,
-                                          category,
-                                          date,
-                                          expenseAmount,
-                                          description);
+        m_walletService.AddPendingExpense(m_wallet1.GetName(),
+                                          m_category,
+                                          m_date,
+                                          m_expenseAmount,
+                                          m_description);
 
         // Check if the wallet balance is the same
-        verify(m_walletRepository, never()).save(wallet);
-        assertEquals(walletBalance, wallet.GetBalance(), Constants.EPSILON);
+        verify(m_walletRepository, never()).save(m_wallet1);
+        assertEquals(previousBalance, m_wallet1.GetBalance(), Constants.EPSILON);
     }
 
     @Test
@@ -555,31 +557,26 @@ public class WalletServiceTest
     public void
     TestAddExpenseWalletDoesNotExist()
     {
-        String    walletName    = "NonExistentWallet";
-        double    expenseAmount = 500.0;
-        LocalDate date          = LocalDate.now();
-        Category  category      = new Category("Food");
-        String    description   = "Expense";
-
-        when(m_walletRepository.findById(walletName)).thenReturn(Optional.empty());
+        when(m_walletRepository.findById(m_wallet1.GetName()))
+            .thenReturn(Optional.empty());
 
         // Check for confirmed expense
         assertThrows(RuntimeException.class,
                      ()
-                         -> m_walletService.AddConfirmedExpense(walletName,
-                                                                category,
-                                                                date,
-                                                                expenseAmount,
-                                                                description));
+                         -> m_walletService.AddConfirmedExpense(m_wallet1.GetName(),
+                                                                m_category,
+                                                                m_date,
+                                                                m_expenseAmount,
+                                                                m_description));
 
         // Check for pending expense
         assertThrows(RuntimeException.class,
                      ()
-                         -> m_walletService.AddPendingExpense(walletName,
-                                                              category,
-                                                              date,
-                                                              expenseAmount,
-                                                              description));
+                         -> m_walletService.AddPendingExpense(m_wallet1.GetName(),
+                                                              m_category,
+                                                              m_date,
+                                                              m_expenseAmount,
+                                                              m_description));
 
         // Verify that the expense was not added
         verify(m_walletTransactionRepository, never())
@@ -590,142 +587,88 @@ public class WalletServiceTest
     @DisplayName("Test if the confirmed expense is deleted successfully")
     public void TestDeleteConfirmedExpense()
     {
-        String    walletName    = "My Wallet";
-        double    walletBalance = 1000.0;
-        double    amount        = 500.0;
-        LocalDate date          = LocalDate.now();
-        Category  category      = new Category("Food");
-        String    description   = "Expense";
+        Double previousBalance = m_wallet1.GetBalance();
 
-        Wallet wallet = new Wallet(walletName, walletBalance);
+        when(
+            m_walletTransactionRepository.findById(m_wallet1ExpenseTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1ExpenseTransaction));
 
-        WalletTransaction transaction =
-            new WalletTransaction(wallet,
-                                  category,
-                                  TransactionType.OUTCOME,
-                                  TransactionStatus.CONFIRMED,
-                                  date,
-                                  amount,
-                                  description);
-
-        when(m_walletTransactionRepository.findById(transaction.GetId()))
-            .thenReturn(Optional.of(transaction));
-
-        m_walletService.DeleteTransaction(transaction.GetId());
+        m_walletService.DeleteTransaction(m_wallet1ExpenseTransaction.GetId());
 
         // Check if the transaction was deleted
-        verify(m_walletTransactionRepository).delete(transaction);
+        verify(m_walletTransactionRepository).delete(m_wallet1ExpenseTransaction);
 
         // Check if the wallet balance was updated
-        verify(m_walletRepository).save(wallet);
+        verify(m_walletRepository).save(m_wallet1);
 
-        assertEquals(walletBalance + amount, wallet.GetBalance(), Constants.EPSILON);
+        assertEquals(previousBalance + m_expenseAmount,
+                     m_wallet1.GetBalance(),
+                     Constants.EPSILON);
     }
 
     @Test
     @DisplayName("Test if the pending expense is deleted successfully")
     public void TestDeletePendingExpense()
     {
-        String    walletName    = "My Wallet";
-        double    walletBalance = 1000.0;
-        double    amount        = 500.0;
-        LocalDate date          = LocalDate.now();
-        Category  category      = new Category("Food");
-        String    description   = "Expense";
+        Double previousBalance = m_wallet1.GetBalance();
+        m_wallet1ExpenseTransaction.SetStatus(TransactionStatus.PENDING);
 
-        Wallet wallet = new Wallet(walletName, walletBalance);
+        when(
+            m_walletTransactionRepository.findById(m_wallet1ExpenseTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1ExpenseTransaction));
 
-        WalletTransaction transaction = new WalletTransaction(wallet,
-                                                              category,
-                                                              TransactionType.OUTCOME,
-                                                              TransactionStatus.PENDING,
-                                                              date,
-                                                              amount,
-                                                              description);
-
-        when(m_walletTransactionRepository.findById(transaction.GetId()))
-            .thenReturn(Optional.of(transaction));
-
-        m_walletService.DeleteTransaction(transaction.GetId());
+        m_walletService.DeleteTransaction(m_wallet1ExpenseTransaction.GetId());
 
         // Check if the transaction was deleted
-        verify(m_walletTransactionRepository).delete(transaction);
+        verify(m_walletTransactionRepository).delete(m_wallet1ExpenseTransaction);
 
         // Check if the wallet balance was not updated
         verify(m_walletRepository, never()).save(any(Wallet.class));
 
-        assertEquals(walletBalance, wallet.GetBalance(), Constants.EPSILON);
+        assertEquals(previousBalance, m_wallet1.GetBalance(), Constants.EPSILON);
     }
 
     @Test
     @DisplayName("Test if the confirmed income transaction is deleted successfully")
     public void TestDeleteConfirmedIncome()
     {
-        String    walletName    = "My Wallet";
-        double    walletBalance = 1000.0;
-        double    amount        = 500.0;
-        LocalDate date          = LocalDate.now();
-        Category  category      = new Category("Salary");
-        String    description   = "Income";
+        Double previousBalance = m_wallet1.GetBalance();
 
-        Wallet wallet = new Wallet(walletName, walletBalance);
+        when(m_walletTransactionRepository.findById(m_wallet1IncomeTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1IncomeTransaction));
 
-        WalletTransaction transaction =
-            new WalletTransaction(wallet,
-                                  category,
-                                  TransactionType.INCOME,
-                                  TransactionStatus.CONFIRMED,
-                                  date,
-                                  amount,
-                                  description);
-
-        when(m_walletTransactionRepository.findById(transaction.GetId()))
-            .thenReturn(Optional.of(transaction));
-
-        m_walletService.DeleteTransaction(transaction.GetId());
+        m_walletService.DeleteTransaction(m_wallet1IncomeTransaction.GetId());
 
         // Check if the transaction was deleted
-        verify(m_walletTransactionRepository).delete(transaction);
+        verify(m_walletTransactionRepository).delete(m_wallet1IncomeTransaction);
 
         // Check if the wallet balance was updated
-        verify(m_walletRepository).save(wallet);
+        verify(m_walletRepository).save(m_wallet1);
 
-        assertEquals(walletBalance - amount, wallet.GetBalance(), Constants.EPSILON);
+        assertEquals(previousBalance - m_incomeAmount,
+                     m_wallet1.GetBalance(),
+                     Constants.EPSILON);
     }
 
     @Test
     @DisplayName("Test if the pending income transaction is deleted successfully")
     public void TestDeletePendingIncome()
     {
-        String    walletName    = "My Wallet";
-        double    walletBalance = 1000.0;
-        double    amount        = 500.0;
-        LocalDate date          = LocalDate.now();
-        Category  category      = new Category("Salary");
-        String    description   = "Income";
+        Double previousBalance = m_wallet1.GetBalance();
+        m_wallet1IncomeTransaction.SetStatus(TransactionStatus.PENDING);
 
-        Wallet wallet = new Wallet(walletName, walletBalance);
+        when(m_walletTransactionRepository.findById(m_wallet1IncomeTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1IncomeTransaction));
 
-        WalletTransaction transaction = new WalletTransaction(wallet,
-                                                              category,
-                                                              TransactionType.INCOME,
-                                                              TransactionStatus.PENDING,
-                                                              date,
-                                                              amount,
-                                                              description);
-
-        when(m_walletTransactionRepository.findById(transaction.GetId()))
-            .thenReturn(Optional.of(transaction));
-
-        m_walletService.DeleteTransaction(transaction.GetId());
+        m_walletService.DeleteTransaction(m_wallet1IncomeTransaction.GetId());
 
         // Check if the transaction was deleted
-        verify(m_walletTransactionRepository).delete(transaction);
+        verify(m_walletTransactionRepository).delete(m_wallet1IncomeTransaction);
 
         // Check if the wallet balance was not updated
         verify(m_walletRepository, never()).save(any(Wallet.class));
 
-        assertEquals(walletBalance, wallet.GetBalance(), Constants.EPSILON);
+        assertEquals(previousBalance, m_wallet1.GetBalance(), Constants.EPSILON);
     }
 
     @Test
@@ -734,12 +677,12 @@ public class WalletServiceTest
     public void
     TestDeleteTransactionDoesNotExist()
     {
-        Long transactionId = 1L;
-
-        when(m_walletTransactionRepository.findById(transactionId))
+        when(m_walletTransactionRepository.findById(m_wallet1IncomeTransaction.GetId()))
             .thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class,
-                     () -> m_walletService.DeleteTransaction(transactionId));
+                     ()
+                         -> m_walletService.DeleteTransaction(
+                             m_wallet1IncomeTransaction.GetId()));
     }
 }
