@@ -64,11 +64,11 @@ Como um usuário, eu quero definir um orçamento mensal para organizar os gastos
 ---
 
 ## US 0008
-Como um usuário, eu quero visualizar minhas últimas despesas para organizar meus pagamentos.
+Como um usuário, eu quero visualizar minhas últimas transações para organizar meus pagamentos.
 
 ### Tarefas:
-- [ ] Obter últimas despesas a partir de uma quantidade de dias atrás.
-- [ ] Obter últimas despesas por quantidade de resultados na consulta.
+- [X] Obter últimas transações a partir de uma data.
+- [X] Obter últimas transações por quantidade de resultados na consulta.
 
 ---
 

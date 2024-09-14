@@ -7,9 +7,43 @@
 package com.mymoney.repositories;
 
 import com.mymoney.entities.WalletTransaction;
+import java.time.LocalDate;
+import java.util.List;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WalletTransactionRepository
-    extends JpaRepository<WalletTransaction, Long> { }
+    extends JpaRepository<WalletTransaction, Long> {
+
+    /**
+     * Get the last transactions in a wallet by date
+     * @param walletName The name of the wallet
+     * @param startDate The start date of the period
+     * @return A list with the last transactions in the wallet by date
+     */
+    @Query("SELECT wt "
+           + "FROM WalletTransaction wt "
+           + "WHERE wt.m_wallet.m_name = :walletName "
+           + "AND wt.m_date >= :startDate "
+           + "ORDER BY wt.m_date DESC")
+    List<WalletTransaction>
+    GetLastTransactionsByDate(@Param("walletName") String   walletName,
+                              @Param("startDate") LocalDate startDate);
+
+    /**
+     * Get the last n transactions in a wallet
+     * @param walletName The name of the wallet
+     * @param pageable The pageable object
+     * @return A list with the last n transactions in the wallet
+     */
+    @Query("SELECT wt "
+           + "FROM WalletTransaction wt "
+           + "WHERE wt.m_wallet.m_name = :walletName "
+           + "ORDER BY wt.m_date DESC")
+    List<WalletTransaction>
+    GetLastTransactions(@Param("walletName") String walletName, Pageable pageable);
+}
