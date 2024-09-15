@@ -9,7 +9,7 @@ mvn compile
 
 ### Execução do programa (ainda em construção)
 ```sh
-mvn spring-boot:run
+mvn javafx:run
 ```
 
 ### Execução dos testes

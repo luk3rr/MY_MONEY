@@ -19,6 +19,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
     <h2.version>2.3.232</h2.version>
     <sqlite.version>3.41.2.1</sqlite.version>
     <hibernate.dialects.version>6.2.6.Final</hibernate.dialects.version>
+    <javafx.version>22.0.1</javafx.version>
   </properties>
   <dependencies>
     <!-- Spring Boot Starter -->
@@ -82,6 +83,19 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
         <artifactId>h2</artifactId>
         <version>${h2.version}</version>
     </dependency>
+
+    <!-- JavaFX -->
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-controls</artifactId>
+      <version>${javafx.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-fxml</artifactId>
+      <version>${javafx.version}</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -130,6 +144,14 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
       <plugin>
         <artifactId>maven-project-info-reports-plugin</artifactId>
         <version>3.0.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-maven-plugin</artifactId>
+        <version>0.0.8</version>
+        <configuration>
+          <mainClass>com.mymoney.app.JavaFXApp</mainClass>
+        </configuration>
       </plugin>
     </plugins>
   </build>
