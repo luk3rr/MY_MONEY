@@ -10,11 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.mymoney.app.MainApplication;
 import com.mymoney.entities.Category;
-import com.mymoney.entities.CreditCard;
-import com.mymoney.entities.CreditCardDebt;
 import com.mymoney.entities.Wallet;
 import com.mymoney.entities.WalletTransaction;
-import com.mymoney.util.Constants;
 import com.mymoney.util.TransactionStatus;
 import com.mymoney.util.TransactionType;
 import java.time.LocalDate;
@@ -46,9 +43,20 @@ public class WalletTransactionRepositoryTest
     @Autowired
     private WalletRepository m_walletRepository;
 
+    @Autowired
+    private CategoryRepository m_categoryRepository;
+
     private Wallet m_wallet1;
 
     private Wallet m_wallet2;
+
+    private Category CreateCategory(String name)
+    {
+        Category category = new Category(name);
+        m_categoryRepository.save(category);
+        m_categoryRepository.flush();
+        return category;
+    }
 
     private WalletTransaction
     CreateWalletTransaction(Wallet walletName, double amount, LocalDate date)
@@ -59,6 +67,7 @@ public class WalletTransactionRepositoryTest
         walletTransaction.SetDate(date);
         walletTransaction.SetStatus(TransactionStatus.CONFIRMED);
         walletTransaction.SetType(TransactionType.EXPENSE);
+        walletTransaction.SetCategory(CreateCategory("Category"));
         m_walletTransactionRepository.save(walletTransaction);
         m_walletTransactionRepository.flush();
         return walletTransaction;
@@ -100,7 +109,7 @@ public class WalletTransactionRepositoryTest
 
         // Get the last transactions in the wallet by date
         var lastTransactions = m_walletTransactionRepository.GetLastTransactionsByDate(
-            m_wallet1.GetName(),
+            m_wallet1.GetId(),
             LocalDate.now().minusDays(1));
 
         // Check if the last transactions are correct
@@ -120,7 +129,7 @@ public class WalletTransactionRepositoryTest
     {
         // Get the last transactions in the wallet by date
         var lastTransactions = m_walletTransactionRepository.GetLastTransactionsByDate(
-            m_wallet1.GetName(),
+            m_wallet1.GetId(),
             LocalDate.now().minusDays(1));
 
         // Check if the last transactions are correct
@@ -147,7 +156,7 @@ public class WalletTransactionRepositoryTest
 
         // Get the last transactions in the wallet by date
         List<WalletTransaction> lastTransactions =
-            m_walletTransactionRepository.GetLastTransactions(m_wallet1.GetName(),
+            m_walletTransactionRepository.GetLastTransactions(m_wallet1.GetId(),
                                                               request);
 
         // Check if the last transactions are correct
@@ -170,7 +179,7 @@ public class WalletTransactionRepositoryTest
 
         // Get the last transactions in the wallet by date
         List<WalletTransaction> lastTransactions =
-            m_walletTransactionRepository.GetLastTransactions(m_wallet1.GetName(),
+            m_walletTransactionRepository.GetLastTransactions(m_wallet1.GetId(),
                                                               request);
 
         // Check if the last transactions are correct

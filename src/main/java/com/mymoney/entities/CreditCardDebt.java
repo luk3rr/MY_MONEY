@@ -6,7 +6,6 @@
 
 package com.mymoney.entities;
 
-import java.time.LocalDate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 
 /**
  * Represents a credit card debt
@@ -26,25 +26,25 @@ public class CreditCardDebt
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "debt_id")
-    private Long m_id;
+    @Column(name = "id")
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "crc_name", referencedColumnName = "name")
-    private CreditCard m_creditCard;
+    @JoinColumn(name = "crc_id", referencedColumnName = "id", nullable = false)
+    private CreditCard creditCard;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
-    private Category m_category;
+    @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false)
+    private Category category;
 
     @Column(name = "date", nullable = false)
-    private LocalDate m_date;
+    private LocalDate date;
 
     @Column(name = "total_amount", nullable = false)
-    private Double m_totalAmount;
+    private Double totalAmount;
 
-    @Column(name = "description")
-    private String m_description;
+    @Column(name = "description", nullable = true)
+    private String description;
 
     /**
      * Default constructor for JPA
@@ -65,11 +65,11 @@ public class CreditCardDebt
                           Double     totalAmount,
                           String     description)
     {
-        m_creditCard  = creditCard;
-        m_category    = category;
-        m_date        = date;
-        m_totalAmount = totalAmount;
-        m_description = description;
+        this.creditCard  = creditCard;
+        this.category    = category;
+        this.date        = date;
+        this.totalAmount = totalAmount;
+        this.description = description;
     }
 
     /**
@@ -78,7 +78,7 @@ public class CreditCardDebt
      */
     public Long GetId()
     {
-        return m_id;
+        return id;
     }
 
     /**
@@ -87,7 +87,7 @@ public class CreditCardDebt
      */
     public CreditCard GetCreditCard()
     {
-        return m_creditCard;
+        return creditCard;
     }
 
     /**
@@ -96,7 +96,7 @@ public class CreditCardDebt
      */
     public Category GetCategory()
     {
-        return m_category;
+        return category;
     }
 
     /**
@@ -105,7 +105,7 @@ public class CreditCardDebt
      */
     public LocalDate GetDate()
     {
-        return m_date;
+        return date;
     }
 
     /**
@@ -114,7 +114,7 @@ public class CreditCardDebt
      */
     public Double GetTotalAmount()
     {
-        return m_totalAmount;
+        return totalAmount;
     }
 
     /**
@@ -123,7 +123,7 @@ public class CreditCardDebt
      */
     public String GetDescription()
     {
-        return m_description;
+        return description;
     }
 
     /**
@@ -132,7 +132,7 @@ public class CreditCardDebt
      */
     public void SetCreditCard(CreditCard creditCard)
     {
-        m_creditCard = creditCard;
+        this.creditCard = creditCard;
     }
 
     /**
@@ -141,7 +141,7 @@ public class CreditCardDebt
      */
     public void SetCategory(Category category)
     {
-        m_category = category;
+        this.category = category;
     }
 
     /**
@@ -150,7 +150,7 @@ public class CreditCardDebt
      */
     public void SetDate(LocalDate date)
     {
-        m_date = date;
+        this.date = date;
     }
 
     /**
@@ -159,7 +159,7 @@ public class CreditCardDebt
      */
     public void SetTotalAmount(Double totalAmount)
     {
-        m_totalAmount = totalAmount;
+        this.totalAmount = totalAmount;
     }
 
     /**
@@ -168,6 +168,6 @@ public class CreditCardDebt
      */
     public void SetDescription(String description)
     {
-        m_description = description;
+        this.description = description;
     }
 }

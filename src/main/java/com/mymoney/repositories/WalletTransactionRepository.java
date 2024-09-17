@@ -21,29 +21,29 @@ public interface WalletTransactionRepository
 
     /**
      * Get the last transactions in a wallet by date
-     * @param walletName The name of the wallet
+     * @param walletId The id of the wallet
      * @param startDate The start date of the period
      * @return A list with the last transactions in the wallet by date
      */
     @Query("SELECT wt "
            + "FROM WalletTransaction wt "
-           + "WHERE wt.m_wallet.m_name = :walletName "
-           + "AND wt.m_date >= :startDate "
-           + "ORDER BY wt.m_date DESC")
+           + "WHERE wt.wallet.id = :walletId "
+           + "AND wt.date >= :startDate "
+           + "ORDER BY wt.date DESC")
     List<WalletTransaction>
-    GetLastTransactionsByDate(@Param("walletName") String   walletName,
+    GetLastTransactionsByDate(@Param("walletId") Long       walletId,
                               @Param("startDate") LocalDate startDate);
 
     /**
      * Get the last n transactions in a wallet
-     * @param walletName The name of the wallet
+     * @param walletId The id of the wallet
      * @param pageable The pageable object
      * @return A list with the last n transactions in the wallet
      */
     @Query("SELECT wt "
            + "FROM WalletTransaction wt "
-           + "WHERE wt.m_wallet.m_name = :walletName "
-           + "ORDER BY wt.m_date DESC")
+           + "WHERE wt.wallet.id = :walletId "
+           + "ORDER BY wt.date DESC")
     List<WalletTransaction>
-    GetLastTransactions(@Param("walletName") String walletName, Pageable pageable);
+    GetLastTransactions(@Param("walletId") Long walletId, Pageable pageable);
 }

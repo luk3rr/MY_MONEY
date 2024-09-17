@@ -18,14 +18,14 @@ public interface CreditCardPaymentRepository
 
     /**
      * Get the total paid amount of a credit card
-     * @param creditCardName The name of the credit card
+     * @param creditCardId The credit card id
      * @return The total paid amount of the credit card
      */
-    @Query("SELECT COALESCE(SUM(ccp.m_amount), 0) "
+    @Query("SELECT COALESCE(SUM(ccp.amount), 0) "
            + "FROM CreditCardPayment ccp "
-           + "JOIN ccp.m_creditCardDebt ccd "
-           + "WHERE ccd.m_creditCard.m_name = :creditCardName "
-           + "AND ccp.m_wallet IS NOT NULL")
+           + "JOIN ccp.creditCardDebt ccd "
+           + "WHERE ccd.creditCard.id = :creditCardId "
+           + "AND ccp.wallet IS NOT NULL")
     Double
-    GetTotalPaidAmount(@Param("creditCardName") String creditCardName);
+    GetTotalPaidAmount(@Param("creditCardId") Long creditCardId);
 }

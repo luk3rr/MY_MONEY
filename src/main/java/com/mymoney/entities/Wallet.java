@@ -8,6 +8,8 @@ package com.mymoney.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -20,15 +22,19 @@ import jakarta.persistence.Table;
 public class Wallet
 {
     @Id
-    @Column(name = "name")
-    private String m_name;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    private Long id;
+
+    @Column(name = "name", nullable = false, length = 50, unique = true)
+    private String name;
 
     @Column(name = "balance", nullable = false)
-    private Double m_balance;
+    private Double balance;
 
-    @Column(name = "archived", nullable = false)
-    private Boolean m_archived =
-        false; // Default value at creation in the database is false
+    @Column(name     = "archived",
+            nullable = false)
+    private Boolean archived = false; // Default value is false
 
     /**
      * Default constructor for JPA
@@ -42,8 +48,17 @@ public class Wallet
      */
     public Wallet(String name, Double balance)
     {
-        m_name    = name;
-        m_balance = balance;
+        this.name    = name;
+        this.balance = balance;
+    }
+
+    /**
+     * Get the id of the wallet
+     * @return The id of the wallet
+     */
+    public Long GetId()
+    {
+        return id;
     }
 
     /**
@@ -52,7 +67,7 @@ public class Wallet
      */
     public String GetName()
     {
-        return m_name;
+        return name;
     }
 
     /**
@@ -61,7 +76,7 @@ public class Wallet
      */
     public Double GetBalance()
     {
-        return m_balance;
+        return balance;
     }
 
     /**
@@ -70,7 +85,7 @@ public class Wallet
      */
     public boolean IsArchived()
     {
-        return m_archived;
+        return archived;
     }
 
     /**
@@ -79,7 +94,7 @@ public class Wallet
      */
     public void SetName(String name)
     {
-        m_name = name;
+        this.name = name;
     }
 
     /**
@@ -88,7 +103,7 @@ public class Wallet
      */
     public void SetBalance(Double balance)
     {
-        m_balance = balance;
+        this.balance = balance;
     }
 
     /**
@@ -97,6 +112,6 @@ public class Wallet
      */
     public void SetArchived(boolean archived)
     {
-        m_archived = archived;
+        this.archived = archived;
     }
 }

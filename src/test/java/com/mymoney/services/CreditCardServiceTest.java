@@ -69,7 +69,7 @@ public class CreditCardServiceTest
     @BeforeEach
     public void BeforeEach()
     {
-        m_creditCard  = new CreditCard("Credit Card", (short)10, 1000.0);
+        m_creditCard  = new CreditCard("Credit Card", 10, 1000.0);
         m_category    = new Category("Category");
         m_date        = LocalDate.now();
         m_description = "";
@@ -79,6 +79,12 @@ public class CreditCardServiceTest
     @DisplayName("Test if the credit card is created successfully")
     public void TestCreateCreditCard()
     {
+        when(m_creditCardRepository.save(any(CreditCard.class)))
+            .thenReturn(m_creditCard);
+
+        when(m_creditCardRepository.existsByName(m_creditCard.GetName()))
+            .thenReturn(false);
+
         m_creditCardService.CreateCreditCard(m_creditCard.GetName(),
                                              m_creditCard.GetBillingDueDay(),
                                              m_creditCard.GetMaxDebt());
@@ -102,8 +108,7 @@ public class CreditCardServiceTest
     public void
     TestCreateCreditCardAlreadyExists()
     {
-        when(m_creditCardRepository.existsById(m_creditCard.GetName()))
-            .thenReturn(true);
+        when(m_creditCardRepository.existsByName(m_creditCard.GetName())).thenReturn(true);
 
         assertThrows(
             RuntimeException.class,
@@ -122,11 +127,11 @@ public class CreditCardServiceTest
     public void
     TestCreateCreditCardInvalidDueDate()
     {
-        when(m_creditCardRepository.existsById(m_creditCard.GetName()))
+        when(m_creditCardRepository.existsByName(m_creditCard.GetName()))
             .thenReturn(false);
 
         // Case when the billing due day is less than 1
-        m_creditCard.SetBillingDueDay((short)0);
+        m_creditCard.SetBillingDueDay(0);
 
         assertThrows(
             RuntimeException.class,
@@ -136,7 +141,7 @@ public class CreditCardServiceTest
                                                         m_creditCard.GetMaxDebt()));
 
         // Case when the billing due day is greater than Constants.MAX_BILLING_DUE_DAY
-        m_creditCard.SetBillingDueDay((short)(Constants.MAX_BILLING_DUE_DAY + 1));
+        m_creditCard.SetBillingDueDay(Constants.MAX_BILLING_DUE_DAY + 1);
 
         assertThrows(
             RuntimeException.class,
@@ -153,7 +158,7 @@ public class CreditCardServiceTest
     @DisplayName("Test if the credit card is not created when the max debt is negative")
     public void TestCreateCreditCardNegativeMaxDebt()
     {
-        when(m_creditCardRepository.existsById(m_creditCard.GetName()))
+        when(m_creditCardRepository.existsByName(m_creditCard.GetName()))
             .thenReturn(false);
 
         // Case when the max debt is negative
@@ -174,10 +179,10 @@ public class CreditCardServiceTest
     @DisplayName("Test if the credit card is deleted successfully")
     public void TestDeleteCreditCard()
     {
-        when(m_creditCardRepository.findById(m_creditCard.GetName()))
+        when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.of(m_creditCard));
 
-        m_creditCardService.DeleteCreditCard(m_creditCard.GetName());
+        m_creditCardService.DeleteCreditCard(m_creditCard.GetId());
 
         // Verify that the credit card was deleted
         verify(m_creditCardRepository).delete(m_creditCard);
@@ -187,12 +192,11 @@ public class CreditCardServiceTest
     @DisplayName("Test if the credit card is not deleted when it does not exist")
     public void TestDeleteCreditCardDoesNotExist()
     {
-        when(m_creditCardRepository.findById(m_creditCard.GetName()))
+        when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.empty());
 
-        assertThrows(
-            RuntimeException.class,
-            () -> m_creditCardService.DeleteCreditCard(m_creditCard.GetName()));
+        assertThrows(RuntimeException.class,
+                     () -> m_creditCardService.DeleteCreditCard(m_creditCard.GetId()));
 
         // Verify that the credit card was not deleted
         verify(m_creditCardRepository, never()).delete(any(CreditCard.class));
@@ -204,11 +208,11 @@ public class CreditCardServiceTest
     public void
     TestGetAvailableCredit()
     {
-        when(m_creditCardRepository.findById(m_creditCard.GetName()))
+        when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.of(m_creditCard));
 
         double availableCredit =
-            m_creditCardService.GetAvailableCredit(m_creditCard.GetName());
+            m_creditCardService.GetAvailableCredit(m_creditCard.GetId());
 
         assertEquals(m_creditCard.GetMaxDebt(), availableCredit);
     }
@@ -221,17 +225,17 @@ public class CreditCardServiceTest
     {
         Double previousFreeCredit = m_creditCard.GetMaxDebt();
 
-        when(m_creditCardRepository.findById(m_creditCard.GetName()))
+        when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.of(m_creditCard));
 
-        when(m_creditCardDebtRepository.GetTotalDebt(m_creditCard.GetName()))
+        when(m_creditCardDebtRepository.GetTotalDebt(m_creditCard.GetId()))
             .thenReturn(previousFreeCredit - previousFreeCredit / 2);
 
-        when(m_creditCardPaymentRepository.GetTotalPaidAmount(m_creditCard.GetName()))
+        when(m_creditCardPaymentRepository.GetTotalPaidAmount(m_creditCard.GetId()))
             .thenReturn(0.0);
 
         double availableCredit =
-            m_creditCardService.GetAvailableCredit(m_creditCard.GetName());
+            m_creditCardService.GetAvailableCredit(m_creditCard.GetId());
 
         assertEquals(previousFreeCredit / 2, availableCredit, Constants.EPSILON);
     }
@@ -244,17 +248,17 @@ public class CreditCardServiceTest
     {
         m_creditCard.SetMaxDebt(1000.0);
 
-        when(m_creditCardRepository.findById(m_creditCard.GetName()))
+        when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.of(m_creditCard));
 
-        when(m_creditCardDebtRepository.GetTotalDebt(m_creditCard.GetName()))
+        when(m_creditCardDebtRepository.GetTotalDebt(m_creditCard.GetId()))
             .thenReturn(300.0);
 
-        when(m_creditCardPaymentRepository.GetTotalPaidAmount(m_creditCard.GetName()))
+        when(m_creditCardPaymentRepository.GetTotalPaidAmount(m_creditCard.GetId()))
             .thenReturn(100.0);
 
         double availableCredit =
-            m_creditCardService.GetAvailableCredit(m_creditCard.GetName());
+            m_creditCardService.GetAvailableCredit(m_creditCard.GetId());
 
         assertEquals(800.0, availableCredit, Constants.EPSILON);
     }
@@ -263,12 +267,12 @@ public class CreditCardServiceTest
     @DisplayName("Test if exception is thrown when the credit card does not exist")
     public void TestGetAvailableCreditDoesNotExist()
     {
-        when(m_creditCardRepository.findById(m_creditCard.GetName()))
+        when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.empty());
 
         assertThrows(
             RuntimeException.class,
-            () -> m_creditCardService.GetAvailableCredit(m_creditCard.GetName()));
+            () -> m_creditCardService.GetAvailableCredit(m_creditCard.GetId()));
     }
 
     @Test
@@ -277,13 +281,13 @@ public class CreditCardServiceTest
     {
         m_creditCard.SetMaxDebt(1000.0);
 
-        when(m_creditCardRepository.findById(m_creditCard.GetName()))
+        when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.of(m_creditCard));
 
         when(m_categoryRepository.findById(m_category.GetId()))
             .thenReturn(Optional.of(m_category));
 
-        m_creditCardService.RegisterDebt(m_creditCard.GetName(),
+        m_creditCardService.RegisterDebt(m_creditCard.GetId(),
                                          m_category,
                                          m_date,
                                          100.0,
@@ -301,12 +305,12 @@ public class CreditCardServiceTest
     @DisplayName("Test if exception is thrown when the credit card does not exist")
     public void TestRegisterDebtCreditCardDoesNotExist()
     {
-        when(m_creditCardRepository.findById(m_creditCard.GetName()))
+        when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class,
                      ()
-                         -> m_creditCardService.RegisterDebt(m_creditCard.GetName(),
+                         -> m_creditCardService.RegisterDebt(m_creditCard.GetId(),
                                                              m_category,
                                                              m_date,
                                                              100.0,
@@ -321,7 +325,7 @@ public class CreditCardServiceTest
     @DisplayName("Test if exception is thrown when the category does not exist")
     public void TestRegisterDebtCategoryDoesNotExist()
     {
-        when(m_creditCardRepository.findById(m_creditCard.GetName()))
+        when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.of(m_creditCard));
 
         when(m_categoryRepository.findById(m_category.GetId()))
@@ -329,7 +333,7 @@ public class CreditCardServiceTest
 
         assertThrows(RuntimeException.class,
                      ()
-                         -> m_creditCardService.RegisterDebt(m_creditCard.GetName(),
+                         -> m_creditCardService.RegisterDebt(m_creditCard.GetId(),
                                                              m_category,
                                                              m_date,
                                                              100.0,
@@ -348,7 +352,7 @@ public class CreditCardServiceTest
     @DisplayName("Test if exception is thrown when the value is negative")
     public void TestRegisterDebtNegativeValue()
     {
-        when(m_creditCardRepository.findById(m_creditCard.GetName()))
+        when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.of(m_creditCard));
 
         when(m_categoryRepository.findById(m_category.GetId()))
@@ -356,7 +360,7 @@ public class CreditCardServiceTest
 
         assertThrows(RuntimeException.class,
                      ()
-                         -> m_creditCardService.RegisterDebt(m_creditCard.GetName(),
+                         -> m_creditCardService.RegisterDebt(m_creditCard.GetId(),
                                                              m_category,
                                                              m_date,
                                                              -1.0,
@@ -375,7 +379,7 @@ public class CreditCardServiceTest
     @DisplayName("Test if exception is thrown when the installment is less than 1")
     public void TestRegisterDebtInvalidInstallment()
     {
-        when(m_creditCardRepository.findById(m_creditCard.GetName()))
+        when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.of(m_creditCard));
 
         when(m_categoryRepository.findById(m_category.GetId()))
@@ -383,7 +387,7 @@ public class CreditCardServiceTest
 
         assertThrows(RuntimeException.class,
                      ()
-                         -> m_creditCardService.RegisterDebt(m_creditCard.GetName(),
+                         -> m_creditCardService.RegisterDebt(m_creditCard.GetId(),
                                                              m_category,
                                                              m_date,
                                                              100.0,
@@ -404,7 +408,7 @@ public class CreditCardServiceTest
     public void
     TestRegisterDebtInvalidInstallment2()
     {
-        when(m_creditCardRepository.findById(m_creditCard.GetName()))
+        when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.of(m_creditCard));
 
         when(m_categoryRepository.findById(m_category.GetId()))
@@ -413,7 +417,7 @@ public class CreditCardServiceTest
         assertThrows(
             RuntimeException.class,
             ()
-                -> m_creditCardService.RegisterDebt(m_creditCard.GetName(),
+                -> m_creditCardService.RegisterDebt(m_creditCard.GetId(),
                                                     m_category,
                                                     m_date,
                                                     100.0,
@@ -437,7 +441,7 @@ public class CreditCardServiceTest
     {
         m_creditCard.SetMaxDebt(100.0);
 
-        when(m_creditCardRepository.findById(m_creditCard.GetName()))
+        when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.of(m_creditCard));
 
         when(m_categoryRepository.findById(m_category.GetId()))
@@ -445,7 +449,7 @@ public class CreditCardServiceTest
 
         assertThrows(RuntimeException.class,
                      ()
-                         -> m_creditCardService.RegisterDebt(m_creditCard.GetName(),
+                         -> m_creditCardService.RegisterDebt(m_creditCard.GetId(),
                                                              m_category,
                                                              m_date,
                                                              200.0,
@@ -465,7 +469,7 @@ public class CreditCardServiceTest
     public void TestRegisterPayment()
     {
         // Setup mocks
-        when(m_creditCardRepository.findById(m_creditCard.GetName()))
+        when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.of(m_creditCard));
 
         when(m_categoryRepository.findById(m_category.GetId()))
@@ -475,7 +479,7 @@ public class CreditCardServiceTest
         ArgumentCaptor<CreditCardPayment> paymentCaptor =
             ArgumentCaptor.forClass(CreditCardPayment.class);
 
-        m_creditCardService.RegisterDebt(m_creditCard.GetName(),
+        m_creditCardService.RegisterDebt(m_creditCard.GetId(),
                                          m_category,
                                          m_date,
                                          100.0,

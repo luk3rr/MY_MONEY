@@ -6,7 +6,6 @@
 
 package com.mymoney.entities;
 
-import java.time.LocalDate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 
 /**
  * Represents a credit card payment
@@ -26,25 +26,25 @@ public class CreditCardPayment
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "payment_id")
-    private Long m_id;
+    @Column(name = "id")
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "wallet", referencedColumnName = "name", nullable = true)
-    private Wallet m_wallet;
+    @JoinColumn(name = "wallet_id", referencedColumnName = "id", nullable = true)
+    private Wallet wallet;
 
     @ManyToOne
-    @JoinColumn(name = "debt_id", referencedColumnName = "debt_id")
-    private CreditCardDebt m_creditCardDebt;
+    @JoinColumn(name = "debt_id", referencedColumnName = "id", nullable = false)
+    private CreditCardDebt creditCardDebt;
 
     @Column(name = "date", nullable = false)
-    private LocalDate m_date;
+    private LocalDate date;
 
     @Column(name = "amount", nullable = false)
-    private Double m_amount;
+    private Double amount;
 
     @Column(name = "installment", nullable = false)
-    private Short m_installment;
+    private Integer installment;
 
     /**
      * Default constructor for JPA
@@ -63,13 +63,13 @@ public class CreditCardPayment
                              CreditCardDebt debt,
                              LocalDate      date,
                              Double         amount,
-                             Short          installment)
+                             Integer        installment)
     {
-        m_wallet         = wallet;
-        m_creditCardDebt = debt;
-        m_date           = date;
-        m_amount         = amount;
-        m_installment    = installment;
+        this.wallet         = wallet;
+        this.creditCardDebt = debt;
+        this.date           = date;
+        this.amount         = amount;
+        this.installment    = installment;
     }
 
     /**
@@ -82,12 +82,12 @@ public class CreditCardPayment
     public CreditCardPayment(CreditCardDebt debt,
                              LocalDate      date,
                              Double         amount,
-                             Short          installment)
+                             Integer        installment)
     {
-        m_creditCardDebt = debt;
-        m_date           = date;
-        m_amount         = amount;
-        m_installment    = installment;
+        this.creditCardDebt = debt;
+        this.date           = date;
+        this.amount         = amount;
+        this.installment    = installment;
     }
 
     /**
@@ -96,7 +96,7 @@ public class CreditCardPayment
      */
     public Long GetId()
     {
-        return m_id;
+        return id;
     }
 
     /**
@@ -105,7 +105,7 @@ public class CreditCardPayment
      */
     public Wallet GetWallet()
     {
-        return m_wallet;
+        return wallet;
     }
 
     /**
@@ -114,7 +114,7 @@ public class CreditCardPayment
      */
     public CreditCardDebt GetCreditCardDebt()
     {
-        return m_creditCardDebt;
+        return creditCardDebt;
     }
 
     /**
@@ -123,7 +123,7 @@ public class CreditCardPayment
      */
     public LocalDate GetDate()
     {
-        return m_date;
+        return date;
     }
 
     /**
@@ -132,16 +132,16 @@ public class CreditCardPayment
      */
     public Double GetAmount()
     {
-        return m_amount;
+        return amount;
     }
 
     /**
      * Get the installment of the payment
      * @return The installment of the payment
      */
-    public Short GetInstallment()
+    public Integer GetInstallment()
     {
-        return m_installment;
+        return installment;
     }
 
     /**
@@ -150,7 +150,7 @@ public class CreditCardPayment
      */
     public void SetWallet(Wallet wallet)
     {
-        m_wallet = wallet;
+        this.wallet = wallet;
     }
 
     /**
@@ -159,7 +159,7 @@ public class CreditCardPayment
      */
     public void SetCreditCardDebt(CreditCardDebt debtId)
     {
-        m_creditCardDebt = debtId;
+        creditCardDebt = debtId;
     }
 
     /**
@@ -168,7 +168,7 @@ public class CreditCardPayment
      */
     public void SetDate(LocalDate date)
     {
-        m_date = date;
+        this.date = date;
     }
 
     /**
@@ -177,15 +177,15 @@ public class CreditCardPayment
      */
     public void SetAmount(Double amount)
     {
-        m_amount = amount;
+        this.amount = amount;
     }
 
     /**
      * Set the installment of the payment
      * @param installment The installment of the payment
      */
-    public void SetInstallment(Short installment)
+    public void SetInstallment(Integer installment)
     {
-        m_installment = installment;
+        this.installment = installment;
     }
 }

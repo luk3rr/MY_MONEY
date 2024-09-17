@@ -13,6 +13,8 @@ import com.mymoney.entities.CreditCard;
 import com.mymoney.entities.CreditCardDebt;
 import com.mymoney.entities.CreditCardPayment;
 import com.mymoney.entities.Wallet;
+import com.mymoney.entities.CreditCardOperator;
+import com.mymoney.entities.Category;
 import com.mymoney.util.Constants;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,6 +47,12 @@ public class CreditCardPaymentRepositoryTest
     @Autowired
     private CreditCardDebtRepository m_creditCardDebtRepository;
 
+    @Autowired
+    private CreditCardOperatorRepository m_creditCardOperatorRepository;
+
+    @Autowired
+    private CategoryRepository m_categoryRepository;
+
     private CreditCard m_creditCard1;
     private CreditCard m_creditCard2;
     private Wallet     m_wallet;
@@ -54,10 +62,21 @@ public class CreditCardPaymentRepositoryTest
         CreditCard creditCard = new CreditCard();
         creditCard.SetName(name);
         creditCard.SetMaxDebt(maxDebt);
-        creditCard.SetBillingDueDay((short)10);
+        creditCard.SetBillingDueDay(10);
+        creditCard.SetOperator(CreateCreditCardOperator("Operator"));
         m_creditCardRepository.save(creditCard);
         m_creditCardRepository.flush();
         return creditCard;
+    }
+
+    private CreditCardOperator CreateCreditCardOperator(String name)
+    {
+        CreditCardOperator creditCardOperator = new CreditCardOperator();
+        creditCardOperator.SetName(name);
+        creditCardOperator.SetIconPath("");
+        m_creditCardOperatorRepository.save(creditCardOperator);
+        m_creditCardOperatorRepository.flush();
+        return creditCardOperator;
     }
 
     private Wallet CreateWallet(String name, double balance)
@@ -77,20 +96,29 @@ public class CreditCardPaymentRepositoryTest
         creditCardDebt.SetTotalAmount(totalAmount);
         creditCardDebt.SetCreditCard(creditCard);
         creditCardDebt.SetDate(LocalDate.now().plusDays(5));
+        creditCardDebt.SetCategory(CreateCategory("category"));
         m_creditCardDebtRepository.save(creditCardDebt);
         m_creditCardDebtRepository.flush();
         return creditCardDebt;
     }
 
+    private Category CreateCategory(String name)
+    {
+        Category category = new Category(name);
+        m_categoryRepository.save(category);
+        m_categoryRepository.flush();
+        return category;
+    }
+
     private void
-    CreateCreditCardPayment(CreditCardDebt debt, Wallet m_wallet, double amount)
+    CreateCreditCardPayment(CreditCardDebt debt, Wallet wallet, double amount)
     {
         CreditCardPayment creditCardPayment = new CreditCardPayment();
         creditCardPayment.SetAmount(amount);
         creditCardPayment.SetCreditCardDebt(debt);
-        creditCardPayment.SetWallet(m_wallet);
+        creditCardPayment.SetWallet(wallet);
         creditCardPayment.SetDate(LocalDate.now());
-        creditCardPayment.SetInstallment((short)1);
+        creditCardPayment.SetInstallment(1);
         m_creditCardPaymentRepository.save(creditCardPayment);
         m_creditCardPaymentRepository.flush();
     }
@@ -110,7 +138,7 @@ public class CreditCardPaymentRepositoryTest
         // No payments yet
         assertEquals(
             0.0,
-            m_creditCardPaymentRepository.GetTotalPaidAmount(m_creditCard1.GetName()),
+            m_creditCardPaymentRepository.GetTotalPaidAmount(m_creditCard1.GetId()),
             Constants.EPSILON,
             "Total paid amount must be 0.0");
     }
@@ -124,7 +152,7 @@ public class CreditCardPaymentRepositoryTest
 
         assertEquals(
             100.0,
-            m_creditCardPaymentRepository.GetTotalPaidAmount(m_creditCard1.GetName()),
+            m_creditCardPaymentRepository.GetTotalPaidAmount(m_creditCard1.GetId()),
             Constants.EPSILON,
             "Total paid amount must be 100.0");
     }
@@ -139,7 +167,7 @@ public class CreditCardPaymentRepositoryTest
 
         assertEquals(
             300.0,
-            m_creditCardPaymentRepository.GetTotalPaidAmount(m_creditCard1.GetName()),
+            m_creditCardPaymentRepository.GetTotalPaidAmount(m_creditCard1.GetId()),
             Constants.EPSILON,
             "Total paid amount must be 300.0");
     }
@@ -157,13 +185,13 @@ public class CreditCardPaymentRepositoryTest
 
         assertEquals(
             300.0,
-            m_creditCardPaymentRepository.GetTotalPaidAmount(m_creditCard1.GetName()),
+            m_creditCardPaymentRepository.GetTotalPaidAmount(m_creditCard1.GetId()),
             Constants.EPSILON,
             "Total paid amount must be 300.0");
 
         assertEquals(
             255.0,
-            m_creditCardPaymentRepository.GetTotalPaidAmount(m_creditCard2.GetName()),
+            m_creditCardPaymentRepository.GetTotalPaidAmount(m_creditCard2.GetId()),
             Constants.EPSILON,
             "Total paid amount must be 255.0");
     }

@@ -30,33 +30,33 @@ public class WalletTransaction
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "transaction_id")
-    private Long m_id;
+    @Column(name = "id")
+    private Long id;
 
     @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "wallet", referencedColumnName = "name")
-    private Wallet m_wallet;
+    @JoinColumn(name = "wallet_id", referencedColumnName = "id", nullable = false)
+    private Wallet wallet;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
-    private Category m_category;
+    @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false)
+    private Category category;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
-    private TransactionType m_type;
-
-    @Column(name = "date", nullable = false)
-    private LocalDate m_date;
-
-    @Column(name = "amount", nullable = false)
-    private Double m_amount;
-
-    @Column(name = "description")
-    private String m_description;
+    private TransactionType type;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private TransactionStatus m_status;
+    private TransactionStatus status;
+
+    @Column(name = "date", nullable = false)
+    private LocalDate date;
+
+    @Column(name = "amount", nullable = false)
+    private Double amount;
+
+    @Column(name = "description", nullable = true)
+    private String description;
 
     /**
      * Default constructor for JPA
@@ -80,13 +80,13 @@ public class WalletTransaction
                              Double            amount,
                              String            description)
     {
-        m_wallet      = wallet;
-        m_category    = category;
-        m_type        = type;
-        m_status      = status;
-        m_date        = date;
-        m_amount      = amount;
-        m_description = description;
+        this.wallet      = wallet;
+        this.category    = category;
+        this.type        = type;
+        this.status      = status;
+        this.date        = date;
+        this.amount      = amount;
+        this.description = description;
     }
 
     /**
@@ -95,7 +95,7 @@ public class WalletTransaction
      */
     public Long GetId()
     {
-        return m_id;
+        return id;
     }
 
     /**
@@ -104,7 +104,7 @@ public class WalletTransaction
      */
     public Wallet GetWallet()
     {
-        return m_wallet;
+        return wallet;
     }
 
     /**
@@ -113,7 +113,7 @@ public class WalletTransaction
      */
     public Category GetCategory()
     {
-        return m_category;
+        return category;
     }
 
     /**
@@ -122,7 +122,7 @@ public class WalletTransaction
      */
     public LocalDate GetDate()
     {
-        return m_date;
+        return date;
     }
 
     /**
@@ -131,7 +131,7 @@ public class WalletTransaction
      */
     public String GetDescription()
     {
-        return m_description;
+        return description;
     }
 
     /**
@@ -140,7 +140,7 @@ public class WalletTransaction
      */
     public Double GetAmount()
     {
-        return m_amount;
+        return amount;
     }
 
     /**
@@ -149,7 +149,7 @@ public class WalletTransaction
      */
     public TransactionType GetType()
     {
-        return m_type;
+        return type;
     }
 
     /**
@@ -158,7 +158,7 @@ public class WalletTransaction
      */
     public TransactionStatus GetStatus()
     {
-        return m_status;
+        return status;
     }
 
     /**
@@ -167,7 +167,7 @@ public class WalletTransaction
      */
     public void SetWallet(Wallet wallet)
     {
-        m_wallet = wallet;
+        this.wallet = wallet;
     }
 
     /**
@@ -176,7 +176,7 @@ public class WalletTransaction
      */
     public void SetCategory(Category category)
     {
-        m_category = category;
+        this.category = category;
     }
 
     /**
@@ -185,7 +185,7 @@ public class WalletTransaction
      */
     public void SetDate(LocalDate date)
     {
-        m_date = date;
+        this.date = date;
     }
 
     /**
@@ -194,7 +194,7 @@ public class WalletTransaction
      */
     public void SetDescription(String description)
     {
-        m_description = description;
+        this.description = description;
     }
 
     /**
@@ -203,7 +203,7 @@ public class WalletTransaction
      */
     public void SetAmount(Double amount)
     {
-        m_amount = amount;
+        this.amount = amount;
     }
 
     /**
@@ -212,7 +212,7 @@ public class WalletTransaction
      */
     public void SetType(TransactionType type)
     {
-        m_type = type;
+        this.type = type;
     }
 
     /**
@@ -221,6 +221,6 @@ public class WalletTransaction
      */
     public void SetStatus(TransactionStatus status)
     {
-        m_status = status;
+        this.status = status;
     }
 }

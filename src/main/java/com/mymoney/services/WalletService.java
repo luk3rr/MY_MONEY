@@ -46,11 +46,12 @@ public class WalletService
      * @param name The name of the wallet
      * @param balance The initial balance of the wallet
      * @throws RuntimeException If the wallet name is already in use
+     * @return The id of the created wallet
      */
     @Transactional
-    public void CreateWallet(String name, double balance)
+    public Long CreateWallet(String name, double balance)
     {
-        if (m_walletRepository.existsById(name))
+        if (m_walletRepository.existsByName(name))
         {
             throw new RuntimeException("Wallet with name " + name + " already exists");
         }
@@ -58,70 +59,72 @@ public class WalletService
         m_walletRepository.save(new Wallet(name, balance));
 
         m_logger.info("Wallet " + name + " created with balance " + balance);
+
+        return m_walletRepository.findByName(name).GetId();
     }
 
     /**
      * Delete a wallet
-     * @param name The name of the wallet to be deleted
+     * @param id The id of the wallet to be deleted
      * @throws RuntimeException If the wallet does not exist
      */
     @Transactional
-    public void DeleteWallet(String name)
+    public void DeleteWallet(Long id)
     {
-        Wallet wallet = m_walletRepository.findById(name).orElseThrow(
+        Wallet wallet = m_walletRepository.findById(id).orElseThrow(
             ()
-                -> new RuntimeException("Wallet with name " + name +
+                -> new RuntimeException("Wallet with id " + id +
                                         " not found and cannot be deleted"));
 
         m_walletRepository.delete(wallet);
 
-        m_logger.info("Wallet " + name + " was permanently deleted");
+        m_logger.info("Wallet with id " + id + " was permanently deleted");
     }
 
     /**
      * Archive a wallet
-     * @param name The name of the wallet
+     * @param id The id of the wallet to be archived
      * @throws RuntimeException If the wallet does not exist
      * @note This method is used to archive a wallet, which means that the wallet
      * will not be deleted from the database, but it will not be used in the
      * application anymore
      */
     @Transactional
-    public void ArchiveWallet(String name)
+    public void ArchiveWallet(Long id)
     {
-        Wallet wallet = m_walletRepository.findById(name).orElseThrow(
+        Wallet wallet = m_walletRepository.findById(id).orElseThrow(
             ()
-                -> new RuntimeException("Wallet with name " + name +
+                -> new RuntimeException("Wallet with id " + id +
                                         " not found and cannot be deleted"));
 
         wallet.SetArchived(true);
         m_walletRepository.save(wallet);
 
-        m_logger.info("Wallet " + name + " was archived");
+        m_logger.info("Wallet with id " + id + " was archived");
     }
 
     /**
      * Update the balance of a wallet
-     * @param name The name of the wallet to be updated
+     * @param id The id of the wallet
      * @param newBalance The new balance of the wallet
      * @throws RuntimeException If the wallet does not exist
      */
     @Transactional
-    public void UpdateWalletBalance(String name, double newBalance)
+    public void UpdateWalletBalance(Long id, double newBalance)
     {
-        Wallet wallet = m_walletRepository.findById(name).orElseThrow(
-            () -> new RuntimeException("Wallet with name " + name + " not found"));
+        Wallet wallet = m_walletRepository.findById(id).orElseThrow(
+            () -> new RuntimeException("Wallet with id " + id + " not found"));
 
         wallet.SetBalance(newBalance);
         m_walletRepository.save(wallet);
 
-        m_logger.info("Wallet " + name + " balance updated to " + newBalance);
+        m_logger.info("Wallet with id " + id + " balance updated to " + newBalance);
     }
 
     /**
      * Transfer money between two wallets
-     * @param senderName The name of the wallet that sends the money
-     * @param receiverName The name of the wallet that receives the money
+     * @param senderId The id of the wallet that sends the money
+     * @param receiverId The id of the wallet that receives the money
      * @param amount The amount of money to be transferred
      * @param description A description of the transfer
      * @throws RuntimeException If the sender and receiver wallets are the same
@@ -132,13 +135,13 @@ public class WalletService
      * to transfer
      */
     @Transactional
-    public void TransferMoney(String    senderName,
-                              String    receiverName,
+    public void TransferMoney(Long      senderId,
+                              Long      receiverId,
                               LocalDate date,
                               double    amount,
                               String    description)
     {
-        if (senderName.equals(receiverName))
+        if (senderId.equals(receiverId))
         {
             throw new RuntimeException("Sender and receiver wallets must be different");
         }
@@ -149,14 +152,14 @@ public class WalletService
         }
 
         Wallet senderWallet =
-            m_walletRepository.findById(senderName)
+            m_walletRepository.findById(senderId)
                 .orElseThrow(
                     ()
                         -> new RuntimeException(
                             "Sender wallet not found and cannot transfer money"));
 
         Wallet receiverWallet =
-            m_walletRepository.findById(receiverName)
+            m_walletRepository.findById(receiverId)
                 .orElseThrow(
                     ()
                         -> new RuntimeException(
@@ -177,13 +180,14 @@ public class WalletService
         m_walletRepository.save(senderWallet);
         m_walletRepository.save(receiverWallet);
 
-        m_logger.info("Transfer from " + senderName + " to " + receiverName + " of " +
-                      amount + " was successful");
+        m_logger.info("Transfer from wallet with id " + senderId +
+                      " to wallet with id " + receiverId + " of " + amount +
+                      " was successful");
     }
 
     /**
      * Add an confirmed income to a wallet
-     * @param walletName The name of the wallet that receives the income
+     * @param walletId The id of the wallet that receives the income
      * @param category The category of the income
      * @param date The date of the income
      * @param amount The amount of the income
@@ -191,17 +195,14 @@ public class WalletService
      * @throws RuntimeException If the wallet does not exist
      */
     @Transactional
-    public void AddConfirmedIncome(String    walletName,
+    public void AddConfirmedIncome(Long      walletId,
                                    Category  category,
                                    LocalDate date,
                                    double    amount,
                                    String    description)
     {
-        Wallet wallet =
-            m_walletRepository.findById(walletName)
-                .orElseThrow(()
-                                 -> new RuntimeException("Wallet with name " +
-                                                         walletName + " not found"));
+        Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
+            () -> new RuntimeException("Wallet with id " + walletId + " not found"));
 
         m_walletTransactionRepository.save(
             new WalletTransaction(wallet,
@@ -215,13 +216,13 @@ public class WalletService
         wallet.SetBalance(wallet.GetBalance() + amount);
         m_walletRepository.save(wallet);
 
-        m_logger.info("Confirmed income of " + amount + " added to wallet " +
-                      walletName);
+        m_logger.info("Confirmed income of " + amount + " added to wallet with id " +
+                      walletId);
     }
 
     /**
      * Add an pending income to a wallet
-     * @param walletName The name of the wallet that receives the income
+     * @param walletId The id of the wallet that receives the income
      * @param category The category of the income
      * @param date The date of the income
      * @param amount The amount of the income
@@ -229,17 +230,14 @@ public class WalletService
      * @throws RuntimeException If the wallet does not exist
      */
     @Transactional
-    public void AddPendingIncome(String    walletName,
+    public void AddPendingIncome(Long      walletId,
                                  Category  category,
                                  LocalDate date,
                                  double    amount,
                                  String    description)
     {
-        Wallet wallet =
-            m_walletRepository.findById(walletName)
-                .orElseThrow(()
-                                 -> new RuntimeException("Wallet with name " +
-                                                         walletName + " not found"));
+        Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
+            () -> new RuntimeException("Wallet with id " + walletId + " not found"));
 
         m_walletTransactionRepository.save(
             new WalletTransaction(wallet,
@@ -250,12 +248,13 @@ public class WalletService
                                   amount,
                                   description));
 
-        m_logger.info("Pending income of " + amount + " added to wallet " + walletName);
+        m_logger.info("Pending income of " + amount + " added to wallet with id " +
+                      walletId);
     }
 
     /**
      * Add an confirmed expense to a wallet
-     * @param walletName The name of the wallet that receives the expense
+     * @param walletId The id of the wallet that receives the expense
      * @param category The category of the expense
      * @param date The date of the expense
      * @param amount The amount of the expense
@@ -263,17 +262,14 @@ public class WalletService
      * @throws RuntimeException If the wallet does not exist
      */
     @Transactional
-    public void AddConfirmedExpense(String    walletName,
+    public void AddConfirmedExpense(Long      walletId,
                                     Category  category,
                                     LocalDate date,
                                     double    amount,
                                     String    description)
     {
-        Wallet wallet =
-            m_walletRepository.findById(walletName)
-                .orElseThrow(()
-                                 -> new RuntimeException("Wallet with name " +
-                                                         walletName + " not found"));
+        Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
+            () -> new RuntimeException("Wallet with id " + walletId + " not found"));
 
         m_walletTransactionRepository.save(
             new WalletTransaction(wallet,
@@ -287,7 +283,7 @@ public class WalletService
         wallet.SetBalance(wallet.GetBalance() - amount);
         m_walletRepository.save(wallet);
 
-        m_logger.info("Expense of " + amount + " added to wallet " + walletName);
+        m_logger.info("Expense of " + amount + " added to wallet with id " + walletId);
     }
 
     /**
@@ -300,17 +296,14 @@ public class WalletService
      * @throws RuntimeException If the wallet does not exist
      */
     @Transactional
-    public void AddPendingExpense(String    walletName,
+    public void AddPendingExpense(Long      walletId,
                                   Category  category,
                                   LocalDate date,
                                   double    amount,
                                   String    description)
     {
-        Wallet wallet =
-            m_walletRepository.findById(walletName)
-                .orElseThrow(()
-                                 -> new RuntimeException("Wallet with name " +
-                                                         walletName + " not found"));
+        Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
+            () -> new RuntimeException("Wallet with id " + walletId + " not found"));
 
         m_walletTransactionRepository.save(
             new WalletTransaction(wallet,
@@ -321,8 +314,8 @@ public class WalletService
                                   amount,
                                   description));
 
-        m_logger.info("Pending expense of " + amount + " added to wallet " +
-                      walletName);
+        m_logger.info("Pending expense of " + amount + " added to wallet with id " +
+                      walletId);
     }
 
     /**
@@ -391,8 +384,9 @@ public class WalletService
         {
             if (wallet.GetBalance() < transaction.GetAmount())
             {
-                throw new RuntimeException("Wallet " + wallet.GetName() +
-                                           " does not have enough balance to confirm transaction");
+                throw new RuntimeException(
+                    "Wallet " + wallet.GetName() +
+                    " does not have enough balance to confirm transaction");
             }
 
             wallet.SetBalance(wallet.GetBalance() - transaction.GetAmount());

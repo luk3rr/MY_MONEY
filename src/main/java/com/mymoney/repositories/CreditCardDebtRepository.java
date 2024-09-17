@@ -20,9 +20,9 @@ public interface CreditCardDebtRepository extends JpaRepository<CreditCardDebt, 
      * @param creditCardName The name of the credit card
      * @return The total debt of the credit card
      */
-    @Query("SELECT COALESCE(SUM(ccd.m_totalAmount), 0) FROM CreditCardDebt ccd "
-           + "JOIN ccd.m_creditCard cc "
-           + "WHERE cc.m_name = :creditCardName")
+    @Query("SELECT COALESCE(SUM(ccd.totalAmount), 0) FROM CreditCardDebt ccd "
+           + "JOIN ccd.creditCard cc "
+           + "WHERE cc.id = :creditCardId")
     Double
-    GetTotalDebt(@Param("creditCardName") String creditCardName);
+    GetTotalDebt(@Param("creditCardId") Long creditCardId);
 }

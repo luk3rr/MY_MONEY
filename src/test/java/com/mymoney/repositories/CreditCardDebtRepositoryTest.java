@@ -11,6 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.mymoney.app.MainApplication;
 import com.mymoney.entities.CreditCard;
 import com.mymoney.entities.CreditCardDebt;
+import com.mymoney.entities.CreditCardOperator;
+import com.mymoney.entities.Category;
 import com.mymoney.util.Constants;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,17 +40,42 @@ public class CreditCardDebtRepositoryTest
     @Autowired
     private CreditCardRepository m_creditCardRepository;
 
+    @Autowired
+    private CreditCardOperatorRepository m_creditCardOperatorRepository;
+
+    @Autowired
+    private CategoryRepository m_categoryRepository;
+
     private CreditCard m_creditCard;
 
     private CreditCard CreateCreditCard(String name, double maxDebt)
     {
-        CreditCard m_creditCard = new CreditCard();
-        m_creditCard.SetName(name);
-        m_creditCard.SetMaxDebt(maxDebt);
-        m_creditCard.SetBillingDueDay((short)10);
-        m_creditCardRepository.save(m_creditCard);
+        CreditCard creditCard = new CreditCard();
+        creditCard.SetName(name);
+        creditCard.SetMaxDebt(maxDebt);
+        creditCard.SetBillingDueDay(10);
+        creditCard.SetOperator(CreateCreditCardOperator("Operator"));
+        m_creditCardRepository.save(creditCard);
         m_creditCardRepository.flush();
-        return m_creditCard;
+        return creditCard;
+    }
+
+    private CreditCardOperator CreateCreditCardOperator(String name)
+    {
+        CreditCardOperator creditCardOperator = new CreditCardOperator();
+        creditCardOperator.SetName(name);
+        creditCardOperator.SetIconPath("");
+        m_creditCardOperatorRepository.save(creditCardOperator);
+        m_creditCardOperatorRepository.flush();
+        return creditCardOperator;
+    }
+
+    private Category CreateCategory(String name)
+    {
+        Category category = new Category(name);
+        m_categoryRepository.save(category);
+        m_categoryRepository.flush();
+        return category;
     }
 
     private CreditCardDebt
@@ -58,6 +85,7 @@ public class CreditCardDebtRepositoryTest
         creditCardDebt.SetCreditCard(m_creditCard);
         creditCardDebt.SetTotalAmount(totalAmount);
         creditCardDebt.SetDate(date);
+        creditCardDebt.SetCategory(CreateCategory("category"));
         m_creditCardDebtRepository.save(creditCardDebt);
         m_creditCardDebtRepository.flush();
         return creditCardDebt;
@@ -75,7 +103,7 @@ public class CreditCardDebtRepositoryTest
     {
         // No debt yet
         assertEquals(0.0,
-                     m_creditCardDebtRepository.GetTotalDebt(m_creditCard.GetName()),
+                     m_creditCardDebtRepository.GetTotalDebt(m_creditCard.GetId()),
                      Constants.EPSILON,
                      "Total debt must be 0.0");
     }
@@ -86,7 +114,7 @@ public class CreditCardDebtRepositoryTest
         CreateCreditCardDebt(m_creditCard, 1000.0, LocalDate.now().plusDays(10));
 
         assertEquals(1000.0,
-                     m_creditCardDebtRepository.GetTotalDebt(m_creditCard.GetName()),
+                     m_creditCardDebtRepository.GetTotalDebt(m_creditCard.GetId()),
                      Constants.EPSILON,
                      "Total debt must be 1000.0");
     }
@@ -98,7 +126,7 @@ public class CreditCardDebtRepositoryTest
         CreateCreditCardDebt(m_creditCard, 500.0, LocalDate.now().plusDays(5));
 
         assertEquals(1500.0,
-                     m_creditCardDebtRepository.GetTotalDebt(m_creditCard.GetName()),
+                     m_creditCardDebtRepository.GetTotalDebt(m_creditCard.GetId()),
                      Constants.EPSILON,
                      "Total debt must be 1500.0");
     }
@@ -113,12 +141,12 @@ public class CreditCardDebtRepositoryTest
         CreateCreditCardDebt(creditCard2, 500.0, LocalDate.now().plusDays(5));
 
         assertEquals(1000.0,
-                     m_creditCardDebtRepository.GetTotalDebt(creditCard1.GetName()),
+                     m_creditCardDebtRepository.GetTotalDebt(creditCard1.GetId()),
                      Constants.EPSILON,
                      "Total debt for CreditCard1 must be 1000.0");
 
         assertEquals(500.0,
-                     m_creditCardDebtRepository.GetTotalDebt(creditCard2.GetName()),
+                     m_creditCardDebtRepository.GetTotalDebt(creditCard2.GetId()),
                      Constants.EPSILON,
                      "Total debt for CreditCard2 must be 500.0");
     }

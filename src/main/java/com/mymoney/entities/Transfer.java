@@ -6,8 +6,6 @@
 
 package com.mymoney.entities;
 
-import java.time.LocalDate;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 
 /**
  * Represents a transfer between wallets
@@ -27,25 +26,29 @@ public class Transfer
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "transfer_id")
-    private Long m_id;
+    @Column(name = "id")
+    private Long id;
 
     @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "sender_wallet", referencedColumnName = "name")
-    private Wallet m_senderWallet;
+    @JoinColumn(name                 = "sender_wallet_id",
+                referencedColumnName = "id",
+                nullable             = false)
+    private Wallet senderWallet;
 
     @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "receiver_wallet", referencedColumnName = "name")
-    private Wallet m_receiverWallet;
+    @JoinColumn(name                 = "receiver_wallet_id",
+                referencedColumnName = "id",
+                nullable             = false)
+    private Wallet receiverWallet;
 
     @Column(name = "date", nullable = false)
-    private LocalDate m_date;
+    private LocalDate date;
 
     @Column(name = "amount", nullable = false)
-    private Double m_amount;
+    private Double amount;
 
-    @Column(name = "description")
-    private String m_description;
+    @Column(name = "description", nullable = true)
+    private String description;
 
     /**
      * Default constructor for JPA
@@ -66,20 +69,20 @@ public class Transfer
                     Double    amount,
                     String    description)
     {
-        m_senderWallet   = senderWallet;
-        m_receiverWallet = receiverWallet;
-        m_date           = date;
-        m_amount         = amount;
-        m_description    = description;
+        this.senderWallet   = senderWallet;
+        this.receiverWallet = receiverWallet;
+        this.date           = date;
+        this.amount         = amount;
+        this.description    = description;
     }
 
-    /*
+    /**
      * Get the transfer id
      * @return The transfer id
      */
     public Long GetId()
     {
-        return m_id;
+        return id;
     }
 
     /**
@@ -88,7 +91,7 @@ public class Transfer
      */
     public Wallet GetSenderWallet()
     {
-        return m_senderWallet;
+        return senderWallet;
     }
 
     /**
@@ -97,7 +100,7 @@ public class Transfer
      */
     public Wallet GetReceiverWallet()
     {
-        return m_receiverWallet;
+        return receiverWallet;
     }
 
     /**
@@ -106,7 +109,7 @@ public class Transfer
      */
     public LocalDate GetDate()
     {
-        return m_date;
+        return date;
     }
 
     /**
@@ -115,7 +118,7 @@ public class Transfer
      */
     public String GetDescription()
     {
-        return m_description;
+        return description;
     }
 
     /**
@@ -124,7 +127,7 @@ public class Transfer
      */
     public Double GetAmount()
     {
-        return m_amount;
+        return amount;
     }
 
     /**
@@ -133,7 +136,7 @@ public class Transfer
      */
     public void SetSenderWallet(Wallet senderWallet)
     {
-        m_senderWallet = senderWallet;
+        this.senderWallet = senderWallet;
     }
 
     /**
@@ -142,7 +145,7 @@ public class Transfer
      */
     public void SetReceiverWallet(Wallet receiverWallet)
     {
-        m_receiverWallet = receiverWallet;
+        this.receiverWallet = receiverWallet;
     }
 
     /**
@@ -151,7 +154,7 @@ public class Transfer
      */
     public void SetDate(LocalDate date)
     {
-        m_date = date;
+        this.date = date;
     }
 
     /**
@@ -160,7 +163,7 @@ public class Transfer
      */
     public void SetDescription(String description)
     {
-        m_description = description;
+        this.description = description;
     }
 
     /**
@@ -169,6 +172,6 @@ public class Transfer
      */
     public void SetAmount(Double amount)
     {
-        m_amount = amount;
+        this.amount = amount;
     }
 }

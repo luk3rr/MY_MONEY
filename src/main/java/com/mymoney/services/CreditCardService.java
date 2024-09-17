@@ -53,11 +53,12 @@ public class CreditCardService
      * @throws RuntimeException If the billingDueDay is not in the range [1,
      *     Constants.MAX_BILLING_DUE_DAY]
      * @throws RuntimeException If the maxDebt is negative
+     * @return The id of the created credit card
      */
     @Transactional
-    public void CreateCreditCard(String name, Short dueDate, double maxDebt)
+    public Long CreateCreditCard(String name, Integer dueDate, Double maxDebt)
     {
-        if (m_creditCardRepository.existsById(name))
+        if (m_creditCardRepository.existsByName(name))
         {
             throw new RuntimeException("Credit card with name " + name +
                                        " already exists");
@@ -74,45 +75,48 @@ public class CreditCardService
             throw new RuntimeException("Max debt must be non-negative");
         }
 
-        m_creditCardRepository.save(new CreditCard(name, dueDate, maxDebt));
+        CreditCard newCreditCard =
+            m_creditCardRepository.save(new CreditCard(name, dueDate, maxDebt));
 
         m_logger.info("Credit card " + name + " created with due date " + dueDate +
                       " and max debt " + maxDebt);
+
+        return newCreditCard.GetId();
     }
 
     /**
      * Delete a credit card
-     * @param name The name of the credit card to be deleted
+     * @param id The id of the credit card
      * @throws RuntimeException If the credit card does not exist
      */
     @Transactional
-    public void DeleteCreditCard(String name)
+    public void DeleteCreditCard(Long id)
     {
-        CreditCard creditCard = m_creditCardRepository.findById(name).orElseThrow(
+        CreditCard creditCard = m_creditCardRepository.findById(id).orElseThrow(
             ()
-                -> new RuntimeException("Credit card with name " + name +
+                -> new RuntimeException("Credit card with id " + id +
                                         " does not exist"));
 
         m_creditCardRepository.delete(creditCard);
 
-        m_logger.info("Credit card " + name + " deleted");
+        m_logger.info("Credit card with id " + id + " deleted");
     }
 
     /**
      * Get available credit of a credit card
-     * @param name The name of the credit card
+     * @param id The id of the credit card
      * @return The available credit of the credit card
      * @throws RuntimeException If the credit card does not exist
      */
-    public double GetAvailableCredit(String name)
+    public Double GetAvailableCredit(Long id)
     {
-        CreditCard creditCard = m_creditCardRepository.findById(name).orElseThrow(
+        CreditCard creditCard = m_creditCardRepository.findById(id).orElseThrow(
             ()
-                -> new RuntimeException("Credit card with name " + name +
+                -> new RuntimeException("Credit card with id " + id +
                                         " does not exist"));
 
-        double totalDebt = m_creditCardDebtRepository.GetTotalDebt(name);
-        double totalPaid = m_creditCardPaymentRepository.GetTotalPaidAmount(name);
+        Double totalDebt = m_creditCardDebtRepository.GetTotalDebt(id);
+        Double totalPaid = m_creditCardPaymentRepository.GetTotalPaidAmount(id);
 
         return creditCard.GetMaxDebt() - totalDebt + totalPaid;
     }
@@ -133,19 +137,17 @@ public class CreditCardService
      * @throws RuntimeException If the credit card does not have enough credit
      */
     @Transactional
-    public void RegisterDebt(String    creditCardName,
+    public void RegisterDebt(Long      crcId,
                              Category  category,
                              LocalDate date,
-                             double    value,
-                             int       installment,
+                             Double    value,
+                             Integer   installment,
                              String    description)
     {
-        CreditCard creditCard =
-            m_creditCardRepository.findById(creditCardName)
-                .orElseThrow(()
-                                 -> new RuntimeException("Credit card with name " +
-                                                         creditCardName +
-                                                         " does not exist"));
+        CreditCard creditCard = m_creditCardRepository.findById(crcId).orElseThrow(
+            ()
+                -> new RuntimeException("Credit card with id " + crcId +
+                                        " does not exist"));
 
         Category cat =
             m_categoryRepository.findById(category.GetId())
@@ -164,12 +166,12 @@ public class CreditCardService
                                        Constants.MAX_INSTALLMENTS + "]");
         }
 
-        double availableCredit = GetAvailableCredit(creditCardName);
+        Double availableCredit = GetAvailableCredit(crcId);
 
         if (value > availableCredit)
         {
             throw new RuntimeException(
-                "Credit card " + creditCardName +
+                "Credit card with id " + crcId +
                 " does not have enough credit to register debt");
         }
 
@@ -178,12 +180,12 @@ public class CreditCardService
 
         m_creditCardDebtRepository.save(debt);
 
-        m_logger.info("Debit registered on credit card " + creditCardName +
+        m_logger.info("Debit registered on credit card with id " + crcId +
                       " with value " + value + " and description " + description);
 
-        double installmentValue = value / installment;
+        Double installmentValue = value / installment;
 
-        for (Short i = 1; i <= installment; i++)
+        for (Integer i = 1; i <= installment; i++)
         {
             LocalDate paymentDate =
                 date.plusMonths(i).withDayOfMonth(creditCard.GetBillingDueDay());
@@ -193,9 +195,10 @@ public class CreditCardService
 
             m_creditCardPaymentRepository.save(payment);
 
-            m_logger.info("Payment of debt " + description + " on credit card " +
-                          creditCardName + " registered with value " +
-                          installmentValue + " and due date " + paymentDate);
+            m_logger.info("Payment of debt " + description +
+                          " on credit card with id " + crcId +
+                          " registered with value " + installmentValue +
+                          " and due date " + paymentDate);
         }
     }
 }

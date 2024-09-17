@@ -22,11 +22,11 @@ public class Category
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "category_id")
-    private Short m_id;
+    @Column(name = "id")
+    private Long id;
 
-    @Column(name = "name", nullable = false)
-    private String m_name;
+    @Column(name = "name", nullable = false, length = 50)
+    private String name;
 
     /**
      * Default constructor for JPA
@@ -39,16 +39,16 @@ public class Category
      */
     public Category(String name)
     {
-        this.m_name = name;
+        this.name = name;
     }
 
     /**
      * Get the category id
      * @return The category id
      */
-    public Short GetId()
+    public Long GetId()
     {
-        return m_id;
+        return id;
     }
 
     /**
@@ -57,7 +57,7 @@ public class Category
      */
     public String GetName()
     {
-        return m_name;
+        return name;
     }
 
     /**
@@ -66,6 +66,6 @@ public class Category
      */
     public void SetName(String name)
     {
-        m_name = name;
+        this.name = name;
     }
 }
