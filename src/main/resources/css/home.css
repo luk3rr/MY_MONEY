@@ -22,7 +22,7 @@
 }
 
 .wallet-item {
-    -fx-background-color: linear-gradient(to bottom right, #34c759, #4cd964);
+    -fx-background-color: linear-gradient(to bottom right, #34c759, #138d75 );
     -fx-padding: 15px;
     -fx-border-radius: 10px;
     -fx-background-radius: 10px;
@@ -47,7 +47,7 @@
 }
 
 .credit-card-item {
-    -fx-background-color: linear-gradient(to bottom right, #4a90e2, #9013fe);
+    -fx-background-color: linear-gradient(to bottom right,  #3498db, #9013fe);
     -fx-padding: 15px;
     -fx-border-color: #000;
     -fx-border-radius: 10px;

@@ -9,11 +9,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mymoney.ui.MainController">
+<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="648.0" prefWidth="1151.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mymoney.ui.MainController">
    <children>
       <HBox fx:id="rootHBox" prefHeight="600.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <VBox fx:id="sidebar" prefHeight="600.0" prefWidth="50.0" spacing="20.0" style="-fx-background-color: #8af0c1;">
+            <VBox fx:id="sidebar" prefHeight="600.0" prefWidth="50.0" spacing="20.0">
                <children>
                   <JFXButton fx:id="menuButton" alignment="BASELINE_LEFT" contentDisplay="GRAPHIC_ONLY" graphicTextGap="15.0" prefHeight="40.0" prefWidth="96.0" text="Menu" wrapText="true">
                      <font>
@@ -95,7 +95,7 @@
                   </JFXButton>
                </children>
             </VBox>
-               <AnchorPane fx:id="contentArea" prefHeight="600.0" prefWidth="950.0" minWidth="300.0"/>
+               <AnchorPane fx:id="contentArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="950.0" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
    </children>

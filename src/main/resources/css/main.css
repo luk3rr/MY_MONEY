@@ -3,3 +3,57 @@
  * Created on: September 21, 2024
  * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
  */
+
+.rootPane {
+    -fx-padding: 0;
+    -fx-border-width: 0;
+}
+
+
+#homeButton:hover {
+    -fx-background-color: #48c9b0;
+}
+
+#contentArea {
+    -fx-background-color: #f9f9f9;
+    -fx-padding: 0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0.0, 0, 3);
+}
+
+#sidebar {
+    -fx-background-color: #1abc9c;
+    -fx-padding: 10px;
+    -fx-spacing: 20px;
+}
+
+#sidebar JFXButton {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 15px;
+    -fx-alignment: center-left;
+    -fx-cursor: hand;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.0, 0, 2);
+}
+
+#sidebar JFXButton:hover {
+    -fx-background-color: #48c9b0;
+}
+
+#sidebar JFXButton ImageView {
+    -fx-fit-height: 30px;
+    -fx-fit-width: 30px;
+    -fx-margin-right: 10px;
+}
+
+#sidebar .sidebar-button-selected {
+    -fx-background-color: #48c9b0;
+    -fx-text-fill: white;
+}
+
+#sidebar JFXButton .VBox {
+    -fx-margin-top: 10px;
+}

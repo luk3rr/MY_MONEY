@@ -37,6 +37,7 @@ public class JavaFXApp extends Application
         FXMLLoader loader = new FXMLLoader(getClass().getResource(Constants.MAIN_FXML));
         loader.setControllerFactory(springContext::getBean);
         Parent root = loader.load();
+        primaryStage.setTitle(Constants.APP_NAME);
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }

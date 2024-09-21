@@ -12,6 +12,7 @@ package com.mymoney.util;
 public final class Constants
 {
     public static final String LOG_FILE                = "log/mymoney.log";
+    public static final String APP_NAME                = "My Money";
 
     // FXML files
     public static final String MAIN_FXML               = "/ui/main.fxml";
@@ -27,7 +28,9 @@ public final class Constants
     public static final String CREDIT_CARD_STYLE_SHEET = "/css/credit_card.css";
     public static final String TRANSACTION_STYLE_SHEET = "/css/transaction.css";
 
+
     public static final Integer HOME_PANES_ITEMS_PER_PAGE = 2;
+    public static final String SIDEBAR_SELECTED_BUTTON_STYLE = "sidebar-button-selected";
 
     public static final Double EPSILON             = 1e-6;
     public static final int    MAX_BILLING_DUE_DAY = 28;
@@ -35,7 +38,7 @@ public final class Constants
 
     // Animation constants
     public static final double MENU_COLLAPSED_WIDTH    = 50;
-    public static final double MENU_EXPANDED_WIDTH     = 200;
+    public static final double MENU_EXPANDED_WIDTH     = 300;
     public static final double MENU_ANIMATION_DURATION = 200; // ms
 
     // Prevent instantiation

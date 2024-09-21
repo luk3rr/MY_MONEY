@@ -30,6 +30,9 @@ public class MainController
     private VBox sidebar;
 
     @FXML
+    private AnchorPane rootPane;
+
+    @FXML
     private Button menuButton;
 
     @FXML
@@ -62,21 +65,32 @@ public class MainController
                                         creditCardButton,
                                         transactionButton };
 
+        rootPane.getStylesheets().add(
+            getClass().getResource(Constants.MAIN_STYLE_SHEET).toExternalForm());
+
         menuButton.setOnAction(event -> ToggleMenu());
-        homeButton.setOnAction(
-            event -> LoadContent(Constants.HOME_FXML, Constants.HOME_STYLE_SHEET));
-        walletButton.setOnAction(
-            event -> LoadContent(Constants.WALLET_FXML, Constants.WALLET_STYLE_SHEET));
-        creditCardButton.setOnAction(event
-                                     -> LoadContent(Constants.CREDIT_CARD_FXML,
-                                                    Constants.CREDIT_CARD_STYLE_SHEET));
-        transactionButton.setOnAction(
-            event
-            -> LoadContent(Constants.TRANSACTION_FXML,
-                           Constants.TRANSACTION_STYLE_SHEET));
+        homeButton.setOnAction(event -> {
+            LoadContent(Constants.HOME_FXML, Constants.HOME_STYLE_SHEET);
+            UpdateSelectedButton(homeButton);
+        });
+
+        walletButton.setOnAction(event -> {
+            LoadContent(Constants.WALLET_FXML, Constants.WALLET_STYLE_SHEET);
+            UpdateSelectedButton(walletButton);
+        });
+
+        creditCardButton.setOnAction(event -> {
+            LoadContent(Constants.CREDIT_CARD_FXML, Constants.CREDIT_CARD_STYLE_SHEET);
+            UpdateSelectedButton(creditCardButton);
+        });
+        transactionButton.setOnAction(event -> {
+            LoadContent(Constants.TRANSACTION_FXML, Constants.TRANSACTION_STYLE_SHEET);
+            UpdateSelectedButton(transactionButton);
+        });
 
         // Load start page
         LoadContent(Constants.HOME_FXML, Constants.HOME_STYLE_SHEET);
+        UpdateSelectedButton(homeButton);
     }
 
     /**
@@ -102,6 +116,16 @@ public class MainController
         {
             e.printStackTrace();
         }
+    }
+
+    private void UpdateSelectedButton(Button selectedButton)
+    {
+        for (Button button : sidebarButtons)
+        {
+            button.getStyleClass().remove(Constants.SIDEBAR_SELECTED_BUTTON_STYLE);
+        }
+
+        selectedButton.getStyleClass().add(Constants.SIDEBAR_SELECTED_BUTTON_STYLE);
     }
 
     /**
