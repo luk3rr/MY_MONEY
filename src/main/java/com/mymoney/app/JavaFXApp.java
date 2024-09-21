@@ -20,26 +20,24 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 public class JavaFXApp extends Application
 {
-
     private ConfigurableApplicationContext springContext;
 
     @Override
     public void init() throws Exception
     {
-        SpringApplicationBuilder builder =
-            new SpringApplicationBuilder(MainApplication.class);
-        springContext = builder.run(getParameters().getRaw().toArray(new String[0]));
+        String[] args = getParameters().getRaw().toArray(new String[0]);
+
+        springContext =
+            new SpringApplicationBuilder().sources(MainApplication.class).run(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception
     {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(Constants.FXML_PATH));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(Constants.MAIN_FXML));
         loader.setControllerFactory(springContext::getBean);
         Parent root = loader.load();
-
         primaryStage.setScene(new Scene(root));
-        primaryStage.setTitle("My Money Manager");
         primaryStage.show();
     }
 
@@ -47,10 +45,6 @@ public class JavaFXApp extends Application
     public void stop() throws Exception
     {
         springContext.close();
-    }
-
-    public static void main(String[] args)
-    {
-        launch(args);
+        super.stop();
     }
 }

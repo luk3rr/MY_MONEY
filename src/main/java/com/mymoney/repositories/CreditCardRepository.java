@@ -7,6 +7,7 @@
 package com.mymoney.repositories;
 
 import com.mymoney.entities.CreditCard;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -26,4 +27,10 @@ public interface CreditCardRepository extends JpaRepository<CreditCard, Long> {
      * @return The credit card with the given name
      */
     CreditCard findByName(String name);
+
+    /**
+     * Get all credit cards ordered by name
+     * @return A list with all credit cards ordered by name
+     */
+    List<CreditCard> findAllByOrderByNameAsc();
 }

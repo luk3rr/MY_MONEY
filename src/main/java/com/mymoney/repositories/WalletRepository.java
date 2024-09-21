@@ -7,6 +7,7 @@
 package com.mymoney.repositories;
 
 import com.mymoney.entities.Wallet;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -25,4 +26,10 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
      * @return The wallet with the given name
      */
     Wallet findByName(String name);
+
+    /**
+     * Get all wallets ordered by name
+     * @return A list with all wallets ordered by name
+     */
+    List<Wallet> findAllByOrderByNameAsc();
 }

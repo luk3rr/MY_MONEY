@@ -95,7 +95,7 @@
                   </JFXButton>
                </children>
             </VBox>
-            <AnchorPane fx:id="contentArea" prefHeight="600.0" prefWidth="949.0" />
+               <AnchorPane fx:id="contentArea" prefHeight="600.0" prefWidth="950.0" minWidth="300.0"/>
          </children>
       </HBox>
    </children>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="rootAnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="960.0" stylesheets="@style/home.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mymoney.ui.HomeController">
+   <children>
+      <AnchorPane fx:id="walletPane" layoutX="71.0" layoutY="14.0" prefHeight="215.0" prefWidth="384.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0">
+         <children>
+            <Label fx:id="walletPaneTitle" layoutX="14.0" layoutY="14.0" text="Wallets" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+            <JFXButton fx:id="walletPrevButton" layoutX="314.0" layoutY="175.0" text="◀" />
+            <JFXButton fx:id="walletNextButton" layoutX="342.0" layoutY="175.0" text="▶" />
+            <AnchorPane fx:id="walletView1" layoutX="14.0" layoutY="50.0" prefHeight="125.0" prefWidth="170.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="50.0" />
+            <AnchorPane fx:id="walletView2" layoutX="200.0" layoutY="50.0" prefHeight="125.0" prefWidth="170.0" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="50.0" />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="creditCardPane" layoutX="429.0" layoutY="20.0" prefHeight="215.0" prefWidth="384.0" AnchorPane.topAnchor="20.0">
+         <children>
+            <Label fx:id="creditCardPaneTitle" layoutX="7.0" layoutY="5.0" text="Credit Cards" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+            <JFXButton fx:id="creditCardPrevButton" layoutX="314.0" layoutY="175.0" text="◀" />
+            <JFXButton fx:id="creditCardNextButton" layoutX="342.0" layoutY="175.0" text="▶" />
+            <AnchorPane fx:id="creditCardView1" layoutX="10.0" layoutY="50.0" prefHeight="125.0" prefWidth="170.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="50.0" />
+            <AnchorPane fx:id="creditCardView2" layoutX="200.0" layoutY="50.0" prefHeight="125.0" prefWidth="170.0" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="50.0" />
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

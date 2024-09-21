@@ -17,6 +17,7 @@ import com.mymoney.util.LoggerConfig;
 import com.mymoney.util.TransactionStatus;
 import com.mymoney.util.TransactionType;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -151,12 +152,10 @@ public class WalletService
             throw new RuntimeException("Amount to transfer must be greater than zero");
         }
 
-        Wallet senderWallet =
-            m_walletRepository.findById(senderId)
-                .orElseThrow(
-                    ()
-                        -> new RuntimeException(
-                            "Sender wallet not found and cannot transfer money"));
+        Wallet senderWallet = m_walletRepository.findById(senderId).orElseThrow(
+            ()
+                -> new RuntimeException(
+                    "Sender wallet not found and cannot transfer money"));
 
         Wallet receiverWallet =
             m_walletRepository.findById(receiverId)
@@ -400,5 +399,23 @@ public class WalletService
 
         m_walletRepository.save(wallet);
         m_walletTransactionRepository.save(transaction);
+    }
+
+    /**
+     * Get all wallets
+     * @return A list with all wallets
+     */
+    public List<Wallet> GetAllWallets()
+    {
+        return m_walletRepository.findAll();
+    }
+
+    /**
+     * Get all wallets ordered by name
+     * @return A list with all wallets ordered by name
+     */
+    public List<Wallet> GetAllWalletsOrderedByName()
+    {
+        return m_walletRepository.findAllByOrderByNameAsc();
     }
 }

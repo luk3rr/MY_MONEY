@@ -17,6 +17,7 @@ import com.mymoney.repositories.CreditCardRepository;
 import com.mymoney.util.Constants;
 import com.mymoney.util.LoggerConfig;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -200,5 +201,23 @@ public class CreditCardService
                           " registered with value " + installmentValue +
                           " and due date " + paymentDate);
         }
+    }
+
+    /**
+     * Get all credit cards
+     * @return A list with all credit cards
+     */
+    public List<CreditCard> GetAllCreditCards()
+    {
+        return m_creditCardRepository.findAll();
+    }
+
+    /**
+     * Get all credit cards ordered by name
+     * @return A list with all credit cards ordered by name
+     */
+    public List<CreditCard> GetAllCreditCardsOrderedByName()
+    {
+        return m_creditCardRepository.findAllByOrderByNameAsc();
     }
 }
