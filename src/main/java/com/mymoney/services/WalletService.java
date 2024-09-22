@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -417,5 +418,25 @@ public class WalletService
     public List<Wallet> GetAllWalletsOrderedByName()
     {
         return m_walletRepository.findAllByOrderByNameAsc();
+    }
+
+    /**
+     * Get the last n transactions of all wallets
+     * @param n The number of transactions to get
+     * @return A list with the last n transactions of all wallets
+     */
+    public List<WalletTransaction> GetLastTransactions(Integer n)
+    {
+        return m_walletTransactionRepository.GetLastTransactions(PageRequest.ofSize(n));
+    }
+
+    /**
+     * Get transactions by month
+     * @param month The month of the transactions
+     * @param year The year of the transactions
+     */
+    public List<WalletTransaction> GetTransactionsByMonth(Integer month, Integer year)
+    {
+        return m_walletTransactionRepository.GetTransactionsByMonth(month, year);
     }
 }

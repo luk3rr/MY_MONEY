@@ -185,4 +185,37 @@ public class WalletTransactionRepositoryTest
         // Check if the last transactions are correct
         assertEquals(0, lastTransactions.size());
     }
+
+    @Test
+    @DisplayName(
+        "Test if the last n transactions of all wallets are returned correctly")
+    public void
+    TestGetLastTransactionsAllWallets()
+    {
+        // Create the wallet transactions
+        WalletTransaction walletTransaction1 =
+            CreateWalletTransaction(m_wallet1, 140.0, LocalDate.now());
+        WalletTransaction walletTransaction2 =
+            CreateWalletTransaction(m_wallet1, 210.0, LocalDate.now().minusDays(1));
+
+        WalletTransaction walletTransaction3 =
+            CreateWalletTransaction(m_wallet2, 300.0, LocalDate.now().minusDays(2));
+
+        CreateWalletTransaction(m_wallet2, 300.0, LocalDate.now().minusDays(3));
+
+        // Request the last 3 transactions
+        Pageable request = PageRequest.ofSize(3);
+
+        // Get the last transactions in the wallet by date
+        List<WalletTransaction> lastTransactions =
+            m_walletTransactionRepository.GetLastTransactions(request);
+
+        // Check if the last transactions are correct
+        assertEquals(3, lastTransactions.size());
+
+        // Check if the last transactions are in the correct order
+        assertEquals(walletTransaction1, lastTransactions.get(0));
+        assertEquals(walletTransaction2, lastTransactions.get(1));
+        assertEquals(walletTransaction3, lastTransactions.get(2));
+    }
 }

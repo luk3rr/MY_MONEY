@@ -34,6 +34,14 @@ public interface WalletTransactionRepository
     GetLastTransactionsByDate(@Param("walletId") Long       walletId,
                               @Param("startDate") LocalDate startDate);
 
+    @Query("SELECT wt "
+           + "FROM WalletTransaction wt "
+           + "WHERE strftime('%m', wt.date) = printf('%02d', :month) "
+           + "AND strftime('%Y', wt.date) = printf('%04d', :year) "
+           + "ORDER BY wt.date DESC")
+    List<WalletTransaction>
+    GetTransactionsByMonth(@Param("month") Integer month, @Param("year") Integer year);
+
     /**
      * Get the last n transactions in a wallet
      * @param walletId The id of the wallet
@@ -46,4 +54,14 @@ public interface WalletTransactionRepository
            + "ORDER BY wt.date DESC")
     List<WalletTransaction>
     GetLastTransactions(@Param("walletId") Long walletId, Pageable pageable);
+
+    /**
+     * Get the last n transactions of all wallets
+     * @param pageable The pageable object
+     */
+    @Query("SELECT wt "
+           + "FROM WalletTransaction wt "
+           + "ORDER BY wt.date DESC")
+    List<WalletTransaction>
+    GetLastTransactions(Pageable pageable);
 }

@@ -4,7 +4,7 @@
  * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
  */
 
-#walletPane, #creditCardPane {
+#walletPane, #creditCardPane, #lastTransactionsPane, #graphPane, #monthResumePane {
     -fx-background-color: white;
     -fx-border-color: #ccc;
     -fx-border-radius: 4px;
@@ -14,8 +14,8 @@
     -fx-min-height: 0;
 }
 
-#walletPaneTitle, #creditCardPaneTitle {
-    -fx-font-size: 20px;
+#walletPaneTitle, #creditCardPaneTitle, #lastTransactionsPaneTitle, #monthResumePaneTitle {
+    -fx-font-size: 15px;
     -fx-font-weight: bold;
     -fx-text-fill: #333;
     -fx-padding: 5px;
@@ -62,4 +62,79 @@
 
 .credit-card-item Label {
     -fx-text-fill: white;
+}
+
+.list-view {
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+}
+
+.list-view .list-cell {
+    -fx-background-color: transparent;
+}
+
+.list-view .scroll-bar:vertical {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+}
+
+.list-view .scroll-bar:horizontal {
+    -fx-opacity: 0;
+    -fx-pref-height: 0;
+}
+
+.income-item {
+    -fx-pref-width: 100%;
+}
+
+.expense-item {
+    -fx-pref-width: 100%;
+}
+
+.last-transaction-label {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.description-value-box {
+    -fx-text-fill: #333;
+}
+
+.wallet-date-box {
+    -fx-text-fill: #777;
+    -fx-font-size: 10px;
+}
+
+.transaction-details {
+    -fx-alignment: CENTER_LEFT;
+}
+.default-color0.chart-bar {
+    -fx-bar-fill: #ec7063 ;
+}
+
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.axis {
+    -fx-border-color: transparent;
+    -fx-tick-mark-visible: false;
+    -fx-minor-tick-visible: false;
+}
+
+.chart-legend {
+    -fx-background-color: transparent;
+    -fx-font-size: 12px;
+    -fx-text-fill: #555;
+}
+
+.month-resume-positive-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #28a745;
+}
+
+.month-resume-negative-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #dc3545;
 }
