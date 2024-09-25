@@ -20,7 +20,7 @@ public interface WalletTransactionRepository
     extends JpaRepository<WalletTransaction, Long> {
 
     /**
-     * Get the last transactions in a wallet by date
+     * Get the transactions in a wallet by date
      * @param walletId The id of the wallet
      * @param startDate The start date of the period
      * @return A list with the last transactions in the wallet by date
@@ -31,16 +31,55 @@ public interface WalletTransactionRepository
            + "AND wt.date >= :startDate "
            + "ORDER BY wt.date DESC")
     List<WalletTransaction>
-    GetLastTransactionsByDate(@Param("walletId") Long       walletId,
-                              @Param("startDate") LocalDate startDate);
+    GetTransactionsByDate(@Param("walletId") Long       walletId,
+                          @Param("startDate") LocalDate startDate);
 
+    /**
+     * Get the all transactions by month and year
+     * @param month The month
+     * @param year The year
+     * @return A list with the transactions in the wallet by month and year
+     */
     @Query("SELECT wt "
            + "FROM WalletTransaction wt "
            + "WHERE strftime('%m', wt.date) = printf('%02d', :month) "
            + "AND strftime('%Y', wt.date) = printf('%04d', :year) "
            + "ORDER BY wt.date DESC")
     List<WalletTransaction>
-    GetTransactionsByMonth(@Param("month") Integer month, @Param("year") Integer year);
+    GetAllTransactionsByMonth(@Param("month") Integer month,
+                              @Param("year") Integer  year);
+
+    /**
+     * Get the pending transactions by month and year
+     * @param month The month
+     * @param year The year
+     * @return A list with the transactions in the wallet by month and year
+     */
+    @Query("SELECT wt "
+           + "FROM WalletTransaction wt "
+           + "WHERE strftime('%m', wt.date) = printf('%02d', :month) "
+           + "AND strftime('%Y', wt.date) = printf('%04d', :year) "
+           + "AND wt.status = 'PENDING' "
+           + "ORDER BY wt.date DESC")
+    List<WalletTransaction>
+    GetPendingTransactionsByMonth(@Param("month") Integer month,
+                                  @Param("year") Integer  year);
+
+    /**
+     * Get the confirmed transactions by month and year
+     * @param month The month
+     * @param year The year
+     * @return A list with the transactions in the wallet by month and year
+     */
+    @Query("SELECT wt "
+           + "FROM WalletTransaction wt "
+           + "WHERE strftime('%m', wt.date) = printf('%02d', :month) "
+           + "AND strftime('%Y', wt.date) = printf('%04d', :year) "
+           + "AND wt.status = 'CONFIRMED' "
+           + "ORDER BY wt.date DESC")
+    List<WalletTransaction>
+    GetConfirmedTransactionsByMonth(@Param("month") Integer month,
+                                    @Param("year") Integer  year);
 
     /**
      * Get the last n transactions in a wallet

@@ -431,12 +431,36 @@ public class WalletService
     }
 
     /**
-     * Get transactions by month
+     * Get all transactions by month
      * @param month The month of the transactions
      * @param year The year of the transactions
      */
-    public List<WalletTransaction> GetTransactionsByMonth(Integer month, Integer year)
+    public List<WalletTransaction> GetAllTransactionsByMonth(Integer month,
+                                                             Integer year)
     {
-        return m_walletTransactionRepository.GetTransactionsByMonth(month, year);
+        return m_walletTransactionRepository.GetAllTransactionsByMonth(month, year);
+    }
+
+    /**
+     * Get all pending transactions by month
+     * @param month The month of the transactions
+     * @param year The year of the transactions
+     */
+    public List<WalletTransaction> GetPendingTransactionsByMonth(Integer month,
+                                                                 Integer year)
+    {
+        return m_walletTransactionRepository.GetPendingTransactionsByMonth(month, year);
+    }
+
+    /**
+     * Get all confirmed transactions by month
+     * @param month The month of the transactions
+     * @param year The year of the transactions
+     */
+    public List<WalletTransaction> GetConfirmedTransactionsByMonth(Integer month,
+                                                                   Integer year)
+    {
+        return m_walletTransactionRepository.GetConfirmedTransactionsByMonth(month,
+                                                                             year);
     }
 }

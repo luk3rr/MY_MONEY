@@ -38,7 +38,53 @@
                   <AnchorPane fx:id="monthResumePane" prefHeight="235.0" prefWidth="210.0">
                      <children>
                         <Label fx:id="monthResumePaneTitle" layoutX="8.0" layoutY="12.0" text="Resume" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
-                        <AnchorPane fx:id="monthResumeView" prefHeight="185.0" prefWidth="170.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0" />
+                        <AnchorPane fx:id="monthResumeView" prefHeight="185.0" prefWidth="170.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+                           <children>
+                              <VBox fx:id="monthResumeVBox" layoutX="14.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <VBox prefHeight="46.0" prefWidth="215.0">
+                                             <children>
+                                                <HBox fx:id="monthResumeCurrentIncomeHBox" prefHeight="100.0" prefWidth="200.0" />
+                                                <HBox fx:id="monthResumeExpectedIncomeHBox" prefHeight="100.0" prefWidth="200.0" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <VBox prefHeight="46.0" prefWidth="215.0">
+                                             <children>
+                                                <HBox fx:id="monthResumeCurrentExpenseHBox" prefHeight="100.0" prefWidth="200.0" />
+                                                <HBox fx:id="monthResumeExpectedExpenseHBox" prefHeight="100.0" prefWidth="200.0" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <VBox prefHeight="46.0" prefWidth="215.0">
+                                             <children>
+                                                <HBox fx:id="monthResumeCurrentBalanceHBox" prefHeight="100.0" prefWidth="200.0" />
+                                                <HBox fx:id="monthResumeExpectedBalanceHBox" prefHeight="100.0" prefWidth="200.0" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                       <children>
+                                          <VBox prefHeight="46.0" prefWidth="215.0">
+                                             <children>
+                                                <HBox fx:id="monthResumeCurrentSavingsHBox" prefHeight="100.0" prefWidth="200.0" />
+                                                <HBox fx:id="monthResumeExpectedSavingsHBox" prefHeight="100.0" prefWidth="200.0" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children></AnchorPane>
                      </children>
                   </AnchorPane>
                </children>

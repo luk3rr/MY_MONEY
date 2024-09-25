@@ -78,6 +78,30 @@ public class HomeController
     @FXML
     private Label monthResumePaneTitle;
 
+    @FXML
+    private HBox monthResumeCurrentIncomeHBox;
+
+    @FXML
+    private HBox monthResumeExpectedIncomeHBox;
+
+    @FXML
+    private HBox monthResumeCurrentExpenseHBox;
+
+    @FXML
+    private HBox monthResumeExpectedExpenseHBox;
+
+    @FXML
+    private HBox monthResumeCurrentBalanceHBox;
+
+    @FXML
+    private HBox monthResumeExpectedBalanceHBox;
+
+    @FXML
+    private HBox monthResumeCurrentSavingsHBox;
+
+    @FXML
+    private HBox monthResumeExpectedSavingsHBox;
+
     private List<Wallet> wallets;
 
     private List<CreditCard> creditCards;
@@ -386,7 +410,7 @@ public class HomeController
             Integer year  = date.getYear();
 
             List<WalletTransaction> transactions =
-                walletService.GetTransactionsByMonth(month, year);
+                walletService.GetAllTransactionsByMonth(month, year);
 
             m_logger.info("Found " + transactions.size() + " transactions for " +
                           month + "/" + year);
@@ -403,7 +427,7 @@ public class HomeController
         Double maxExpenseValue = 0.0;
 
         XYChart.Series<String, Double> series = new XYChart.Series<>();
-        series.setName("Total Expenses");
+        series.setName("Expenses");
 
         for (Map.Entry<String, Double> entry : monthlyExpenses.entrySet())
         {
@@ -487,51 +511,77 @@ public class HomeController
         Integer   month       = currentDate.getMonthValue();
         Integer   year        = currentDate.getYear();
 
-        List<WalletTransaction> transactions =
-            walletService.GetTransactionsByMonth(month, year);
+        List<WalletTransaction> confirmedTransactions =
+            walletService.GetConfirmedTransactionsByMonth(month, year);
 
-        Double totalIncome = transactions.stream()
-                                 .filter(t -> t.GetType() == TransactionType.INCOME)
-                                 .mapToDouble(WalletTransaction::GetAmount)
-                                 .sum();
+        Double totalConfirmedIncome =
+            confirmedTransactions.stream()
+                .filter(t -> t.GetType() == TransactionType.INCOME)
+                .mapToDouble(WalletTransaction::GetAmount)
+                .sum();
 
-        Double totalExpenses = transactions.stream()
-                                   .filter(t -> t.GetType() == TransactionType.EXPENSE)
-                                   .mapToDouble(WalletTransaction::GetAmount)
-                                   .sum();
+        Double totalConfirmedExpenses =
+            confirmedTransactions.stream()
+                .filter(t -> t.GetType() == TransactionType.EXPENSE)
+                .mapToDouble(WalletTransaction::GetAmount)
+                .sum();
 
-        Double balance = totalIncome - totalExpenses;
+        List<WalletTransaction> allMonthTransactions =
+            walletService.GetAllTransactionsByMonth(month, year);
+
+        Double allMonthExpectedIncome =
+            allMonthTransactions.stream()
+                .filter(t -> t.GetType() == TransactionType.INCOME)
+                .mapToDouble(WalletTransaction::GetAmount)
+                .sum();
+
+        Double allMonthExpectedExpenses =
+            allMonthTransactions.stream()
+                .filter(t -> t.GetType() == TransactionType.EXPENSE)
+                .mapToDouble(WalletTransaction::GetAmount)
+                .sum();
+
+        Double balance = totalConfirmedIncome - totalConfirmedExpenses;
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM/yy");
         monthResumePaneTitle.setText(currentDate.format(formatter) + " Resume");
 
         // Total Income
-        Label incomeTextLabel = new Label("Total Income: ");
+        Label incomeTextLabel = new Label("Incomes: ");
         incomeTextLabel.setPrefWidth(Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
 
-        Label incomeLabel = new Label(String.format("$ %.2f", totalIncome));
+        Label incomeLabel = new Label(String.format("$ %.2f", totalConfirmedIncome));
         incomeLabel.getStyleClass().add(
             Constants.HOME_MONTH_RESUME_POSITIVE_LABEL_STYLE);
 
         Label incomeSignLabel = new Label("");
         incomeSignLabel.setPrefWidth(Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
 
-        HBox incomeWithSignalHBox = new HBox(0, incomeSignLabel, incomeLabel);
-        incomeWithSignalHBox.setAlignment(Pos.CENTER_LEFT);
+        Label incomeExpectedIncomeLabel = new Label("Expected: ");
+        incomeExpectedIncomeLabel.setPrefWidth(
+            Constants.HOME_MONTH_RESUME_TEXT_EXPECTED_LABEL_WIDTH);
+
+        Label incomeExpectedIncomeValueLabel =
+            new Label(String.format("$ %.2f", allMonthExpectedIncome));
 
         // Total Expenses
-        Label expensesTextLabel = new Label("Total Expenses: ");
+        Label expensesTextLabel = new Label("Expenses: ");
         expensesTextLabel.setPrefWidth(Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
 
-        Label expensesLabel = new Label(String.format("$ %.2f", totalExpenses));
+        Label expensesLabel =
+            new Label(String.format("$ %.2f", totalConfirmedExpenses));
         expensesLabel.getStyleClass().add(
             Constants.HOME_MONTH_RESUME_NEGATIVE_LABEL_STYLE);
 
         Label expensesSignLabel = new Label("");
         expensesSignLabel.setPrefWidth(Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
 
-        HBox expensesWithSignalHBox = new HBox(0, expensesSignLabel, expensesLabel);
-        expensesWithSignalHBox.setAlignment(Pos.CENTER_LEFT);
+        Label expectedExpensesLabel = new Label("Expected: ");
+        expectedExpensesLabel.setPrefWidth(
+            Constants.HOME_MONTH_RESUME_TEXT_EXPECTED_LABEL_WIDTH);
+
+        Label expectedExpensesValueLabel =
+            new Label(String.format("$ %.2f", allMonthExpectedExpenses));
 
         // Balance
         Label balanceTextLabel = new Label("Balance: ");
@@ -541,53 +591,87 @@ public class HomeController
         Label balanceLabel;
 
         // Set the balance label and sign label according to the balance value
-        if (balance >= 0)
+        if (balance > 0)
         {
             balanceLabel     = new Label(String.format("$ %.2f", balance));
             balanceSignLabel = new Label("+");
 
-            balanceSignLabel.setPrefWidth(Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
-
             balanceLabel.getStyleClass().add(
                 Constants.HOME_MONTH_RESUME_POSITIVE_LABEL_STYLE);
 
             balanceSignLabel.getStyleClass().add(
                 Constants.HOME_MONTH_RESUME_POSITIVE_LABEL_STYLE);
         }
-        else
+        else if (balance < 0)
         {
             balanceLabel     = new Label(String.format("$ %.2f", -balance));
             balanceSignLabel = new Label("-");
 
-            balanceSignLabel.setPrefWidth(Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
-
             balanceLabel.getStyleClass().add(
                 Constants.HOME_MONTH_RESUME_NEGATIVE_LABEL_STYLE);
 
             balanceSignLabel.getStyleClass().add(
                 Constants.HOME_MONTH_RESUME_NEGATIVE_LABEL_STYLE);
         }
+        else
+        {
+            balanceLabel     = new Label("$ 0.00");
+            balanceSignLabel = new Label("");
 
-        HBox balanceWithSignalHBox = new HBox(0, balanceSignLabel, balanceLabel);
-        balanceWithSignalHBox.setAlignment(Pos.CENTER_LEFT);
+            balanceLabel.getStyleClass().add(
+                Constants.HOME_MONTH_RESUME_ZERO_LABEL_STYLE);
+        }
+
+        balanceSignLabel.setPrefWidth(Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
+
+        Double expectedBalance = allMonthExpectedIncome - allMonthExpectedExpenses;
+
+        Label expectedBalanceTextLabel = new Label("Expected: ");
+        expectedBalanceTextLabel.setPrefWidth(
+            Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
+
+        Label expectedBalanceValueLabel;
+        Label expectedBalanceSignLabel;
+
+        if (expectedBalance > 0)
+        {
+            expectedBalanceValueLabel =
+                new Label(String.format("$ %.2f", expectedBalance));
+
+            expectedBalanceSignLabel = new Label("+");
+        }
+        else if (expectedBalance < 0)
+        {
+            expectedBalanceValueLabel =
+                new Label(String.format("$ %.2f", -expectedBalance));
+
+            expectedBalanceSignLabel = new Label("-");
+        }
+        else
+        {
+            expectedBalanceValueLabel = new Label("$ 0.00");
+            expectedBalanceSignLabel  = new Label("");
+        }
+
+        expectedBalanceSignLabel.setPrefWidth(
+            Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
 
         // Mensal Economies
-        Double economyPercentage = (totalIncome - totalExpenses) / totalIncome * 100;
-        Label  mensalEconomiesTextLabel;
-        Label  mensalEconomiesSignLabel;
-        Label  mensalEconomiesPercentLabel;
+        Double economyPercentage = (totalConfirmedIncome - totalConfirmedExpenses) /
+                                   totalConfirmedIncome * 100;
+
+        Label mensalEconomiesTextLabel;
+        Label mensalEconomiesSignLabel;
+        Label mensalEconomiesPercentLabel;
 
         // Set the economy label and sign label according to the economy value
-        if (economyPercentage >= 0)
+        if (economyPercentage > 0)
         {
-            mensalEconomiesTextLabel = new Label("Economy: ");
+            mensalEconomiesTextLabel = new Label("Savings: ");
             mensalEconomiesSignLabel = new Label("");
 
-            mensalEconomiesSignLabel.setPrefWidth(
-                Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
-
             mensalEconomiesPercentLabel =
-                new Label(String.format("%.2f%%", economyPercentage));
+                new Label(String.format("%.2f %%", economyPercentage));
 
             mensalEconomiesPercentLabel.getStyleClass().add(
                 Constants.HOME_MONTH_RESUME_POSITIVE_LABEL_STYLE);
@@ -595,53 +679,123 @@ public class HomeController
             mensalEconomiesSignLabel.getStyleClass().add(
                 Constants.HOME_MONTH_RESUME_POSITIVE_LABEL_STYLE);
         }
-        else
+        else if (economyPercentage < 0)
         {
             mensalEconomiesTextLabel = new Label("No savings: ");
             mensalEconomiesSignLabel = new Label("-");
 
-            mensalEconomiesSignLabel.setPrefWidth(
-                Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
-
             mensalEconomiesPercentLabel =
-                new Label(String.format("%.2f%%", -economyPercentage));
+                new Label(String.format("%.2f %%", -economyPercentage));
 
             mensalEconomiesPercentLabel.getStyleClass().add(
                 Constants.HOME_MONTH_RESUME_NEGATIVE_LABEL_STYLE);
 
             mensalEconomiesSignLabel.getStyleClass().add(
                 Constants.HOME_MONTH_RESUME_NEGATIVE_LABEL_STYLE);
+        }
+        else
+        {
+            mensalEconomiesTextLabel = new Label("No savings: ");
+            mensalEconomiesSignLabel = new Label("");
+
+            mensalEconomiesPercentLabel = new Label("0.00 %");
+
+            mensalEconomiesPercentLabel.getStyleClass().add(
+                Constants.HOME_MONTH_RESUME_ZERO_LABEL_STYLE);
         }
 
         mensalEconomiesTextLabel.setPrefWidth(
             Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
 
-        HBox mensalEconomiesWithSignalHBox =
-            new HBox(0, mensalEconomiesSignLabel, mensalEconomiesPercentLabel);
+        mensalEconomiesSignLabel.setPrefWidth(
+            Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
 
-        mensalEconomiesWithSignalHBox.setAlignment(Pos.CENTER_LEFT);
+        Label expectedSavingsLabel = new Label("Expected: ");
 
-        // HBox for each row (explanation + VBox with signal and value)
-        HBox incomeHBox   = new HBox(10, incomeTextLabel, incomeWithSignalHBox);
-        HBox expensesHBox = new HBox(10, expensesTextLabel, expensesWithSignalHBox);
-        HBox balanceHBox  = new HBox(10, balanceTextLabel, balanceWithSignalHBox);
-        HBox mensalEconomiesHBox =
-            new HBox(10, mensalEconomiesTextLabel, mensalEconomiesWithSignalHBox);
+        Double expectedSavingsPercentage =
+            (allMonthExpectedIncome - allMonthExpectedExpenses) /
+            allMonthExpectedIncome * 100;
+
+        Label expectedSavingsPercentLabel;
+        Label expectedSavingsSignLabel;
+
+        if (expectedSavingsPercentage > 0)
+        {
+            expectedSavingsPercentLabel =
+                new Label(String.format("%.2f %%", expectedSavingsPercentage));
+
+            expectedSavingsSignLabel = new Label("");
+        }
+        else if (expectedSavingsPercentage < 0)
+        {
+
+            expectedSavingsPercentLabel =
+                new Label(String.format("%.2f %%", -expectedSavingsPercentage));
+
+            expectedSavingsSignLabel = new Label("-");
+        }
+        else
+        {
+            expectedSavingsPercentLabel = new Label("0.00 %");
+            expectedSavingsSignLabel    = new Label("");
+        }
+
+        expectedSavingsLabel.setPrefWidth(Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
+
+        expectedSavingsSignLabel.setPrefWidth(
+            Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
+
+        // Clear the HBoxes and add the labels
+        monthResumeCurrentIncomeHBox.getChildren().clear();
+        monthResumeExpectedIncomeHBox.getChildren().clear();
+        monthResumeCurrentExpenseHBox.getChildren().clear();
+        monthResumeExpectedExpenseHBox.getChildren().clear();
+        monthResumeCurrentBalanceHBox.getChildren().clear();
+        monthResumeExpectedBalanceHBox.getChildren().clear();
+        monthResumeCurrentSavingsHBox.getChildren().clear();
+        monthResumeExpectedSavingsHBox.getChildren().clear();
+
+        monthResumeCurrentIncomeHBox.getChildren().addAll(incomeTextLabel,
+                                                          incomeSignLabel,
+                                                          incomeLabel);
+
+        monthResumeExpectedIncomeHBox.getChildren().addAll(
+            incomeExpectedIncomeLabel,
+            incomeExpectedIncomeValueLabel);
+
+        monthResumeCurrentExpenseHBox.getChildren().addAll(expensesTextLabel,
+                                                           expensesSignLabel,
+                                                           expensesLabel);
+
+        monthResumeExpectedExpenseHBox.getChildren().addAll(expectedExpensesLabel,
+                                                            expectedExpensesValueLabel);
+
+        monthResumeCurrentBalanceHBox.getChildren().addAll(balanceTextLabel,
+                                                           balanceSignLabel,
+                                                           balanceLabel);
+
+        monthResumeExpectedBalanceHBox.getChildren().addAll(expectedBalanceTextLabel,
+                                                            expectedBalanceSignLabel,
+                                                            expectedBalanceValueLabel);
+
+        monthResumeCurrentSavingsHBox.getChildren().addAll(mensalEconomiesTextLabel,
+                                                           mensalEconomiesSignLabel,
+                                                           mensalEconomiesPercentLabel);
+
+        monthResumeExpectedSavingsHBox.getChildren().addAll(
+            expectedSavingsLabel,
+            expectedSavingsSignLabel,
+            expectedSavingsPercentLabel);
 
         // Alignment for the HBoxes
-        incomeHBox.setAlignment(Pos.CENTER_LEFT);
-        expensesHBox.setAlignment(Pos.CENTER_LEFT);
-        balanceHBox.setAlignment(Pos.CENTER_LEFT);
-        mensalEconomiesHBox.setAlignment(Pos.CENTER_LEFT);
-
-        // VBox to hold the HBoxes
-        VBox vbox =
-            new VBox(10, incomeHBox, expensesHBox, balanceHBox, mensalEconomiesHBox);
-        vbox.setAlignment(Pos.CENTER_LEFT);
-
-        // Clear previous content and add the new layout
-        monthResumeView.getChildren().clear();
-        monthResumeView.getChildren().add(vbox);
+        monthResumeCurrentIncomeHBox.setAlignment(Pos.CENTER_LEFT);
+        monthResumeExpectedIncomeHBox.setAlignment(Pos.TOP_LEFT);
+        monthResumeCurrentExpenseHBox.setAlignment(Pos.CENTER_LEFT);
+        monthResumeExpectedExpenseHBox.setAlignment(Pos.TOP_LEFT);
+        monthResumeCurrentBalanceHBox.setAlignment(Pos.CENTER_LEFT);
+        monthResumeExpectedBalanceHBox.setAlignment(Pos.TOP_LEFT);
+        monthResumeCurrentSavingsHBox.setAlignment(Pos.CENTER_LEFT);
+        monthResumeExpectedSavingsHBox.setAlignment(Pos.TOP_LEFT);
     }
 
     /**

@@ -1,7 +1,7 @@
 # MY_MONEY
 MY_MONEY é uma aplicação de gerenciamento financeiro pessoal que permite aos usuários registrar, visualizar e acompanhar suas transações financeiras. A aplicação possibilita a categorização de receitas e despesas, cálculo de balanços mensais e exibição de gráficos para fácil entendimento da economia mensal.
 
-![Home Screen](docs/homescreen.png)
+![Home Screen](docs/homeScreen.png)
 
 ## Compilação e Execução
 
@@ -10,7 +10,7 @@ MY_MONEY é uma aplicação de gerenciamento financeiro pessoal que permite aos 
 mvn compile
 ```
 
-### Execução do programa 
+### Execução do programa
 ```sh
 mvn javafx:run
 # or

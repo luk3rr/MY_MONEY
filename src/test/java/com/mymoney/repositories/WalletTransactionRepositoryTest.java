@@ -108,7 +108,7 @@ public class WalletTransactionRepositoryTest
         CreateWalletTransaction(m_wallet2, 300.0, LocalDate.now().minusDays(1));
 
         // Get the last transactions in the wallet by date
-        var lastTransactions = m_walletTransactionRepository.GetLastTransactionsByDate(
+        var lastTransactions = m_walletTransactionRepository.GetTransactionsByDate(
             m_wallet1.GetId(),
             LocalDate.now().minusDays(1));
 
@@ -128,7 +128,7 @@ public class WalletTransactionRepositoryTest
     TestGetLastTransactionsByDateNoTransactions()
     {
         // Get the last transactions in the wallet by date
-        var lastTransactions = m_walletTransactionRepository.GetLastTransactionsByDate(
+        var lastTransactions = m_walletTransactionRepository.GetTransactionsByDate(
             m_wallet1.GetId(),
             LocalDate.now().minusDays(1));
 

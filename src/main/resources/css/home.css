@@ -4,137 +4,157 @@
  * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
  */
 
-#walletPane, #creditCardPane, #lastTransactionsPane, #graphPane, #monthResumePane {
-    -fx-background-color: white;
-    -fx-border-color: #ccc;
-    -fx-border-radius: 4px;
-    -fx-background-radius: 10px;
-    -fx-padding: 10px;
-    -fx-min-width: 0;
-    -fx-min-height: 0;
+#walletPane,
+#creditCardPane,
+#lastTransactionsPane,
+#graphPane,
+#monthResumePane {
+  -fx-background-color: white;
+  -fx-border-color: #ccc;
+  -fx-border-radius: 4px;
+  -fx-background-radius: 10px;
+  -fx-padding: 10px;
+  -fx-min-width: 0;
+  -fx-min-height: 0;
 }
 
-#walletPaneTitle, #creditCardPaneTitle, #lastTransactionsPaneTitle, #monthResumePaneTitle {
-    -fx-font-size: 15px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #333;
-    -fx-padding: 5px;
+#walletPaneTitle,
+#creditCardPaneTitle,
+#lastTransactionsPaneTitle,
+#monthResumePaneTitle {
+  -fx-font-size: 15px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #333;
+  -fx-padding: 5px;
 }
 
 .wallet-item {
-    -fx-background-color: linear-gradient(to bottom right, #34c759, #138d75 );
-    -fx-padding: 15px;
-    -fx-border-radius: 10px;
-    -fx-background-radius: 10px;
-    -fx-border-color: #000;
-    -fx-border-width: 1px;
-    -fx-border-style: solid;
-    -fx-margin-bottom: 20px;
-    -fx-pref-width: 100%;
-    -fx-pref-height: 100%;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0.0, 0, 1);
+  -fx-background-color: linear-gradient(to bottom right, #34c759, #138d75);
+  -fx-padding: 15px;
+  -fx-border-radius: 10px;
+  -fx-background-radius: 10px;
+  -fx-border-color: #000;
+  -fx-border-width: 1px;
+  -fx-border-style: solid;
+  -fx-margin-bottom: 20px;
+  -fx-pref-width: 100%;
+  -fx-pref-height: 100%;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 0, 1);
 }
 
 .wallet-item Label {
-    -fx-text-fill: white;
-    -fx-font-size: 12px;
-    -fx-font-weight: bold;
+  -fx-text-fill: white;
+  -fx-font-size: 12px;
+  -fx-font-weight: bold;
 }
 
 .wallet-item .balance-label {
-    -fx-font-size: 10px;
-    -fx-opacity: 0.8;
+  -fx-font-size: 10px;
+  -fx-opacity: 0.8;
 }
 
 .credit-card-item {
-    -fx-background-color: linear-gradient(to bottom right,  #3498db, #9013fe);
-    -fx-padding: 15px;
-    -fx-border-color: #000;
-    -fx-border-radius: 10px;
-    -fx-background-radius: 10px;
-    -fx-border-width: 1px;
-    -fx-border-style: solid;
-    -fx-margin-bottom: 20px;
-    -fx-pref-width: 100%;
-    -fx-pref-height: 100%;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0.0, 0, 1);
+  -fx-background-color: linear-gradient(to bottom right, #3498db, #9013fe);
+  -fx-padding: 15px;
+  -fx-border-color: #000;
+  -fx-border-radius: 10px;
+  -fx-background-radius: 10px;
+  -fx-border-width: 1px;
+  -fx-border-style: solid;
+  -fx-margin-bottom: 20px;
+  -fx-pref-width: 100%;
+  -fx-pref-height: 100%;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 0, 1);
 }
 
 .credit-card-item Label {
-    -fx-text-fill: white;
+  -fx-text-fill: white;
 }
 
 .list-view {
-    -fx-border-color: transparent;
-    -fx-background-color: transparent;
+  -fx-border-color: transparent;
+  -fx-background-color: transparent;
 }
 
 .list-view .list-cell {
-    -fx-background-color: transparent;
+  -fx-background-color: transparent;
 }
 
 .list-view .scroll-bar:vertical {
-    -fx-opacity: 0;
-    -fx-pref-width: 0;
+  -fx-opacity: 0;
+  -fx-pref-width: 0;
 }
 
 .list-view .scroll-bar:horizontal {
-    -fx-opacity: 0;
-    -fx-pref-height: 0;
+  -fx-opacity: 0;
+  -fx-pref-height: 0;
 }
 
 .income-item {
-    -fx-pref-width: 100%;
+  -fx-pref-width: 100%;
 }
 
 .expense-item {
-    -fx-pref-width: 100%;
+  -fx-pref-width: 100%;
 }
 
 .last-transaction-label {
-    -fx-text-fill: white;
-    -fx-font-size: 12px;
-    -fx-font-weight: bold;
+  -fx-text-fill: white;
+  -fx-font-size: 12px;
+  -fx-font-weight: bold;
 }
 
 .description-value-box {
-    -fx-text-fill: #333;
+  -fx-text-fill: #333;
 }
 
 .wallet-date-box {
-    -fx-text-fill: #777;
-    -fx-font-size: 10px;
+  -fx-text-fill: #777;
+  -fx-font-size: 10px;
 }
 
 .transaction-details {
-    -fx-alignment: CENTER_LEFT;
+  -fx-alignment: CENTER_LEFT;
 }
 .default-color0.chart-bar {
-    -fx-bar-fill: #ec7063 ;
+  -fx-bar-fill: #ec7063;
 }
 
 .chart-plot-background {
-    -fx-background-color: transparent;
+  -fx-background-color: transparent;
 }
 
 .axis {
-    -fx-border-color: transparent;
-    -fx-tick-mark-visible: false;
-    -fx-minor-tick-visible: false;
+  -fx-border-color: transparent;
+  -fx-tick-mark-visible: false;
+  -fx-minor-tick-visible: false;
 }
 
 .chart-legend {
-    -fx-background-color: transparent;
-    -fx-font-size: 12px;
-    -fx-text-fill: #555;
+  -fx-background-color: transparent;
+  -fx-font-size: 12px;
+  -fx-text-fill: #555;
 }
 
 .month-resume-positive-label {
-    -fx-font-weight: bold;
-    -fx-text-fill: #28a745;
+  -fx-font-weight: bold;
+  -fx-text-fill: #28a745;
 }
 
 .month-resume-negative-label {
-    -fx-font-weight: bold;
-    -fx-text-fill: #dc3545;
+  -fx-font-weight: bold;
+  -fx-text-fill: #dc3545;
+}
+
+.month-resume-zero-label {
+  -fx-font-weight: bold;
+  -fx-text-fill: #333;
+}
+
+#monthResumeExpectedIncomeHBox,
+#monthResumeExpectedExpenseHBox,
+#monthResumeExpectedBalanceHBox,
+#monthResumeExpectedSavingsHBox {
+    -fx-font-size: 9px;
+    -fx-text-fill: #333;
 }

@@ -48,11 +48,14 @@ public final class Constants
         "month-resume-negative-label";
     public static final String HOME_MONTH_RESUME_ZERO_LABEL_STYLE =
         "month-resume-zero-label";
+    public static final String HOME_MONTH_RESUME_EXPECTED_LABEL_STYLE =
+        "month-resume-expected-label";
 
     // Icons
     public static final String EXPENSE_ICON = "/icons/expense.png";
     public static final String INCOME_ICON  = "/icons/income.png";
 
+    // Sizes
     public static final Integer HOME_LAST_TRANSACTIONS_SIZE      = 6;
     public static final Integer HOME_LAST_TRANSACTIONS_ICON_SIZE = 32; // 32x32 px
     public static final Integer HOME_LAST_TRANSACTIONS_DESCRIPTION_LABEL_WIDTH = 180;
@@ -63,8 +66,9 @@ public final class Constants
     public static final Integer HOME_BAR_CHART_MONTHS                          = 12;
     public static final Integer HOME_BAR_CHART_TICK_UNIT                       = 250;
     public static final Integer HOME_MONTH_RESUME_TEXT_LABEL_WIDTH             = 100;
-    public static final Integer HOME_MONTH_RESUME_VALUE_LABEL_WIDTH            = 100;
     public static final Integer HOME_MONTH_RESUME_SIGN_LABEL_WIDTH             = 10;
+    public static final Integer HOME_MONTH_RESUME_TEXT_EXPECTED_LABEL_WIDTH =
+        HOME_MONTH_RESUME_TEXT_LABEL_WIDTH + HOME_MONTH_RESUME_SIGN_LABEL_WIDTH;
 
     public static final Double EPSILON          = 1e-6;
     public static final Double ONE_SECOND_IN_NS = 1_000_000_000.0;
