@@ -11,115 +11,118 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="rootAnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="628.0" prefWidth="1042.0" stylesheets="@style/home.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mymoney.ui.HomeController">
+<AnchorPane fx:id="rootAnchorPane" minHeight="700.0" stylesheets="@style/home.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mymoney.ui.HomeController">
    <children>
-      <VBox fx:id="rootVBox" prefHeight="628.0" prefWidth="1042.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox fx:id="rootVBox" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <HBox fx:id="rootHBoxUp" prefHeight="250.0" prefWidth="1042.0" spacing="10.0">
+            <AnchorPane minHeight="250.0">
                <children>
-                  <AnchorPane fx:id="walletPane" prefHeight="235.0" prefWidth="385.0">
+                  <HBox fx:id="rootHBoxUp" maxHeight="1.7976931348623157E308" minHeight="250.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <Label fx:id="walletPaneTitle" layoutX="14.0" layoutY="14.0" text="Wallets" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
-                        <AnchorPane fx:id="walletView1" layoutX="14.0" layoutY="50.0" prefHeight="125.0" prefWidth="170.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="50.0" />
-                        <AnchorPane fx:id="walletView2" layoutX="200.0" layoutY="50.0" prefHeight="125.0" prefWidth="170.0" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="50.0" />
-                        <JFXButton fx:id="walletPrevButton" layoutX="314.0" layoutY="175.0" text="◀" AnchorPane.bottomAnchor="10.0" />
-                        <JFXButton fx:id="walletNextButton" layoutX="342.0" layoutY="175.0" text="▶" AnchorPane.bottomAnchor="10.0" />
-                     </children>
-                  </AnchorPane>
-                  <AnchorPane fx:id="creditCardPane" prefHeight="235.0" prefWidth="385.0">
-                     <children>
-                        <Label fx:id="creditCardPaneTitle" layoutX="7.0" layoutY="5.0" text="Credit Cards" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
-                        <AnchorPane fx:id="creditCardView1" layoutX="10.0" layoutY="50.0" prefHeight="125.0" prefWidth="170.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="50.0" />
-                        <AnchorPane fx:id="creditCardView2" layoutX="200.0" layoutY="50.0" prefHeight="125.0" prefWidth="170.0" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="50.0" />
-                        <JFXButton fx:id="creditCardPrevButton" layoutX="314.0" layoutY="175.0" text="◀" AnchorPane.bottomAnchor="10.0" />
-                        <JFXButton fx:id="creditCardNextButton" layoutX="342.0" layoutY="175.0" text="▶" AnchorPane.bottomAnchor="10.0" />
-                     </children>
-                  </AnchorPane>
-                  <AnchorPane fx:id="monthResumePane" prefHeight="235.0" prefWidth="210.0">
-                     <children>
-                        <Label fx:id="monthResumePaneTitle" layoutX="8.0" layoutY="12.0" text="Resume" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
-                        <AnchorPane fx:id="monthResumeView" prefHeight="185.0" prefWidth="170.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+                        <AnchorPane fx:id="walletPane" minWidth="390.0">
                            <children>
-                              <VBox fx:id="monthResumeVBox" layoutX="14.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <Label fx:id="walletPaneTitle" text="Wallets" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                              <AnchorPane fx:id="walletView1" minHeight="125.0" minWidth="170.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="50.0" />
+                              <AnchorPane fx:id="walletView2" minHeight="125.0" minWidth="170.0" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="50.0" />
+                              <JFXButton fx:id="walletPrevButton" text="◀" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="30.0" />
+                              <JFXButton fx:id="walletNextButton" text="▶" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="0.0" />
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="creditCardPane" minWidth="390.0">
+                           <children>
+                              <Label fx:id="creditCardPaneTitle" text="Credit Cards" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                              <AnchorPane fx:id="creditCardView1" minHeight="125.0" minWidth="170.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="50.0" />
+                              <AnchorPane fx:id="creditCardView2" minHeight="125.0" minWidth="170.0" AnchorPane.bottomAnchor="40.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="50.0" />
+                              <JFXButton fx:id="creditCardPrevButton" text="◀" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="30.0" />
+                              <JFXButton fx:id="creditCardNextButton" text="▶" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="0.0" />
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="monthResumePane" minWidth="390.0" prefHeight="250.0" prefWidth="420.0">
+                           <children>
+                              <Label fx:id="monthResumePaneTitle" text="Resume" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                              <AnchorPane fx:id="monthResumeView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
                                  <children>
-                                    <HBox prefHeight="100.0" prefWidth="200.0">
+                                    <VBox fx:id="monthResumeVBox" style="-fx-background-color: gray;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <VBox prefHeight="46.0" prefWidth="215.0">
+                                          <HBox>
                                              <children>
-                                                <HBox fx:id="monthResumeCurrentIncomeHBox" prefHeight="100.0" prefWidth="200.0" />
-                                                <HBox fx:id="monthResumeExpectedIncomeHBox" prefHeight="100.0" prefWidth="200.0" />
+                                                <VBox>
+                                                   <children>
+                                                      <HBox fx:id="monthResumeCurrentIncomeHBox" />
+                                                      <HBox fx:id="monthResumeExpectedIncomeHBox" />
+                                                   </children>
+                                                </VBox>
                                              </children>
-                                          </VBox>
-                                       </children>
-                                    </HBox>
-                                    <HBox prefHeight="100.0" prefWidth="200.0">
-                                       <children>
-                                          <VBox prefHeight="46.0" prefWidth="215.0">
+                                          </HBox>
+                                          <HBox>
                                              <children>
-                                                <HBox fx:id="monthResumeCurrentExpenseHBox" prefHeight="100.0" prefWidth="200.0" />
-                                                <HBox fx:id="monthResumeExpectedExpenseHBox" prefHeight="100.0" prefWidth="200.0" />
+                                                <VBox>
+                                                   <children>
+                                                      <HBox fx:id="monthResumeCurrentExpenseHBox" />
+                                                      <HBox fx:id="monthResumeExpectedExpenseHBox" />
+                                                   </children>
+                                                </VBox>
                                              </children>
-                                          </VBox>
-                                       </children>
-                                    </HBox>
-                                    <HBox prefHeight="100.0" prefWidth="200.0">
-                                       <children>
-                                          <VBox prefHeight="46.0" prefWidth="215.0">
+                                          </HBox>
+                                          <HBox>
                                              <children>
-                                                <HBox fx:id="monthResumeCurrentBalanceHBox" prefHeight="100.0" prefWidth="200.0" />
-                                                <HBox fx:id="monthResumeExpectedBalanceHBox" prefHeight="100.0" prefWidth="200.0" />
+                                                <VBox>
+                                                   <children>
+                                                      <HBox fx:id="monthResumeCurrentBalanceHBox" />
+                                                      <HBox fx:id="monthResumeExpectedBalanceHBox" />
+                                                   </children>
+                                                </VBox>
                                              </children>
-                                          </VBox>
-                                       </children>
-                                    </HBox>
-                                    <HBox prefHeight="100.0" prefWidth="200.0">
-                                       <children>
-                                          <VBox prefHeight="46.0" prefWidth="215.0">
+                                          </HBox>
+                                          <HBox>
                                              <children>
-                                                <HBox fx:id="monthResumeCurrentSavingsHBox" prefHeight="100.0" prefWidth="200.0" />
-                                                <HBox fx:id="monthResumeExpectedSavingsHBox" prefHeight="100.0" prefWidth="200.0" />
+                                                <VBox>
+                                                   <children>
+                                                      <HBox fx:id="monthResumeCurrentSavingsHBox" />
+                                                      <HBox fx:id="monthResumeExpectedSavingsHBox" />
+                                                   </children>
+                                                </VBox>
                                              </children>
-                                          </VBox>
+                                          </HBox>
                                        </children>
-                                    </HBox>
+                                    </VBox>
                                  </children>
-                              </VBox>
-                           </children></AnchorPane>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
                      </children>
-                  </AnchorPane>
+                  </HBox>
                </children>
-               <VBox.margin>
-                  <Insets left="10.0" top="10.0" />
-               </VBox.margin>
-            </HBox>
-            <HBox fx:id="rootHBoxBottom" prefHeight="388.0" prefWidth="1042.0" spacing="10.0">
+            </AnchorPane>
+            <AnchorPane>
                <children>
-                  <AnchorPane fx:id="graphPane" prefHeight="348.0" prefWidth="637.0">
+                  <HBox fx:id="rootHBoxBottom" maxWidth="1.7976931348623157E308" minHeight="450.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <BarChart fx:id="expensesLast12Months" layoutX="2.0" layoutY="-52.0" prefHeight="348.0" prefWidth="637.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                          <xAxis>
-                            <CategoryAxis side="BOTTOM" />
-                          </xAxis>
-                          <yAxis>
-                            <NumberAxis side="LEFT" />
-                          </yAxis>
-                        </BarChart>
+                        <AnchorPane fx:id="graphPane" minHeight="300.0" minWidth="600.0" prefHeight="451.0" prefWidth="703.0">
+                           <children>
+                              <BarChart fx:id="expensesLast12Months" minWidth="700.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <xAxis>
+                                  <CategoryAxis side="BOTTOM" />
+                                </xAxis>
+                                <yAxis>
+                                  <NumberAxis side="LEFT" />
+                                </yAxis>
+                              </BarChart>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="lastTransactionsPane" minHeight="300.0" minWidth="500.0">
+                           <children>
+                              <ListView fx:id="lastTransactions" layoutY="66.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="66.0" />
+                              <Label fx:id="lastTransactionsPaneTitle" layoutX="10.0" layoutY="17.0" text="Last Transactions" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                           </children>
+                        </AnchorPane>
                      </children>
-                  </AnchorPane>
-                  <AnchorPane fx:id="lastTransactionsPane" prefHeight="348.0" prefWidth="353.0">
-                     <children>
-                        <ListView fx:id="lastTransactions" layoutY="66.0" prefHeight="282.0" prefWidth="353.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="66.0" />
-                        <Label fx:id="lastTransactionsPaneTitle" layoutX="10.0" layoutY="17.0" text="Last Transactions" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
-                     </children>
-                  </AnchorPane>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" />
+                     </padding>
+                  </HBox>
                </children>
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-               <padding>
-                  <Insets bottom="10.0" left="10.0" />
-               </padding>
-            </HBox>
+            </AnchorPane>
          </children>
       </VBox>
    </children>
