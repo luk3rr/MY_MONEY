@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.NumberAxis;
@@ -31,11 +32,14 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -70,7 +74,7 @@ public class HomeController
     private JFXButton creditCardNextButton;
 
     @FXML
-    private ListView<WalletTransaction> lastTransactions;
+    private VBox lastTransactionsVBox;
 
     @FXML
     private BarChart<String, Double> expensesLast12Months;
@@ -298,94 +302,75 @@ public class HomeController
     }
 
     /**
-     * Update the display of the last transactions
+     * Update the display of the last transactions using VBox
      */
     private void UpdateDisplayLastTransactions()
     {
-        lastTransactions.getItems().clear();
-        lastTransactions.setMouseTransparent(true);
-        lastTransactions.getItems().addAll(transactions);
+        lastTransactionsVBox.getChildren().clear();
 
-        lastTransactions.setCellFactory(listView -> new ListCell<WalletTransaction>() {
-            @Override
-            protected void updateItem(WalletTransaction transaction, boolean empty)
+        // Add the transactions to the VBox
+        for (WalletTransaction transaction : transactions)
+        {
+            ImageView icon = transaction.GetType() == TransactionType.INCOME
+                                 ? new ImageView(Constants.INCOME_ICON)
+                                 : new ImageView(Constants.EXPENSE_ICON);
+
+            icon.setFitHeight(Constants.HOME_LAST_TRANSACTIONS_ICON_SIZE);
+            icon.setFitWidth(Constants.HOME_LAST_TRANSACTIONS_ICON_SIZE);
+
+            // Labels
+            Label descriptionLabel = new Label(transaction.GetDescription());
+            descriptionLabel.setPrefWidth(
+                Constants.HOME_LAST_TRANSACTIONS_DESCRIPTION_LABEL_WIDTH);
+
+            Label valueLabel =
+                new Label(String.format("$ %.2f", transaction.GetAmount()));
+            valueLabel.setPrefWidth(Constants.HOME_LAST_TRANSACTIONS_VALUE_LABEL_WIDTH);
+
+            Label dateLabel = new Label(transaction.GetDate().toString());
+            dateLabel.setPrefWidth(Constants.HOME_LAST_TRANSACTIONS_DATE_LABEL_WIDTH);
+
+            Label walletLabel = new Label(transaction.GetWallet().GetName());
+            walletLabel.setPrefWidth(
+                Constants.HOME_LAST_TRANSACTIONS_WALLET_LABEL_WIDTH);
+
+            AddTooltipToNode(walletLabel, "Wallet");
+
+            HBox descriptionValueBox = new HBox();
+            descriptionValueBox.getStyleClass().add(
+                Constants.HOME_LAST_TRANSACTIONS_DESCRIPTION_VALUE_STYLE);
+            descriptionValueBox.getChildren().addAll(descriptionLabel, valueLabel);
+
+            HBox.setHgrow(descriptionLabel, Priority.ALWAYS);
+            descriptionValueBox.setAlignment(Pos.CENTER_LEFT);
+
+            HBox walletDateBox = new HBox();
+            walletDateBox.getStyleClass().add(
+                Constants.HOME_LAST_TRANSACTIONS_WALLET_DATE_STYLE);
+            walletDateBox.getChildren().addAll(walletLabel, dateLabel);
+
+            HBox.setHgrow(walletLabel, Priority.ALWAYS);
+            walletDateBox.setAlignment(Pos.CENTER_LEFT);
+
+            VBox vbox = new VBox(5, descriptionValueBox, walletDateBox);
+            vbox.getStyleClass().add(
+                Constants.HOME_LAST_TRANSACTIONS_TRANSACTION_DETAILS_STYLE);
+
+            HBox hbox = new HBox(10, icon, vbox);
+            hbox.setAlignment(Pos.CENTER_LEFT);
+
+            if (transaction.GetType() == TransactionType.INCOME)
             {
-                super.updateItem(transaction, empty);
-
-                if (empty || transaction == null)
-                {
-                    setGraphic(null);
-                }
-                else
-                {
-                    ImageView icon = transaction.GetType() == TransactionType.INCOME
-                                         ? new ImageView(Constants.INCOME_ICON)
-                                         : new ImageView(Constants.EXPENSE_ICON);
-
-                    icon.setFitHeight(Constants.HOME_LAST_TRANSACTIONS_ICON_SIZE);
-                    icon.setFitWidth(Constants.HOME_LAST_TRANSACTIONS_ICON_SIZE);
-
-                    // Labels
-                    Label descriptionLabel = new Label(transaction.GetDescription());
-                    descriptionLabel.setPrefWidth(
-                        Constants.HOME_LAST_TRANSACTIONS_DESCRIPTION_LABEL_WIDTH);
-
-                    Label valueLabel =
-                        new Label(String.format("$ %.2f", transaction.GetAmount()));
-                    valueLabel.setPrefWidth(
-                        Constants.HOME_LAST_TRANSACTIONS_VALUE_LABEL_WIDTH);
-
-                    Label dateLabel = new Label(transaction.GetDate().toString());
-                    dateLabel.setPrefWidth(
-                        Constants.HOME_LAST_TRANSACTIONS_DATE_LABEL_WIDTH);
-
-                    Label walletLabel = new Label(transaction.GetWallet().GetName());
-                    walletLabel.setPrefWidth(
-                        Constants.HOME_LAST_TRANSACTIONS_WALLET_LABEL_WIDTH);
-
-                    HBox descriptionValueBox = new HBox();
-                    descriptionValueBox.getStyleClass().add(
-                        Constants.HOME_LAST_TRANSACTIONS_DESCRIPTION_VALUE_STYLE);
-
-                    descriptionValueBox.getChildren().addAll(descriptionLabel,
-                                                             valueLabel);
-
-                    HBox.setHgrow(descriptionLabel, Priority.ALWAYS);
-                    descriptionValueBox.setAlignment(Pos.CENTER_LEFT);
-
-                    HBox walletDateBox = new HBox();
-
-                    walletDateBox.getStyleClass().add(
-                        Constants.HOME_LAST_TRANSACTIONS_WALLET_DATE_STYLE);
-
-                    walletDateBox.getChildren().addAll(walletLabel, dateLabel);
-
-                    HBox.setHgrow(walletLabel, Priority.ALWAYS);
-
-                    walletDateBox.setAlignment(Pos.CENTER_LEFT);
-
-                    VBox vbox = new VBox(5, descriptionValueBox, walletDateBox);
-                    vbox.getStyleClass().add(
-                        Constants.HOME_LAST_TRANSACTIONS_TRANSACTION_DETAILS_STYLE);
-
-                    HBox hbox = new HBox(10, icon, vbox);
-                    hbox.setAlignment(Pos.CENTER_LEFT);
-
-                    if (transaction.GetType() == TransactionType.INCOME)
-                    {
-                        hbox.getStyleClass().add(
-                            Constants.HOME_LAST_TRANSACTIONS_INCOME_ITEM_STYLE);
-                    }
-                    else
-                    {
-                        hbox.getStyleClass().add(
-                            Constants.HOME_LAST_TRANSACTIONS_EXPENSE_ITEM_STYLE);
-                    }
-
-                    setGraphic(hbox);
-                }
+                hbox.getStyleClass().add(
+                    Constants.HOME_LAST_TRANSACTIONS_INCOME_ITEM_STYLE);
             }
-        });
+            else
+            {
+                hbox.getStyleClass().add(
+                    Constants.HOME_LAST_TRANSACTIONS_EXPENSE_ITEM_STYLE);
+            }
+            lastTransactionsVBox.getChildren().add(hbox);
+        }
     }
 
     /**
@@ -810,12 +795,16 @@ public class HomeController
         vbox.getStyleClass().add(Constants.HOME_CREDIT_CARD_ITEM_STYLE);
 
         Label nameLabel = new Label(creditCard.GetName());
+        AddTooltipToNode(nameLabel, "Credit card name");
 
         Label availableCredit = new Label(
             String.format("$ %.2f",
                           creditCardService.GetAvailableCredit(creditCard.GetId())));
+        AddTooltipToNode(availableCredit, "Available credit");
+
         Label digitsLabel =
             new Label("**** **** **** " + creditCard.GetLastFourDigits());
+        AddTooltipToNode(digitsLabel, "Credit card number");
 
         vbox.getChildren().addAll(nameLabel, availableCredit, digitsLabel);
 
@@ -833,11 +822,30 @@ public class HomeController
         vbox.setAlignment(Pos.CENTER_LEFT);
         vbox.getStyleClass().add(Constants.HOME_WALLET_ITEM_STYLE);
 
-        Label nameLabel    = new Label(wallet.GetName());
+        Label nameLabel = new Label(wallet.GetName());
+        AddTooltipToNode(nameLabel, "Wallet name");
+
         Label balanceLabel = new Label(String.format("$ %.2f", wallet.GetBalance()));
+        AddTooltipToNode(balanceLabel, "Wallet balance");
 
         vbox.getChildren().addAll(nameLabel, balanceLabel);
 
         return vbox;
+    }
+
+    /**
+     * Add a tooltip to a node
+     * @param node The node to add the tooltip
+     * @param text The text of the tooltip
+     */
+    private void AddTooltipToNode(Node node, String text)
+    {
+        Tooltip tooltip = new Tooltip(text);
+        tooltip.getStyleClass().add(Constants.HOME_TOOLTIP_STYLE);
+        tooltip.setShowDelay(Duration.seconds(Constants.HOME_TOOLTIP_ANIMATION_DELAY));
+        tooltip.setHideDelay(
+            Duration.seconds(Constants.HOME_TOOLTIP_ANIMATION_DURATION));
+
+        Tooltip.install(node, tooltip);
     }
 }

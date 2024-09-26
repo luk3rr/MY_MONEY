@@ -57,3 +57,9 @@
 #sidebar JFXButton .VBox {
     -fx-margin-top: 10px;
 }
+
+.tooltip {
+    -fx-background-color: #34495e ;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}

@@ -50,15 +50,16 @@ public final class Constants
         "month-resume-zero-label";
     public static final String HOME_MONTH_RESUME_EXPECTED_LABEL_STYLE =
         "month-resume-expected-label";
+    public static final String HOME_TOOLTIP_STYLE = "tooltip";
 
     // Icons
     public static final String EXPENSE_ICON = "/icons/expense.png";
     public static final String INCOME_ICON  = "/icons/income.png";
 
     // Sizes
-    public static final Integer HOME_LAST_TRANSACTIONS_SIZE      = 6;
+    public static final Integer HOME_LAST_TRANSACTIONS_SIZE      = 7;
     public static final Integer HOME_LAST_TRANSACTIONS_ICON_SIZE = 32; // 32x32 px
-    public static final Integer HOME_LAST_TRANSACTIONS_DESCRIPTION_LABEL_WIDTH = 180;
+    public static final Integer HOME_LAST_TRANSACTIONS_DESCRIPTION_LABEL_WIDTH = 280;
     public static final Integer HOME_LAST_TRANSACTIONS_VALUE_LABEL_WIDTH       = 70;
     public static final Integer HOME_LAST_TRANSACTIONS_DATE_LABEL_WIDTH        = 80;
     public static final Integer HOME_LAST_TRANSACTIONS_WALLET_LABEL_WIDTH      = 100;
@@ -83,6 +84,8 @@ public final class Constants
     public static final Double  MENU_ANIMATION_DURATION           = 200.0; // ms
     public static final Integer HOME_BAR_CHART_ANIMATION_FRAMES   = 30;
     public static final Double  HOME_BAR_CHART_ANIMATION_DURATION = 0.7; // s
+    public static final Double  HOME_TOOLTIP_ANIMATION_DURATION   = 0.5; // s
+    public static final Double  HOME_TOOLTIP_ANIMATION_DELAY      = 0.5; // s
 
     // Prevent instantiation
     private Constants() { }
