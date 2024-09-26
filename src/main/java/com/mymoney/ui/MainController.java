@@ -109,6 +109,11 @@ public class MainController
             newContent.getStylesheets().add(
                 getClass().getResource(styleSheet).toExternalForm());
 
+            AnchorPane.setTopAnchor(newContent, 0.0);
+            AnchorPane.setRightAnchor(newContent, 0.0);
+            AnchorPane.setBottomAnchor(newContent, 0.0);
+            AnchorPane.setLeftAnchor(newContent, 0.0);
+
             contentArea.getChildren().clear();
             contentArea.getChildren().add(newContent);
         }
@@ -146,6 +151,14 @@ public class MainController
                          keyValueSidebarWidth);
 
         timeline.getKeyFrames().add(keyFrame);
+
+        // If the menu is being expanded, hide the text of the buttons
+        // before the animation starts. This encreses the visual quality
+        // of the animation
+        if (isMenuExpanded)
+        {
+            SetButtonTextVisibility(false);
+        }
 
         timeline.setOnFinished(event -> {
             SetButtonTextVisibility(isMenuExpanded);
