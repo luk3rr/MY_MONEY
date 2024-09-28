@@ -822,7 +822,7 @@ public class HomeController
         monthResumeCurrentSavingsHBox.setAlignment(Pos.CENTER_LEFT);
         monthResumeExpectedSavingsHBox.setAlignment(Pos.TOP_LEFT);
         monthResumeCreditCardDebtHBox.setAlignment(Pos.CENTER_LEFT);
-        monthResumeCreditCardPendingPaymentsHBox.setAlignment(Pos.CENTER_LEFT);
+        monthResumeCreditCardPendingPaymentsHBox.setAlignment(Pos.TOP_LEFT);
     }
 
     /**

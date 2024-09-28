@@ -55,8 +55,8 @@
                                              <children>
                                                 <VBox HBox.hgrow="ALWAYS">
                                                    <children>
-                                                      <HBox fx:id="monthResumeCurrentIncomeHBox" />
-                                                      <HBox fx:id="monthResumeExpectedIncomeHBox" />
+                                                      <HBox fx:id="monthResumeCurrentIncomeHBox" VBox.vgrow="ALWAYS" />
+                                                      <HBox fx:id="monthResumeExpectedIncomeHBox" VBox.vgrow="ALWAYS" />
                                                    </children>
                                                 </VBox>
                                              </children>
@@ -65,8 +65,8 @@
                                              <children>
                                                 <VBox HBox.hgrow="ALWAYS">
                                                    <children>
-                                                      <HBox fx:id="monthResumeCurrentExpenseHBox" />
-                                                      <HBox fx:id="monthResumeExpectedExpenseHBox" />
+                                                      <HBox fx:id="monthResumeCurrentExpenseHBox" VBox.vgrow="ALWAYS" />
+                                                      <HBox fx:id="monthResumeExpectedExpenseHBox" VBox.vgrow="ALWAYS" />
                                                    </children>
                                                 </VBox>
                                              </children>
@@ -75,8 +75,8 @@
                                              <children>
                                                 <VBox HBox.hgrow="ALWAYS">
                                                    <children>
-                                                      <HBox fx:id="monthResumeCurrentBalanceHBox" />
-                                                      <HBox fx:id="monthResumeExpectedBalanceHBox" />
+                                                      <HBox fx:id="monthResumeCurrentBalanceHBox" VBox.vgrow="ALWAYS" />
+                                                      <HBox fx:id="monthResumeExpectedBalanceHBox" VBox.vgrow="ALWAYS" />
                                                    </children>
                                                 </VBox>
                                              </children>
@@ -85,8 +85,8 @@
                                              <children>
                                                 <VBox HBox.hgrow="ALWAYS">
                                                    <children>
-                                                      <HBox fx:id="monthResumeCurrentSavingsHBox" />
-                                                      <HBox fx:id="monthResumeExpectedSavingsHBox" />
+                                                      <HBox fx:id="monthResumeCurrentSavingsHBox" VBox.vgrow="ALWAYS" />
+                                                      <HBox fx:id="monthResumeExpectedSavingsHBox" VBox.vgrow="ALWAYS" />
                                                    </children>
                                                 </VBox>
                                              </children>
@@ -95,8 +95,8 @@
                                              <children>
                                                 <VBox HBox.hgrow="ALWAYS">
                                                    <children>
-                                                      <HBox fx:id="monthResumeCreditCardDebtHBox" />
-                                                      <HBox fx:id="monthResumeCreditCardPendingPaymentsHBox" />
+                                                      <HBox fx:id="monthResumeCreditCardDebtHBox" VBox.vgrow="ALWAYS" />
+                                                      <HBox fx:id="monthResumeCreditCardPendingPaymentsHBox" VBox.vgrow="ALWAYS" />
                                                    </children>
                                                 </VBox>
                                              </children>
