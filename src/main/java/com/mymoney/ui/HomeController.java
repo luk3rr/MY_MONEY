@@ -74,7 +74,7 @@ public class HomeController
     private VBox lastTransactionsVBox;
 
     @FXML
-    private BarChart<String, Double> expensesLast12Months;
+    private BarChart<String, Double> transactionsLast12Months;
 
     @FXML
     private Label monthResumePaneTitle;
@@ -157,7 +157,7 @@ public class HomeController
         UpdateDisplayWallets();
         UpdateDisplayCreditCards();
         UpdateDisplayLastTransactions();
-        UpdateChartExpensesLast12Months();
+        UpdateChartIncomesAndExpensesLast12Months();
         UpdateMonthResume();
 
         SetButtonsActions();
@@ -377,116 +377,141 @@ public class HomeController
     }
 
     /**
-     * Update the expenses chart
+     * Update the chart with incomes and expenses for the last 12 months
      */
-    private void UpdateChartExpensesLast12Months()
+    private void UpdateChartIncomesAndExpensesLast12Months()
     {
-        Map<String, Double> monthlyExpenses =
-            new LinkedHashMap<>(); // To keep the order
+        // LinkedHashMap to keep the order of the months
+        Map<String, Double> monthlyExpenses = new LinkedHashMap<>();
+        Map<String, Double> monthlyIncomes  = new LinkedHashMap<>();
 
         LocalDate         currentDate = LocalDate.now();
         DateTimeFormatter formatter   = DateTimeFormatter.ofPattern("MMM/yy");
 
+        // Collect data for the last 12 months
         for (Integer i = 0; i < Constants.HOME_BAR_CHART_MONTHS; i++)
         {
             // Get the data from the oldest month to the most recent, to keep the order
-            // in the chart
             LocalDate date =
                 currentDate.minusMonths(Constants.HOME_BAR_CHART_MONTHS - i - 1);
-
             Integer month = date.getMonthValue();
             Integer year  = date.getYear();
 
+            // Get transactions
             List<WalletTransaction> transactions =
                 walletService.GetAllTransactionsByMonth(month, year);
-
             m_logger.info("Found " + transactions.size() + " transactions for " +
                           month + "/" + year);
 
-            Double total = transactions.stream()
-                               .filter(t -> t.GetType() == TransactionType.EXPENSE)
-                               .mapToDouble(WalletTransaction::GetAmount)
-                               .sum();
+            // Calculate total expenses for the month
+            Double totalExpenses =
+                transactions.stream()
+                    .filter(t -> t.GetType() == TransactionType.EXPENSE)
+                    .mapToDouble(WalletTransaction::GetAmount)
+                    .sum();
 
-            monthlyExpenses.put(date.format(formatter), total);
+            // Calculate total incomes for the month
+            Double totalIncomes =
+                transactions.stream()
+                    .filter(t -> t.GetType() == TransactionType.INCOME)
+                    .mapToDouble(WalletTransaction::GetAmount)
+                    .sum();
+
+            monthlyExpenses.put(date.format(formatter), totalExpenses);
+            monthlyIncomes.put(date.format(formatter), totalIncomes);
         }
 
-        // Get the maximum value to set the axis
-        Double maxExpenseValue = 0.0;
+        // Create two series: one for incomes and one for expenses
+        XYChart.Series<String, Double> expensesSeries = new XYChart.Series<>();
+        expensesSeries.setName("Expenses");
 
-        XYChart.Series<String, Double> series = new XYChart.Series<>();
-        series.setName("Expenses");
+        XYChart.Series<String, Double> incomesSeries = new XYChart.Series<>();
+        incomesSeries.setName("Incomes");
 
+        Double maxValue = 0.0;
+
+        // Add data to each series
         for (Map.Entry<String, Double> entry : monthlyExpenses.entrySet())
         {
-            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
-            maxExpenseValue = Math.max(maxExpenseValue, entry.getValue());
+            String month        = entry.getKey();
+            Double expenseValue = entry.getValue();
+            Double incomeValue  = monthlyIncomes.getOrDefault(month, 0.0);
+
+            expensesSeries.getData().add(new XYChart.Data<>(month, expenseValue));
+            incomesSeries.getData().add(new XYChart.Data<>(month, incomeValue));
+
+            maxValue = Math.max(maxValue, Math.max(expenseValue, incomeValue));
         }
 
-        // Set the maximum value for the Y axis as the maximum expense value
-        Axis<?> yAxis = expensesLast12Months.getYAxis();
+        // Set Y-axis limits based on the maximum value found
+        Axis<?> yAxis = transactionsLast12Months.getYAxis();
         if (yAxis instanceof NumberAxis)
         {
             NumberAxis numberAxis = (NumberAxis)yAxis;
             numberAxis.setAutoRanging(false);
             numberAxis.setLowerBound(0);
-            numberAxis.setUpperBound(maxExpenseValue);
+            numberAxis.setUpperBound(maxValue);
             numberAxis.setTickUnit(Constants.HOME_BAR_CHART_TICK_UNIT);
         }
 
-        expensesLast12Months.setVerticalGridLinesVisible(false);
-        expensesLast12Months.setTitle("Expenses in the Last " +
-                                      Constants.HOME_BAR_CHART_MONTHS + " Months");
+        transactionsLast12Months.setVerticalGridLinesVisible(false);
+        transactionsLast12Months.setTitle("Incomes and Expenses for the Last " +
+                                          Constants.HOME_BAR_CHART_MONTHS + " Months");
 
-        expensesLast12Months.getData().clear();
-        expensesLast12Months.getData().add(series);
+        // Clear previous data and add the new series (expenses and incomes)
+        transactionsLast12Months.getData().clear();
+        transactionsLast12Months.getData().add(expensesSeries);
+        transactionsLast12Months.getData().add(incomesSeries);
 
-        // Animate the chart
-        for (XYChart.Data<String, Double> data : series.getData())
+        // Add tooltips to the bars
+        AddTooltipToBars(expensesSeries);
+        AddTooltipToBars(incomesSeries);
+
+        for (XYChart.Series<String, Double> series : transactionsLast12Months.getData())
         {
-            Double targetValue = data.getYValue();
-            data.setYValue(0.0);
+            for (XYChart.Data<String, Double> data : series.getData())
+            {
+                Double targetValue = data.getYValue();
+                data.setYValue(0.0);
 
-            AnimationTimer timer = new AnimationTimer() {
-                private Long         lastUpdate   = 0L;
-                private Double       currentValue = 0.0;
-                private final Double increment =
-                    targetValue / Constants.HOME_BAR_CHART_ANIMATION_FRAMES;
+                AnimationTimer timer = new AnimationTimer() {
+                    private Long         lastUpdate   = 0L;
+                    private Double       currentValue = 0.0;
+                    private final Double increment =
+                        targetValue / Constants.HOME_BAR_CHART_ANIMATION_FRAMES;
+                    Double elapsed = 0.0;
 
-                Double elapsed = 0.0;
-
-                @Override
-                public void handle(long now)
-                {
-                    if (lastUpdate == 0)
+                    @Override
+                    public void handle(long now)
                     {
-                        lastUpdate = now;
-                    }
-
-                    elapsed += (now - lastUpdate) / Constants.ONE_SECOND_IN_NS;
-
-                    if (elapsed >= Constants.HOME_BAR_CHART_ANIMATION_DURATION)
-                    {
-                        currentValue = targetValue;
-                        data.setYValue(currentValue);
-                        stop();
-                    }
-                    else
-                    {
-                        currentValue += increment;
-
-                        if (currentValue > targetValue)
+                        if (lastUpdate == 0)
                         {
-                            currentValue = targetValue;
+                            lastUpdate = now;
                         }
 
-                        data.setYValue(currentValue);
-                    }
+                        elapsed += (now - lastUpdate) / Constants.ONE_SECOND_IN_NS;
 
-                    lastUpdate = now;
-                }
-            };
-            timer.start();
+                        if (elapsed >= Constants.HOME_BAR_CHART_ANIMATION_DURATION)
+                        {
+                            currentValue = targetValue;
+                            data.setYValue(currentValue);
+                            stop();
+                        }
+                        else
+                        {
+                            currentValue += increment;
+                            if (currentValue > targetValue)
+                            {
+                                currentValue = targetValue;
+                            }
+                            data.setYValue(currentValue);
+                        }
+
+                        lastUpdate = now;
+                    }
+                };
+                timer.start();
+            }
         }
     }
 
@@ -873,6 +898,24 @@ public class HomeController
         vbox.getChildren().addAll(nameLabel, balanceLabel);
 
         return vbox;
+    }
+
+    /**
+     * Add a tooltip to the bars of the chart
+     * @param series The series to add the tooltip
+     */
+    private void AddTooltipToBars(XYChart.Series<String, Double> series)
+    {
+        for (XYChart.Data<String, Double> data : series.getData())
+        {
+            String tooltipText = String.format("%.2f", data.getYValue());
+            AddTooltipToNode(data.getNode(), tooltipText);
+
+            data.getNode().setOnMouseEntered(
+                event -> { data.getNode().setStyle("-fx-opacity: 0.7;"); });
+            data.getNode().setOnMouseExited(
+                event -> { data.getNode().setStyle("-fx-opacity: 1;"); });
+        }
     }
 
     /**

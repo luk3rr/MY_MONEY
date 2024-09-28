@@ -113,7 +113,11 @@
   -fx-alignment: CENTER_LEFT;
 }
 .default-color0.chart-bar {
-  -fx-bar-fill: #ec7063;
+  -fx-bar-fill: #dc3545;
+}
+
+.default-color1.chart-bar {
+  -fx-bar-fill: #28a745;
 }
 
 .chart-plot-background {
