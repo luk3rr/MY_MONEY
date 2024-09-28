@@ -51,9 +51,9 @@
                                  <children>
                                     <VBox fx:id="monthResumeVBox" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <HBox>
+                                          <HBox VBox.vgrow="ALWAYS">
                                              <children>
-                                                <VBox>
+                                                <VBox HBox.hgrow="ALWAYS">
                                                    <children>
                                                       <HBox fx:id="monthResumeCurrentIncomeHBox" />
                                                       <HBox fx:id="monthResumeExpectedIncomeHBox" />
@@ -61,9 +61,9 @@
                                                 </VBox>
                                              </children>
                                           </HBox>
-                                          <HBox>
+                                          <HBox VBox.vgrow="ALWAYS">
                                              <children>
-                                                <VBox>
+                                                <VBox HBox.hgrow="ALWAYS">
                                                    <children>
                                                       <HBox fx:id="monthResumeCurrentExpenseHBox" />
                                                       <HBox fx:id="monthResumeExpectedExpenseHBox" />
@@ -71,9 +71,9 @@
                                                 </VBox>
                                              </children>
                                           </HBox>
-                                          <HBox>
+                                          <HBox VBox.vgrow="ALWAYS">
                                              <children>
-                                                <VBox>
+                                                <VBox HBox.hgrow="ALWAYS">
                                                    <children>
                                                       <HBox fx:id="monthResumeCurrentBalanceHBox" />
                                                       <HBox fx:id="monthResumeExpectedBalanceHBox" />
@@ -81,12 +81,22 @@
                                                 </VBox>
                                              </children>
                                           </HBox>
-                                          <HBox>
+                                          <HBox VBox.vgrow="ALWAYS">
                                              <children>
-                                                <VBox>
+                                                <VBox HBox.hgrow="ALWAYS">
                                                    <children>
                                                       <HBox fx:id="monthResumeCurrentSavingsHBox" />
                                                       <HBox fx:id="monthResumeExpectedSavingsHBox" />
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                          </HBox>
+                                          <HBox VBox.vgrow="ALWAYS">
+                                             <children>
+                                                <VBox HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <HBox fx:id="monthResumeCreditCardDebtHBox" />
+                                                      <HBox fx:id="monthResumeCreditCardPendingPaymentsHBox" />
                                                    </children>
                                                 </VBox>
                                              </children>

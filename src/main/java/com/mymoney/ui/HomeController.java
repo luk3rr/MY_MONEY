@@ -30,9 +30,6 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -105,6 +102,12 @@ public class HomeController
 
     @FXML
     private HBox monthResumeExpectedSavingsHBox;
+
+    @FXML
+    private HBox monthResumeCreditCardDebtHBox;
+
+    @FXML
+    private HBox monthResumeCreditCardPendingPaymentsHBox;
 
     private List<Wallet> wallets;
 
@@ -320,18 +323,18 @@ public class HomeController
 
             // Labels
             Label descriptionLabel = new Label(transaction.GetDescription());
-            descriptionLabel.setPrefWidth(
+            descriptionLabel.setMinWidth(
                 Constants.HOME_LAST_TRANSACTIONS_DESCRIPTION_LABEL_WIDTH);
 
             Label valueLabel =
                 new Label(String.format("$ %.2f", transaction.GetAmount()));
-            valueLabel.setPrefWidth(Constants.HOME_LAST_TRANSACTIONS_VALUE_LABEL_WIDTH);
+            valueLabel.setMinWidth(Constants.HOME_LAST_TRANSACTIONS_VALUE_LABEL_WIDTH);
 
             Label dateLabel = new Label(transaction.GetDate().toString());
-            dateLabel.setPrefWidth(Constants.HOME_LAST_TRANSACTIONS_DATE_LABEL_WIDTH);
+            dateLabel.setMinWidth(Constants.HOME_LAST_TRANSACTIONS_DATE_LABEL_WIDTH);
 
             Label walletLabel = new Label(transaction.GetWallet().GetName());
-            walletLabel.setPrefWidth(
+            walletLabel.setMinWidth(
                 Constants.HOME_LAST_TRANSACTIONS_WALLET_LABEL_WIDTH);
 
             AddTooltipToNode(walletLabel, "Wallet");
@@ -526,6 +529,10 @@ public class HomeController
                 .mapToDouble(WalletTransaction::GetAmount)
                 .sum();
 
+        Double totalDebtAmount = creditCardService.GetTotalDebtAmount(month, year);
+        Double totalPendingPayments =
+            creditCardService.GetTotalPendingPayments(month, year);
+
         Double balance = totalConfirmedIncome - totalConfirmedExpenses;
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM/yy");
@@ -533,17 +540,18 @@ public class HomeController
 
         // Total Income
         Label incomeTextLabel = new Label("Incomes: ");
-        incomeTextLabel.setPrefWidth(Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
+        incomeTextLabel.setMinWidth(Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
 
-        Label incomeLabel = new Label(String.format("$ %.2f", totalConfirmedIncome));
-        incomeLabel.getStyleClass().add(
+        Label incomeValueLabel =
+            new Label(String.format("$ %.2f", totalConfirmedIncome));
+        incomeValueLabel.getStyleClass().add(
             Constants.HOME_MONTH_RESUME_POSITIVE_LABEL_STYLE);
 
         Label incomeSignLabel = new Label("");
-        incomeSignLabel.setPrefWidth(Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
+        incomeSignLabel.setMinWidth(Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
 
-        Label incomeExpectedIncomeLabel = new Label("Expected: ");
-        incomeExpectedIncomeLabel.setPrefWidth(
+        Label incomeExpectedIncomeLabel = new Label("Foreseen: ");
+        incomeExpectedIncomeLabel.setMinWidth(
             Constants.HOME_MONTH_RESUME_TEXT_EXPECTED_LABEL_WIDTH);
 
         Label incomeExpectedIncomeValueLabel =
@@ -551,7 +559,7 @@ public class HomeController
 
         // Total Expenses
         Label expensesTextLabel = new Label("Expenses: ");
-        expensesTextLabel.setPrefWidth(Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
+        expensesTextLabel.setMinWidth(Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
 
         Label expensesLabel =
             new Label(String.format("$ %.2f", totalConfirmedExpenses));
@@ -559,10 +567,10 @@ public class HomeController
             Constants.HOME_MONTH_RESUME_NEGATIVE_LABEL_STYLE);
 
         Label expensesSignLabel = new Label("");
-        expensesSignLabel.setPrefWidth(Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
+        expensesSignLabel.setMinWidth(Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
 
-        Label expectedExpensesLabel = new Label("Expected: ");
-        expectedExpensesLabel.setPrefWidth(
+        Label expectedExpensesLabel = new Label("Foreseen: ");
+        expectedExpensesLabel.setMinWidth(
             Constants.HOME_MONTH_RESUME_TEXT_EXPECTED_LABEL_WIDTH);
 
         Label expectedExpensesValueLabel =
@@ -570,7 +578,7 @@ public class HomeController
 
         // Balance
         Label balanceTextLabel = new Label("Balance: ");
-        balanceTextLabel.setPrefWidth(Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
+        balanceTextLabel.setMinWidth(Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
 
         Label balanceSignLabel;
         Label balanceLabel;
@@ -607,12 +615,12 @@ public class HomeController
                 Constants.HOME_MONTH_RESUME_ZERO_LABEL_STYLE);
         }
 
-        balanceSignLabel.setPrefWidth(Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
+        balanceSignLabel.setMinWidth(Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
 
         Double expectedBalance = allMonthExpectedIncome - allMonthExpectedExpenses;
 
-        Label expectedBalanceTextLabel = new Label("Expected: ");
-        expectedBalanceTextLabel.setPrefWidth(
+        Label expectedBalanceTextLabel = new Label("Foreseen: ");
+        expectedBalanceTextLabel.setMinWidth(
             Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
 
         Label expectedBalanceValueLabel;
@@ -638,7 +646,7 @@ public class HomeController
             expectedBalanceSignLabel  = new Label("");
         }
 
-        expectedBalanceSignLabel.setPrefWidth(
+        expectedBalanceSignLabel.setMinWidth(
             Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
 
         // Mensal Economies
@@ -689,13 +697,13 @@ public class HomeController
                 Constants.HOME_MONTH_RESUME_ZERO_LABEL_STYLE);
         }
 
-        mensalEconomiesTextLabel.setPrefWidth(
+        mensalEconomiesTextLabel.setMinWidth(
             Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
 
-        mensalEconomiesSignLabel.setPrefWidth(
+        mensalEconomiesSignLabel.setMinWidth(
             Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
 
-        Label expectedSavingsLabel = new Label("Expected: ");
+        Label expectedSavingsLabel = new Label("Foreseen: ");
 
         Double expectedSavingsPercentage =
             (allMonthExpectedIncome - allMonthExpectedExpenses) /
@@ -725,10 +733,32 @@ public class HomeController
             expectedSavingsSignLabel    = new Label("");
         }
 
-        expectedSavingsLabel.setPrefWidth(Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
+        expectedSavingsLabel.setMinWidth(Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
 
-        expectedSavingsSignLabel.setPrefWidth(
+        expectedSavingsSignLabel.setMinWidth(
             Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
+
+        // Credit card debt
+        Label creditCardDebtLabel = new Label("Credit cards: ");
+        creditCardDebtLabel.setMinWidth(Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
+
+        Label creditCardDebtValueLabel =
+            new Label(String.format("$ %.2f", totalDebtAmount));
+
+        Label creditCardSignLabel = new Label("");
+        creditCardSignLabel.setMinWidth(Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
+
+        creditCardDebtValueLabel.getStyleClass().add(
+            Constants.HOME_MONTH_RESUME_ZERO_LABEL_STYLE);
+
+        creditCardDebtValueLabel.setAlignment(Pos.CENTER_RIGHT);
+
+        Label pendingPaymentsLabel = new Label("Total invoices to pay: ");
+        pendingPaymentsLabel.setMinWidth(
+            Constants.HOME_MONTH_RESUME_TEXT_EXPECTED_LABEL_WIDTH);
+
+        Label pendingPaymentsValueLabel =
+            new Label(String.format("$ %.2f", totalPendingPayments));
 
         // Clear the HBoxes and add the labels
         monthResumeCurrentIncomeHBox.getChildren().clear();
@@ -739,10 +769,12 @@ public class HomeController
         monthResumeExpectedBalanceHBox.getChildren().clear();
         monthResumeCurrentSavingsHBox.getChildren().clear();
         monthResumeExpectedSavingsHBox.getChildren().clear();
+        monthResumeCreditCardDebtHBox.getChildren().clear();
+        monthResumeCreditCardPendingPaymentsHBox.getChildren().clear();
 
         monthResumeCurrentIncomeHBox.getChildren().addAll(incomeTextLabel,
                                                           incomeSignLabel,
-                                                          incomeLabel);
+                                                          incomeValueLabel);
 
         monthResumeExpectedIncomeHBox.getChildren().addAll(
             incomeExpectedIncomeLabel,
@@ -772,6 +804,14 @@ public class HomeController
             expectedSavingsSignLabel,
             expectedSavingsPercentLabel);
 
+        monthResumeCreditCardDebtHBox.getChildren().addAll(creditCardDebtLabel,
+                                                           creditCardSignLabel,
+                                                           creditCardDebtValueLabel);
+
+        monthResumeCreditCardPendingPaymentsHBox.getChildren().addAll(
+            pendingPaymentsLabel,
+            pendingPaymentsValueLabel);
+
         // Alignment for the HBoxes
         monthResumeCurrentIncomeHBox.setAlignment(Pos.CENTER_LEFT);
         monthResumeExpectedIncomeHBox.setAlignment(Pos.TOP_LEFT);
@@ -781,6 +821,8 @@ public class HomeController
         monthResumeExpectedBalanceHBox.setAlignment(Pos.TOP_LEFT);
         monthResumeCurrentSavingsHBox.setAlignment(Pos.CENTER_LEFT);
         monthResumeExpectedSavingsHBox.setAlignment(Pos.TOP_LEFT);
+        monthResumeCreditCardDebtHBox.setAlignment(Pos.CENTER_LEFT);
+        monthResumeCreditCardPendingPaymentsHBox.setAlignment(Pos.CENTER_LEFT);
     }
 
     /**

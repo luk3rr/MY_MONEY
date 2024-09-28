@@ -66,7 +66,7 @@ public final class Constants
     public static final Integer HOME_PANES_ITEMS_PER_PAGE                      = 2;
     public static final Integer HOME_BAR_CHART_MONTHS                          = 12;
     public static final Integer HOME_BAR_CHART_TICK_UNIT                       = 250;
-    public static final Integer HOME_MONTH_RESUME_TEXT_LABEL_WIDTH             = 100;
+    public static final Integer HOME_MONTH_RESUME_TEXT_LABEL_WIDTH             = 120;
     public static final Integer HOME_MONTH_RESUME_SIGN_LABEL_WIDTH             = 10;
     public static final Integer HOME_MONTH_RESUME_TEXT_EXPECTED_LABEL_WIDTH =
         HOME_MONTH_RESUME_TEXT_LABEL_WIDTH + HOME_MONTH_RESUME_SIGN_LABEL_WIDTH;

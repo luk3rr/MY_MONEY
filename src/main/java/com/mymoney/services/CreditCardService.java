@@ -220,4 +220,28 @@ public class CreditCardService
     {
         return m_creditCardRepository.findAllByOrderByNameAsc();
     }
+
+    /**
+     * Get the total debt amount of all credit cards in a month and year
+     * @param month The month
+     * @param year The year
+     * @return The total debt amount of all credit cards in a month and year
+     */
+    public Double GetTotalDebtAmount(Integer month, Integer year)
+    {
+        return m_creditCardPaymentRepository.GetTotalDebtAmount(month, year);
+    }
+
+    /**
+     * Get the total of all pending payments of all credit cards from a specified month
+     * and year onward, including future months and the current month
+     * @param month The starting month (inclusive)
+     * @param year The starting year (inclusive)
+     * @return The total of all pending payments of all credit cards from the specified
+     *     month and year onward
+     */
+    public Double GetTotalPendingPayments(Integer month, Integer year)
+    {
+        return m_creditCardPaymentRepository.GetTotalPendingPayments(month, year);
+    }
 }

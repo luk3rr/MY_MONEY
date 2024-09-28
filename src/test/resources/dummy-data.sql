@@ -96,3 +96,56 @@ INSERT INTO wallet_transaction (id, wallet_id, category_id, type, status, date, 
 (58, 1, 8, 'EXPENSE', 'CONFIRMED', '2024-08-03 00:00:00', 75.00, 'Compra de material escolar'),
 (59, 2, 1, 'INCOME', 'CONFIRMED', '2024-09-10 00:00:00', 800.00, 'Comissão de vendas'),
 (60, 3, 2, 'EXPENSE', 'CONFIRMED', '2024-09-15 00:00:00', 100.00, 'Assinatura de serviços online');
+
+-- Dívidas passadas (já pagas)
+INSERT INTO credit_card_debt (id, crc_id, category_id, date, total_amount, description)
+VALUES
+(1, 1, 1, '2023-05-10', 200.00, 'Compra de supermercado'),
+(2, 1, 2, '2023-06-10', 150.00, 'Transporte público'),
+(3, 2, 3, '2023-07-15', 500.00, 'Viagem de férias'),
+(4, 3, 4, '2023-08-20', 300.00, 'Consulta médica'),
+(5, 4, 5, '2023-09-25', 250.00, 'Material escolar');
+
+-- Pagamentos para as dívidas passadas
+INSERT INTO credit_card_payment (id, wallet_id, debt_id, date, amount, installment)
+VALUES
+(1, 1, 1, '2023-05-11', 100.00, 1),
+(2, 1, 1, '2023-06-11', 100.00, 2),
+(3, 1, 2, '2023-07-11', 75.00, 1),
+(4, 1, 2, '2023-08-11', 75.00, 2),
+(5, 2, 3, '2023-08-11', 250.00, 1),
+(6, 2, 3, '2023-09-11', 250.00, 2),
+(7, 3, 4, '2023-09-11', 150.00, 1),
+(8, 3, 4, '2023-10-11', 150.00, 2),
+(9, 4, 5, '2023-10-11', 125.00, 1),
+(10, 4, 5, '2023-11-11', 125.00, 2);
+
+-- Dívidas futuras (não pagas)
+INSERT INTO credit_card_debt (id, crc_id, category_id, date, total_amount, description)
+VALUES
+(6, 1, 1, '2024-09-10', 180.00, 'Compra de supermercado'),
+(7, 2, 2, '2024-09-15', 400.00, 'Passagem de ônibus'),
+(8, 3, 3, '2025-09-20', 600.00, 'Viagem planejada'),
+(9, 4, 4, '2025-09-25', 320.00, 'Consulta médica'),
+(10, 5, 5, '2025-09-30', 270.00, 'Compra de livros');
+
+-- Pagamentos para as dívidas futuras
+INSERT INTO credit_card_payment (id, wallet_id, debt_id, date, amount, installment)
+VALUES
+(11, NULL, 6, '2024-10-11', 90.00, 1),
+(12, NULL, 6, '2024-11-11', 90.00, 2),
+(13, NULL, 7, '2024-10-11', 200.00, 1),
+(14, NULL, 7, '2024-11-11', 200.00, 2),
+(15, NULL, 8, '2024-10-11', 300.00, 1),
+(16, NULL, 8, '2024-11-11', 300.00, 2),
+(17, NULL, 9, '2024-10-11', 320.00, 1),
+(19, NULL, 10, '2024-10-11', 27.00, 1),
+(20, NULL, 10, '2024-11-11', 27.00, 2),
+(21, NULL, 10, '2024-12-11', 27.00, 3),
+(22, NULL, 10, '2025-01-11', 27.00, 4),
+(23, NULL, 10, '2025-02-11', 27.00, 5),
+(24, NULL, 10, '2025-03-11', 27.00, 6),
+(25, NULL, 10, '2025-04-11', 27.00, 7),
+(26, NULL, 10, '2025-05-11', 27.00, 8),
+(27, NULL, 10, '2025-06-11', 27.00, 9),
+(28, NULL, 10, '2025-08-11', 27.00, 10);

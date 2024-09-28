@@ -38,7 +38,7 @@ public interface WalletTransactionRepository
      * Get the all transactions by month and year
      * @param month The month
      * @param year The year
-     * @return A list with the transactions in the wallet by month and year
+     * @return A list with the transactions by month and year
      */
     @Query("SELECT wt "
            + "FROM WalletTransaction wt "

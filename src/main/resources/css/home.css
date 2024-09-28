@@ -150,7 +150,9 @@
 #monthResumeExpectedIncomeHBox,
 #monthResumeExpectedExpenseHBox,
 #monthResumeExpectedBalanceHBox,
-#monthResumeExpectedSavingsHBox {
+#monthResumeExpectedSavingsHBox,
+#monthResumeCreditCardPendingPaymentsHBox
+{
     -fx-font-size: 9px;
     -fx-text-fill: #333;
 }
