@@ -33,7 +33,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ActiveProfiles("test")
 public class CreditCardDebtRepositoryTest
 {
-
     @Autowired
     private CreditCardDebtRepository m_creditCardDebtRepository;
 
@@ -47,16 +46,16 @@ public class CreditCardDebtRepositoryTest
     private CategoryRepository m_categoryRepository;
 
     private CreditCard m_creditCard;
+    private CreditCardOperator m_crcOperator;
 
-    private CreditCard CreateCreditCard(String name, double maxDebt)
+    private CreditCard CreateCreditCard(String name, CreditCardOperator operator, Double maxDebt)
     {
         CreditCard creditCard = new CreditCard();
         creditCard.SetName(name);
         creditCard.SetMaxDebt(maxDebt);
         creditCard.SetBillingDueDay(10);
-        creditCard.SetOperator(CreateCreditCardOperator("Operator"));
+        creditCard.SetOperator(operator);
         m_creditCardRepository.save(creditCard);
-        m_creditCardRepository.flush();
         return creditCard;
     }
 
@@ -64,9 +63,8 @@ public class CreditCardDebtRepositoryTest
     {
         CreditCardOperator creditCardOperator = new CreditCardOperator();
         creditCardOperator.SetName(name);
-        creditCardOperator.SetIconPath("");
+        creditCardOperator.SetIcon("");
         m_creditCardOperatorRepository.save(creditCardOperator);
-        m_creditCardOperatorRepository.flush();
         return creditCardOperator;
     }
 
@@ -74,12 +72,11 @@ public class CreditCardDebtRepositoryTest
     {
         Category category = new Category(name);
         m_categoryRepository.save(category);
-        m_categoryRepository.flush();
         return category;
     }
 
     private CreditCardDebt
-    CreateCreditCardDebt(CreditCard m_creditCard, double totalAmount, LocalDate date)
+    CreateCreditCardDebt(CreditCard m_creditCard, Double totalAmount, LocalDate date)
     {
         CreditCardDebt creditCardDebt = new CreditCardDebt();
         creditCardDebt.SetCreditCard(m_creditCard);
@@ -87,7 +84,6 @@ public class CreditCardDebtRepositoryTest
         creditCardDebt.SetDate(date);
         creditCardDebt.SetCategory(CreateCategory("category"));
         m_creditCardDebtRepository.save(creditCardDebt);
-        m_creditCardDebtRepository.flush();
         return creditCardDebt;
     }
 
@@ -95,7 +91,8 @@ public class CreditCardDebtRepositoryTest
     public void SetUp()
     {
         // Initialize the credit card
-        m_creditCard = CreateCreditCard("CreditCard", 1000.0);
+        m_crcOperator = CreateCreditCardOperator("Operator");
+        m_creditCard = CreateCreditCard("CreditCard", m_crcOperator, 1000.0);
     }
 
     @Test
@@ -134,8 +131,8 @@ public class CreditCardDebtRepositoryTest
     @Test
     public void TestDebtsForMultipleCreditCards()
     {
-        CreditCard creditCard1 = CreateCreditCard("CreditCard1", 1000.0);
-        CreditCard creditCard2 = CreateCreditCard("CreditCard2", 2000.0);
+        CreditCard creditCard1 = CreateCreditCard("CreditCard1", m_crcOperator, 1000.0);
+        CreditCard creditCard2 = CreateCreditCard("CreditCard2", m_crcOperator, 2000.0);
 
         CreateCreditCardDebt(creditCard1, 1000.0, LocalDate.now().plusDays(10));
         CreateCreditCardDebt(creditCard2, 500.0, LocalDate.now().plusDays(5));

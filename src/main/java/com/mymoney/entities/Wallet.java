@@ -11,7 +11,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * Represents a wallet
@@ -25,6 +29,11 @@ public class Wallet
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
+
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    @JoinColumn(name = "type_id", referencedColumnName = "id")
+    private WalletType type;
 
     @Column(name = "name", nullable = false, length = 50, unique = true)
     private String name;
@@ -62,6 +71,15 @@ public class Wallet
     }
 
     /**
+     * Get the type of the wallet
+     * @return The type of the wallet
+     */
+    public WalletType GetType()
+    {
+        return type;
+    }
+
+    /**
      * Get the name of the wallet
      * @return The name of the wallet
      */
@@ -86,6 +104,15 @@ public class Wallet
     public boolean IsArchived()
     {
         return archived;
+    }
+
+    /**
+     * Set the type of the wallet
+     * @param type The new type of the wallet
+     */
+    public void SetType(WalletType type)
+    {
+        this.type = type;
     }
 
     /**

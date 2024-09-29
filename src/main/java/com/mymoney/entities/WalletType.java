@@ -1,6 +1,6 @@
 /*
- * Filename: CreditCardOperator.java
- * Created on: September 17, 2024
+ * Filename: wallet_type.java
+ * Created on: September 29, 2024
  * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
  */
 
@@ -14,12 +14,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 /**
- * Represents a credit card operator
- * A credit card operator is a company that issues credit cards
+ * Represents a wallet type
+ * A wallet type is a category of wallets
  */
 @Entity
-@Table(name = "credit_card_operator")
-public class CreditCardOperator
+@Table(name = "wallet_type")
+public class WalletType
 {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -35,21 +35,20 @@ public class CreditCardOperator
     /**
      * Default constructor for JPA
      */
-    public CreditCardOperator() { }
+    public WalletType() { }
 
     /**
-     * Constructor for CreditCardOperator
-     * @param name The name of the credit card operator
+     * Constructor for WalletType
+     * @param name The name of the wallet type
      */
-    public CreditCardOperator(String name)
-
+    public WalletType(String name)
     {
         this.name = name;
     }
 
     /**
-     * Get the id of the credit card operator
-     * @return The id of the credit card operator
+     * Get the id of the wallet type
+     * @return The id of the wallet type
      */
     public Long GetId()
     {
@@ -57,8 +56,8 @@ public class CreditCardOperator
     }
 
     /**
-     * Get the name of the credit card operator
-     * @return The name of the credit card operator
+     * Get the name of the wallet type
+     * @return The name of the wallet type
      */
     public String GetName()
     {
@@ -66,8 +65,8 @@ public class CreditCardOperator
     }
 
     /**
-     * Get the icon of the credit card operator
-     * @return The icon of the credit card operator
+     * Get the icon of the wallet type
+     * @return The icon of the wallet type
      */
     public String GetIcon()
     {
@@ -75,8 +74,8 @@ public class CreditCardOperator
     }
 
     /**
-     * Set the name of the credit card operator
-     * @param name The name of the credit card operator
+     * Set the name of the wallet type
+     * @param name The name of the wallet type
      */
     public void SetName(String name)
     {
@@ -84,8 +83,8 @@ public class CreditCardOperator
     }
 
     /**
-     * Set the icon of the credit card operator
-     * @param icon The icon of the credit card operator
+     * Set the icon of the wallet type
+     * @param icon The icon of the wallet type
      */
     public void SetIcon(String icon)
     {

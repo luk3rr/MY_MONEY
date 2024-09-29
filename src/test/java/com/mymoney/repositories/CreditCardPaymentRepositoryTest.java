@@ -9,12 +9,12 @@ package com.mymoney.repositories;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.mymoney.app.MainApplication;
+import com.mymoney.entities.Category;
 import com.mymoney.entities.CreditCard;
 import com.mymoney.entities.CreditCardDebt;
+import com.mymoney.entities.CreditCardOperator;
 import com.mymoney.entities.CreditCardPayment;
 import com.mymoney.entities.Wallet;
-import com.mymoney.entities.CreditCardOperator;
-import com.mymoney.entities.Category;
 import com.mymoney.util.Constants;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,17 +55,18 @@ public class CreditCardPaymentRepositoryTest
 
     private CreditCard m_creditCard1;
     private CreditCard m_creditCard2;
+    private CreditCardOperator m_crcOperator;
     private Wallet     m_wallet;
 
-    private CreditCard CreateCreditCard(String name, double maxDebt)
+    private CreditCard
+    CreateCreditCard(String name, CreditCardOperator operator, Double maxDebt)
     {
         CreditCard creditCard = new CreditCard();
         creditCard.SetName(name);
         creditCard.SetMaxDebt(maxDebt);
         creditCard.SetBillingDueDay(10);
-        creditCard.SetOperator(CreateCreditCardOperator("Operator"));
+        creditCard.SetOperator(operator);
         m_creditCardRepository.save(creditCard);
-        m_creditCardRepository.flush();
         return creditCard;
     }
 
@@ -73,24 +74,22 @@ public class CreditCardPaymentRepositoryTest
     {
         CreditCardOperator creditCardOperator = new CreditCardOperator();
         creditCardOperator.SetName(name);
-        creditCardOperator.SetIconPath("");
+        creditCardOperator.SetIcon("");
         m_creditCardOperatorRepository.save(creditCardOperator);
-        m_creditCardOperatorRepository.flush();
         return creditCardOperator;
     }
 
-    private Wallet CreateWallet(String name, double balance)
+    private Wallet CreateWallet(String name, Double balance)
     {
         Wallet m_wallet = new Wallet();
         m_wallet.SetName(name);
         m_wallet.SetBalance(balance);
         m_walletRepository.save(m_wallet);
-        m_walletRepository.flush();
         return m_wallet;
     }
 
     private CreditCardDebt CreateCreditCardDebt(CreditCard creditCard,
-                                                double     totalAmount)
+                                                Double     totalAmount)
     {
         CreditCardDebt creditCardDebt = new CreditCardDebt();
         creditCardDebt.SetTotalAmount(totalAmount);
@@ -98,7 +97,6 @@ public class CreditCardPaymentRepositoryTest
         creditCardDebt.SetDate(LocalDate.now().plusDays(5));
         creditCardDebt.SetCategory(CreateCategory("category"));
         m_creditCardDebtRepository.save(creditCardDebt);
-        m_creditCardDebtRepository.flush();
         return creditCardDebt;
     }
 
@@ -106,12 +104,11 @@ public class CreditCardPaymentRepositoryTest
     {
         Category category = new Category(name);
         m_categoryRepository.save(category);
-        m_categoryRepository.flush();
         return category;
     }
 
     private void
-    CreateCreditCardPayment(CreditCardDebt debt, Wallet wallet, double amount)
+    CreateCreditCardPayment(CreditCardDebt debt, Wallet wallet, Double amount)
     {
         CreditCardPayment creditCardPayment = new CreditCardPayment();
         creditCardPayment.SetAmount(amount);
@@ -120,15 +117,15 @@ public class CreditCardPaymentRepositoryTest
         creditCardPayment.SetDate(LocalDate.now());
         creditCardPayment.SetInstallment(1);
         m_creditCardPaymentRepository.save(creditCardPayment);
-        m_creditCardPaymentRepository.flush();
     }
 
     @BeforeEach
     public void SetUp()
     {
         // Initialize CreditCard and Wallet
-        m_creditCard1 = CreateCreditCard("CreditCard1", 1000.0);
-        m_creditCard2 = CreateCreditCard("CreditCard2", 1000.0);
+        m_crcOperator = CreateCreditCardOperator("Operator");
+        m_creditCard1 = CreateCreditCard("CreditCard1", m_crcOperator, 1000.0);
+        m_creditCard2 = CreateCreditCard("CreditCard2", m_crcOperator, 1000.0);
         m_wallet      = CreateWallet("Wallet", 1000.0);
     }
 

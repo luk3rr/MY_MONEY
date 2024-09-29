@@ -39,6 +39,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 public class HomeController
@@ -157,7 +158,7 @@ public class HomeController
         UpdateDisplayWallets();
         UpdateDisplayCreditCards();
         UpdateDisplayLastTransactions();
-        UpdateChartIncomesAndExpensesLast12Months();
+        UpdateChartIncomesAndExpensesLastMonths();
         UpdateMonthResume();
 
         SetButtonsActions();
@@ -330,14 +331,29 @@ public class HomeController
                 new Label(String.format("$ %.2f", transaction.GetAmount()));
             valueLabel.setMinWidth(Constants.HOME_LAST_TRANSACTIONS_VALUE_LABEL_WIDTH);
 
-            Label dateLabel = new Label(transaction.GetDate().toString());
-            dateLabel.setMinWidth(Constants.HOME_LAST_TRANSACTIONS_DATE_LABEL_WIDTH);
-
             Label walletLabel = new Label(transaction.GetWallet().GetName());
             walletLabel.setMinWidth(
                 Constants.HOME_LAST_TRANSACTIONS_WALLET_LABEL_WIDTH);
 
             AddTooltipToNode(walletLabel, "Wallet");
+
+            Label dateLabel = new Label(transaction.GetDate().toString());
+            dateLabel.setMinWidth(Constants.HOME_LAST_TRANSACTIONS_DATE_LABEL_WIDTH);
+
+            Label transactionStatusLabel = new Label(StringUtils.capitalize(
+                transaction.GetStatus().toString().toLowerCase()));
+
+            transactionStatusLabel.setMinWidth(
+                Constants.HOME_LAST_TRANSACTIONS_STATUS_LABEL_WIDTH);
+
+            AddTooltipToNode(transactionStatusLabel, "Status");
+
+            Label transactionCategoryLabel =
+                new Label(transaction.GetCategory().GetName());
+            transactionCategoryLabel.setMinWidth(
+                Constants.HOME_LAST_TRANSACTIONS_CATEGORY_LABEL_WIDTH);
+
+            AddTooltipToNode(transactionCategoryLabel, "Category");
 
             HBox descriptionValueBox = new HBox();
             descriptionValueBox.getStyleClass().add(
@@ -347,15 +363,18 @@ public class HomeController
             HBox.setHgrow(descriptionLabel, Priority.ALWAYS);
             descriptionValueBox.setAlignment(Pos.CENTER_LEFT);
 
-            HBox walletDateBox = new HBox();
-            walletDateBox.getStyleClass().add(
+            HBox walletCategoryStatusDateBox = new HBox();
+            walletCategoryStatusDateBox.getStyleClass().add(
                 Constants.HOME_LAST_TRANSACTIONS_WALLET_DATE_STYLE);
-            walletDateBox.getChildren().addAll(walletLabel, dateLabel);
+            walletCategoryStatusDateBox.getChildren().addAll(walletLabel,
+                                                             transactionCategoryLabel,
+                                                             transactionStatusLabel,
+                                                             dateLabel);
 
             HBox.setHgrow(walletLabel, Priority.ALWAYS);
-            walletDateBox.setAlignment(Pos.CENTER_LEFT);
+            walletCategoryStatusDateBox.setAlignment(Pos.CENTER_LEFT);
 
-            VBox vbox = new VBox(5, descriptionValueBox, walletDateBox);
+            VBox vbox = new VBox(5, descriptionValueBox, walletCategoryStatusDateBox);
             vbox.getStyleClass().add(
                 Constants.HOME_LAST_TRANSACTIONS_TRANSACTION_DETAILS_STYLE);
 
@@ -377,9 +396,9 @@ public class HomeController
     }
 
     /**
-     * Update the chart with incomes and expenses for the last 12 months
+     * Update the chart with incomes and expenses for the last months
      */
-    private void UpdateChartIncomesAndExpensesLast12Months()
+    private void UpdateChartIncomesAndExpensesLastMonths()
     {
         // LinkedHashMap to keep the order of the months
         Map<String, Double> monthlyExpenses = new LinkedHashMap<>();
@@ -451,7 +470,11 @@ public class HomeController
             numberAxis.setAutoRanging(false);
             numberAxis.setLowerBound(0);
             numberAxis.setUpperBound(maxValue);
-            numberAxis.setTickUnit(Constants.HOME_BAR_CHART_TICK_UNIT);
+
+            // Set the tick unit based on the maximum value
+            // The tick unit must be a multiple of 10
+            Double tickUnit = ((maxValue / Constants.HOME_BAR_CHART_TICKS) / 10) * 10;
+            numberAxis.setTickUnit(tickUnit);
         }
 
         transactionsLast12Months.setVerticalGridLinesVisible(false);

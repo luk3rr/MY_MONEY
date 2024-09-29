@@ -4,12 +4,127 @@
  * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
  */
 
-INSERT INTO credit_card_operator (id, name, icon_path) VALUES
-(1, 'Visa', '/icons/visa.png'),
-(2, 'MasterCard', '/icons/mastercard.png'),
-(3, 'American Express', '/icons/amex.png'),
-(4, 'Discover', '/icons/discover.png'),
-(5, 'Diners Club', '/icons/diners.png');
+INSERT INTO category (id, name) VALUES
+(0, 'Outros'),
+(1, 'Alimentação'),
+(2, 'Transporte'),
+(3, 'Lazer'),
+(4, 'Saúde'),
+(5, 'Educação'),
+(6, 'Moradia'),
+(7, 'Serviços'),
+(8, 'Pets'),
+(9, 'Investimentos'),
+(10, 'Rendimentos'),
+(11, 'Salário'),
+(12, 'Vestuário'),
+(13, 'Carro'),
+(14, 'Documentos');
+
+INSERT INTO wallet_type (id, name, icon) VALUES
+(0, 'Others', 'others.png'),
+(1, 'Broker', 'broker.png'),
+(2, 'Checking Account', 'checking.png'),
+(3, 'Criptocurrency', 'criptocurrency.png'),
+(4, 'Savings Account', 'savings.png'),
+(5, 'Wallet', 'wallet.png');
+
+INSERT INTO wallet (id, type_id, name, balance, archived) VALUES
+(1, 2, 'Banco XYZ', 1948.31, false),
+(2, 5, 'Carteira', 312.00, false),
+(3, 4, 'Emergência', 3050.00, false),
+(4, 4, 'Economia', 5100.00, false),
+(5, 1, 'Corretora KLM', 5350.00, false),
+(6, 3, 'Corretora ABC', 536.92, false);
+
+INSERT INTO wallet_transaction (id, wallet_id, category_id, type, status, date, amount, description) VALUES
+-- Banco XYZ (Checking Account)
+(1, 1, 1, 'EXPENSE', 'CONFIRMED', '2024-01-15 00:00:00', 530.00, 'Compra de alimentos no supermercado'),
+(2, 1, 2, 'EXPENSE', 'CONFIRMED', '2024-01-18 00:00:00', 97.00, 'Táxi para o aeroporto'),
+(7, 1, 7, 'EXPENSE', 'CONFIRMED', '2024-03-01 00:00:00', 150.00, 'Pagamento de serviço de internet'),
+(8, 1, 8, 'EXPENSE', 'CONFIRMED', '2024-03-05 00:00:00', 860.00, 'Veterinário'),
+(13, 1, 1, 'EXPENSE', 'CONFIRMED', '2024-04-03 00:00:00', 45.00, 'Café da manhã em padaria'),
+(18, 1, 1, 'EXPENSE', 'CONFIRMED', '2024-05-01 00:00:00', 130.00, 'Jantar em restaurante'),
+(23, 1, 0, 'INCOME', 'CONFIRMED', '2024-06-01 00:00:00', 200.00, 'Devolução de empréstimo'),
+(28, 1, 5, 'EXPENSE', 'CONFIRMED', '2024-07-01 00:00:00', 270.00, 'Compra de livro'),
+(33, 1, 0, 'INCOME', 'CONFIRMED', '2024-08-01 00:00:00', 150.00, 'Devolução de fiança'),
+(38, 1, 1, 'EXPENSE', 'CONFIRMED', '2024-09-01 00:00:00', 330.00, 'Jantar fora de casa'),
+(43, 1, 4, 'EXPENSE', 'PENDING', '2024-10-05 00:00:00', 140.00, 'Pagamento de academia'),
+(44, 1, 11, 'INCOME', 'CONFIRMED', '2023-12-05 00:00:00', 3600.00, 'Salário'),
+(45, 1, 6, 'EXPENSE', 'CONFIRMED', '2023-12-10 00:00:00', 2500.00, 'Aluguel'),
+(46, 1, 11, 'INCOME', 'CONFIRMED', '2023-11-05 00:00:00', 3600.00, 'Salário'),
+(47, 1, 6, 'EXPENSE', 'CONFIRMED', '2023-11-10 00:00:00', 2500.00, 'Aluguel'),
+(48, 1, 0, 'EXPENSE', 'CONFIRMED', '2023-11-25 00:00:00', 743.00, 'Compra de itens diversos'),
+(49, 1, 11, 'INCOME', 'CONFIRMED', '2023-10-05 00:00:00', 3100.00, 'Salário'),
+(50, 1, 6, 'EXPENSE', 'CONFIRMED', '2023-10-10 00:00:00', 2500.00, 'Aluguel'),
+(51, 1, 0, 'EXPENSE', 'CONFIRMED', '2023-10-25 00:00:00', 959.00, 'Compra de itens diversos'),
+(52, 1, 11, 'INCOME', 'CONFIRMED', '2023-09-05 00:00:00', 3234.00, 'Salário'),
+(53, 1, 6, 'EXPENSE', 'CONFIRMED', '2023-09-10 00:00:00', 2300.00, 'Aluguel'),
+(54, 1, 0, 'EXPENSE', 'CONFIRMED', '2023-09-25 00:00:00', 915.05, 'Compra de itens diversos'),
+(59, 1, 11, 'INCOME', 'CONFIRMED', '2024-01-05 00:00:00', 3931.00, 'Salário'),
+(60, 1, 6, 'EXPENSE', 'CONFIRMED', '2024-01-10 00:00:00', 2300.00, 'Aluguel'),
+(61, 1, 11, 'INCOME', 'CONFIRMED', '2024-02-05 00:00:00', 3831.00, 'Salário'),
+(62, 1, 6, 'EXPENSE', 'CONFIRMED', '2024-02-10 00:00:00', 2300.00, 'Aluguel'),
+(65, 1, 11, 'INCOME', 'CONFIRMED', '2024-03-05 00:00:00', 3231.00, 'Salário'),
+(66, 1, 6, 'EXPENSE', 'CONFIRMED', '2024-03-10 00:00:00', 2300.00, 'Aluguel'),
+(67, 1, 11, 'INCOME', 'CONFIRMED', '2024-04-05 00:00:00', 3230.00, 'Salário'),
+(68, 1, 6, 'EXPENSE', 'CONFIRMED', '2024-04-10 00:00:00', 2300.00, 'Aluguel'),
+(69, 1, 11, 'INCOME', 'CONFIRMED', '2024-05-05 00:00:00', 3830.00, 'Salário'),
+(70, 1, 6, 'EXPENSE', 'CONFIRMED', '2024-05-10 00:00:00', 2300.00, 'Aluguel'),
+(71, 1, 11, 'INCOME', 'CONFIRMED', '2024-06-05 00:00:00', 3430.00, 'Salário'),
+(72, 1, 6, 'EXPENSE', 'CONFIRMED', '2024-06-10 00:00:00', 2300.00, 'Aluguel'),
+(73, 1, 11, 'INCOME', 'CONFIRMED', '2024-07-05 00:00:00', 4130.00, 'Salário'),
+(74, 1, 6, 'EXPENSE', 'CONFIRMED', '2024-07-10 00:00:00', 2300.00, 'Aluguel'),
+(75, 1, 11, 'INCOME', 'CONFIRMED', '2024-08-05 00:00:00', 3630.00, 'Salário'),
+(76, 1, 6, 'EXPENSE', 'CONFIRMED', '2024-08-10 00:00:00', 2300.00, 'Aluguel'),
+(77, 1, 11, 'INCOME', 'CONFIRMED', '2024-09-05 00:00:00', 3530.00, 'Salário'),
+(78, 1, 6, 'EXPENSE', 'CONFIRMED', '2024-09-10 00:00:00', 2300.00, 'Aluguel'),
+
+-- Carteira (Wallet)
+(3, 2, 3, 'EXPENSE', 'PENDING', '2024-02-05 00:00:00', 150.00, 'Reserva de hotel para a viagem'),
+(9, 2, 1, 'INCOME', 'PENDING', '2024-03-08 00:00:00', 250.00, 'Reembolso de alimentação'),
+(14, 2, 11, 'INCOME', 'CONFIRMED', '2024-04-07 00:00:00', 350.00, 'Salário recebido'),
+(19, 2, 5, 'EXPENSE', 'CONFIRMED', '2024-05-05 00:00:00', 540.00, 'Compra de material de estudos'),
+(24, 2, 6, 'EXPENSE', 'PENDING', '2024-06-05 00:00:00', 80.00, 'Serviço de jardinagem'),
+(29, 2, 11, 'INCOME', 'CONFIRMED', '2024-07-05 00:00:00', 320.00, 'Recebimento de serviços prestados'),
+(34, 2, 6, 'EXPENSE', 'CONFIRMED', '2024-08-05 00:00:00', 530.00, 'Compra de material de limpeza'),
+(39, 2, 4, 'EXPENSE', 'PENDING', '2024-09-05 00:00:00', 450.00, 'Compra de remédios'),
+(58, 2, 4, 'EXPENSE', 'CONFIRMED', '2024-08-24 00:00:00', 70.00, 'Atualização da identidade'),
+
+-- Emergência (Savings Account)
+(12, 3, 9, 'INCOME', 'CONFIRMED', '2024-02-20 00:00:00', 100.00, 'Depósito na poupança de emergência'),
+(10, 3, 4, 'EXPENSE', 'CONFIRMED', '2024-03-15 00:00:00', 622.00, 'Compra de medicamentos'),
+(15, 3, 12, 'EXPENSE', 'PENDING', '2024-04-10 00:00:00', 400.00, 'Compra de roupas de frio'),
+(20, 3, 4, 'EXPENSE', 'PENDING', '2024-05-08 00:00:00', 600.00, 'Consulta médica particular'),
+(25, 3, 6, 'EXPENSE', 'CONFIRMED', '2024-06-10 00:00:00', 250.00, 'Manutenção banheiro'),
+(30, 3, 6, 'EXPENSE', 'CONFIRMED', '2024-07-10 00:00:00', 950.00, 'Compra de móveis'),
+(35, 3, 7, 'EXPENSE', 'PENDING', '2024-08-10 00:00:00', 300.00, 'Serviço de manutenção de TI'),
+(40, 3, 13, 'EXPENSE', 'CONFIRMED', '2024-09-10 00:00:00', 300.00, 'Manutenção do corsa'),
+
+-- Corretora KLM (Broker)
+(4, 5, 10, 'INCOME', 'CONFIRMED', '2024-05-15 00:00:00', 300.00, 'Lucro com venda de ações da empresa ABC'),
+(6, 5, 10, 'INCOME', 'CONFIRMED', '2024-03-25 00:00:00', 120.00, 'Dividendos recebidos de investimento'),
+(22, 5, 10, 'INCOME', 'CONFIRMED', '2024-05-15 00:00:00', 300.00, 'Rendimentos de fundo de renda fixa'),
+(37, 5, 10, 'INCOME', 'CONFIRMED', '2024-08-20 00:00:00', 400.00, 'Rendimento de ações vendidas'),
+(42, 5, 10, 'INCOME', 'CONFIRMED', '2024-09-20 00:00:00', 500.00, 'Lucro com venda de títulos'),
+
+-- Corretora ABC
+(55, 3, 10, 'INCOME', 'CONFIRMED', '2024-06-15 00:00:00', 150.00, 'Rendimento de criptos vendidas'),
+(57, 3, 9, 'INCOME', 'CONFIRMED', '2024-07-15 00:00:00', 200.00, 'Compra de mais criptos'),
+
+-- Economia (Savings Account)
+(5, 4, 10, 'INCOME', 'CONFIRMED', '2024-02-12 00:00:00', 500.00, 'Rendimento de poupança'),
+(11, 4, 10, 'INCOME', 'CONFIRMED', '2024-03-20 00:00:00', 75.00, 'Juros acumulados na conta poupança'),
+(16, 4, 9, 'INCOME', 'CONFIRMED', '2024-04-12 00:00:00', 250.00, 'Depósito de economias pessoais'),
+(41, 4, 10, 'INCOME', 'CONFIRMED', '2024-09-15 00:00:00', 180.00, 'Rendimento de aplicação'),
+(56, 4, 9, 'INCOME', 'CONFIRMED', '2024-06-15 00:00:00', 400.00, 'Depósito de economias pessoais');
+
+INSERT INTO credit_card_operator (id, name, icon) VALUES
+(1, 'Visa', 'visa.png'),
+(2, 'MasterCard', 'mastercard.png'),
+(3, 'American Express', 'amex.png'),
+(4, 'Discover', 'discover.png'),
+(5, 'Diners Club', 'diners.png');
 
 INSERT INTO credit_card (id, operator_id, name, billing_due_day, max_debt, last_four_digits) VALUES
 (1, 1, 'Visa Gold', 10, 5000.00, '1234'),
@@ -18,84 +133,6 @@ INSERT INTO credit_card (id, operator_id, name, billing_due_day, max_debt, last_
 (4, 4, 'Discover Cashback', 25, 2000.00, '1121'),
 (5, 5, 'Diners Club Rewards', 30, 4000.00, '3141');
 
-INSERT INTO category (id, name) VALUES
-(1, 'Alimentação'),
-(2, 'Transporte'),
-(3, 'Lazer'),
-(4, 'Saúde'),
-(5, 'Educação'),
-(6, 'Moradia'),
-(7, 'Serviços'),
-(8, 'Outros');
-
-INSERT INTO wallet (id, name, balance, archived) VALUES
-(1, 'Principal', 1000.00, false),
-(2, 'Viagem', 500.00, false),
-(3, 'Emergência', 250.00, false),
-(4, 'Lazer', 150.00, false),
-(5, 'Economia', 2000.00, false);
-
-INSERT INTO wallet_transaction (id, wallet_id, category_id, type, status, date, amount, description) VALUES
-(1, 1, 1, 'EXPENSE', 'CONFIRMED', '2024-01-15 00:00:00', 50.00, 'Compra de alimentos no supermercado'),
-(2, 1, 2, 'EXPENSE', 'CONFIRMED', '2024-01-18 00:00:00', 20.00, 'Táxi para o aeroporto'),
-(3, 2, 3, 'EXPENSE', 'PENDING', '2024-02-05 00:00:00', 150.00, 'Reserva de hotel para a viagem'),
-(4, 3, 4, 'EXPENSE', 'CONFIRMED', '2024-02-10 00:00:00', 200.00, 'Consulta médica de emergência'),
-(5, 4, 5, 'EXPENSE', 'CONFIRMED', '2024-02-12 00:00:00', 500.00, 'Pagamento de curso cancelado'),
-(6, 5, 6, 'INCOME', 'CONFIRMED', '2024-02-20 00:00:00', 1000.00, 'Depósito na poupança'),
-(7, 1, 7, 'EXPENSE', 'CONFIRMED', '2024-03-01 00:00:00', 100.00, 'Pagamento de serviço de internet'),
-(8, 1, 8, 'EXPENSE', 'CONFIRMED', '2024-03-05 00:00:00', 60.00, 'Compra de itens diversos'),
-(9, 2, 1, 'INCOME', 'PENDING', '2024-03-08 00:00:00', 250.00, 'Reembolso de alimentação'),
-(10, 3, 4, 'EXPENSE', 'CONFIRMED', '2024-03-15 00:00:00', 300.00, 'Compra de medicamentos'),
-(11, 4, 3, 'EXPENSE', 'CONFIRMED', '2024-03-20 00:00:00', 75.00, 'Ingresso de cinema para lazer'),
-(12, 5, 2, 'INCOME', 'CONFIRMED', '2024-03-25 00:00:00', 120.00, 'Reembolso de transporte de trabalho'),
-(13, 1, 5, 'EXPENSE', 'CONFIRMED', '2024-04-03 00:00:00', 45.00, 'Café da manhã em padaria'),
-(14, 2, 6, 'INCOME', 'CONFIRMED', '2024-04-07 00:00:00', 350.00, 'Salário recebido'),
-(15, 3, 4, 'EXPENSE', 'PENDING', '2024-04-10 00:00:00', 90.00, 'Compra de roupas'),
-(16, 4, 1, 'EXPENSE', 'CONFIRMED', '2024-04-12 00:00:00', 250.00, 'Conta de luz'),
-(17, 5, 2, 'EXPENSE', 'CONFIRMED', '2024-04-15 00:00:00', 120.00, 'Manutenção de carro'),
-(18, 1, 7, 'EXPENSE', 'CONFIRMED', '2024-05-01 00:00:00', 130.00, 'Jantar em restaurante'),
-(19, 2, 8, 'EXPENSE', 'CONFIRMED', '2024-05-05 00:00:00', 40.00, 'Compra de material de escritório'),
-(20, 3, 3, 'INCOME', 'PENDING', '2024-05-08 00:00:00', 400.00, 'Bônus de desempenho'),
-(21, 4, 4, 'EXPENSE', 'CONFIRMED', '2024-05-10 00:00:00', 60.00, 'Abastecimento de carro'),
-(22, 5, 1, 'EXPENSE', 'CONFIRMED', '2024-05-15 00:00:00', 300.00, 'Compra de eletrônicos'),
-(23, 1, 2, 'INCOME', 'CONFIRMED', '2024-06-01 00:00:00', 200.00, 'Devolução de empréstimo'),
-(24, 2, 7, 'EXPENSE', 'PENDING', '2024-06-05 00:00:00', 80.00, 'Serviço de jardinagem'),
-(25, 3, 8, 'EXPENSE', 'CONFIRMED', '2024-06-10 00:00:00', 150.00, 'Compra de material esportivo'),
-(26, 4, 5, 'INCOME', 'CONFIRMED', '2024-06-15 00:00:00', 500.00, 'Reembolso médico'),
-(27, 5, 6, 'EXPENSE', 'CONFIRMED', '2024-06-20 00:00:00', 600.00, 'Pagamento de aluguel'),
-(28, 1, 3, 'EXPENSE', 'CONFIRMED', '2024-07-01 00:00:00', 70.00, 'Compra de livro'),
-(29, 2, 4, 'INCOME', 'CONFIRMED', '2024-07-05 00:00:00', 320.00, 'Recebimento de serviços prestados'),
-(30, 3, 1, 'EXPENSE', 'CONFIRMED', '2024-07-10 00:00:00', 200.00, 'Compra de móveis'),
-(31, 4, 2, 'EXPENSE', 'PENDING', '2024-07-15 00:00:00', 60.00, 'Assinatura de serviço de streaming'),
-(32, 5, 7, 'EXPENSE', 'CONFIRMED', '2024-07-20 00:00:00', 50.00, 'Presente para amigo'),
-(33, 1, 8, 'INCOME', 'CONFIRMED', '2024-08-01 00:00:00', 150.00, 'Devolução de fiança'),
-(34, 2, 5, 'EXPENSE', 'CONFIRMED', '2024-08-05 00:00:00', 30.00, 'Compra de material de limpeza'),
-(35, 3, 6, 'EXPENSE', 'PENDING', '2024-08-10 00:00:00', 100.00, 'Serviço de manutenção de TI'),
-(36, 4, 4, 'EXPENSE', 'CONFIRMED', '2024-08-15 00:00:00', 150.00, 'Conta de água'),
-(37, 5, 1, 'EXPENSE', 'CONFIRMED', '2024-08-20 00:00:00', 400.00, 'Viagem de férias'),
-(38, 1, 2, 'EXPENSE', 'CONFIRMED', '2024-09-01 00:00:00', 60.00, 'Jantar fora de casa'),
-(39, 2, 3, 'EXPENSE', 'PENDING', '2024-09-05 00:00:00', 50.00, 'Compra de remédios'),
-(40, 3, 7, 'INCOME', 'CONFIRMED', '2024-09-10 00:00:00', 300.00, 'Pagamento por consultoria'),
-(41, 4, 8, 'EXPENSE', 'CONFIRMED', '2024-09-15 00:00:00', 180.00, 'Compra de eletrodomésticos'),
-(42, 5, 5, 'EXPENSE', 'CONFIRMED', '2024-09-20 00:00:00', 500.00, 'Curso de aperfeiçoamento profissional'),
-(43, 1, 1, 'EXPENSE', 'CONFIRMED', '2023-10-05 00:00:00', 100.00, 'Pagamento de academia'),
-(44, 2, 2, 'EXPENSE', 'CONFIRMED', '2023-11-10 00:00:00', 250.00, 'Compra de vestuário'),
-(45, 3, 3, 'INCOME', 'CONFIRMED', '2023-12-15 00:00:00', 600.00, 'Bônus de fim de ano'),
-(46, 4, 4, 'EXPENSE', 'CONFIRMED', '2023-11-20 00:00:00', 50.00, 'Presente de aniversário'),
-(47, 5, 5, 'EXPENSE', 'CONFIRMED', '2023-10-25 00:00:00', 80.00, 'Assinatura de revista'),
-(48, 1, 6, 'EXPENSE', 'CONFIRMED', '2023-12-30 00:00:00', 300.00, 'Jantar de Réveillon'),
-(49, 2, 7, 'INCOME', 'CONFIRMED', '2023-11-05 00:00:00', 1200.00, 'Pagamento de freelance'),
-(50, 3, 8, 'EXPENSE', 'CONFIRMED', '2024-01-07 00:00:00', 200.00, 'Compra de eletrônicos'),
-(51, 4, 1, 'EXPENSE', 'PENDING', '2024-01-15 00:00:00', 40.00, 'Manutenção de bicicleta'),
-(52, 5, 2, 'EXPENSE', 'CONFIRMED', '2024-02-10 00:00:00', 75.00, 'Compras em loja de conveniência'),
-(53, 1, 3, 'INCOME', 'CONFIRMED', '2024-03-05 00:00:00', 500.00, 'Reembolso de despesas corporativas'),
-(54, 2, 4, 'EXPENSE', 'CONFIRMED', '2024-04-12 00:00:00', 100.00, 'Conta de gás'),
-(55, 3, 5, 'INCOME', 'CONFIRMED', '2024-05-08 00:00:00', 250.00, 'Pagamento por serviços prestados'),
-(56, 4, 6, 'EXPENSE', 'CONFIRMED', '2024-06-15 00:00:00', 400.00, 'Compra de ingressos para show'),
-(57, 5, 7, 'EXPENSE', 'CONFIRMED', '2024-07-20 00:00:00', 130.00, 'Manutenção de jardim'),
-(58, 1, 8, 'EXPENSE', 'CONFIRMED', '2024-08-03 00:00:00', 75.00, 'Compra de material escolar'),
-(59, 2, 1, 'INCOME', 'CONFIRMED', '2024-09-10 00:00:00', 800.00, 'Comissão de vendas'),
-(60, 3, 2, 'EXPENSE', 'CONFIRMED', '2024-09-15 00:00:00', 100.00, 'Assinatura de serviços online');
 
 -- Dívidas passadas (já pagas)
 INSERT INTO credit_card_debt (id, crc_id, category_id, date, total_amount, description)

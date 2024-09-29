@@ -32,7 +32,7 @@ public class CreditCard
 
     @ManyToOne()
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-    @JoinColumn(name = "operator_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "operator_id", referencedColumnName = "id")
     private CreditCardOperator operator;
 
     @Column(name = "name", nullable = false, length = 50, unique = true)
