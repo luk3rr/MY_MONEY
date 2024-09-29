@@ -21,6 +21,15 @@ public final class Constants
     public static final String CREDIT_CARD_FXML = "/ui/credit_card.fxml";
     public static final String TRANSACTION_FXML = "/ui/transaction.fxml";
 
+    // Icons
+    public static final String WALLET_TYPE_ICONS_PATH  = "/icons/wallet_type/";
+    public static final String SIDEBAR_ICONS_PATH      = "/icons/sidebar/";
+    public static final String CRC_OPERATOR_ICONS_PATH = "/icons/crc_operator/";
+    public static final String HOME_ICONS_PATH         = "/icons/home/";
+
+    public static final String HOME_EXPENSE_ICON = "/icons/home/expense.png";
+    public static final String HOME_INCOME_ICON  = "/icons/home/income.png";
+
     // Stylesheets
     public static final String MAIN_STYLE_SHEET        = "/css/main.css";
     public static final String HOME_STYLE_SHEET        = "/css/home.css";
@@ -41,7 +50,20 @@ public final class Constants
     public static final String HOME_LAST_TRANSACTIONS_EXPENSE_ITEM_STYLE =
         "expense-item";
     public static final String HOME_CREDIT_CARD_ITEM_STYLE = "credit-card-item";
-    public static final String HOME_WALLET_ITEM_STYLE      = "wallet-item";
+    public static final String HOME_CREDIT_CARD_ITEM_NAME_STYLE =
+        "credit-card-item-name";
+    public static final String HOME_CREDIT_CARD_ITEM_BALANCE_STYLE =
+        "credit-card-item-balance";
+    public static final String HOME_CREDIT_CARD_ITEM_DIGITS_STYLE =
+        "credit-card-item-digits";
+    public static final String HOME_CREDIT_CARD_ITEM_OPERATOR_STYLE =
+        "credit-card-item-operator";
+    public static final String HOME_CREDIT_CARD_TYPE_STYLE    = "credit-card-item-type";
+    public static final String HOME_WALLET_ITEM_STYLE         = "wallet-item";
+    public static final String HOME_WALLET_ITEM_NAME_STYLE    = "wallet-item-name";
+    public static final String HOME_WALLET_ITEM_BALANCE_STYLE = "wallet-item-balance";
+    public static final String HOME_WALLET_TYPE_STYLE         = "wallet-item-type";
+
     public static final String HOME_MONTH_RESUME_POSITIVE_LABEL_STYLE =
         "month-resume-positive-label";
     public static final String HOME_MONTH_RESUME_NEGATIVE_LABEL_STYLE =
@@ -52,11 +74,9 @@ public final class Constants
         "month-resume-expected-label";
     public static final String HOME_TOOLTIP_STYLE = "tooltip";
 
-    // Icons
-    public static final String EXPENSE_ICON = "/icons/expense.png";
-    public static final String INCOME_ICON  = "/icons/income.png";
-
     // Sizes
+    public static final Integer WALLET_TYPE_ICONS_SIZE           = 42; // 32x32 px
+    public static final Integer CRC_OPERATOR_ICONS_SIZE  = 42; // 32x32 px
     public static final Integer HOME_LAST_TRANSACTIONS_SIZE      = 7;
     public static final Integer HOME_LAST_TRANSACTIONS_ICON_SIZE = 32; // 32x32 px
     public static final Integer HOME_LAST_TRANSACTIONS_DESCRIPTION_LABEL_WIDTH = 280;

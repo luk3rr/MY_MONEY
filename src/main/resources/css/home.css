@@ -40,15 +40,21 @@
   -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 0, 1);
 }
 
-.wallet-item Label {
+.wallet-item-name {
   -fx-text-fill: white;
   -fx-font-size: 12px;
   -fx-font-weight: bold;
 }
 
-.wallet-item .balance-label {
-  -fx-font-size: 10px;
-  -fx-opacity: 0.8;
+.wallet-item-type {
+  -fx-text-fill: white;
+  -fx-font-size: 9px;
+  -fx-font-weight: normal;
+}
+
+.wallet-item-balance {
+  -fx-font-size: 12px;
+  -fx-text-fill: white;
 }
 
 .credit-card-item {
@@ -63,7 +69,25 @@
   -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0, 0, 1);
 }
 
-.credit-card-item Label {
+.credit-card-item-name {
+  -fx-text-fill: white;
+  -fx-font-size: 12px;
+  -fx-font-weight: bold;
+}
+
+.credit-card-item-operator {
+  -fx-text-fill: white;
+  -fx-font-size: 9px;
+  -fx-font-weight: normal;
+}
+
+.credit-card-item-balance {
+  -fx-font-size: 12px;
+  -fx-text-fill: white;
+}
+
+.credit-card-item-digits {
+  -fx-font-size: 9px;
   -fx-text-fill: white;
 }
 

@@ -35,6 +35,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -244,22 +245,22 @@ public class HomeController
         for (Integer i = start; i < end; i++)
         {
             Wallet wallet     = wallets.get(i);
-            VBox   walletVBox = CreateWalletItemNode(wallet);
+            HBox   walletHBox = CreateWalletItemNode(wallet);
 
-            AnchorPane.setTopAnchor(walletVBox, 0.0);
-            AnchorPane.setBottomAnchor(walletVBox, 0.0);
+            AnchorPane.setTopAnchor(walletHBox, 0.0);
+            AnchorPane.setBottomAnchor(walletHBox, 0.0);
 
             if (i % 2 == 0)
             {
-                walletView1.getChildren().add(walletVBox);
-                AnchorPane.setLeftAnchor(walletVBox, 0.0);
-                AnchorPane.setRightAnchor(walletVBox, 10.0);
+                walletView1.getChildren().add(walletHBox);
+                AnchorPane.setLeftAnchor(walletHBox, 0.0);
+                AnchorPane.setRightAnchor(walletHBox, 10.0);
             }
             else
             {
-                walletView2.getChildren().add(walletVBox);
-                AnchorPane.setLeftAnchor(walletVBox, 10.0);
-                AnchorPane.setRightAnchor(walletVBox, 0.0);
+                walletView2.getChildren().add(walletHBox);
+                AnchorPane.setLeftAnchor(walletHBox, 10.0);
+                AnchorPane.setRightAnchor(walletHBox, 0.0);
             }
         }
 
@@ -282,22 +283,22 @@ public class HomeController
         for (Integer i = start; i < end; i++)
         {
             CreditCard creditCard = creditCards.get(i);
-            VBox       crcVBox    = CreateCreditCardItemNode(creditCard);
+            HBox       crcHbox    = CreateCreditCardItemNode(creditCard);
 
-            AnchorPane.setTopAnchor(crcVBox, 0.0);
-            AnchorPane.setBottomAnchor(crcVBox, 0.0);
+            AnchorPane.setTopAnchor(crcHbox, 0.0);
+            AnchorPane.setBottomAnchor(crcHbox, 0.0);
 
             if (i % 2 == 0)
             {
-                creditCardView1.getChildren().add(crcVBox);
-                AnchorPane.setLeftAnchor(crcVBox, 0.0);
-                AnchorPane.setRightAnchor(crcVBox, 10.0);
+                creditCardView1.getChildren().add(crcHbox);
+                AnchorPane.setLeftAnchor(crcHbox, 0.0);
+                AnchorPane.setRightAnchor(crcHbox, 10.0);
             }
             else
             {
-                creditCardView2.getChildren().add(crcVBox);
-                AnchorPane.setLeftAnchor(crcVBox, 10.0);
-                AnchorPane.setRightAnchor(crcVBox, 0.0);
+                creditCardView2.getChildren().add(crcHbox);
+                AnchorPane.setLeftAnchor(crcHbox, 10.0);
+                AnchorPane.setRightAnchor(crcHbox, 0.0);
             }
         }
 
@@ -316,8 +317,8 @@ public class HomeController
         for (WalletTransaction transaction : transactions)
         {
             ImageView icon = transaction.GetType() == TransactionType.INCOME
-                                 ? new ImageView(Constants.INCOME_ICON)
-                                 : new ImageView(Constants.EXPENSE_ICON);
+                                 ? new ImageView(Constants.HOME_INCOME_ICON)
+                                 : new ImageView(Constants.HOME_EXPENSE_ICON);
 
             icon.setFitHeight(Constants.HOME_LAST_TRANSACTIONS_ICON_SIZE);
             icon.setFitWidth(Constants.HOME_LAST_TRANSACTIONS_ICON_SIZE);
@@ -876,51 +877,103 @@ public class HomeController
     /**
      * Create a node for a credit card
      * @param creditCard The credit card to be displayed
-     * @return The VBox containing the credit card information
+     * @return The HBox containing the credit card information
      */
-    private VBox CreateCreditCardItemNode(CreditCard creditCard)
+    private HBox CreateCreditCardItemNode(CreditCard creditCard)
     {
-        VBox vbox = new VBox(10);
-        vbox.setAlignment(Pos.CENTER_LEFT);
-        vbox.getStyleClass().add(Constants.HOME_CREDIT_CARD_ITEM_STYLE);
+        HBox rootHbox = new HBox(10);
+        rootHbox.getStyleClass().add(Constants.HOME_CREDIT_CARD_ITEM_STYLE);
+
+        VBox infoVbox = new VBox(10);
+        infoVbox.setAlignment(Pos.CENTER_LEFT);
 
         Label nameLabel = new Label(creditCard.GetName());
+        nameLabel.getStyleClass().add(Constants.HOME_CREDIT_CARD_ITEM_NAME_STYLE);
         AddTooltipToNode(nameLabel, "Credit card name");
+
+        Label crcOperatorLabel = new Label(creditCard.GetOperator().GetName());
+        crcOperatorLabel.getStyleClass().add(Constants.HOME_CREDIT_CARD_ITEM_OPERATOR_STYLE);
+        crcOperatorLabel.setAlignment(Pos.TOP_LEFT);
+        AddTooltipToNode(crcOperatorLabel, "Credit card operator");
 
         Label availableCredit = new Label(
             String.format("$ %.2f",
                           creditCardService.GetAvailableCredit(creditCard.GetId())));
+        availableCredit.getStyleClass().add(
+            Constants.HOME_CREDIT_CARD_ITEM_BALANCE_STYLE);
+
         AddTooltipToNode(availableCredit, "Available credit");
 
         Label digitsLabel =
             new Label("**** **** **** " + creditCard.GetLastFourDigits());
+        digitsLabel.getStyleClass().add(Constants.HOME_CREDIT_CARD_ITEM_DIGITS_STYLE);
         AddTooltipToNode(digitsLabel, "Credit card number");
 
-        vbox.getChildren().addAll(nameLabel, availableCredit, digitsLabel);
+        infoVbox.getChildren().addAll(nameLabel, crcOperatorLabel, availableCredit,
+                                     digitsLabel);
 
-        return vbox;
+        ImageView icon = new ImageView(Constants.CRC_OPERATOR_ICONS_PATH +
+                                       creditCard.GetOperator().GetIcon());
+
+        icon.setFitHeight(Constants.CRC_OPERATOR_ICONS_SIZE);
+        icon.setFitWidth(Constants.CRC_OPERATOR_ICONS_SIZE);
+
+        VBox iconVBox = new VBox();
+        iconVBox.setAlignment(Pos.CENTER_RIGHT);
+        iconVBox.getChildren().add(icon);
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        rootHbox.getChildren().addAll(infoVbox, spacer, iconVBox);
+
+        return rootHbox;
     }
 
     /**
      * Create a node for a wallet
      * @param wallet The wallet to be displayed
-     * @return The VBox containing the wallet information
+     * @return The HBox containing the wallet information
      */
-    private VBox CreateWalletItemNode(Wallet wallet)
+    private HBox CreateWalletItemNode(Wallet wallet)
     {
-        VBox vbox = new VBox(10);
-        vbox.setAlignment(Pos.CENTER_LEFT);
-        vbox.getStyleClass().add(Constants.HOME_WALLET_ITEM_STYLE);
+        HBox rootHbox = new HBox(10);
+        rootHbox.getStyleClass().add(Constants.HOME_WALLET_ITEM_STYLE);
+
+        VBox infoVbox = new VBox(10);
+        infoVbox.setAlignment(Pos.CENTER_LEFT);
 
         Label nameLabel = new Label(wallet.GetName());
+        nameLabel.getStyleClass().add(Constants.HOME_WALLET_ITEM_NAME_STYLE);
         AddTooltipToNode(nameLabel, "Wallet name");
 
+        Label walletTypeLabel = new Label(wallet.GetType().GetName());
+        walletTypeLabel.getStyleClass().add(Constants.HOME_WALLET_TYPE_STYLE);
+        walletTypeLabel.setAlignment(Pos.TOP_LEFT);
+        AddTooltipToNode(walletTypeLabel, "Wallet type");
+
         Label balanceLabel = new Label(String.format("$ %.2f", wallet.GetBalance()));
+        balanceLabel.getStyleClass().add(Constants.HOME_WALLET_ITEM_BALANCE_STYLE);
         AddTooltipToNode(balanceLabel, "Wallet balance");
 
-        vbox.getChildren().addAll(nameLabel, balanceLabel);
+        infoVbox.getChildren().addAll(nameLabel, walletTypeLabel, balanceLabel);
 
-        return vbox;
+        ImageView icon = new ImageView(Constants.WALLET_TYPE_ICONS_PATH +
+                                       wallet.GetType().GetIcon());
+
+        icon.setFitHeight(Constants.WALLET_TYPE_ICONS_SIZE);
+        icon.setFitWidth(Constants.WALLET_TYPE_ICONS_SIZE);
+
+        VBox iconVBox = new VBox();
+        iconVBox.setAlignment(Pos.CENTER_RIGHT);
+        iconVBox.getChildren().add(icon);
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        rootHbox.getChildren().addAll(infoVbox, spacer, iconVBox);
+
+        return rootHbox;
     }
 
     /**

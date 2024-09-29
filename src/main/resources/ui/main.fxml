@@ -22,7 +22,7 @@
                      <graphic>
                         <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../icons/menu.png" />
+                              <Image url="@../icons/sidebar/menu.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -37,7 +37,7 @@
                      <graphic>
                         <ImageView fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../icons/home.png" />
+                              <Image url="@../icons/sidebar/home.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -49,7 +49,7 @@
                      <graphic>
                         <ImageView fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../icons/wallet.png" />
+                              <Image url="@../icons/sidebar/wallet.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -67,7 +67,7 @@
                      <graphic>
                         <ImageView fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../icons/credit-card.png" />
+                              <Image url="@../icons/sidebar/credit-card.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -82,7 +82,7 @@
                      <graphic>
                         <ImageView fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../icons/transaction.png" />
+                              <Image url="@../icons/sidebar/transaction.png" />
                            </image>
                         </ImageView>
                      </graphic>

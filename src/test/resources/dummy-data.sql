@@ -25,7 +25,7 @@ INSERT INTO wallet_type (id, name, icon) VALUES
 (0, 'Others', 'others.png'),
 (1, 'Broker', 'broker.png'),
 (2, 'Checking Account', 'checking.png'),
-(3, 'Criptocurrency', 'criptocurrency.png'),
+(3, 'Criptocurrency', 'cryptocurrency.png'),
 (4, 'Savings Account', 'savings.png'),
 (5, 'Wallet', 'wallet.png');
 
