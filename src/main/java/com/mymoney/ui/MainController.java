@@ -23,6 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 
+/**
+ * Controller for the main view
+ */
 @Component
 public class MainController
 {
@@ -48,6 +51,9 @@ public class MainController
     private Button transactionButton;
 
     @FXML
+    private Button categoryButton;
+
+    @FXML
     private AnchorPane contentArea;
 
     @Autowired
@@ -59,16 +65,15 @@ public class MainController
     @FXML
     public void initialize()
     {
-        sidebarButtons = new Button[] { menuButton,
-                                        homeButton,
-                                        walletButton,
-                                        creditCardButton,
-                                        transactionButton };
+        sidebarButtons =
+            new Button[] { menuButton,       homeButton,        walletButton,
+                           creditCardButton, transactionButton, categoryButton };
 
         rootPane.getStylesheets().add(
             getClass().getResource(Constants.MAIN_STYLE_SHEET).toExternalForm());
 
         menuButton.setOnAction(event -> ToggleMenu());
+
         homeButton.setOnAction(event -> {
             LoadContent(Constants.HOME_FXML, Constants.HOME_STYLE_SHEET);
             UpdateSelectedButton(homeButton);
@@ -83,9 +88,15 @@ public class MainController
             LoadContent(Constants.CREDIT_CARD_FXML, Constants.CREDIT_CARD_STYLE_SHEET);
             UpdateSelectedButton(creditCardButton);
         });
+
         transactionButton.setOnAction(event -> {
             LoadContent(Constants.TRANSACTION_FXML, Constants.TRANSACTION_STYLE_SHEET);
             UpdateSelectedButton(transactionButton);
+        });
+
+        categoryButton.setOnAction(event -> {
+            LoadContent(Constants.CATEGORY_FXML, Constants.CATEGORY_STYLE_SHEET);
+            UpdateSelectedButton(categoryButton);
         });
 
         // Load start page

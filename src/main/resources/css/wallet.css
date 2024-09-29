@@ -3,3 +3,39 @@
  * Created on: September 21, 2024
  * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
  */
+
+#totalBalancePane {
+  -fx-background-color: white;
+  -fx-border-color: #ccc;
+  -fx-border-radius: 4px;
+  -fx-background-radius: 10px;
+  -fx-padding: 10px;
+  -fx-min-width: 0;
+  -fx-min-height: 0;
+}
+
+#totalBalancePaneTitle {
+  -fx-font-size: 15px;
+  -fx-font-weight: bold;
+  -fx-padding: 5px;
+}
+
+.total-balance-value-label {
+  -fx-font-size: 50px;
+  -fx-font-color: black;
+  -fx-padding: 5px;
+}
+
+.total-balance-foreseen-label {
+  -fx-font-size: 11px;
+  -fx-font-style: normal;
+  -fx-text-fill: grey;
+  -fx-padding: 5px;
+}
+
+.total-balance-wallets-label {
+  -fx-font-size: 11px;
+  -fx-font-style: italic;
+  -fx-text-fill: grey;
+  -fx-padding: 5px;
+}

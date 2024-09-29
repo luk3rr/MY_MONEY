@@ -26,7 +26,7 @@ import org.hibernate.annotations.OnDeleteAction;
 public class Wallet
 {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
@@ -59,6 +59,19 @@ public class Wallet
     {
         this.name    = name;
         this.balance = balance;
+    }
+
+    /**
+     * Constructor for Wallet
+     * @param name The name of the wallet
+     * @param balance The balance of the wallet
+     * @param type The type of the wallet
+     */
+    public Wallet(String name, Double balance, WalletType type)
+    {
+        this.name    = name;
+        this.balance = balance;
+        this.type    = type;
     }
 
     /**

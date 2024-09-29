@@ -10,9 +10,11 @@ import com.mymoney.entities.Category;
 import com.mymoney.entities.Transfer;
 import com.mymoney.entities.Wallet;
 import com.mymoney.entities.WalletTransaction;
+import com.mymoney.entities.WalletType;
 import com.mymoney.repositories.TransferRepository;
 import com.mymoney.repositories.WalletRepository;
 import com.mymoney.repositories.WalletTransactionRepository;
+import com.mymoney.repositories.WalletTypeRepository;
 import com.mymoney.util.LoggerConfig;
 import com.mymoney.util.TransactionStatus;
 import com.mymoney.util.TransactionType;
@@ -39,6 +41,9 @@ public class WalletService
     @Autowired
     private WalletTransactionRepository m_walletTransactionRepository;
 
+    @Autowired
+    private WalletTypeRepository m_walletTypeRepository;
+
     private static final Logger m_logger = LoggerConfig.GetLogger();
 
     public WalletService() { }
@@ -51,18 +56,45 @@ public class WalletService
      * @return The id of the created wallet
      */
     @Transactional
-    public Long CreateWallet(String name, double balance)
+    public Long CreateWallet(String name, Double balance)
     {
         if (m_walletRepository.existsByName(name))
         {
             throw new RuntimeException("Wallet with name " + name + " already exists");
         }
 
-        m_walletRepository.save(new Wallet(name, balance));
+        m_logger.info("Wallet " + name + " created with balance " + balance);
+
+        Wallet wt = new Wallet(name, balance);
+
+        m_walletRepository.save(wt);
+
+        return wt.GetId();
+    }
+
+    /**
+     * Creates a new wallet
+     * @param name The name of the wallet
+     * @param balance The initial balance of the wallet
+     * @param walletType The type of the wallet
+     * @throws RuntimeException If the wallet name is already in use
+     * @return The id of the created wallet
+     */
+    @Transactional
+    public Long CreateWallet(String name, Double balance, WalletType walletType)
+    {
+        if (m_walletRepository.existsByName(name))
+        {
+            throw new RuntimeException("Wallet with name " + name + " already exists");
+        }
 
         m_logger.info("Wallet " + name + " created with balance " + balance);
 
-        return m_walletRepository.findByName(name).GetId();
+        Wallet wt = new Wallet(name, balance, walletType);
+
+        m_walletRepository.save(wt);
+
+        return wt.GetId();
     }
 
     /**
@@ -112,7 +144,7 @@ public class WalletService
      * @throws RuntimeException If the wallet does not exist
      */
     @Transactional
-    public void UpdateWalletBalance(Long id, double newBalance)
+    public void UpdateWalletBalance(Long id, Double newBalance)
     {
         Wallet wallet = m_walletRepository.findById(id).orElseThrow(
             () -> new RuntimeException("Wallet with id " + id + " not found"));
@@ -140,7 +172,7 @@ public class WalletService
     public void TransferMoney(Long      senderId,
                               Long      receiverId,
                               LocalDate date,
-                              double    amount,
+                              Double    amount,
                               String    description)
     {
         if (senderId.equals(receiverId))
@@ -198,7 +230,7 @@ public class WalletService
     public void AddConfirmedIncome(Long      walletId,
                                    Category  category,
                                    LocalDate date,
-                                   double    amount,
+                                   Double    amount,
                                    String    description)
     {
         Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
@@ -233,7 +265,7 @@ public class WalletService
     public void AddPendingIncome(Long      walletId,
                                  Category  category,
                                  LocalDate date,
-                                 double    amount,
+                                 Double    amount,
                                  String    description)
     {
         Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
@@ -265,7 +297,7 @@ public class WalletService
     public void AddConfirmedExpense(Long      walletId,
                                     Category  category,
                                     LocalDate date,
-                                    double    amount,
+                                    Double    amount,
                                     String    description)
     {
         Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
@@ -299,7 +331,7 @@ public class WalletService
     public void AddPendingExpense(Long      walletId,
                                   Category  category,
                                   LocalDate date,
-                                  double    amount,
+                                  Double    amount,
                                   String    description)
     {
         Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
@@ -333,7 +365,7 @@ public class WalletService
                                                          transactionId + " not found"));
 
         Wallet wallet = transaction.GetWallet();
-        double amount = transaction.GetAmount();
+        Double amount = transaction.GetAmount();
 
         // Update the wallet balance if the transaction is confirmed
         if (transaction.GetStatus() == TransactionStatus.CONFIRMED)
@@ -462,5 +494,14 @@ public class WalletService
     {
         return m_walletTransactionRepository.GetConfirmedTransactionsByMonth(month,
                                                                              year);
+    }
+
+    /**
+     * Get all wallet types
+     * @return A list with all wallet types
+     */
+    public List<WalletType> GetAllWalletTypes()
+    {
+        return m_walletTypeRepository.findAllByOrderByNameAsc();
     }
 }

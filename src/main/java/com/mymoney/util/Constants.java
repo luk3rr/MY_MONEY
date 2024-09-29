@@ -20,6 +20,8 @@ public final class Constants
     public static final String WALLET_FXML      = "/ui/wallet.fxml";
     public static final String CREDIT_CARD_FXML = "/ui/credit_card.fxml";
     public static final String TRANSACTION_FXML = "/ui/transaction.fxml";
+    public static final String CATEGORY_FXML    = "/ui/category.fxml";
+    public static final String ADD_WALLET_FXML  = "/ui/add_wallet.fxml";
 
     // Icons
     public static final String WALLET_TYPE_ICONS_PATH  = "/icons/wallet_type/";
@@ -29,17 +31,21 @@ public final class Constants
 
     public static final String HOME_EXPENSE_ICON = "/icons/home/expense.png";
     public static final String HOME_INCOME_ICON  = "/icons/home/income.png";
+    public static final String ETC_ICONS_PATH    = "/icons/etc/";
 
-    // Stylesheets
-    public static final String MAIN_STYLE_SHEET        = "/css/main.css";
-    public static final String HOME_STYLE_SHEET        = "/css/home.css";
-    public static final String WALLET_STYLE_SHEET      = "/css/wallet.css";
-    public static final String CREDIT_CARD_STYLE_SHEET = "/css/credit_card.css";
-    public static final String TRANSACTION_STYLE_SHEET = "/css/transaction.css";
+        // Stylesheets
+        public static final String MAIN_STYLE_SHEET        = "/css/main.css";
+    public static final String     HOME_STYLE_SHEET        = "/css/home.css";
+    public static final String     WALLET_STYLE_SHEET      = "/css/wallet.css";
+    public static final String     CREDIT_CARD_STYLE_SHEET = "/css/credit_card.css";
+    public static final String     TRANSACTION_STYLE_SHEET = "/css/transaction.css";
+    public static final String     CATEGORY_STYLE_SHEET    = "/css/category.css";
 
-    // Styles
+    // Main pane styles
     public static final String SIDEBAR_SELECTED_BUTTON_STYLE =
         "sidebar-button-selected";
+
+    // Home pane styles
     public static final String HOME_LAST_TRANSACTIONS_DESCRIPTION_VALUE_STYLE =
         "description-value-box";
     public static final String HOME_LAST_TRANSACTIONS_WALLET_DATE_STYLE =
@@ -63,7 +69,6 @@ public final class Constants
     public static final String HOME_WALLET_ITEM_NAME_STYLE    = "wallet-item-name";
     public static final String HOME_WALLET_ITEM_BALANCE_STYLE = "wallet-item-balance";
     public static final String HOME_WALLET_TYPE_STYLE         = "wallet-item-type";
-
     public static final String HOME_MONTH_RESUME_POSITIVE_LABEL_STYLE =
         "month-resume-positive-label";
     public static final String HOME_MONTH_RESUME_NEGATIVE_LABEL_STYLE =
@@ -74,9 +79,17 @@ public final class Constants
         "month-resume-expected-label";
     public static final String HOME_TOOLTIP_STYLE = "tooltip";
 
+    // Wallet pane styles
+    public static final String WALLET_TOTAL_BALANCE_VALUE_LABEL_STYLE =
+        "total-balance-value-label";
+    public static final String WALLET_TOTAL_BALANCE_FORESEEN_LABEL_STYLE =
+        "total-balance-foreseen-label";
+    public static final String WALLET_TOTAL_BALANCE_WALLETS_LABEL_STYLE =
+        "total-balance-wallets-label";
+
     // Sizes
     public static final Integer WALLET_TYPE_ICONS_SIZE           = 42; // 32x32 px
-    public static final Integer CRC_OPERATOR_ICONS_SIZE  = 42; // 32x32 px
+    public static final Integer CRC_OPERATOR_ICONS_SIZE          = 42; // 32x32 px
     public static final Integer HOME_LAST_TRANSACTIONS_SIZE      = 7;
     public static final Integer HOME_LAST_TRANSACTIONS_ICON_SIZE = 32; // 32x32 px
     public static final Integer HOME_LAST_TRANSACTIONS_DESCRIPTION_LABEL_WIDTH = 280;
@@ -101,8 +114,8 @@ public final class Constants
     public static final Short   MAX_INSTALLMENTS    = 12 * 3;
 
     // Animation constants
-    public static final Double  MENU_COLLAPSED_WIDTH              = 50.0;
-    public static final Double  MENU_EXPANDED_WIDTH               = 250.0;
+    public static final Double  MENU_COLLAPSED_WIDTH              = 80.0;
+    public static final Double  MENU_EXPANDED_WIDTH               = 220.0;
     public static final Double  MENU_ANIMATION_DURATION           = 200.0; // ms
     public static final Integer HOME_BAR_CHART_ANIMATION_FRAMES   = 30;
     public static final Double  HOME_BAR_CHART_ANIMATION_DURATION = 0.7; // s

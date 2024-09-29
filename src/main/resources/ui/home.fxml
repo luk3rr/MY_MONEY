@@ -6,9 +6,12 @@
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="rootAnchorPane" stylesheets="@style/home.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mymoney.ui.HomeController">
    <children>
@@ -21,8 +24,25 @@
                         <AnchorPane fx:id="walletPane" minWidth="390.0" HBox.hgrow="ALWAYS">
                            <children>
                               <Label fx:id="walletPaneTitle" text="Wallets" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
-                              <JFXButton fx:id="walletPrevButton" text="◀" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="30.0" />
-                              <JFXButton fx:id="walletNextButton" text="▶" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="0.0" />
+                              <JFXButton fx:id="walletPrevButton" stylesheets="@../css/buttons.css" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="60.0">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../icons/etc/arrow_left.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic></JFXButton>
+                              <JFXButton fx:id="walletNextButton" ellipsisString="" stylesheets="@../css/buttons.css" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="0.0">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../icons/etc/arrow_right.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                                 <font>
+                                    <Font />
+                                 </font></JFXButton>
                               <HBox minWidth="380.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="60.0">
                                  <children>
                                     <AnchorPane fx:id="walletView1" minHeight="125.0" minWidth="170.0" HBox.hgrow="ALWAYS" />
@@ -34,8 +54,22 @@
                         <AnchorPane fx:id="creditCardPane" minWidth="390.0" HBox.hgrow="ALWAYS">
                            <children>
                               <Label fx:id="creditCardPaneTitle" text="Credit Cards" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
-                              <JFXButton fx:id="creditCardPrevButton" text="◀" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="30.0" />
-                              <JFXButton fx:id="creditCardNextButton" text="▶" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="0.0" />
+                              <JFXButton fx:id="creditCardPrevButton" stylesheets="@../css/buttons.css" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="60.0">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../icons/etc/arrow_left.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic></JFXButton>
+                              <JFXButton fx:id="creditCardNextButton" graphicTextGap="0.0" stylesheets="@../css/buttons.css" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="0.0">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../icons/etc/arrow_right.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic></JFXButton>
                               <HBox layoutX="108.0" minWidth="380.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="60.0">
                                  <children>
                                     <AnchorPane fx:id="creditCardView1" minHeight="125.0" minWidth="170.0" HBox.hgrow="ALWAYS" />

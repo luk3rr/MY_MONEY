@@ -42,6 +42,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+/**
+ * Controller for the home view
+ */
 @Component
 public class HomeController
 {
@@ -125,7 +128,7 @@ public class HomeController
 
     private Integer creditCardPaneCurrentPage = 0;
 
-    private static final Logger m_logger = LoggerConfig.GetLogger();
+    private static final Logger logger = LoggerConfig.GetLogger();
 
     public HomeController() { }
 
@@ -150,9 +153,9 @@ public class HomeController
         LoadCreditCardsFromDatabase();
         LoadLastTransactionsFromDatabase(Constants.HOME_LAST_TRANSACTIONS_SIZE);
 
-        m_logger.info("Loaded " + wallets.size() + " wallets from the database");
+        logger.info("Loaded " + wallets.size() + " wallets from the database");
 
-        m_logger.info("Loaded " + creditCards.size() +
+        logger.info("Loaded " + creditCards.size() +
                       " credit cards from the database");
 
         // Update the display with the loaded data
@@ -420,7 +423,7 @@ public class HomeController
             // Get transactions
             List<WalletTransaction> transactions =
                 walletService.GetAllTransactionsByMonth(month, year);
-            m_logger.info("Found " + transactions.size() + " transactions for " +
+            logger.info("Found " + transactions.size() + " transactions for " +
                           month + "/" + year);
 
             // Calculate total expenses for the month
@@ -699,8 +702,22 @@ public class HomeController
             Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
 
         // Mensal Economies
-        Double economyPercentage = (totalConfirmedIncome - totalConfirmedExpenses) /
-                                   totalConfirmedIncome * 100;
+
+        logger.info("Total confirmed income: " + totalConfirmedIncome);
+        logger.info("Total confirmed expenses: " + totalConfirmedExpenses);
+
+        Double economyPercentage = 0.0;
+
+        if (totalConfirmedIncome <= 0)
+        {
+            economyPercentage = 0.0;
+        }
+        else
+        {
+            economyPercentage =
+                (totalConfirmedIncome - totalConfirmedExpenses) /
+                totalConfirmedIncome * 100;
+        }
 
         Label mensalEconomiesTextLabel;
         Label mensalEconomiesSignLabel;
@@ -754,9 +771,18 @@ public class HomeController
 
         Label expectedSavingsLabel = new Label("Foreseen: ");
 
-        Double expectedSavingsPercentage =
-            (allMonthExpectedIncome - allMonthExpectedExpenses) /
-            allMonthExpectedIncome * 100;
+        Double expectedSavingsPercentage = 0.0;
+
+        if (allMonthExpectedIncome <= 0)
+        {
+            expectedSavingsPercentage = 0.0;
+        }
+        else
+        {
+            expectedSavingsPercentage =
+                (allMonthExpectedIncome - allMonthExpectedExpenses) /
+                allMonthExpectedIncome * 100;
+        }
 
         Label expectedSavingsPercentLabel;
         Label expectedSavingsSignLabel;

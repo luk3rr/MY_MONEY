@@ -158,7 +158,7 @@ public class WalletServiceTest
     @DisplayName("Test if the wallet is created successfully")
     public void TestCreateWallet()
     {
-        when(m_walletRepository.findByName(m_wallet1.GetName())).thenReturn(m_wallet1);
+        when(m_walletRepository.existsByName(m_wallet1.GetName())).thenReturn(false);
 
         m_walletService.CreateWallet(m_wallet1.GetName(), m_wallet1.GetBalance());
 

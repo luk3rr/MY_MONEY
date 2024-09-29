@@ -23,7 +23,7 @@ buildNumber.properties
 .classpath
 
 # Database files
-*.db
+*.db*
 
 # log files
 *.log

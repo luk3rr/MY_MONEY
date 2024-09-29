@@ -79,6 +79,8 @@ INSERT INTO wallet_transaction (id, wallet_id, category_id, type, status, date, 
 (76, 1, 6, 'EXPENSE', 'CONFIRMED', '2024-08-10 00:00:00', 2300.00, 'Aluguel'),
 (77, 1, 11, 'INCOME', 'CONFIRMED', '2024-09-05 00:00:00', 3530.00, 'Salário'),
 (78, 1, 6, 'EXPENSE', 'CONFIRMED', '2024-09-10 00:00:00', 2300.00, 'Aluguel'),
+(79, 1, 11, 'INCOME', 'CONFIRMED', '2024-10-05 00:00:00', 3530.00, 'Salário'),
+(80, 1, 6, 'EXPENSE', 'CONFIRMED', '2024-10-10 00:00:00', 2300.00, 'Aluguel'),
 
 -- Carteira (Wallet)
 (3, 2, 3, 'EXPENSE', 'PENDING', '2024-02-05 00:00:00', 150.00, 'Reserva de hotel para a viagem'),
@@ -90,6 +92,7 @@ INSERT INTO wallet_transaction (id, wallet_id, category_id, type, status, date, 
 (34, 2, 6, 'EXPENSE', 'CONFIRMED', '2024-08-05 00:00:00', 530.00, 'Compra de material de limpeza'),
 (39, 2, 4, 'EXPENSE', 'PENDING', '2024-09-05 00:00:00', 450.00, 'Compra de remédios'),
 (58, 2, 4, 'EXPENSE', 'CONFIRMED', '2024-08-24 00:00:00', 70.00, 'Atualização da identidade'),
+(81, 2, 4, 'EXPENSE', 'PENDING', '2024-10-05 00:00:00', 371.99, 'Compra de remédios'),
 
 -- Emergência (Savings Account)
 (12, 3, 9, 'INCOME', 'CONFIRMED', '2024-02-20 00:00:00', 100.00, 'Depósito na poupança de emergência'),
@@ -100,6 +103,7 @@ INSERT INTO wallet_transaction (id, wallet_id, category_id, type, status, date, 
 (30, 3, 6, 'EXPENSE', 'CONFIRMED', '2024-07-10 00:00:00', 950.00, 'Compra de móveis'),
 (35, 3, 7, 'EXPENSE', 'PENDING', '2024-08-10 00:00:00', 300.00, 'Serviço de manutenção de TI'),
 (40, 3, 13, 'EXPENSE', 'CONFIRMED', '2024-09-10 00:00:00', 300.00, 'Manutenção do corsa'),
+(82, 3, 9, 'INCOME', 'CONFIRMED', '2024-10-01 00:00:00', 1050.00, 'Depósito na poupança de emergência'),
 
 -- Corretora KLM (Broker)
 (4, 5, 10, 'INCOME', 'CONFIRMED', '2024-05-15 00:00:00', 300.00, 'Lucro com venda de ações da empresa ABC'),
@@ -107,6 +111,7 @@ INSERT INTO wallet_transaction (id, wallet_id, category_id, type, status, date, 
 (22, 5, 10, 'INCOME', 'CONFIRMED', '2024-05-15 00:00:00', 300.00, 'Rendimentos de fundo de renda fixa'),
 (37, 5, 10, 'INCOME', 'CONFIRMED', '2024-08-20 00:00:00', 400.00, 'Rendimento de ações vendidas'),
 (42, 5, 10, 'INCOME', 'CONFIRMED', '2024-09-20 00:00:00', 500.00, 'Lucro com venda de títulos'),
+(83, 5, 10, 'INCOME', 'CONFIRMED', '2024-10-01 00:00:00', 300.00, 'Lucro com venda de títulos'),
 
 -- Corretora ABC
 (55, 3, 10, 'INCOME', 'CONFIRMED', '2024-06-15 00:00:00', 150.00, 'Rendimento de criptos vendidas'),
