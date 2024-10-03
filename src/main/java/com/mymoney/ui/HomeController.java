@@ -155,8 +155,7 @@ public class HomeController
 
         logger.info("Loaded " + wallets.size() + " wallets from the database");
 
-        logger.info("Loaded " + creditCards.size() +
-                      " credit cards from the database");
+        logger.info("Loaded " + creditCards.size() + " credit cards from the database");
 
         // Update the display with the loaded data
         UpdateDisplayWallets();
@@ -411,7 +410,7 @@ public class HomeController
         LocalDate         currentDate = LocalDate.now();
         DateTimeFormatter formatter   = DateTimeFormatter.ofPattern("MMM/yy");
 
-        // Collect data for the last 12 months
+        // Collect data for the last months
         for (Integer i = 0; i < Constants.HOME_BAR_CHART_MONTHS; i++)
         {
             // Get the data from the oldest month to the most recent, to keep the order
@@ -423,8 +422,8 @@ public class HomeController
             // Get transactions
             List<WalletTransaction> transactions =
                 walletService.GetAllTransactionsByMonth(month, year);
-            logger.info("Found " + transactions.size() + " transactions for " +
-                          month + "/" + year);
+            logger.info("Found " + transactions.size() + " transactions for " + month +
+                        "/" + year);
 
             // Calculate total expenses for the month
             Double totalExpenses =
@@ -477,7 +476,8 @@ public class HomeController
 
             // Set the tick unit based on the maximum value
             // The tick unit must be a multiple of 10
-            Double tickUnit = ((maxValue / Constants.HOME_BAR_CHART_TICKS) / 10) * 10;
+            Integer tickUnit = (int)Math.round(
+                ((maxValue / Constants.HOME_BAR_CHART_TICKS) / 10) * 10);
             numberAxis.setTickUnit(tickUnit);
         }
 
@@ -714,9 +714,8 @@ public class HomeController
         }
         else
         {
-            economyPercentage =
-                (totalConfirmedIncome - totalConfirmedExpenses) /
-                totalConfirmedIncome * 100;
+            economyPercentage = (totalConfirmedIncome - totalConfirmedExpenses) /
+                                totalConfirmedIncome * 100;
         }
 
         Label mensalEconomiesTextLabel;
@@ -918,7 +917,8 @@ public class HomeController
         AddTooltipToNode(nameLabel, "Credit card name");
 
         Label crcOperatorLabel = new Label(creditCard.GetOperator().GetName());
-        crcOperatorLabel.getStyleClass().add(Constants.HOME_CREDIT_CARD_ITEM_OPERATOR_STYLE);
+        crcOperatorLabel.getStyleClass().add(
+            Constants.HOME_CREDIT_CARD_ITEM_OPERATOR_STYLE);
         crcOperatorLabel.setAlignment(Pos.TOP_LEFT);
         AddTooltipToNode(crcOperatorLabel, "Credit card operator");
 
@@ -935,8 +935,10 @@ public class HomeController
         digitsLabel.getStyleClass().add(Constants.HOME_CREDIT_CARD_ITEM_DIGITS_STYLE);
         AddTooltipToNode(digitsLabel, "Credit card number");
 
-        infoVbox.getChildren().addAll(nameLabel, crcOperatorLabel, availableCredit,
-                                     digitsLabel);
+        infoVbox.getChildren().addAll(nameLabel,
+                                      crcOperatorLabel,
+                                      availableCredit,
+                                      digitsLabel);
 
         ImageView icon = new ImageView(Constants.CRC_OPERATOR_ICONS_PATH +
                                        creditCard.GetOperator().GetIcon());
