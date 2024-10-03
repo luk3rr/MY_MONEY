@@ -4,31 +4,6 @@
  * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
  */
 
-INSERT INTO category (id, name) VALUES
-(0, 'Outros'),
-(1, 'Alimentação'),
-(2, 'Transporte'),
-(3, 'Lazer'),
-(4, 'Saúde'),
-(5, 'Educação'),
-(6, 'Moradia'),
-(7, 'Serviços'),
-(8, 'Pets'),
-(9, 'Investimentos'),
-(10, 'Rendimentos'),
-(11, 'Salário'),
-(12, 'Vestuário'),
-(13, 'Carro'),
-(14, 'Documentos');
-
-INSERT INTO wallet_type (id, name, icon) VALUES
-(0, 'Others', 'others.png'),
-(1, 'Broker', 'broker.png'),
-(2, 'Checking Account', 'checking.png'),
-(3, 'Criptocurrency', 'cryptocurrency.png'),
-(4, 'Savings Account', 'savings.png'),
-(5, 'Wallet', 'wallet.png');
-
 INSERT INTO wallet (id, type_id, name, balance, archived) VALUES
 (1, 2, 'Banco XYZ', 1948.31, false),
 (2, 5, 'Carteira', 312.00, false),
@@ -124,20 +99,15 @@ INSERT INTO wallet_transaction (id, wallet_id, category_id, type, status, date, 
 (41, 4, 10, 'INCOME', 'CONFIRMED', '2024-09-15 00:00:00', 180.00, 'Rendimento de aplicação'),
 (56, 4, 9, 'INCOME', 'CONFIRMED', '2024-06-15 00:00:00', 400.00, 'Depósito de economias pessoais');
 
-INSERT INTO credit_card_operator (id, name, icon) VALUES
-(1, 'Visa', 'visa.png'),
-(2, 'MasterCard', 'mastercard.png'),
-(3, 'American Express', 'amex.png'),
-(4, 'Discover', 'discover.png'),
-(5, 'Diners Club', 'diners.png');
-
 INSERT INTO credit_card (id, operator_id, name, billing_due_day, max_debt, last_four_digits) VALUES
 (1, 1, 'Visa Gold', 10, 5000.00, '1234'),
 (2, 2, 'MasterCard Platinum', 15, 7500.00, '5678'),
 (3, 3, 'Amex Green', 20, 3000.00, '9101'),
 (4, 4, 'Discover Cashback', 25, 2000.00, '1121'),
 (5, 5, 'Diners Club Rewards', 30, 4000.00, '3141');
-
+(6, 6, 'JCB', 10, 1000.00, '3830');
+(7, 7, 'Elo', 11, 2300.00, '4301');
+(8, 8, 'Hipercard', 5, 500.00, '9031');
 
 -- Dívidas passadas (já pagas)
 INSERT INTO credit_card_debt (id, crc_id, category_id, date, total_amount, description)
