@@ -104,10 +104,11 @@ INSERT INTO credit_card (id, operator_id, name, billing_due_day, max_debt, last_
 (2, 2, 'MasterCard Platinum', 15, 7500.00, '5678'),
 (3, 3, 'Amex Green', 20, 3000.00, '9101'),
 (4, 4, 'Discover Cashback', 25, 2000.00, '1121'),
-(5, 5, 'Diners Club Rewards', 30, 4000.00, '3141');
-(6, 6, 'JCB', 10, 1000.00, '3830');
-(7, 7, 'Elo', 11, 2300.00, '4301');
-(8, 8, 'Hipercard', 5, 500.00, '9031');
+(5, 5, 'Diners Club Rewards', 30, 4000.00, '3141'),
+(6, 6, 'JCB', 10, 1000.00, '3830'),
+(7, 7, 'Elo', 11, 2300.00, '4301'),
+(8, 8, 'Hipercard', 5, 500.00, '9031'),
+(9, 0, 'Cartaozin', 5, 1.00, '1683');
 
 -- Dívidas passadas (já pagas)
 INSERT INTO credit_card_debt (id, crc_id, category_id, date, total_amount, description)
