@@ -456,6 +456,18 @@ public class WalletService
     }
 
     /**
+     * Get wallet by name
+     * @param name The name of the wallet
+     * @return The wallet with the provided name
+     * @throws RuntimeException If the wallet does not exist
+     */
+    public Wallet GetWalletByName(String name)
+    {
+        return m_walletRepository.findByName(name).orElseThrow(
+            () -> new RuntimeException("Wallet with name " + name + " not found"));
+    }
+
+    /**
      * Get the last n transactions of all wallets
      * @param n The number of transactions to get
      * @return A list with the last n transactions of all wallets
@@ -474,6 +486,20 @@ public class WalletService
                                                              Integer year)
     {
         return m_walletTransactionRepository.GetAllTransactionsByMonth(month, year);
+    }
+
+    /**
+     * Get all transactions by wallet and month
+     * @param walletId The id of the wallet
+     * @param month The month of the transactions
+     * @param year The year of the transactions
+     */
+    public List<WalletTransaction>
+    GetTransactionsByWalletAndMonth(Long walletId, Integer month, Integer year)
+    {
+        return m_walletTransactionRepository.GetTransactionsByWalletAndMonth(walletId,
+                                                                             month,
+                                                                             year);
     }
 
     /**
@@ -506,5 +532,39 @@ public class WalletService
     public List<WalletType> GetAllWalletTypes()
     {
         return m_walletTypeRepository.findAllByOrderByNameAsc();
+    }
+
+    /**
+     * Get the transfers by wallet
+     * @param walletId The id of the wallet
+     * @return A list with the transfers in the wallet
+     */
+    public List<Transfer> GetTransfersByWallet(Long walletId)
+    {
+        return m_transferRepository.GetTransfersByWallet(walletId);
+    }
+
+    /**
+     * Get the transfers by month and year
+     * @param month The month
+     * @param year The year
+     * @return A list with the transfers by month and year
+     */
+    public List<Transfer> GetTransfersByMonthAndYear(Integer month, Integer year)
+    {
+        return m_transferRepository.GetTransferByMonthAndYear(month, year);
+    }
+
+    /**
+     * Get the transfers by wallet and month
+     * @param walletId The id of the wallet
+     * @param month The month
+     * @param year The year
+     * @return A list with the transfers in the wallet by month
+     */
+    public List<Transfer>
+    GetTransfersByWalletAndMonth(Long walletId, Integer month, Integer year)
+    {
+        return m_transferRepository.GetTransfersByWalletAndMonth(walletId, month, year);
     }
 }

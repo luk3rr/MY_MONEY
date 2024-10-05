@@ -6,8 +6,8 @@
 
 package com.mymoney.repositories;
 
+import com.mymoney.entities.Transfer;
 import com.mymoney.entities.WalletTransaction;
-import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,7 +31,7 @@ public interface WalletTransactionRepository
            + "AND wt.date >= :startDate "
            + "ORDER BY wt.date DESC")
     List<WalletTransaction>
-    GetTransactionsByDate(@Param("walletId") Long           walletId,
+    GetTransactionsByDate(@Param("walletId") Long    walletId,
                           @Param("startDate") String startDate);
 
     /**
@@ -48,6 +48,24 @@ public interface WalletTransactionRepository
     List<WalletTransaction>
     GetAllTransactionsByMonth(@Param("month") Integer month,
                               @Param("year") Integer  year);
+
+    /**
+     * Get the transactions by wallet and month
+     * @param walletId The id of the wallet
+     * @param month The month
+     * @param year The year
+     * @return A list with the transactions in the wallet by month
+     */
+    @Query("SELECT wt "
+           + "FROM WalletTransaction wt "
+           + "WHERE wt.wallet.id = :walletId "
+           + "AND strftime('%m', wt.date) = printf('%02d', :month) "
+           + "AND strftime('%Y', wt.date) = printf('%04d', :year) "
+           + "ORDER BY wt.date DESC")
+    List<WalletTransaction>
+    GetTransactionsByWalletAndMonth(@Param("walletId") Long walletId,
+                                    @Param("month") Integer month,
+                                    @Param("year") Integer  year);
 
     /**
      * Get the pending transactions by month and year

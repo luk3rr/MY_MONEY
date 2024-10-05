@@ -4,30 +4,6 @@
  * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
  */
 
-#walletPane,
-#creditCardPane,
-#lastTransactionsPane,
-#graphPane,
-#monthResumePane {
-  -fx-background-color: white;
-  -fx-border-color: #ccc;
-  -fx-border-radius: 4px;
-  -fx-background-radius: 10px;
-  -fx-padding: 10px;
-  -fx-min-width: 0;
-  -fx-min-height: 0;
-}
-
-#walletPaneTitle,
-#creditCardPaneTitle,
-#lastTransactionsPaneTitle,
-#monthResumePaneTitle {
-  -fx-font-size: 15px;
-  -fx-font-weight: bold;
-  -fx-text-fill: #333;
-  -fx-padding: 5px;
-}
-
 .wallet-item {
   -fx-background-color: linear-gradient(to bottom right, #34c759, #138d75);
   -fx-padding: 15px;

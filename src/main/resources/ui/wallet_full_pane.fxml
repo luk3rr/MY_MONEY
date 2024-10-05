@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="walletPane" minHeight="125.0" minWidth="250.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mymoney.ui.WalletFullPaneController">
+   <children>
+      <VBox fx:id="rootVBox" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox fx:id="header" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <ImageView fx:id="walletIcon" fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS">
+                     <image>
+                        <Image url="@../icons/etc/default.png" />
+                     </image></ImageView>
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label fx:id="walletName" text="Name" />
+                        <Label fx:id="walletType" text="Type" textFill="#433d3d">
+                           <font>
+                              <Font size="9.0" />
+                           </font></Label>
+                     </children>
+                  </VBox>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="130.0" HBox.hgrow="ALWAYS">
+                     <children>
+                        <JFXButton fx:id="addButton" HBox.hgrow="ALWAYS">
+                           <graphic>
+                              <ImageView fx:id="addButton" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../icons/wallet/add_wallet.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </JFXButton>
+                        <JFXButton fx:id="menuButton">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../icons/wallet/options.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </JFXButton>
+                     </children>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets left="5.0" right="5.0" />
+               </padding>
+            </HBox>
+            <VBox fx:id="body" prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <HBox fx:id="openingBalance" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Label fx:id="openingBalanceDescription" minWidth="130.0" text="Opening balance" />
+                        <Label fx:id="openingBalanceSign" minWidth="10.0" text=" ">
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font></Label>
+                        <Label fx:id="openingBalanceValue" text="\$ 0.00">
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font>
+                        </Label>
+                     </children></HBox>
+                  <HBox fx:id="incomes" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Label fx:id="incomesDescription" minWidth="130.0" text="Incomes" />
+                        <Label fx:id="incomesSign" minWidth="10.0" text=" " >
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font></Label>
+                        <Label fx:id="incomesValue" text="\$ 0.00">
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font>
+                        </Label>
+                     </children></HBox>
+                  <HBox fx:id="expenses" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Label fx:id="expensesDescription" minWidth="130.0" text="Expenses" />
+                        <Label fx:id="expensesSign" minWidth="10.0" text=" ">
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font></Label>
+                        <Label fx:id="expensesValue" text="\$ 0.00">
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font>
+                        </Label>
+                     </children></HBox>
+                  <HBox fx:id="creditedTransfers" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Label fx:id="creditedTransfersDescription" minWidth="130.0" text="Credited transfers" />
+                        <Label fx:id="creditedTransfersSign" minWidth="10.0" text=" " >
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font></Label>
+                        <Label fx:id="creditedTransfersValue" text="\$ 0.00">
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font>
+                        </Label>
+                     </children></HBox>
+                  <HBox fx:id="debitedTransfers" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Label fx:id="debitedTransfersDescription" minWidth="130.0" text="Debited transfers" />
+                        <Label fx:id="debitedTransfersSign" minWidth="10.0" text=" " >
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font></Label>
+                        <Label fx:id="debitedTransfersValue" text="\$ 0.00">
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font>
+                        </Label>
+                     </children></HBox>
+                  <HBox fx:id="currentBalance" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Label fx:id="currentBalanceDescription" minWidth="130.0" text="Current balance" />
+                        <Label fx:id="currentBalanceSign" minWidth="10.0" text=" " >
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font></Label>
+                        <Label fx:id="currentBalanceValue" text="\$ 0.00">
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font>
+                        </Label>
+                     </children></HBox>
+                  <HBox fx:id="foreseenBalance" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label fx:id="foreseenBalanceDescription" minWidth="130.0" text="Foreseen balance" />
+                        <Label fx:id="foreseenBalanceSign" minWidth="10.0" text=" ">
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font></Label>
+                        <Label fx:id="foreseenBalanceValue" text="\$ 0.00" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font>
+                        </Label>
+                     </children></HBox>
+               </children>
+               <padding>
+                  <Insets left="5.0" right="5.0" />
+               </padding>
+            </VBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

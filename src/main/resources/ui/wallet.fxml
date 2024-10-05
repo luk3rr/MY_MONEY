@@ -17,11 +17,11 @@
          <children>
             <AnchorPane minHeight="300.0" VBox.vgrow="ALWAYS">
                <children>
-                  <HBox layoutX="89.0" layoutY="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <HBox layoutX="89.0" layoutY="40.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <AnchorPane fx:id="totalBalancePane" maxHeight="350.0" HBox.hgrow="ALWAYS">
+                        <AnchorPane fx:id="totalBalancePane" maxHeight="350.0" styleClass="anchor-pane" stylesheets="@../css/anchorpane.css" HBox.hgrow="ALWAYS">
                            <children>
-                              <Text fx:id="totalBalancePaneTitle" strokeType="OUTSIDE" strokeWidth="0.0" text="Total balance" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                              <Text fx:id="totalBalancePaneTitle" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="title" text="Total balance" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                               <ComboBox fx:id="totalBalancePaneWalletTypeComboBox" minWidth="150.0" stylesheets="@../css/combobox.css" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
                               <JFXButton fx:id="totalBalancePaneTransferButton" stylesheets="@../css/buttons.css" text="Transfer" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
                                  <graphic>
@@ -44,9 +44,9 @@
                               <VBox fx:id="totalBalancePaneInfoVBox" alignment="CENTER_LEFT" layoutX="5.0" layoutY="50.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="50.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="walletPane" HBox.hgrow="ALWAYS">
+                        <AnchorPane fx:id="walletPane" styleClass="anchor-pane" stylesheets="@../css/anchorpane.css" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label fx:id="walletPaneTitle" text="Wallets" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                              <Label fx:id="walletPaneTitle" styleClass="title" text="Wallets" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                               <JFXButton fx:id="walletPrevButton" stylesheets="@../css/buttons.css" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="60.0">
                                  <graphic>
                                     <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -68,7 +68,6 @@
                                     <AnchorPane fx:id="walletPane1" minHeight="125.0" minWidth="170.0" HBox.hgrow="ALWAYS" />
                                     <AnchorPane fx:id="walletPane2" minHeight="125.0" minWidth="170.0" HBox.hgrow="ALWAYS" />
                                     <AnchorPane fx:id="walletPane3" minHeight="125.0" minWidth="170.0" HBox.hgrow="ALWAYS" />
-                                    <AnchorPane fx:id="walletPane4" minHeight="125.0" minWidth="170.0" HBox.hgrow="ALWAYS" />
                                  </children>
                               </HBox>
                               <ComboBox layoutX="536.0" layoutY="15.0" minWidth="150.0" stylesheets="@../css/combobox.css" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
@@ -81,7 +80,7 @@
             <AnchorPane VBox.vgrow="ALWAYS">
                <children>
                   <VBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                  <AnchorPane AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <AnchorPane minHeight="400.0" minWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
          </children>

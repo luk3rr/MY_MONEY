@@ -94,7 +94,7 @@ public class AddWalletController
 
         try
         {
-            double walletBalance = Double.parseDouble(walletBalanceStr);
+            Double walletBalance = Double.parseDouble(walletBalanceStr);
 
             walletService.CreateWallet(walletName, walletBalance, walletType);
 

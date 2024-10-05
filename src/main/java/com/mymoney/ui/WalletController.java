@@ -20,13 +20,21 @@ import java.util.List;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
@@ -41,6 +49,15 @@ public class WalletController
     private AnchorPane totalBalanceView;
 
     @FXML
+    private AnchorPane walletPane1;
+
+    @FXML
+    private AnchorPane walletPane2;
+
+    @FXML
+    private AnchorPane walletPane3;
+
+    @FXML
     private VBox totalBalancePaneInfoVBox;
 
     @FXML
@@ -48,6 +65,12 @@ public class WalletController
 
     @FXML
     private JFXButton totalBalancePaneAddWalletButton;
+
+    @FXML
+    private JFXButton walletPrevButton;
+
+    @FXML
+    private JFXButton walletNextButton;
 
     @FXML
     private ComboBox<String> totalBalancePaneWalletTypeComboBox;
@@ -68,6 +91,10 @@ public class WalletController
     private Integer totalBalanceSelectedYear;
 
     private static final Logger logger = LoggerConfig.GetLogger();
+
+    private Integer walletPaneCurrentPage = 0;
+
+    private Integer itemsPerPage = 3;
 
     public WalletController() { }
 
@@ -100,6 +127,7 @@ public class WalletController
         totalBalancePaneWalletTypeComboBox.getSelectionModel().selectFirst();
 
         UpdateTotalBalanceView();
+        UpdateDisplayWallets();
 
         SetButtonsActions();
     }
@@ -112,6 +140,22 @@ public class WalletController
         totalBalancePaneTransferButton.setOnAction(e -> AddTransfer());
         totalBalancePaneWalletTypeComboBox.setOnAction(e -> UpdateTotalBalanceView());
         totalBalancePaneAddWalletButton.setOnAction(e -> AddWallet());
+
+        walletPrevButton.setOnAction(event -> {
+            if (walletPaneCurrentPage > 0)
+            {
+                walletPaneCurrentPage--;
+                UpdateDisplayWallets();
+            }
+        });
+
+        walletNextButton.setOnAction(event -> {
+            if (walletPaneCurrentPage < wallets.size() / itemsPerPage)
+            {
+                walletPaneCurrentPage++;
+                UpdateDisplayWallets();
+            }
+        });
     }
 
     /**
@@ -286,6 +330,74 @@ public class WalletController
     }
 
     /**
+     * Update the display of wallets
+     */
+    private void UpdateDisplayWallets()
+    {
+        walletPane1.getChildren().clear();
+        walletPane2.getChildren().clear();
+        walletPane3.getChildren().clear();
+
+        Integer start = walletPaneCurrentPage * itemsPerPage;
+        Integer end   = Math.min(start + itemsPerPage, wallets.size());
+
+        for (Integer i = start; i < end; i++)
+        {
+            Wallet wallet = wallets.get(i);
+
+            try
+            {
+                FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(Constants.WALLET_FULL_PANE_FXML));
+                loader.setControllerFactory(springContext::getBean);
+                Parent newContent = loader.load();
+
+                // Add style class to the wallet pane
+                newContent.getStylesheets().add(
+                    getClass()
+                        .getResource(Constants.COMMON_STYLE_SHEET)
+                        .toExternalForm());
+
+                WalletFullPaneController walletFullPaneController =
+                    loader.getController();
+
+                walletFullPaneController.UpdateWalletPane(wallet);
+
+                AnchorPane.setTopAnchor(newContent, 0.0);
+                AnchorPane.setBottomAnchor(newContent, 0.0);
+
+                switch (i % 4)
+                {
+                    case 0:
+                        walletPane1.getChildren().add(newContent);
+                        AnchorPane.setLeftAnchor(newContent, 0.0);
+                        AnchorPane.setRightAnchor(newContent, 10.0);
+                        break;
+                    case 1:
+                        walletPane2.getChildren().add(newContent);
+                        AnchorPane.setLeftAnchor(newContent, 10.0);
+                        AnchorPane.setRightAnchor(newContent, 0.0);
+                        break;
+                    case 2:
+                        walletPane3.getChildren().add(newContent);
+                        AnchorPane.setLeftAnchor(newContent, 0.0);
+                        AnchorPane.setRightAnchor(newContent, 10.0);
+                        break;
+                }
+            }
+            catch (IOException e)
+            {
+                logger.severe("Error while loading wallet full pane");
+                e.printStackTrace();
+                continue;
+            }
+        }
+
+        walletPrevButton.setDisable(walletPaneCurrentPage == 0);
+        walletNextButton.setDisable(end >= wallets.size());
+    }
+
+    /**
      * Add a new wallet
      */
     private void AddWallet()
@@ -301,7 +413,10 @@ public class WalletController
             popupStage.setTitle("Create new wallet");
             popupStage.setScene(new Scene(root));
 
-            popupStage.setOnHidden(e -> UpdateTotalBalanceView());
+            popupStage.setOnHidden(e -> {
+                UpdateTotalBalanceView();
+                UpdateDisplayWallets();
+            });
 
             popupStage.showAndWait();
         }
@@ -333,7 +448,10 @@ public class WalletController
             popupStage.setTitle("Add new transfer");
             popupStage.setScene(scene);
 
-            popupStage.setOnHidden(e -> UpdateTotalBalanceView());
+            popupStage.setOnHidden(e -> {
+                UpdateTotalBalanceView();
+                UpdateDisplayWallets();
+            });
 
             popupStage.showAndWait();
         }

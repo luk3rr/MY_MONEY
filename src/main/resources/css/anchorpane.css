@@ -1,0 +1,22 @@
+/*
+ * Filename: anchorpane.css
+ * Created on: October  5, 2024
+ * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
+ */
+
+.anchor-pane {
+  -fx-background-color: white;
+  -fx-border-color: #ccc;
+  -fx-border-radius: 4px;
+  -fx-background-radius: 10px;
+  -fx-padding: 10px;
+  -fx-min-width: 0;
+  -fx-min-height: 0;
+}
+
+.anchor-pane .title {
+  -fx-font-size: 15px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #333;
+  -fx-padding: 5px;
+}
