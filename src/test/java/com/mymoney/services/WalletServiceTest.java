@@ -25,7 +25,7 @@ import com.mymoney.repositories.WalletTransactionRepository;
 import com.mymoney.util.Constants;
 import com.mymoney.util.TransactionStatus;
 import com.mymoney.util.TransactionType;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,23 +68,23 @@ public class WalletServiceTest
     private WalletTransaction m_wallet1IncomeTransaction;
     private WalletTransaction m_wallet1ExpenseTransaction;
     private Category          m_category;
-    private LocalDate         m_date;
+    private LocalDateTime     m_date;
     private Double            m_incomeAmount;
     private Double            m_expenseAmount;
     private Double            m_transferAmount;
     private String            m_description = "";
 
-    private Wallet CreateWallet(String name, double balance)
+    private Wallet CreateWallet(String name, Double balance)
     {
         Wallet wallet = new Wallet(name, balance);
         return wallet;
     }
 
-    private Transfer CreateTransfer(Wallet    sender,
-                                    Wallet    receiver,
-                                    LocalDate date,
-                                    double    amount,
-                                    String    description)
+    private Transfer CreateTransfer(Wallet        sender,
+                                    Wallet        receiver,
+                                    LocalDateTime date,
+                                    Double        amount,
+                                    String        description)
     {
         Transfer transfer = new Transfer(sender, receiver, date, amount, description);
         return transfer;
@@ -94,8 +94,8 @@ public class WalletServiceTest
                                                       Category          category,
                                                       TransactionType   type,
                                                       TransactionStatus status,
-                                                      LocalDate         date,
-                                                      double            amount,
+                                                      LocalDateTime     date,
+                                                      Double            amount,
                                                       String            description)
     {
         WalletTransaction walletTransaction = new WalletTransaction(wallet,
@@ -120,7 +120,7 @@ public class WalletServiceTest
         m_incomeAmount   = 500.0;
         m_expenseAmount  = 200.0;
         m_transferAmount = 125.5;
-        m_date           = LocalDate.now();
+        m_date           = LocalDateTime.now();
         m_category       = new Category("etc");
 
         m_wallet1 = CreateWallet("Wallet1", 1000.0);
@@ -253,7 +253,7 @@ public class WalletServiceTest
             .thenReturn(Optional.of(m_wallet1));
         when(m_walletRepository.save(any(Wallet.class))).thenReturn(m_wallet1);
 
-        double newBalance = 2000.0;
+        Double newBalance = 2000.0;
 
         m_walletService.UpdateWalletBalance(m_wallet1Id, newBalance);
 

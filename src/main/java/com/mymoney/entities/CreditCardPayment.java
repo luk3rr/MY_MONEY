@@ -14,7 +14,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import com.mymoney.util.Constants;
 
 /**
  * Represents a credit card payment
@@ -38,7 +40,7 @@ public class CreditCardPayment
     private CreditCardDebt creditCardDebt;
 
     @Column(name = "date", nullable = false)
-    private LocalDate date;
+    private String date;
 
     @Column(name = "amount", nullable = false)
     private Double amount;
@@ -61,13 +63,13 @@ public class CreditCardPayment
      */
     public CreditCardPayment(Wallet         wallet,
                              CreditCardDebt debt,
-                             LocalDate      date,
+                             LocalDateTime      date,
                              Double         amount,
                              Integer        installment)
     {
         this.wallet         = wallet;
         this.creditCardDebt = debt;
-        this.date           = date;
+        this.date           = date.format(Constants.DATE_TIME_FORMATTER);
         this.amount         = amount;
         this.installment    = installment;
     }
@@ -80,12 +82,12 @@ public class CreditCardPayment
      * @param installment The installment of the payment
      */
     public CreditCardPayment(CreditCardDebt debt,
-                             LocalDate      date,
+                             LocalDateTime      date,
                              Double         amount,
                              Integer        installment)
     {
         this.creditCardDebt = debt;
-        this.date           = date;
+        this.date           = date.format(Constants.DATE_TIME_FORMATTER);
         this.amount         = amount;
         this.installment    = installment;
     }
@@ -121,9 +123,9 @@ public class CreditCardPayment
      * Get the date of the payment
      * @return The date of the payment
      */
-    public LocalDate GetDate()
+    public LocalDateTime GetDate()
     {
-        return date;
+        return LocalDateTime.parse(date, Constants.DATE_TIME_FORMATTER);
     }
 
     /**
@@ -166,9 +168,9 @@ public class CreditCardPayment
      * Set the date of the payment
      * @param date The date of the payment
      */
-    public void SetDate(LocalDate date)
+    public void SetDate(LocalDateTime date)
     {
-        this.date = date;
+        this.date = date.format(Constants.DATE_TIME_FORMATTER);
     }
 
     /**

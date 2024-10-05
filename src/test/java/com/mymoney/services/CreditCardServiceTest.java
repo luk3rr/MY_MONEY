@@ -23,7 +23,8 @@ import com.mymoney.repositories.CreditCardDebtRepository;
 import com.mymoney.repositories.CreditCardPaymentRepository;
 import com.mymoney.repositories.CreditCardRepository;
 import com.mymoney.util.Constants;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
@@ -55,10 +56,10 @@ public class CreditCardServiceTest
     @InjectMocks
     private CreditCardService m_creditCardService;
 
-    private CreditCard m_creditCard;
-    private Category   m_category;
-    private LocalDate  m_date;
-    private String     m_description;
+    private CreditCard    m_creditCard;
+    private Category      m_category;
+    private LocalDateTime m_date;
+    private String        m_description;
 
     @BeforeAll
     public static void SetUp()
@@ -71,7 +72,7 @@ public class CreditCardServiceTest
     {
         m_creditCard  = new CreditCard("Credit Card", 10, 1000.0);
         m_category    = new Category("Category");
-        m_date        = LocalDate.now();
+        m_date        = LocalDateTime.now();
         m_description = "";
     }
 
@@ -108,7 +109,8 @@ public class CreditCardServiceTest
     public void
     TestCreateCreditCardAlreadyExists()
     {
-        when(m_creditCardRepository.existsByName(m_creditCard.GetName())).thenReturn(true);
+        when(m_creditCardRepository.existsByName(m_creditCard.GetName()))
+            .thenReturn(true);
 
         assertThrows(
             RuntimeException.class,
@@ -211,7 +213,7 @@ public class CreditCardServiceTest
         when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.of(m_creditCard));
 
-        double availableCredit =
+        Double availableCredit =
             m_creditCardService.GetAvailableCredit(m_creditCard.GetId());
 
         assertEquals(m_creditCard.GetMaxDebt(), availableCredit);
@@ -234,7 +236,7 @@ public class CreditCardServiceTest
         when(m_creditCardPaymentRepository.GetTotalPaidAmount(m_creditCard.GetId()))
             .thenReturn(0.0);
 
-        double availableCredit =
+        Double availableCredit =
             m_creditCardService.GetAvailableCredit(m_creditCard.GetId());
 
         assertEquals(previousFreeCredit / 2, availableCredit, Constants.EPSILON);
@@ -257,7 +259,7 @@ public class CreditCardServiceTest
         when(m_creditCardPaymentRepository.GetTotalPaidAmount(m_creditCard.GetId()))
             .thenReturn(100.0);
 
-        double availableCredit =
+        Double availableCredit =
             m_creditCardService.GetAvailableCredit(m_creditCard.GetId());
 
         assertEquals(800.0, availableCredit, Constants.EPSILON);
@@ -494,12 +496,12 @@ public class CreditCardServiceTest
 
         assertEquals(5, capturedPayments.size(), "The number of payments is incorrect");
 
-        double expectedInstallmentValue = 100.0 / 5;
+        Double expectedInstallmentValue = 100.0 / 5;
 
-        for (int i = 0; i < capturedPayments.size(); i++)
+        for (Integer i = 0; i < capturedPayments.size(); i++)
         {
             CreditCardPayment payment           = capturedPayments.get(i);
-            int               installmentNumber = i + 1;
+            Integer           installmentNumber = i + 1;
 
             // Check if the payment amount is correct
             assertEquals(expectedInstallmentValue,
@@ -509,15 +511,16 @@ public class CreditCardServiceTest
                              " is incorrect");
 
             // Check if the installment number is correct
-            assertEquals((short)installmentNumber,
+            assertEquals(installmentNumber,
                          payment.GetInstallment(),
                          "The installment number of installment " + installmentNumber +
                              " is incorrect");
 
             // Check if the payment date is correct
-            LocalDate expectedPaymentDate =
+            LocalDateTime expectedPaymentDate =
                 m_date.plusMonths(installmentNumber)
-                    .withDayOfMonth(m_creditCard.GetBillingDueDay());
+                    .withDayOfMonth(m_creditCard.GetBillingDueDay())
+                    .truncatedTo(ChronoUnit.SECONDS);
 
             assertEquals(expectedPaymentDate,
                          payment.GetDate(),

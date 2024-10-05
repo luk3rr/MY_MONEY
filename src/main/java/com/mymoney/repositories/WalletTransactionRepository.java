@@ -7,7 +7,7 @@
 package com.mymoney.repositories;
 
 import com.mymoney.entities.WalletTransaction;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,8 +31,8 @@ public interface WalletTransactionRepository
            + "AND wt.date >= :startDate "
            + "ORDER BY wt.date DESC")
     List<WalletTransaction>
-    GetTransactionsByDate(@Param("walletId") Long       walletId,
-                          @Param("startDate") LocalDate startDate);
+    GetTransactionsByDate(@Param("walletId") Long           walletId,
+                          @Param("startDate") String startDate);
 
     /**
      * Get the all transactions by month and year

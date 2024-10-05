@@ -16,7 +16,7 @@ import com.mymoney.repositories.CreditCardPaymentRepository;
 import com.mymoney.repositories.CreditCardRepository;
 import com.mymoney.util.Constants;
 import com.mymoney.util.LoggerConfig;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,12 +138,12 @@ public class CreditCardService
      * @throws RuntimeException If the credit card does not have enough credit
      */
     @Transactional
-    public void RegisterDebt(Long      crcId,
-                             Category  category,
-                             LocalDate date,
-                             Double    value,
-                             Integer   installment,
-                             String    description)
+    public void RegisterDebt(Long          crcId,
+                             Category      category,
+                             LocalDateTime date,
+                             Double        value,
+                             Integer       installment,
+                             String        description)
     {
         CreditCard creditCard = m_creditCardRepository.findById(crcId).orElseThrow(
             ()
@@ -188,7 +188,7 @@ public class CreditCardService
 
         for (Integer i = 1; i <= installment; i++)
         {
-            LocalDate paymentDate =
+            LocalDateTime paymentDate =
                 date.plusMonths(i).withDayOfMonth(creditCard.GetBillingDueDay());
 
             CreditCardPayment payment =

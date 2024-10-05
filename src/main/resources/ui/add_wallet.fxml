@@ -18,7 +18,7 @@
 
     <Label text="Initial balance" />
     <TextField fx:id="walletBalanceField" promptText="Initial balance" />
-   <ComboBox fx:id="walletTypeComboBox" prefWidth="150.0" promptText="Wallet type" stylesheets="@../css/combobox.css" />
+   <ComboBox fx:id="walletTypeComboBox" promptText="Wallet type" stylesheets="@../css/combobox.css" VBox.vgrow="ALWAYS" />
    <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
       <children>
          <JFXButton contentDisplay="CENTER" onAction="#handleSave" stylesheets="@../css/buttons.css" text="Save" />

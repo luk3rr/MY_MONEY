@@ -1,0 +1,17 @@
+/*
+ * Filename: common-styles.css
+ * Created on: October  4, 2024
+ * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
+ */
+
+.positive-balance {
+  -fx-text-fill: #28a745;
+}
+
+.neutral-balance {
+  -fx-text-fill: black;
+}
+
+.negative-balance {
+  -fx-text-fill: red;
+}

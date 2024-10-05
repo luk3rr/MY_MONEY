@@ -14,7 +14,8 @@ import com.mymoney.entities.Wallet;
 import com.mymoney.entities.WalletTransaction;
 import com.mymoney.util.TransactionStatus;
 import com.mymoney.util.TransactionType;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -59,7 +60,7 @@ public class WalletTransactionRepositoryTest
     }
 
     private WalletTransaction
-    CreateWalletTransaction(Wallet walletName, double amount, LocalDate date)
+    CreateWalletTransaction(Wallet walletName, double amount, LocalDateTime date)
     {
         WalletTransaction walletTransaction = new WalletTransaction();
         walletTransaction.SetWallet(walletName);
@@ -96,21 +97,23 @@ public class WalletTransactionRepositoryTest
     public void
     TestGetLastTransactionsByDate()
     {
+        LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+
         // Create the wallet transactions
         WalletTransaction walletTransaction1 =
-            CreateWalletTransaction(m_wallet1, 100.0, LocalDate.now());
+            CreateWalletTransaction(m_wallet1, 100.0, now);
         WalletTransaction walletTransaction2 =
-            CreateWalletTransaction(m_wallet1, 200.0, LocalDate.now().minusDays(1));
+            CreateWalletTransaction(m_wallet1, 200.0, now.minusDays(1));
 
-        CreateWalletTransaction(m_wallet1, 300.0, LocalDate.now().minusDays(2));
+        CreateWalletTransaction(m_wallet1, 300.0, now.minusDays(2));
 
         // Create another wallet transaction in another wallet
-        CreateWalletTransaction(m_wallet2, 300.0, LocalDate.now().minusDays(1));
+        CreateWalletTransaction(m_wallet2, 300.0, now.minusDays(1));
 
         // Get the last transactions in the wallet by date
         var lastTransactions = m_walletTransactionRepository.GetTransactionsByDate(
             m_wallet1.GetId(),
-            LocalDate.now().minusDays(1));
+            now.minusDays(1).toString());
 
         // Check if the last transactions are correct
         assertEquals(2, lastTransactions.size());
@@ -130,7 +133,7 @@ public class WalletTransactionRepositoryTest
         // Get the last transactions in the wallet by date
         var lastTransactions = m_walletTransactionRepository.GetTransactionsByDate(
             m_wallet1.GetId(),
-            LocalDate.now().minusDays(1));
+            LocalDateTime.now().minusDays(1).toString());
 
         // Check if the last transactions are correct
         assertEquals(0, lastTransactions.size());
@@ -142,14 +145,14 @@ public class WalletTransactionRepositoryTest
     {
         // Create the wallet transactions
         WalletTransaction walletTransaction1 =
-            CreateWalletTransaction(m_wallet1, 140.0, LocalDate.now());
+            CreateWalletTransaction(m_wallet1, 140.0, LocalDateTime.now());
         WalletTransaction walletTransaction2 =
-            CreateWalletTransaction(m_wallet1, 210.0, LocalDate.now().minusDays(1));
+            CreateWalletTransaction(m_wallet1, 210.0, LocalDateTime.now().minusDays(1));
 
         WalletTransaction walletTransaction3 =
-            CreateWalletTransaction(m_wallet1, 300.0, LocalDate.now().minusDays(2));
+            CreateWalletTransaction(m_wallet1, 300.0, LocalDateTime.now().minusDays(2));
 
-        CreateWalletTransaction(m_wallet1, 300.0, LocalDate.now().minusDays(3));
+        CreateWalletTransaction(m_wallet1, 300.0, LocalDateTime.now().minusDays(3));
 
         // Request the last 3 transactions
         Pageable request = PageRequest.ofSize(3);
@@ -194,14 +197,14 @@ public class WalletTransactionRepositoryTest
     {
         // Create the wallet transactions
         WalletTransaction walletTransaction1 =
-            CreateWalletTransaction(m_wallet1, 140.0, LocalDate.now());
+            CreateWalletTransaction(m_wallet1, 140.0, LocalDateTime.now());
         WalletTransaction walletTransaction2 =
-            CreateWalletTransaction(m_wallet1, 210.0, LocalDate.now().minusDays(1));
+            CreateWalletTransaction(m_wallet1, 210.0, LocalDateTime.now().minusDays(1));
 
         WalletTransaction walletTransaction3 =
-            CreateWalletTransaction(m_wallet2, 300.0, LocalDate.now().minusDays(2));
+            CreateWalletTransaction(m_wallet2, 300.0, LocalDateTime.now().minusDays(2));
 
-        CreateWalletTransaction(m_wallet2, 300.0, LocalDate.now().minusDays(3));
+        CreateWalletTransaction(m_wallet2, 300.0, LocalDateTime.now().minusDays(3));
 
         // Request the last 3 transactions
         Pageable request = PageRequest.ofSize(3);

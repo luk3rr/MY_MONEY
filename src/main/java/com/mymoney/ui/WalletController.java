@@ -13,7 +13,6 @@ import com.mymoney.entities.WalletType;
 import com.mymoney.services.WalletService;
 import com.mymoney.util.Constants;
 import com.mymoney.util.LoggerConfig;
-import com.mymoney.util.TransactionStatus;
 import com.mymoney.util.TransactionType;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -167,8 +166,6 @@ public class WalletController
         LoadWalletTransactions();
         LoadWalletTypes();
 
-        Double totalExpenses         = 0.0;
-        Double totalIncomes          = 0.0;
         Double foreseenExpenses      = 0.0;
         Double foreseenIncomes       = 0.0;
         Double walletsCurrentBalance = 0.0;
@@ -187,20 +184,6 @@ public class WalletController
 
             walletsCurrentBalance =
                 wallets.stream().mapToDouble(Wallet::GetBalance).sum();
-
-            totalExpenses =
-                transactions.stream()
-                    .filter(t -> t.GetType() == TransactionType.EXPENSE)
-                    .filter(t -> t.GetStatus() == TransactionStatus.CONFIRMED)
-                    .mapToDouble(WalletTransaction::GetAmount)
-                    .sum();
-
-            totalIncomes =
-                transactions.stream()
-                    .filter(t -> t.GetType() == TransactionType.INCOME)
-                    .filter(t -> t.GetStatus() == TransactionStatus.CONFIRMED)
-                    .mapToDouble(WalletTransaction::GetAmount)
-                    .sum();
 
             foreseenExpenses = transactions.stream()
                                    .filter(t -> t.GetType() == TransactionType.EXPENSE)
@@ -227,26 +210,6 @@ public class WalletController
                 wallets.stream()
                     .filter(w -> w.GetType().GetId() == selectedWalletType.GetId())
                     .mapToDouble(Wallet::GetBalance)
-                    .sum();
-
-            totalExpenses =
-                transactions.stream()
-                    .filter(t
-                            -> t.GetWallet().GetType().GetId() ==
-                                   selectedWalletType.GetId())
-                    .filter(t -> t.GetType() == TransactionType.EXPENSE)
-                    .filter(t -> t.GetStatus() == TransactionStatus.CONFIRMED)
-                    .mapToDouble(WalletTransaction::GetAmount)
-                    .sum();
-
-            totalIncomes =
-                transactions.stream()
-                    .filter(t
-                            -> t.GetWallet().GetType().GetId() ==
-                                   selectedWalletType.GetId())
-                    .filter(t -> t.GetType() == TransactionType.INCOME)
-                    .filter(t -> t.GetStatus() == TransactionStatus.CONFIRMED)
-                    .mapToDouble(WalletTransaction::GetAmount)
                     .sum();
 
             foreseenExpenses = transactions.stream()
@@ -278,19 +241,18 @@ public class WalletController
             logger.warning("Invalid index: " + selectedIndex);
         }
 
-        Double totalBalance = totalIncomes - totalExpenses + walletsCurrentBalance;
         Double foreseenBalance =
             foreseenIncomes - foreseenExpenses + walletsCurrentBalance;
 
         String totalBalanceText;
 
-        if (totalBalance < 0)
+        if (walletsCurrentBalance < 0)
         {
-            totalBalanceText = String.format("- $ %.2f", -totalBalance);
+            totalBalanceText = String.format("- $ %.2f", -walletsCurrentBalance);
         }
         else
         {
-            totalBalanceText = String.format("$ %.2f", totalBalance);
+            totalBalanceText = String.format("$ %.2f", walletsCurrentBalance);
         }
 
         String foreseenBalanceText = "Foreseen: ";
@@ -352,5 +314,32 @@ public class WalletController
     /**
      * Add a new transfer
      */
-    private void AddTransfer() { }
+    private void AddTransfer()
+    {
+        try
+        {
+            FXMLLoader loader =
+                new FXMLLoader(getClass().getResource(Constants.ADD_TRANSFER_FXML));
+            loader.setControllerFactory(springContext::getBean);
+            Parent root = loader.load();
+
+            Stage popupStage = new Stage();
+
+            Scene scene = new Scene(root);
+
+            scene.getStylesheets().add(
+                getClass().getResource(Constants.COMMON_STYLE_SHEET).toExternalForm());
+
+            popupStage.setTitle("Add new transfer");
+            popupStage.setScene(scene);
+
+            popupStage.setOnHidden(e -> UpdateTotalBalanceView());
+
+            popupStage.showAndWait();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
 }

@@ -9,12 +9,12 @@ package com.mymoney.repositories;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.mymoney.app.MainApplication;
+import com.mymoney.entities.Category;
 import com.mymoney.entities.CreditCard;
 import com.mymoney.entities.CreditCardDebt;
 import com.mymoney.entities.CreditCardOperator;
-import com.mymoney.entities.Category;
 import com.mymoney.util.Constants;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,10 +45,11 @@ public class CreditCardDebtRepositoryTest
     @Autowired
     private CategoryRepository m_categoryRepository;
 
-    private CreditCard m_creditCard;
+    private CreditCard         m_creditCard;
     private CreditCardOperator m_crcOperator;
 
-    private CreditCard CreateCreditCard(String name, CreditCardOperator operator, Double maxDebt)
+    private CreditCard
+    CreateCreditCard(String name, CreditCardOperator operator, Double maxDebt)
     {
         CreditCard creditCard = new CreditCard();
         creditCard.SetName(name);
@@ -75,8 +76,9 @@ public class CreditCardDebtRepositoryTest
         return category;
     }
 
-    private CreditCardDebt
-    CreateCreditCardDebt(CreditCard m_creditCard, Double totalAmount, LocalDate date)
+    private CreditCardDebt CreateCreditCardDebt(CreditCard    m_creditCard,
+                                                Double        totalAmount,
+                                                LocalDateTime date)
     {
         CreditCardDebt creditCardDebt = new CreditCardDebt();
         creditCardDebt.SetCreditCard(m_creditCard);
@@ -92,7 +94,7 @@ public class CreditCardDebtRepositoryTest
     {
         // Initialize the credit card
         m_crcOperator = CreateCreditCardOperator("Operator");
-        m_creditCard = CreateCreditCard("CreditCard", m_crcOperator, 1000.0);
+        m_creditCard  = CreateCreditCard("CreditCard", m_crcOperator, 1000.0);
     }
 
     @Test
@@ -108,7 +110,7 @@ public class CreditCardDebtRepositoryTest
     @Test
     public void TestSingleDebt()
     {
-        CreateCreditCardDebt(m_creditCard, 1000.0, LocalDate.now().plusDays(10));
+        CreateCreditCardDebt(m_creditCard, 1000.0, LocalDateTime.now().plusDays(10));
 
         assertEquals(1000.0,
                      m_creditCardDebtRepository.GetTotalDebt(m_creditCard.GetId()),
@@ -119,8 +121,8 @@ public class CreditCardDebtRepositoryTest
     @Test
     public void TestMultipleDebts()
     {
-        CreateCreditCardDebt(m_creditCard, 1000.0, LocalDate.now().plusDays(10));
-        CreateCreditCardDebt(m_creditCard, 500.0, LocalDate.now().plusDays(5));
+        CreateCreditCardDebt(m_creditCard, 1000.0, LocalDateTime.now().plusDays(10));
+        CreateCreditCardDebt(m_creditCard, 500.0, LocalDateTime.now().plusDays(5));
 
         assertEquals(1500.0,
                      m_creditCardDebtRepository.GetTotalDebt(m_creditCard.GetId()),
@@ -134,8 +136,8 @@ public class CreditCardDebtRepositoryTest
         CreditCard creditCard1 = CreateCreditCard("CreditCard1", m_crcOperator, 1000.0);
         CreditCard creditCard2 = CreateCreditCard("CreditCard2", m_crcOperator, 2000.0);
 
-        CreateCreditCardDebt(creditCard1, 1000.0, LocalDate.now().plusDays(10));
-        CreateCreditCardDebt(creditCard2, 500.0, LocalDate.now().plusDays(5));
+        CreateCreditCardDebt(creditCard1, 1000.0, LocalDateTime.now().plusDays(10));
+        CreateCreditCardDebt(creditCard2, 500.0, LocalDateTime.now().plusDays(5));
 
         assertEquals(1000.0,
                      m_creditCardDebtRepository.GetTotalDebt(creditCard1.GetId()),

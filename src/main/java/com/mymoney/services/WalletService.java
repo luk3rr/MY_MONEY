@@ -18,7 +18,7 @@ import com.mymoney.repositories.WalletTypeRepository;
 import com.mymoney.util.LoggerConfig;
 import com.mymoney.util.TransactionStatus;
 import com.mymoney.util.TransactionType;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,6 +161,7 @@ public class WalletService
      * @param receiverId The id of the wallet that receives the money
      * @param amount The amount of money to be transferred
      * @param description A description of the transfer
+     * @return The id of the created transfer
      * @throws RuntimeException If the sender and receiver wallets are the same
      * @throws RuntimeException If the amount to transfer is less than or equal to zero
      * @throws RuntimeException If the sender wallet does not exist
@@ -169,11 +170,11 @@ public class WalletService
      * to transfer
      */
     @Transactional
-    public void TransferMoney(Long      senderId,
-                              Long      receiverId,
-                              LocalDate date,
-                              Double    amount,
-                              String    description)
+    public Long TransferMoney(Long          senderId,
+                              Long          receiverId,
+                              LocalDateTime date,
+                              Double        amount,
+                              String        description)
     {
         if (senderId.equals(receiverId))
         {
@@ -203,7 +204,7 @@ public class WalletService
                 "Sender wallet does not have enough balance to transfer");
         }
 
-        m_transferRepository.save(
+        Transfer transfer = m_transferRepository.save(
             new Transfer(senderWallet, receiverWallet, date, amount, description));
 
         senderWallet.SetBalance(senderWallet.GetBalance() - amount);
@@ -215,6 +216,8 @@ public class WalletService
         m_logger.info("Transfer from wallet with id " + senderId +
                       " to wallet with id " + receiverId + " of " + amount +
                       " was successful");
+
+        return transfer.GetId();
     }
 
     /**
@@ -227,11 +230,11 @@ public class WalletService
      * @throws RuntimeException If the wallet does not exist
      */
     @Transactional
-    public void AddConfirmedIncome(Long      walletId,
-                                   Category  category,
-                                   LocalDate date,
-                                   Double    amount,
-                                   String    description)
+    public void AddConfirmedIncome(Long          walletId,
+                                   Category      category,
+                                   LocalDateTime date,
+                                   Double        amount,
+                                   String        description)
     {
         Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
             () -> new RuntimeException("Wallet with id " + walletId + " not found"));
@@ -262,11 +265,11 @@ public class WalletService
      * @throws RuntimeException If the wallet does not exist
      */
     @Transactional
-    public void AddPendingIncome(Long      walletId,
-                                 Category  category,
-                                 LocalDate date,
-                                 Double    amount,
-                                 String    description)
+    public void AddPendingIncome(Long          walletId,
+                                 Category      category,
+                                 LocalDateTime date,
+                                 Double        amount,
+                                 String        description)
     {
         Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
             () -> new RuntimeException("Wallet with id " + walletId + " not found"));
@@ -294,11 +297,11 @@ public class WalletService
      * @throws RuntimeException If the wallet does not exist
      */
     @Transactional
-    public void AddConfirmedExpense(Long      walletId,
-                                    Category  category,
-                                    LocalDate date,
-                                    Double    amount,
-                                    String    description)
+    public void AddConfirmedExpense(Long          walletId,
+                                    Category      category,
+                                    LocalDateTime date,
+                                    Double        amount,
+                                    String        description)
     {
         Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
             () -> new RuntimeException("Wallet with id " + walletId + " not found"));
@@ -328,11 +331,11 @@ public class WalletService
      * @throws RuntimeException If the wallet does not exist
      */
     @Transactional
-    public void AddPendingExpense(Long      walletId,
-                                  Category  category,
-                                  LocalDate date,
-                                  Double    amount,
-                                  String    description)
+    public void AddPendingExpense(Long          walletId,
+                                  Category      category,
+                                  LocalDateTime date,
+                                  Double        amount,
+                                  String        description)
     {
         Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
             () -> new RuntimeException("Wallet with id " + walletId + " not found"));

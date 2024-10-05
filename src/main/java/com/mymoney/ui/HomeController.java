@@ -15,7 +15,7 @@ import com.mymoney.services.WalletService;
 import com.mymoney.util.Constants;
 import com.mymoney.util.LoggerConfig;
 import com.mymoney.util.TransactionType;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -340,7 +340,8 @@ public class HomeController
 
             AddTooltipToNode(walletLabel, "Wallet");
 
-            Label dateLabel = new Label(transaction.GetDate().toString());
+            Label dateLabel = new Label(transaction.GetDate().format(
+                DateTimeFormatter.ofPattern(Constants.DATE_FORMAT_NO_TIME)));
             dateLabel.setMinWidth(Constants.HOME_LAST_TRANSACTIONS_DATE_LABEL_WIDTH);
 
             Label transactionStatusLabel = new Label(StringUtils.capitalize(
@@ -407,14 +408,14 @@ public class HomeController
         Map<String, Double> monthlyExpenses = new LinkedHashMap<>();
         Map<String, Double> monthlyIncomes  = new LinkedHashMap<>();
 
-        LocalDate         currentDate = LocalDate.now();
+        LocalDateTime     currentDate = LocalDateTime.now();
         DateTimeFormatter formatter   = DateTimeFormatter.ofPattern("MMM/yy");
 
         // Collect data for the last months
         for (Integer i = 0; i < Constants.HOME_BAR_CHART_MONTHS; i++)
         {
             // Get the data from the oldest month to the most recent, to keep the order
-            LocalDate date =
+            LocalDateTime date =
                 currentDate.minusMonths(Constants.HOME_BAR_CHART_MONTHS - i - 1);
             Integer month = date.getMonthValue();
             Integer year  = date.getYear();
@@ -547,9 +548,9 @@ public class HomeController
      */
     private void UpdateMonthResume()
     {
-        LocalDate currentDate = LocalDate.now();
-        Integer   month       = currentDate.getMonthValue();
-        Integer   year        = currentDate.getYear();
+        LocalDateTime currentDate = LocalDateTime.now();
+        Integer       month       = currentDate.getMonthValue();
+        Integer       year        = currentDate.getYear();
 
         List<WalletTransaction> confirmedTransactions =
             walletService.GetConfirmedTransactionsByMonth(month, year);

@@ -6,6 +6,7 @@
 
 package com.mymoney.entities;
 
+import com.mymoney.util.Constants;
 import com.mymoney.util.TransactionStatus;
 import com.mymoney.util.TransactionType;
 import jakarta.persistence.CascadeType;
@@ -19,7 +20,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Represents a transaction in a wallet
@@ -50,7 +51,7 @@ public class WalletTransaction
     private TransactionStatus status;
 
     @Column(name = "date", nullable = false)
-    private LocalDate date;
+    private String date;
 
     @Column(name = "amount", nullable = false)
     private Double amount;
@@ -76,7 +77,7 @@ public class WalletTransaction
                              Category          category,
                              TransactionType   type,
                              TransactionStatus status,
-                             LocalDate         date,
+                             LocalDateTime     date,
                              Double            amount,
                              String            description)
     {
@@ -84,7 +85,7 @@ public class WalletTransaction
         this.category    = category;
         this.type        = type;
         this.status      = status;
-        this.date        = date;
+        this.date        = date.format(Constants.DATE_TIME_FORMATTER);
         this.amount      = amount;
         this.description = description;
     }
@@ -120,9 +121,9 @@ public class WalletTransaction
      * Get the type of the transaction
      * @return The type of the transaction
      */
-    public LocalDate GetDate()
+    public LocalDateTime GetDate()
     {
-        return date;
+        return LocalDateTime.parse(date, Constants.DATE_TIME_FORMATTER);
     }
 
     /**
@@ -183,9 +184,9 @@ public class WalletTransaction
      * Set the type of the transaction
      * @param type The type of the transaction
      */
-    public void SetDate(LocalDate date)
+    public void SetDate(LocalDateTime date)
     {
-        this.date = date;
+        this.date = date.format(Constants.DATE_TIME_FORMATTER);
     }
 
     /**

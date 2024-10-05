@@ -6,6 +6,8 @@
 
 package com.mymoney.util;
 
+import java.time.format.DateTimeFormatter;
+
 /**
  * Constants used in the application
  */
@@ -15,13 +17,14 @@ public final class Constants
     public static final String APP_NAME = "My Money";
 
     // FXML files
-    public static final String MAIN_FXML        = "/ui/main.fxml";
-    public static final String HOME_FXML        = "/ui/home.fxml";
-    public static final String WALLET_FXML      = "/ui/wallet.fxml";
-    public static final String CREDIT_CARD_FXML = "/ui/credit_card.fxml";
-    public static final String TRANSACTION_FXML = "/ui/transaction.fxml";
-    public static final String CATEGORY_FXML    = "/ui/category.fxml";
-    public static final String ADD_WALLET_FXML  = "/ui/add_wallet.fxml";
+    public static final String MAIN_FXML         = "/ui/main.fxml";
+    public static final String HOME_FXML         = "/ui/home.fxml";
+    public static final String WALLET_FXML       = "/ui/wallet.fxml";
+    public static final String CREDIT_CARD_FXML  = "/ui/credit_card.fxml";
+    public static final String TRANSACTION_FXML  = "/ui/transaction.fxml";
+    public static final String CATEGORY_FXML     = "/ui/category.fxml";
+    public static final String ADD_WALLET_FXML   = "/ui/add_wallet.fxml";
+    public static final String ADD_TRANSFER_FXML = "/ui/add_transfer.fxml";
 
     // Icons
     public static final String WALLET_TYPE_ICONS_PATH  = "/icons/wallet_type/";
@@ -33,17 +36,21 @@ public final class Constants
     public static final String HOME_INCOME_ICON  = "/icons/home/income.png";
     public static final String ETC_ICONS_PATH    = "/icons/etc/";
 
-        // Stylesheets
-        public static final String MAIN_STYLE_SHEET        = "/css/main.css";
-    public static final String     HOME_STYLE_SHEET        = "/css/home.css";
-    public static final String     WALLET_STYLE_SHEET      = "/css/wallet.css";
-    public static final String     CREDIT_CARD_STYLE_SHEET = "/css/credit_card.css";
-    public static final String     TRANSACTION_STYLE_SHEET = "/css/transaction.css";
-    public static final String     CATEGORY_STYLE_SHEET    = "/css/category.css";
+    // Stylesheets
+    public static final String MAIN_STYLE_SHEET        = "/css/main.css";
+    public static final String HOME_STYLE_SHEET        = "/css/home.css";
+    public static final String WALLET_STYLE_SHEET      = "/css/wallet.css";
+    public static final String CREDIT_CARD_STYLE_SHEET = "/css/credit_card.css";
+    public static final String TRANSACTION_STYLE_SHEET = "/css/transaction.css";
+    public static final String CATEGORY_STYLE_SHEET    = "/css/category.css";
+    public static final String COMMON_STYLE_SHEET      = "/css/common-styles.css";
 
     // Main pane styles
     public static final String SIDEBAR_SELECTED_BUTTON_STYLE =
         "sidebar-button-selected";
+    public static final String NEGATIVE_BALANCE_STYLE = "negative-balance";
+    public static final String POSITIVE_BALANCE_STYLE = "positive-balance";
+    public static final String NEUTRAL_BALANCE_STYLE  = "neutral-balance";
 
     // Home pane styles
     public static final String HOME_LAST_TRANSACTIONS_DESCRIPTION_VALUE_STYLE =
@@ -121,6 +128,11 @@ public final class Constants
     public static final Double  HOME_BAR_CHART_ANIMATION_DURATION = 0.7; // s
     public static final Double  HOME_TOOLTIP_ANIMATION_DURATION   = 0.5; // s
     public static final Double  HOME_TOOLTIP_ANIMATION_DELAY      = 0.5; // s
+
+    public static final String            DATE_FORMAT         = "yyyy-MM-dd'T'HH:mm:ss";
+    public static final String            DATE_FORMAT_NO_TIME = "yyyy-MM-dd";
+    public static final DateTimeFormatter DATE_TIME_FORMATTER =
+        DateTimeFormatter.ofPattern(DATE_FORMAT);
 
     // Prevent instantiation
     private Constants() { }

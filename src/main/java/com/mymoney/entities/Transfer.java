@@ -6,6 +6,7 @@
 
 package com.mymoney.entities;
 
+import com.mymoney.util.Constants;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,7 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Represents a transfer between wallets
@@ -42,7 +43,7 @@ public class Transfer
     private Wallet receiverWallet;
 
     @Column(name = "date", nullable = false)
-    private LocalDate date;
+    private String date;
 
     @Column(name = "amount", nullable = false)
     private Double amount;
@@ -63,15 +64,15 @@ public class Transfer
      * @param amount The amount transferred
      * @param description A description of the transfer
      */
-    public Transfer(Wallet    senderWallet,
-                    Wallet    receiverWallet,
-                    LocalDate date,
-                    Double    amount,
-                    String    description)
+    public Transfer(Wallet        senderWallet,
+                    Wallet        receiverWallet,
+                    LocalDateTime date,
+                    Double        amount,
+                    String        description)
     {
         this.senderWallet   = senderWallet;
         this.receiverWallet = receiverWallet;
-        this.date           = date;
+        this.date           = date.format(Constants.DATE_TIME_FORMATTER);
         this.amount         = amount;
         this.description    = description;
     }
@@ -107,9 +108,9 @@ public class Transfer
      * Get the date of the transfer
      * @return The date of the transfer
      */
-    public LocalDate GetDate()
+    public LocalDateTime GetDate()
     {
-        return date;
+        return LocalDateTime.parse(date, Constants.DATE_TIME_FORMATTER);
     }
 
     /**
@@ -152,9 +153,9 @@ public class Transfer
      * Set the date of the transfer
      * @param date The date of the transfer
      */
-    public void SetDate(LocalDate date)
+    public void SetDate(LocalDateTime date)
     {
-        this.date = date;
+        this.date = date.format(Constants.DATE_TIME_FORMATTER);
     }
 
     /**

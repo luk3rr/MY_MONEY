@@ -16,7 +16,7 @@ import com.mymoney.entities.CreditCardOperator;
 import com.mymoney.entities.CreditCardPayment;
 import com.mymoney.entities.Wallet;
 import com.mymoney.util.Constants;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,10 +53,10 @@ public class CreditCardPaymentRepositoryTest
     @Autowired
     private CategoryRepository m_categoryRepository;
 
-    private CreditCard m_creditCard1;
-    private CreditCard m_creditCard2;
+    private CreditCard         m_creditCard1;
+    private CreditCard         m_creditCard2;
     private CreditCardOperator m_crcOperator;
-    private Wallet     m_wallet;
+    private Wallet             m_wallet;
 
     private CreditCard
     CreateCreditCard(String name, CreditCardOperator operator, Double maxDebt)
@@ -94,7 +94,7 @@ public class CreditCardPaymentRepositoryTest
         CreditCardDebt creditCardDebt = new CreditCardDebt();
         creditCardDebt.SetTotalAmount(totalAmount);
         creditCardDebt.SetCreditCard(creditCard);
-        creditCardDebt.SetDate(LocalDate.now().plusDays(5));
+        creditCardDebt.SetDate(LocalDateTime.now().plusDays(5));
         creditCardDebt.SetCategory(CreateCategory("category"));
         m_creditCardDebtRepository.save(creditCardDebt);
         return creditCardDebt;
@@ -114,7 +114,7 @@ public class CreditCardPaymentRepositoryTest
         creditCardPayment.SetAmount(amount);
         creditCardPayment.SetCreditCardDebt(debt);
         creditCardPayment.SetWallet(wallet);
-        creditCardPayment.SetDate(LocalDate.now());
+        creditCardPayment.SetDate(LocalDateTime.now());
         creditCardPayment.SetInstallment(1);
         m_creditCardPaymentRepository.save(creditCardPayment);
     }
