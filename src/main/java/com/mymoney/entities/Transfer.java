@@ -57,6 +57,30 @@ public class Transfer
     public Transfer() { }
 
     /**
+     * Constructor for testing purposes
+     * @param id The id of the transfer
+     * @param senderWallet The wallet that sends the money
+     * @param receiverWallet The wallet that receives the money
+     * @param date The date of the transfer
+     * @param amount The amount transferred
+     * @param description A description of the transfer
+     */
+    public Transfer(Long          id,
+                    Wallet        senderWallet,
+                    Wallet        receiverWallet,
+                    LocalDateTime date,
+                    Double        amount,
+                    String        description)
+    {
+        this.id             = id;
+        this.senderWallet   = senderWallet;
+        this.receiverWallet = receiverWallet;
+        this.date           = date.format(Constants.DATE_TIME_FORMATTER);
+        this.amount         = amount;
+        this.description    = description;
+    }
+
+    /**
      * Constructor for Transfer
      * @param senderWallet The wallet that sends the money
      * @param receiverWallet The wallet that receives the money

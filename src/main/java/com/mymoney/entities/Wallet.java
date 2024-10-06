@@ -51,6 +51,18 @@ public class Wallet
     public Wallet() { }
 
     /**
+     * Constructor for testing purposes
+     * @param id The id of the wallet type
+     * @param name The name of the wallet type
+     */
+    public Wallet(Long id, String name, Double balance)
+    {
+        this.id = id;
+        this.name = name;
+        this.balance = balance;
+    }
+
+    /**
      * Constructor for Wallet
      * @param name The name of the wallet
      * @param balance The balance of the wallet

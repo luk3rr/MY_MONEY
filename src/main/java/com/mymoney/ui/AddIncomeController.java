@@ -258,7 +258,7 @@ public class AddIncomeController
                                 .findFirst()
                                 .get();
 
-            Double walletAfterBalance = wallet.GetBalance() - incomeValue;
+            Double walletAfterBalance = wallet.GetBalance() + incomeValue;
 
             // Episilon is used to avoid floating point arithmetic errors
             if (walletAfterBalance < Constants.EPSILON)

@@ -38,6 +38,17 @@ public class WalletType
     public WalletType() { }
 
     /**
+     * Constructor for testing purposes
+     * @param id The id of the wallet type
+     * @param name The name of the wallet type
+     */
+    public WalletType(Long id, String name)
+    {
+        this.id = id;
+        this.name = name;
+    }
+
+    /**
      * Constructor for WalletType
      * @param name The name of the wallet type
      */
