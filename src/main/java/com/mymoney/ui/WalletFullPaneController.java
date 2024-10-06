@@ -164,7 +164,11 @@ public class WalletFullPaneController
     @FXML
     private void handleAddIncome()
     {
-        logger.info("Add Income button clicked");
+        OpenPopupWindow(Constants.ADD_INCOME_FXML,
+                        "Add new income",
+                        (AddIncomeController controller) -> {
+                            controller.SetWalletComboBox(wallet);
+                        });
     }
 
     @FXML
@@ -297,9 +301,10 @@ public class WalletFullPaneController
                 .mapToDouble(WalletTransaction::GetAmount)
                 .sum();
 
-        Double allIncomesSum =
+        Double pendingIncomesSum =
             transactions.stream()
                 .filter(t -> t.GetType().equals(TransactionType.INCOME))
+                .filter(t -> t.GetStatus().equals(TransactionStatus.PENDING))
                 .mapToDouble(WalletTransaction::GetAmount)
                 .sum();
 
@@ -310,9 +315,10 @@ public class WalletFullPaneController
                 .mapToDouble(WalletTransaction::GetAmount)
                 .sum();
 
-        Double allExpensesSum =
+        Double pendingExpensesSum =
             transactions.stream()
                 .filter(t -> t.GetType().equals(TransactionType.EXPENSE))
+                .filter(t -> t.GetStatus().equals(TransactionStatus.PENDING))
                 .mapToDouble(WalletTransaction::GetAmount)
                 .sum();
 
@@ -332,7 +338,8 @@ public class WalletFullPaneController
                                 confirmedExpensesSum - creditedTransfersSum +
                                 debitedTransfersSum;
 
-        Double foreseenBalance = wallet.GetBalance() - allIncomesSum + allExpensesSum;
+        Double foreseenBalance = wallet.GetBalance() + pendingIncomesSum -
+                                 pendingExpensesSum;
 
         SetLabelValue(openingBalanceSign, openingBalanceValue, openingBalance);
         SetLabelValue(incomesSign, incomesValue, confirmedIncomesSum);

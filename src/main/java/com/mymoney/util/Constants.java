@@ -26,6 +26,7 @@ public final class Constants
     public static final String ADD_WALLET_FXML       = "/ui/add_wallet.fxml";
     public static final String ADD_TRANSFER_FXML     = "/ui/add_transfer.fxml";
     public static final String ADD_EXPENSE_FXML      = "/ui/add_expense.fxml";
+    public static final String ADD_INCOME_FXML       = "/ui/add_income.fxml";
     public static final String WALLET_FULL_PANE_FXML = "/ui/wallet_full_pane.fxml";
 
     // Icons

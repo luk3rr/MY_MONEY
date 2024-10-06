@@ -1,6 +1,6 @@
 /*
- * Filename: AddExpenseController.java
- * Created on: October  5, 2024
+ * Filename: AddIncomeController.java
+ * Created on: October  6, 2024
  * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
  */
 
@@ -8,7 +8,6 @@ package com.mymoney.ui;
 
 import com.mymoney.entities.Category;
 import com.mymoney.entities.Wallet;
-import com.mymoney.entities.WalletTransaction;
 import com.mymoney.services.CategoryService;
 import com.mymoney.services.WalletService;
 import com.mymoney.util.Constants;
@@ -33,10 +32,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Controller for the Add Expense dialog
+ * Controller for the Add Income dialog
  */
 @Component
-public class AddExpenseController
+public class AddIncomeController
 {
     @FXML
     private Label walletAfterBalanceValueLabel;
@@ -54,13 +53,13 @@ public class AddExpenseController
     private ComboBox<String> categoryComboBox;
 
     @FXML
-    private TextField expenseValueField;
+    private TextField incomeValueField;
 
     @FXML
     private TextField descriptionField;
 
     @FXML
-    private DatePicker expenseDatePicker;
+    private DatePicker incomeDatePicker;
 
     private WalletService walletService;
 
@@ -72,7 +71,7 @@ public class AddExpenseController
 
     private static final Logger m_logger = LoggerConfig.GetLogger();
 
-    public AddExpenseController() { }
+    public AddIncomeController() { }
 
     /**
      * Constructor
@@ -80,8 +79,8 @@ public class AddExpenseController
      * @note This constructor is used for dependency injection
      */
     @Autowired
-    public AddExpenseController(WalletService   walletService,
-                                CategoryService categoryService)
+    public AddIncomeController(WalletService   walletService,
+                               CategoryService categoryService)
     {
         this.walletService   = walletService;
         this.categoryService = categoryService;
@@ -108,7 +107,7 @@ public class AddExpenseController
         });
 
         // Update wallet after balance when the value field changes
-        expenseValueField.textProperty().addListener(
+        incomeValueField.textProperty().addListener(
             (observable, oldValue, newValue) -> { walletAfterBalance(); });
     }
 
@@ -122,16 +121,16 @@ public class AddExpenseController
     @FXML
     private void handleSave()
     {
-        String    walletName         = walletComboBox.getValue();
-        String    description        = descriptionField.getText();
-        String    expenseValueString = expenseValueField.getText();
-        String    statusString       = statusComboBox.getValue();
-        String    categoryString     = categoryComboBox.getValue();
-        LocalDate expenseDate        = expenseDatePicker.getValue();
+        String    walletName        = walletComboBox.getValue();
+        String    description       = descriptionField.getText();
+        String    incomeValueString = incomeValueField.getText();
+        String    statusString      = statusComboBox.getValue();
+        String    categoryString    = categoryComboBox.getValue();
+        LocalDate incomeDate        = incomeDatePicker.getValue();
 
         if (walletName == null || description == null || description.trim().isEmpty() ||
-            expenseValueString == null || expenseValueString.trim().isEmpty() ||
-            statusString == null || categoryString == null || expenseDate == null)
+            incomeValueString == null || incomeValueString.trim().isEmpty() ||
+            statusString == null || categoryString == null || incomeDate == null)
         {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Error");
@@ -143,14 +142,14 @@ public class AddExpenseController
 
         try
         {
-            Double expenseValue = Double.parseDouble(expenseValueString);
+            Double incomeValue = Double.parseDouble(incomeValueString);
 
-            if (expenseValue < 0)
+            if (incomeValue < 0)
             {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Error");
                 alert.setHeaderText("Invalid income value");
-                alert.setContentText("Expense value must be a positive number.");
+                alert.setContentText("Income value must be a positive number.");
                 alert.showAndWait();
                 return;
             }
@@ -167,37 +166,26 @@ public class AddExpenseController
 
             TransactionStatus status = TransactionStatus.valueOf(statusString);
 
-            // Episilon is used to compare floating point numbers
-            if (wallet.GetBalance() + Constants.EPSILON < expenseValue)
-            {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Error");
-                alert.setHeaderText("Insufficient funds");
-                alert.setContentText("Wallet does not have enough funds.");
-                alert.showAndWait();
-                return;
-            }
-
             LocalTime     currentTime             = LocalTime.now();
-            LocalDateTime dateTimeWithCurrentHour = expenseDate.atTime(currentTime);
+            LocalDateTime dateTimeWithCurrentHour = incomeDate.atTime(currentTime);
 
-            Long expenseId;
+            Long incomeId;
 
             if (status == TransactionStatus.CONFIRMED)
             {
-                expenseId = walletService.AddConfirmedExpense(wallet.GetId(),
-                                                              category,
-                                                              dateTimeWithCurrentHour,
-                                                              expenseValue,
-                                                              description);
+                incomeId = walletService.AddConfirmedIncome(wallet.GetId(),
+                                                            category,
+                                                            dateTimeWithCurrentHour,
+                                                            incomeValue,
+                                                            description);
             }
             else
             {
-                expenseId = walletService.AddPendingExpense(wallet.GetId(),
-                                                            category,
-                                                            dateTimeWithCurrentHour,
-                                                            expenseValue,
-                                                            description);
+                incomeId = walletService.AddPendingIncome(wallet.GetId(),
+                                                          category,
+                                                          dateTimeWithCurrentHour,
+                                                          incomeValue,
+                                                          description);
             }
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -208,11 +196,11 @@ public class AddExpenseController
                               .toString())));
 
             alert.setTitle("Success");
-            alert.setHeaderText("Expense created");
-            alert.setContentText("The expense was successfully created.");
+            alert.setHeaderText("Income created");
+            alert.setContentText("The income was successfully created.");
             alert.showAndWait();
 
-            m_logger.info("Expense created: " + expenseId);
+            m_logger.info("Income created: " + incomeId);
 
             Stage stage = (Stage)descriptionField.getScene().getWindow();
             stage.close();
@@ -221,8 +209,8 @@ public class AddExpenseController
         {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
-            alert.setHeaderText("Invalid expense value");
-            alert.setContentText("Expense value must be a number.");
+            alert.setHeaderText("Invalid income value");
+            alert.setContentText("Income value must be a number.");
             alert.showAndWait();
         }
     }
@@ -247,10 +235,10 @@ public class AddExpenseController
 
     private void walletAfterBalance()
     {
-        String expenseValueString = expenseValueField.getText();
-        String walletName         = walletComboBox.getValue();
+        String incomeValueString = incomeValueField.getText();
+        String walletName        = walletComboBox.getValue();
 
-        if (expenseValueString == null || expenseValueString.trim().isEmpty() ||
+        if (incomeValueString == null || incomeValueString.trim().isEmpty() ||
             walletName == null)
         {
             ResetLabel(walletAfterBalanceValueLabel);
@@ -259,9 +247,9 @@ public class AddExpenseController
 
         try
         {
-            Double expenseValue = Double.parseDouble(expenseValueString);
+            Double incomeValue = Double.parseDouble(incomeValueString);
 
-            if (expenseValue < 0)
+            if (incomeValue < 0)
             {
                 ResetLabel(walletAfterBalanceValueLabel);
                 return;
@@ -272,7 +260,7 @@ public class AddExpenseController
                                 .findFirst()
                                 .get();
 
-            Double walletAfterBalance = wallet.GetBalance() - expenseValue;
+            Double walletAfterBalance = wallet.GetBalance() - incomeValue;
 
             // Episilon is used to avoid floating point arithmetic errors
             if (walletAfterBalance < Constants.EPSILON)

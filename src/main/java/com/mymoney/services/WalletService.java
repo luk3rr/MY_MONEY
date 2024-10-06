@@ -227,10 +227,11 @@ public class WalletService
      * @param date The date of the income
      * @param amount The amount of the income
      * @param description A description of the income
+     * @return The id of the created transaction
      * @throws RuntimeException If the wallet does not exist
      */
     @Transactional
-    public void AddConfirmedIncome(Long          walletId,
+    public Long AddConfirmedIncome(Long          walletId,
                                    Category      category,
                                    LocalDateTime date,
                                    Double        amount,
@@ -239,20 +240,23 @@ public class WalletService
         Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
             () -> new RuntimeException("Wallet with id " + walletId + " not found"));
 
-        m_walletTransactionRepository.save(
-            new WalletTransaction(wallet,
-                                  category,
-                                  TransactionType.INCOME,
-                                  TransactionStatus.CONFIRMED,
-                                  date,
-                                  amount,
-                                  description));
+        WalletTransaction wt = new WalletTransaction(wallet,
+                                                     category,
+                                                     TransactionType.INCOME,
+                                                     TransactionStatus.CONFIRMED,
+                                                     date,
+                                                     amount,
+                                                     description);
+
+        m_walletTransactionRepository.save(wt);
 
         wallet.SetBalance(wallet.GetBalance() + amount);
         m_walletRepository.save(wallet);
 
         m_logger.info("Confirmed income of " + amount + " added to wallet with id " +
                       walletId);
+
+        return wt.GetId();
     }
 
     /**
@@ -262,10 +266,11 @@ public class WalletService
      * @param date The date of the income
      * @param amount The amount of the income
      * @param description A description of the income
+     * @return The id of the created transaction
      * @throws RuntimeException If the wallet does not exist
      */
     @Transactional
-    public void AddPendingIncome(Long          walletId,
+    public Long AddPendingIncome(Long          walletId,
                                  Category      category,
                                  LocalDateTime date,
                                  Double        amount,
@@ -274,17 +279,20 @@ public class WalletService
         Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
             () -> new RuntimeException("Wallet with id " + walletId + " not found"));
 
-        m_walletTransactionRepository.save(
-            new WalletTransaction(wallet,
-                                  category,
-                                  TransactionType.INCOME,
-                                  TransactionStatus.PENDING,
-                                  date,
-                                  amount,
-                                  description));
+        WalletTransaction wt = new WalletTransaction(wallet,
+                                                     category,
+                                                     TransactionType.INCOME,
+                                                     TransactionStatus.PENDING,
+                                                     date,
+                                                     amount,
+                                                     description);
+
+        m_walletTransactionRepository.save(wt);
 
         m_logger.info("Pending income of " + amount + " added to wallet with id " +
                       walletId);
+
+        return wt.GetId();
     }
 
     /**

@@ -65,8 +65,26 @@
             </HBox>
          </children>
       </VBox>
-      <TextField fx:id="descriptionField" promptText="Description" />
-      <TextField fx:id="transferValueField" promptText="Value to transfer" />
+      <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+         <children>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../icons/etc/pencil.png" />
+               </image>
+            </ImageView>
+            <TextField fx:id="descriptionField" promptText="Description" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+         <children>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../icons/etc/coin.png" />
+               </image>
+            </ImageView>
+            <TextField fx:id="transferValueField" promptText="\$ 0.00" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
       <DatePicker fx:id="transferDatePicker" prefHeight="26.0" prefWidth="149.0" promptText="Select the date" showWeekNumbers="true" />
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
          <children>
@@ -76,6 +94,6 @@
       </HBox>
    </children>
    <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
    </padding>
 </VBox>

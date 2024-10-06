@@ -13,6 +13,7 @@ import com.mymoney.entities.WalletType;
 import com.mymoney.services.WalletService;
 import com.mymoney.util.Constants;
 import com.mymoney.util.LoggerConfig;
+import com.mymoney.util.TransactionStatus;
 import com.mymoney.util.TransactionType;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -203,8 +204,8 @@ public class WalletController
         LoadWalletTransactions();
         LoadWalletTypes();
 
-        Double foreseenExpenses      = 0.0;
-        Double foreseenIncomes       = 0.0;
+        Double pendingExpenses       = 0.0;
+        Double pendingIncomes        = 0.0;
         Double walletsCurrentBalance = 0.0;
         Long   totalWallets          = 0L;
 
@@ -222,15 +223,19 @@ public class WalletController
             walletsCurrentBalance =
                 wallets.stream().mapToDouble(Wallet::GetBalance).sum();
 
-            foreseenExpenses = transactions.stream()
-                                   .filter(t -> t.GetType() == TransactionType.EXPENSE)
-                                   .mapToDouble(WalletTransaction::GetAmount)
-                                   .sum();
+            pendingExpenses =
+                transactions.stream()
+                    .filter(t -> t.GetType().equals(TransactionType.EXPENSE))
+                    .filter(t -> t.GetStatus().equals(TransactionStatus.PENDING))
+                    .mapToDouble(WalletTransaction::GetAmount)
+                    .sum();
 
-            foreseenIncomes = transactions.stream()
-                                  .filter(t -> t.GetType() == TransactionType.INCOME)
-                                  .mapToDouble(WalletTransaction::GetAmount)
-                                  .sum();
+            pendingIncomes =
+                transactions.stream()
+                    .filter(t -> t.GetType().equals(TransactionType.INCOME))
+                    .filter(t -> t.GetStatus().equals(TransactionStatus.PENDING))
+                    .mapToDouble(WalletTransaction::GetAmount)
+                    .sum();
 
             totalWallets = transactions.stream()
                                .map(t -> t.GetWallet().GetId())
@@ -249,21 +254,25 @@ public class WalletController
                     .mapToDouble(Wallet::GetBalance)
                     .sum();
 
-            foreseenExpenses = transactions.stream()
-                                   .filter(t
-                                           -> t.GetWallet().GetType().GetId() ==
-                                                  selectedWalletType.GetId())
-                                   .filter(t -> t.GetType() == TransactionType.EXPENSE)
-                                   .mapToDouble(WalletTransaction::GetAmount)
-                                   .sum();
+            pendingExpenses =
+                transactions.stream()
+                    .filter(t
+                            -> t.GetWallet().GetType().GetId() ==
+                                   selectedWalletType.GetId())
+                    .filter(t -> t.GetType().equals(TransactionType.EXPENSE))
+                    .filter(t -> t.GetStatus().equals(TransactionStatus.PENDING))
+                    .mapToDouble(WalletTransaction::GetAmount)
+                    .sum();
 
-            foreseenIncomes = transactions.stream()
-                                  .filter(t
-                                          -> t.GetWallet().GetType().GetId() ==
-                                                 selectedWalletType.GetId())
-                                  .filter(t -> t.GetType() == TransactionType.INCOME)
-                                  .mapToDouble(WalletTransaction::GetAmount)
-                                  .sum();
+            pendingIncomes =
+                transactions.stream()
+                    .filter(t
+                            -> t.GetWallet().GetType().GetId() ==
+                                   selectedWalletType.GetId())
+                    .filter(t -> t.GetType().equals(TransactionType.INCOME))
+                    .filter(t -> t.GetStatus().equals(TransactionStatus.PENDING))
+                    .mapToDouble(WalletTransaction::GetAmount)
+                    .sum();
 
             totalWallets = transactions.stream()
                                .filter(t
@@ -279,7 +288,7 @@ public class WalletController
         }
 
         Double foreseenBalance =
-            foreseenIncomes - foreseenExpenses + walletsCurrentBalance;
+            walletsCurrentBalance - pendingExpenses + pendingIncomes;
 
         String totalBalanceText;
 

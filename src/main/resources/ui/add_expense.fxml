@@ -6,6 +6,8 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -26,7 +28,7 @@
             </HBox>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                <children>
-                  <Label text="Balance after transfer:" />
+                  <Label text="Balance after expense:" />
                   <Label fx:id="walletAfterBalanceValueLabel" text="-">
                      <font>
                         <Font name="System Bold" size="13.0" />
@@ -35,8 +37,26 @@
             </HBox>
          </children>
       </VBox>
-      <TextField fx:id="descriptionField" promptText="Description" />
-      <TextField fx:id="expenseValueField" promptText="Value" />
+      <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+         <children>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../icons/etc/pencil.png" />
+               </image>
+            </ImageView>
+            <TextField fx:id="descriptionField" promptText="Description" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+         <children>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../icons/etc/coin.png" />
+               </image>
+            </ImageView>
+            <TextField fx:id="expenseValueField" promptText="\$ 0.00" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
       <HBox alignment="CENTER" prefHeight="44.0" prefWidth="274.0" spacing="10.0" VBox.vgrow="ALWAYS">
          <children>
             <ComboBox fx:id="statusComboBox" promptText="Status" stylesheets="@../css/combobox.css" HBox.hgrow="ALWAYS" />
