@@ -177,7 +177,8 @@ public class AddTransferController
                     .findFirst()
                     .get();
 
-            if (senderWallet.GetBalance() < transferValue)
+            // Episilon is used to avoid floating point arithmetic errors
+            if (senderWallet.GetBalance() + Constants.EPSILON < transferValue)
             {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Error");
@@ -187,10 +188,9 @@ public class AddTransferController
                 return;
             }
 
-            LocalTime currentTime = LocalTime.now();
+            LocalTime     currentTime             = LocalTime.now();
             LocalDateTime dateTimeWithCurrentHour = transferDate.atTime(currentTime);
 
-            
             Long transferId = walletService.TransferMoney(senderWallet.GetId(),
                                                           receiverWallet.GetId(),
                                                           dateTimeWithCurrentHour,
@@ -293,7 +293,8 @@ public class AddTransferController
 
             Double senderWalletAfterBalance = senderWallet.GetBalance() - transferValue;
 
-            if (senderWalletAfterBalance < 0)
+            // Episilon is used to avoid floating point arithmetic errors
+            if (senderWalletAfterBalance < Constants.EPSILON)
             {
                 // Remove old style and add negative style
                 SetLabelStyle(senderWalletAfterBalanceValueLabel,
@@ -349,7 +350,8 @@ public class AddTransferController
             Double receiverWalletAfterBalance =
                 receiverWallet.GetBalance() + transferValue;
 
-            if (receiverWalletAfterBalance < 0)
+            // Episilon is used to avoid floating point arithmetic errors
+            if (receiverWalletAfterBalance < Constants.EPSILON)
             {
                 // Remove old style and add negative style
                 SetLabelStyle(receiverWalletAfterBalanceValueLabel,
@@ -398,5 +400,17 @@ public class AddTransferController
                                         Constants.NEUTRAL_BALANCE_STYLE);
 
         label.getStyleClass().add(style);
+    }
+
+    public void SetSenderWalletComboBox(Wallet wt)
+    {
+        if (wallets.stream().noneMatch(w -> w.GetId() == wt.GetId()))
+        {
+            return;
+        }
+
+        senderWalletComboBox.setValue(wt.GetName());
+
+        UpdateSenderWalletBalance();
     }
 }

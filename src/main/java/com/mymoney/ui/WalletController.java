@@ -16,25 +16,18 @@ import com.mymoney.util.LoggerConfig;
 import com.mymoney.util.TransactionType;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
@@ -366,18 +359,20 @@ public class WalletController
                 AnchorPane.setTopAnchor(newContent, 0.0);
                 AnchorPane.setBottomAnchor(newContent, 0.0);
 
-                switch (i % 4)
+                switch (i % itemsPerPage)
                 {
                     case 0:
                         walletPane1.getChildren().add(newContent);
                         AnchorPane.setLeftAnchor(newContent, 0.0);
                         AnchorPane.setRightAnchor(newContent, 10.0);
                         break;
+
                     case 1:
                         walletPane2.getChildren().add(newContent);
                         AnchorPane.setLeftAnchor(newContent, 10.0);
                         AnchorPane.setRightAnchor(newContent, 0.0);
                         break;
+
                     case 2:
                         walletPane3.getChildren().add(newContent);
                         AnchorPane.setLeftAnchor(newContent, 0.0);

@@ -14,22 +14,34 @@ import com.mymoney.util.Constants;
 import com.mymoney.util.LoggerConfig;
 import com.mymoney.util.TransactionStatus;
 import com.mymoney.util.TransactionType;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 /**
  * Controller for the Wallet Full Pane
+ *
+ * @note prototype is necessary so that each scene knows to which wallet it belongs
  */
 @Controller
+@Scope("prototype") // Each instance of this controller is unique
 public class WalletFullPaneController
 {
     @FXML
@@ -110,6 +122,18 @@ public class WalletFullPaneController
     @FXML
     private Label foreseenBalanceValue;
 
+    @FXML
+    private MenuItem addIncomeMenuItem;
+
+    @FXML
+    private MenuItem addExpenseMenuItem;
+
+    @FXML
+    private MenuItem addTransferMenuItem;
+
+    @Autowired
+    private ConfigurableApplicationContext springContext;
+
     private WalletService walletService;
 
     private Wallet wallet;
@@ -137,6 +161,85 @@ public class WalletFullPaneController
     private void initialize()
     { }
 
+    @FXML
+    private void handleAddIncome()
+    {
+        logger.info("Add Income button clicked");
+    }
+
+    @FXML
+    private void handleAddExpense()
+    {
+        OpenPopupWindow(Constants.ADD_EXPENSE_FXML,
+                        "Add new expense",
+                        (AddExpenseController controller) -> {
+                            controller.SetWalletComboBox(wallet);
+                        });
+    }
+
+    @FXML
+    private void handleAddTransfer()
+    {
+        OpenPopupWindow(Constants.ADD_TRANSFER_FXML,
+                        "Add new transfer",
+                        (AddTransferController controller) -> {
+                            controller.SetSenderWalletComboBox(wallet);
+                        });
+    }
+
+    /**
+     * Opens a popup window for adding expenses or transfers
+     * @param fxmlFileName The FXML file to load
+     * @param title The title of the popup window
+     * @param controllerSetup A consumer that accepts the controller for additional
+     *     setup
+     * @param <T> The type of the controller
+     */
+    private <T> void
+    OpenPopupWindow(String fxmlFileName, String title, Consumer<T> controllerSetup)
+    {
+        try
+        {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFileName));
+            loader.setControllerFactory(springContext::getBean);
+            Parent root = loader.load();
+
+            Stage popupStage = new Stage();
+            Scene scene      = new Scene(root);
+            scene.getStylesheets().add(
+                getClass().getResource(Constants.COMMON_STYLE_SHEET).toExternalForm());
+
+            T controller = loader.getController();
+            controllerSetup.accept(controller);
+
+            popupStage.setTitle(title);
+            popupStage.setScene(scene);
+
+            popupStage.setOnHidden(e -> {
+                LoadWalletInfo();
+                UpdateWalletPane(wallet);
+            });
+
+            popupStage.showAndWait();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleRenameWallet()
+    {
+        logger.info("Rename Wallet button clicked");
+    }
+
+    @FXML
+    private void handleChangeWalletType()
+    {
+        logger.info("Change Wallet Type button clicked");
+    }
+
     /**
      * Load wallet information from the database
      * @param wtName Wallet name to find in the database
@@ -149,6 +252,9 @@ public class WalletFullPaneController
             transfers.clear();
             return;
         }
+
+        // Reload wallet from the database
+        wallet = walletService.GetWalletById(wallet.GetId());
 
         LocalDate now = LocalDate.now();
 
@@ -212,13 +318,13 @@ public class WalletFullPaneController
 
         Double creditedTransfersSum =
             transfers.stream()
-                .filter(t -> t.GetReceiverWallet().equals(wallet))
+                .filter(t -> t.GetReceiverWallet().GetId() == wallet.GetId())
                 .mapToDouble(Transfer::GetAmount)
                 .sum();
 
         Double debitedTransfersSum =
             transfers.stream()
-                .filter(t -> t.GetSenderWallet().equals(wallet))
+                .filter(t -> t.GetSenderWallet().GetId() == wallet.GetId())
                 .mapToDouble(Transfer::GetAmount)
                 .sum();
 
@@ -264,19 +370,12 @@ public class WalletFullPaneController
      */
     private void SetLabelValue(Label signLabel, Label valueLabel, Double value)
     {
-        if (value < 0)
+        if (value + Constants.EPSILON < 0)
         {
             signLabel.setText("-");
             valueLabel.setText(String.format("$ %.2f", -value));
             SetLabelStyle(signLabel, Constants.NEGATIVE_BALANCE_STYLE);
             SetLabelStyle(valueLabel, Constants.NEGATIVE_BALANCE_STYLE);
-        }
-        else if (value < 0)
-        {
-            signLabel.setText("+");
-            valueLabel.setText(String.format("$ %.2f", value));
-            SetLabelStyle(signLabel, Constants.POSITIVE_BALANCE_STYLE);
-            SetLabelStyle(valueLabel, Constants.POSITIVE_BALANCE_STYLE);
         }
         else
         {

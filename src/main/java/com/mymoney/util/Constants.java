@@ -17,14 +17,15 @@ public final class Constants
     public static final String APP_NAME = "My Money";
 
     // FXML files
-    public static final String MAIN_FXML         = "/ui/main.fxml";
-    public static final String HOME_FXML         = "/ui/home.fxml";
-    public static final String WALLET_FXML       = "/ui/wallet.fxml";
-    public static final String CREDIT_CARD_FXML  = "/ui/credit_card.fxml";
-    public static final String TRANSACTION_FXML  = "/ui/transaction.fxml";
-    public static final String CATEGORY_FXML     = "/ui/category.fxml";
-    public static final String ADD_WALLET_FXML   = "/ui/add_wallet.fxml";
-    public static final String ADD_TRANSFER_FXML = "/ui/add_transfer.fxml";
+    public static final String MAIN_FXML             = "/ui/main.fxml";
+    public static final String HOME_FXML             = "/ui/home.fxml";
+    public static final String WALLET_FXML           = "/ui/wallet.fxml";
+    public static final String CREDIT_CARD_FXML      = "/ui/credit_card.fxml";
+    public static final String TRANSACTION_FXML      = "/ui/transaction.fxml";
+    public static final String CATEGORY_FXML         = "/ui/category.fxml";
+    public static final String ADD_WALLET_FXML       = "/ui/add_wallet.fxml";
+    public static final String ADD_TRANSFER_FXML     = "/ui/add_transfer.fxml";
+    public static final String ADD_EXPENSE_FXML      = "/ui/add_expense.fxml";
     public static final String WALLET_FULL_PANE_FXML = "/ui/wallet_full_pane.fxml";
 
     // Icons

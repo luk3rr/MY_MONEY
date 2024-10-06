@@ -1,0 +1,30 @@
+/*
+ * Filename: menu-button.css
+ * Created on: October  5, 2024
+ * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
+ */
+
+.menu-button {
+    -fx-background-color: transparent;
+    -fx-padding: 5;
+    -fx-border-color: transparent;
+}
+
+.menu-button .arrow {
+    -fx-background-color: transparent;
+    -fx-shape: "";
+}
+
+.menu-item {
+    -fx-background-color: transparent;
+    -fx-background-radius: 20;
+}
+
+.menu-item .label{
+    -fx-text-fill: black;
+}
+
+.menu-item:hover {
+    -fx-background-color: #e6e6e6;
+    -fx-background-radius: 20;
+}

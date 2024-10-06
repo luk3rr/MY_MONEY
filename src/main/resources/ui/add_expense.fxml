@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="335.0" prefWidth="320.0" spacing="10.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mymoney.ui.AddExpenseController">
+   <children>
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+         <children>
+            <ComboBox fx:id="walletComboBox" promptText="Select the wallet" stylesheets="@../css/combobox.css" VBox.vgrow="ALWAYS" />
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+               <children>
+                  <Label text="Current balance:" />
+                  <Label fx:id="walletCurrentBalanceValueLabel" text="-">
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font></Label>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+               <children>
+                  <Label text="Balance after transfer:" />
+                  <Label fx:id="walletAfterBalanceValueLabel" text="-">
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font></Label>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <TextField fx:id="descriptionField" promptText="Description" />
+      <TextField fx:id="expenseValueField" promptText="Value" />
+      <HBox alignment="CENTER" prefHeight="44.0" prefWidth="274.0" spacing="10.0" VBox.vgrow="ALWAYS">
+         <children>
+            <ComboBox fx:id="statusComboBox" promptText="Status" stylesheets="@../css/combobox.css" HBox.hgrow="ALWAYS" />
+            <ComboBox fx:id="categoryComboBox" promptText="Category" stylesheets="@../css/combobox.css" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <DatePicker fx:id="expenseDatePicker" promptText="Select the date" showWeekNumbers="true" />
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+         <children>
+            <JFXButton onAction="#handleSave" stylesheets="@../css/buttons.css" text="Save" />
+            <JFXButton onAction="#handleCancel" stylesheets="@../css/buttons.css" text="Cancel" />
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</VBox>
