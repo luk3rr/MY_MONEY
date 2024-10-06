@@ -578,11 +578,12 @@ public class WalletServiceTest
                                               m_incomeAmount,
                                               m_description));
 
-        m_walletService.AddConfirmedIncome(m_wallet1.GetId(),
-                                           m_category,
-                                           m_date,
-                                           m_incomeAmount,
-                                           m_description);
+        m_walletService.AddIncome(m_wallet1.GetId(),
+                                  m_category,
+                                  m_date,
+                                  m_incomeAmount,
+                                  m_description,
+                                  TransactionStatus.CONFIRMED);
 
         // Check if the wallet balance was updated
         verify(m_walletRepository).save(m_wallet1);
@@ -609,11 +610,12 @@ public class WalletServiceTest
                                               m_incomeAmount,
                                               m_description));
 
-        m_walletService.AddPendingIncome(m_wallet1.GetId(),
-                                         m_category,
-                                         m_date,
-                                         m_incomeAmount,
-                                         m_description);
+        m_walletService.AddIncome(m_wallet1.GetId(),
+                                  m_category,
+                                  m_date,
+                                  m_incomeAmount,
+                                  m_description,
+                                  TransactionStatus.PENDING);
 
         // Check if the wallet balance is the same
         verify(m_walletRepository, never()).save(any(Wallet.class));
@@ -632,20 +634,22 @@ public class WalletServiceTest
         // Check for confirmed income
         assertThrows(RuntimeException.class,
                      ()
-                         -> m_walletService.AddConfirmedIncome(m_wallet1.GetId(),
-                                                               m_category,
-                                                               m_date,
-                                                               m_incomeAmount,
-                                                               m_description));
+                         -> m_walletService.AddIncome(m_wallet1.GetId(),
+                                                      m_category,
+                                                      m_date,
+                                                      m_incomeAmount,
+                                                      m_description,
+                                                      TransactionStatus.CONFIRMED));
 
         // Check for pending income
         assertThrows(RuntimeException.class,
                      ()
-                         -> m_walletService.AddPendingIncome(m_wallet1.GetId(),
-                                                             m_category,
-                                                             m_date,
-                                                             m_incomeAmount,
-                                                             m_description));
+                         -> m_walletService.AddIncome(m_wallet1.GetId(),
+                                                      m_category,
+                                                      m_date,
+                                                      m_incomeAmount,
+                                                      m_description,
+                                                      TransactionStatus.PENDING));
 
         // Verify that the income was not added
         verify(m_walletTransactionRepository, never())
@@ -671,11 +675,12 @@ public class WalletServiceTest
                                               m_expenseAmount,
                                               m_description));
 
-        m_walletService.AddConfirmedExpense(m_wallet1.GetId(),
-                                            m_category,
-                                            m_date,
-                                            m_expenseAmount,
-                                            m_description);
+        m_walletService.AddExpense(m_wallet1.GetId(),
+                                   m_category,
+                                   m_date,
+                                   m_expenseAmount,
+                                   m_description,
+                                   TransactionStatus.CONFIRMED);
 
         // Check if the wallet balance was updated
         verify(m_walletRepository).save(m_wallet1);
@@ -702,11 +707,12 @@ public class WalletServiceTest
                                               m_expenseAmount,
                                               m_description));
 
-        m_walletService.AddPendingExpense(m_wallet1.GetId(),
-                                          m_category,
-                                          m_date,
-                                          m_expenseAmount,
-                                          m_description);
+        m_walletService.AddExpense(m_wallet1.GetId(),
+                                   m_category,
+                                   m_date,
+                                   m_expenseAmount,
+                                   m_description,
+                                   TransactionStatus.PENDING);
 
         // Check if the wallet balance is the same
         verify(m_walletRepository, never()).save(m_wallet1);
@@ -725,20 +731,22 @@ public class WalletServiceTest
         // Check for confirmed expense
         assertThrows(RuntimeException.class,
                      ()
-                         -> m_walletService.AddConfirmedExpense(m_wallet1.GetId(),
-                                                                m_category,
-                                                                m_date,
-                                                                m_expenseAmount,
-                                                                m_description));
+                         -> m_walletService.AddExpense(m_wallet1.GetId(),
+                                                       m_category,
+                                                       m_date,
+                                                       m_expenseAmount,
+                                                       m_description,
+                                                       TransactionStatus.CONFIRMED));
 
         // Check for pending expense
         assertThrows(RuntimeException.class,
                      ()
-                         -> m_walletService.AddPendingExpense(m_wallet1.GetId(),
-                                                              m_category,
-                                                              m_date,
-                                                              m_expenseAmount,
-                                                              m_description));
+                         -> m_walletService.AddExpense(m_wallet1.GetId(),
+                                                       m_category,
+                                                       m_date,
+                                                       m_expenseAmount,
+                                                       m_description,
+                                                       TransactionStatus.PENDING));
 
         // Verify that the expense was not added
         verify(m_walletTransactionRepository, never())

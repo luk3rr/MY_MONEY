@@ -161,22 +161,12 @@ public class AddIncomeController
 
             Long incomeId;
 
-            if (status == TransactionStatus.CONFIRMED)
-            {
-                incomeId = walletService.AddConfirmedIncome(wallet.GetId(),
-                                                            category,
-                                                            dateTimeWithCurrentHour,
-                                                            incomeValue,
-                                                            description);
-            }
-            else
-            {
-                incomeId = walletService.AddPendingIncome(wallet.GetId(),
-                                                          category,
-                                                          dateTimeWithCurrentHour,
-                                                          incomeValue,
-                                                          description);
-            }
+            incomeId = walletService.AddIncome(wallet.GetId(),
+                                               category,
+                                               dateTimeWithCurrentHour,
+                                               incomeValue,
+                                               description,
+                                               status);
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
 

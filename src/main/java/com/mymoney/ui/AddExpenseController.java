@@ -8,7 +8,6 @@ package com.mymoney.ui;
 
 import com.mymoney.entities.Category;
 import com.mymoney.entities.Wallet;
-import com.mymoney.entities.WalletTransaction;
 import com.mymoney.services.CategoryService;
 import com.mymoney.services.WalletService;
 import com.mymoney.util.Constants;
@@ -161,23 +160,12 @@ public class AddExpenseController
             LocalDateTime dateTimeWithCurrentHour = expenseDate.atTime(currentTime);
 
             Long expenseId;
-
-            if (status == TransactionStatus.CONFIRMED)
-            {
-                expenseId = walletService.AddConfirmedExpense(wallet.GetId(),
-                                                              category,
-                                                              dateTimeWithCurrentHour,
-                                                              expenseValue,
-                                                              description);
-            }
-            else
-            {
-                expenseId = walletService.AddPendingExpense(wallet.GetId(),
-                                                            category,
-                                                            dateTimeWithCurrentHour,
-                                                            expenseValue,
-                                                            description);
-            }
+            expenseId = walletService.AddExpense(wallet.GetId(),
+                                                 category,
+                                                 dateTimeWithCurrentHour,
+                                                 expenseValue,
+                                                 description,
+                                                 status);
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
 

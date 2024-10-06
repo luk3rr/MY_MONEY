@@ -286,22 +286,24 @@ public class WalletService
     }
 
     /**
-     * Add an confirmed income to a wallet
+     * Add an income to a wallet
      * @param walletId The id of the wallet that receives the income
      * @param category The category of the income
      * @param date The date of the income
      * @param amount The amount of the income
      * @param description A description of the income
+     * @param status The status of the transaction
      * @return The id of the created transaction
      * @throws RuntimeException If the wallet does not exist
      * @throws RuntimeException If the amount to transfer is less than or equal to zero
      */
     @Transactional
-    public Long AddConfirmedIncome(Long          walletId,
-                                   Category      category,
-                                   LocalDateTime date,
-                                   Double        amount,
-                                   String        description)
+    public Long AddIncome(Long              walletId,
+                          Category          category,
+                          LocalDateTime     date,
+                          Double            amount,
+                          String            description,
+                          TransactionStatus status)
     {
         Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
             () -> new RuntimeException("Wallet with id " + walletId + " not found"));
@@ -314,82 +316,45 @@ public class WalletService
         WalletTransaction wt = new WalletTransaction(wallet,
                                                      category,
                                                      TransactionType.INCOME,
-                                                     TransactionStatus.CONFIRMED,
+                                                     status,
                                                      date,
                                                      amount,
                                                      description);
 
         m_walletTransactionRepository.save(wt);
 
-        wallet.SetBalance(wallet.GetBalance() + amount);
-        m_walletRepository.save(wallet);
-
-        m_logger.info("Confirmed income of " + amount + " added to wallet with id " +
-                      walletId);
-
-        return wt.GetId();
-    }
-
-    /**
-     * Add an pending income to a wallet
-     * @param walletId The id of the wallet that receives the income
-     * @param category The category of the income
-     * @param date The date of the income
-     * @param amount The amount of the income
-     * @param description A description of the income
-     * @return The id of the created transaction
-     * @throws RuntimeException If the wallet does not exist
-     * @throws RuntimeException If the amount to transfer is less than or equal to zero
-     */
-    @Transactional
-    public Long AddPendingIncome(Long          walletId,
-                                 Category      category,
-                                 LocalDateTime date,
-                                 Double        amount,
-                                 String        description)
-    {
-        Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
-            () -> new RuntimeException("Wallet with id " + walletId + " not found"));
-
-        if (amount <= 0)
+        if (status == TransactionStatus.CONFIRMED)
         {
-            throw new RuntimeException("Amount to transfer must be greater than zero");
+            wallet.SetBalance(wallet.GetBalance() + amount);
+            m_walletRepository.save(wallet);
         }
 
-        WalletTransaction wt = new WalletTransaction(wallet,
-                                                     category,
-                                                     TransactionType.INCOME,
-                                                     TransactionStatus.PENDING,
-                                                     date,
-                                                     amount,
-                                                     description);
-
-        m_walletTransactionRepository.save(wt);
-
-        m_logger.info("Pending income of " + amount + " added to wallet with id " +
-                      walletId);
+        m_logger.info("Income with status " + status.toString() + " of " + amount +
+                      " added to wallet with id " + walletId);
 
         return wt.GetId();
     }
 
     /**
-     * Add an confirmed expense to a wallet
+     * Add an expense to a wallet
      * @param walletId The id of the wallet that receives the expense
      * @param category The category of the expense
      * @param date The date of the expense
      * @param amount The amount of the expense
      * @param description A description of the expense
+     * @param status The status of the transaction
      * @return The id of the created transaction
      * @throws RuntimeException If the wallet does not exist
      * @throws RuntimeException If the amount to transfer is less than or equal to zero
      * @throws RuntimeException If the wallet does not have enough balance to confirm
      */
     @Transactional
-    public Long AddConfirmedExpense(Long          walletId,
-                                    Category      category,
-                                    LocalDateTime date,
-                                    Double        amount,
-                                    String        description)
+    public Long AddExpense(Long              walletId,
+                           Category          category,
+                           LocalDateTime     date,
+                           Double            amount,
+                           String            description,
+                           TransactionStatus status)
     {
         Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
             () -> new RuntimeException("Wallet with id " + walletId + " not found"));
@@ -409,60 +374,21 @@ public class WalletService
         WalletTransaction wt = new WalletTransaction(wallet,
                                                      category,
                                                      TransactionType.EXPENSE,
-                                                     TransactionStatus.CONFIRMED,
+                                                     status,
                                                      date,
                                                      amount,
                                                      description);
 
         m_walletTransactionRepository.save(wt);
 
-        wallet.SetBalance(wallet.GetBalance() - amount);
-        m_walletRepository.save(wallet);
-
-        m_logger.info("Confirmed expense of " + amount + " added to wallet with id " +
-                      walletId);
-
-        return wt.GetId();
-    }
-
-    /**
-     * Add an pending expense to a wallet
-     * @param walletName The name of the wallet that receives the expense
-     * @param category The category of the expense
-     * @param date The date of the expense
-     * @param amount The amount of the expense
-     * @param description A description of the expense
-     * @return The id of the created transaction
-     * @throws RuntimeException If the wallet does not exist
-     * @throws RuntimeException If the amount to transfer is less than or equal to zero
-     */
-    @Transactional
-    public Long AddPendingExpense(Long          walletId,
-                                  Category      category,
-                                  LocalDateTime date,
-                                  Double        amount,
-                                  String        description)
-    {
-        Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
-            () -> new RuntimeException("Wallet with id " + walletId + " not found"));
-
-        if (amount <= 0)
+        if (status == TransactionStatus.CONFIRMED)
         {
-            throw new RuntimeException("Amount to transfer must be greater than zero");
+            wallet.SetBalance(wallet.GetBalance() - amount);
+            m_walletRepository.save(wallet);
         }
 
-        WalletTransaction wt = new WalletTransaction(wallet,
-                                                     category,
-                                                     TransactionType.EXPENSE,
-                                                     TransactionStatus.PENDING,
-                                                     date,
-                                                     amount,
-                                                     description);
-
-        m_walletTransactionRepository.save(wt);
-
-        m_logger.info("Pending expense of " + amount + " added to wallet with id " +
-                      walletId);
+        m_logger.info("Expense with status " + status.toString() + " of " + amount +
+                      " added to wallet with id " + walletId);
 
         return wt.GetId();
     }
