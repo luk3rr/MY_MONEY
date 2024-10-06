@@ -145,16 +145,6 @@ public class AddExpenseController
         {
             Double expenseValue = Double.parseDouble(expenseValueString);
 
-            if (expenseValue < 0)
-            {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Error");
-                alert.setHeaderText("Invalid income value");
-                alert.setContentText("Expense value must be a positive number.");
-                alert.showAndWait();
-                return;
-            }
-
             Wallet wallet = wallets.stream()
                                 .filter(w -> w.GetName().equals(walletName))
                                 .findFirst()
@@ -166,17 +156,6 @@ public class AddExpenseController
                                     .get();
 
             TransactionStatus status = TransactionStatus.valueOf(statusString);
-
-            // Episilon is used to compare floating point numbers
-            if (wallet.GetBalance() + Constants.EPSILON < expenseValue)
-            {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Error");
-                alert.setHeaderText("Insufficient funds");
-                alert.setContentText("Wallet does not have enough funds.");
-                alert.showAndWait();
-                return;
-            }
 
             LocalTime     currentTime             = LocalTime.now();
             LocalDateTime dateTimeWithCurrentHour = expenseDate.atTime(currentTime);
@@ -223,6 +202,14 @@ public class AddExpenseController
             alert.setTitle("Error");
             alert.setHeaderText("Invalid expense value");
             alert.setContentText("Expense value must be a number.");
+            alert.showAndWait();
+        }
+        catch (RuntimeException e)
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error while creating expense");
+            alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
     }

@@ -1,0 +1,11 @@
+/*
+ * Filename: wallet-full-pane.css
+ * Created on: October  6, 2024
+ * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
+ */
+
+#walletPane {
+  -fx-background-color: #f2f3f4;
+  -fx-background-radius: 10px;
+  -fx-padding: 10px;
+}

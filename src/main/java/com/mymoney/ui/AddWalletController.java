@@ -126,7 +126,7 @@ public class AddWalletController
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Error while creating wallet");
-            alert.setContentText("Already exists a wallet with the same name.");
+            alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
     }

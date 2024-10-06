@@ -142,29 +142,9 @@ public class AddTransferController
             return;
         }
 
-        if (senderWalletName.equals(receiverWalletName))
-        {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setHeaderText("Same wallet");
-            alert.setContentText("Sender and receiver wallets must be different.");
-            alert.showAndWait();
-            return;
-        }
-
         try
         {
             Double transferValue = Double.parseDouble(transferValueString);
-
-            if (transferValue < 0)
-            {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Error");
-                alert.setHeaderText("Invalid transfer value");
-                alert.setContentText("Transfer value must be a positive number.");
-                alert.showAndWait();
-                return;
-            }
 
             Wallet senderWallet = wallets.stream()
                                       .filter(w -> w.GetName().equals(senderWalletName))
@@ -176,17 +156,6 @@ public class AddTransferController
                     .filter(w -> w.GetName().equals(receiverWalletName))
                     .findFirst()
                     .get();
-
-            // Episilon is used to avoid floating point arithmetic errors
-            if (senderWallet.GetBalance() + Constants.EPSILON < transferValue)
-            {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Error");
-                alert.setHeaderText("Insufficient funds");
-                alert.setContentText("Sender wallet does not have enough funds.");
-                alert.showAndWait();
-                return;
-            }
 
             LocalTime     currentTime             = LocalTime.now();
             LocalDateTime dateTimeWithCurrentHour = transferDate.atTime(currentTime);
@@ -225,6 +194,15 @@ public class AddTransferController
             alert.setHeaderText("Invalid transfer value");
             alert.setContentText("Transfer value must be a number.");
             alert.showAndWait();
+        }
+        catch (RuntimeException e)
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error while creating transfer");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+            return;
         }
     }
 

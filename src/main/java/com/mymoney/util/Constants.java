@@ -17,17 +17,19 @@ public final class Constants
     public static final String APP_NAME = "My Money";
 
     // FXML files
-    public static final String MAIN_FXML             = "/ui/main.fxml";
-    public static final String HOME_FXML             = "/ui/home.fxml";
-    public static final String WALLET_FXML           = "/ui/wallet.fxml";
-    public static final String CREDIT_CARD_FXML      = "/ui/credit_card.fxml";
-    public static final String TRANSACTION_FXML      = "/ui/transaction.fxml";
-    public static final String CATEGORY_FXML         = "/ui/category.fxml";
-    public static final String ADD_WALLET_FXML       = "/ui/add_wallet.fxml";
-    public static final String ADD_TRANSFER_FXML     = "/ui/add_transfer.fxml";
-    public static final String ADD_EXPENSE_FXML      = "/ui/add_expense.fxml";
-    public static final String ADD_INCOME_FXML       = "/ui/add_income.fxml";
-    public static final String WALLET_FULL_PANE_FXML = "/ui/wallet_full_pane.fxml";
+    public static final String MAIN_FXML               = "/ui/main.fxml";
+    public static final String HOME_FXML               = "/ui/home.fxml";
+    public static final String WALLET_FXML             = "/ui/wallet.fxml";
+    public static final String CREDIT_CARD_FXML        = "/ui/credit_card.fxml";
+    public static final String TRANSACTION_FXML        = "/ui/transaction.fxml";
+    public static final String CATEGORY_FXML           = "/ui/category.fxml";
+    public static final String ADD_WALLET_FXML         = "/ui/add_wallet.fxml";
+    public static final String ADD_TRANSFER_FXML       = "/ui/add_transfer.fxml";
+    public static final String ADD_EXPENSE_FXML        = "/ui/add_expense.fxml";
+    public static final String ADD_INCOME_FXML         = "/ui/add_income.fxml";
+    public static final String WALLET_FULL_PANE_FXML   = "/ui/wallet_full_pane.fxml";
+    public static final String RENAME_WALLET_FXML      = "/ui/rename_wallet.fxml";
+    public static final String CHANGE_WALLET_TYPE_FXML = "/ui/change_wallet_type.fxml";
 
     // Icons
     public static final String WALLET_TYPE_ICONS_PATH  = "/icons/wallet_type/";
@@ -43,7 +45,7 @@ public final class Constants
     public static final String MAIN_STYLE_SHEET        = "/css/main.css";
     public static final String HOME_STYLE_SHEET        = "/css/home.css";
     public static final String WALLET_STYLE_SHEET      = "/css/wallet.css";
-    public static final String CREDIT_CARD_STYLE_SHEET = "/css/credit_card.css";
+    public static final String CREDIT_CARD_STYLE_SHEET = "/css/credit-card.css";
     public static final String TRANSACTION_STYLE_SHEET = "/css/transaction.css";
     public static final String CATEGORY_STYLE_SHEET    = "/css/category.css";
     public static final String COMMON_STYLE_SHEET      = "/css/common-styles.css";

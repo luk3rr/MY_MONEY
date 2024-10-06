@@ -58,6 +58,9 @@ public class WalletService
     @Transactional
     public Long CreateWallet(String name, Double balance)
     {
+        // Remove leading and trailing whitespaces
+        name = name.strip();
+
         if (m_walletRepository.existsByName(name))
         {
             throw new RuntimeException("Wallet with name " + name + " already exists");
@@ -83,6 +86,9 @@ public class WalletService
     @Transactional
     public Long CreateWallet(String name, Double balance, WalletType walletType)
     {
+        // Remove leading and trailing whitespaces
+        name = name.strip();
+
         if (m_walletRepository.existsByName(name))
         {
             throw new RuntimeException("Wallet with name " + name + " already exists");
@@ -135,6 +141,65 @@ public class WalletService
         m_walletRepository.save(wallet);
 
         m_logger.info("Wallet with id " + id + " was archived");
+    }
+
+    /**
+     * Rename a wallet
+     * @param id The id of the wallet to be renamed
+     * @param newName The new name of the wallet
+     * @throws RuntimeException If the wallet does not exist
+     * @throws RuntimeException If the new name is already in use
+     */
+    @Transactional
+    public void RenameWallet(Long id, String newName)
+    {
+        // Remove leading and trailing whitespaces
+        newName = newName.strip();
+
+        Wallet wallet = m_walletRepository.findById(id).orElseThrow(
+            () -> new RuntimeException("Wallet with id " + id + " not found"));
+
+        if (m_walletRepository.existsByName(newName))
+        {
+            throw new RuntimeException("Wallet with name " + newName +
+                                       " already exists");
+        }
+
+        wallet.SetName(newName);
+        m_walletRepository.save(wallet);
+
+        m_logger.info("Wallet with id " + id + " renamed to " + newName);
+    }
+
+    /**
+     * Change wallet type
+     * @param id The id of the wallet to change the type
+     * @param newType The new type of the wallet
+     * @throws RuntimeException If the wallet does not exist
+     * @throws RuntimeException If the new type does not exist
+     * @throws RuntimeException If the wallet type is already the new type
+     */
+    @Transactional
+    public void ChangeWalletType(Long id, WalletType newType)
+    {
+        Wallet wallet = m_walletRepository.findById(id).orElseThrow(
+            () -> new RuntimeException("Wallet with id " + id + " not found"));
+
+        if (newType == null || !m_walletTypeRepository.existsById(newType.GetId()))
+        {
+            throw new RuntimeException("Wallet type not found");
+        }
+
+        if (wallet.GetType().GetId() == newType.GetId())
+        {
+            throw new RuntimeException("Wallet with name " + wallet.GetName() +
+                                       " already has type " + newType.GetName());
+        }
+
+        wallet.SetType(newType);
+        m_walletRepository.save(wallet);
+
+        m_logger.info("Wallet with id " + id + " type changed to " + newType.GetName());
     }
 
     /**
@@ -229,6 +294,7 @@ public class WalletService
      * @param description A description of the income
      * @return The id of the created transaction
      * @throws RuntimeException If the wallet does not exist
+     * @throws RuntimeException If the amount to transfer is less than or equal to zero
      */
     @Transactional
     public Long AddConfirmedIncome(Long          walletId,
@@ -239,6 +305,11 @@ public class WalletService
     {
         Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
             () -> new RuntimeException("Wallet with id " + walletId + " not found"));
+
+        if (amount <= 0)
+        {
+            throw new RuntimeException("Amount to transfer must be greater than zero");
+        }
 
         WalletTransaction wt = new WalletTransaction(wallet,
                                                      category,
@@ -268,6 +339,7 @@ public class WalletService
      * @param description A description of the income
      * @return The id of the created transaction
      * @throws RuntimeException If the wallet does not exist
+     * @throws RuntimeException If the amount to transfer is less than or equal to zero
      */
     @Transactional
     public Long AddPendingIncome(Long          walletId,
@@ -278,6 +350,11 @@ public class WalletService
     {
         Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
             () -> new RuntimeException("Wallet with id " + walletId + " not found"));
+
+        if (amount <= 0)
+        {
+            throw new RuntimeException("Amount to transfer must be greater than zero");
+        }
 
         WalletTransaction wt = new WalletTransaction(wallet,
                                                      category,
@@ -304,6 +381,8 @@ public class WalletService
      * @param description A description of the expense
      * @return The id of the created transaction
      * @throws RuntimeException If the wallet does not exist
+     * @throws RuntimeException If the amount to transfer is less than or equal to zero
+     * @throws RuntimeException If the wallet does not have enough balance to confirm
      */
     @Transactional
     public Long AddConfirmedExpense(Long          walletId,
@@ -314,6 +393,18 @@ public class WalletService
     {
         Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
             () -> new RuntimeException("Wallet with id " + walletId + " not found"));
+
+        if (amount <= 0)
+        {
+            throw new RuntimeException("Amount to transfer must be greater than zero");
+        }
+
+        if (wallet.GetBalance() < amount)
+        {
+            throw new RuntimeException(
+                "Wallet " + wallet.GetName() +
+                " does not have enough balance to confirm expense");
+        }
 
         WalletTransaction wt = new WalletTransaction(wallet,
                                                      category,
@@ -343,6 +434,7 @@ public class WalletService
      * @param description A description of the expense
      * @return The id of the created transaction
      * @throws RuntimeException If the wallet does not exist
+     * @throws RuntimeException If the amount to transfer is less than or equal to zero
      */
     @Transactional
     public Long AddPendingExpense(Long          walletId,
@@ -353,6 +445,11 @@ public class WalletService
     {
         Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
             () -> new RuntimeException("Wallet with id " + walletId + " not found"));
+
+        if (amount <= 0)
+        {
+            throw new RuntimeException("Amount to transfer must be greater than zero");
+        }
 
         WalletTransaction wt = new WalletTransaction(wallet,
                                                      category,

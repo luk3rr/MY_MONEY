@@ -21,7 +21,7 @@
                <children>
                   <HBox fx:id="rootHBoxUp" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <AnchorPane fx:id="walletPane" minWidth="390.0" styleClass="anchor-pane" stylesheets="@../css/anchorpane.css" HBox.hgrow="ALWAYS">
+                        <AnchorPane fx:id="walletPane" minWidth="390.0" styleClass="anchor-pane" stylesheets="@../css/anchor-pane.css" HBox.hgrow="ALWAYS">
                            <children>
                               <Label fx:id="walletPaneTitle" styleClass="title" text="Wallets" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                               <JFXButton fx:id="walletPrevButton" stylesheets="@../css/buttons.css" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="60.0">
@@ -51,7 +51,7 @@
                               </HBox>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="creditCardPane" minWidth="390.0" styleClass="anchor-pane" stylesheets="@../css/anchorpane.css" HBox.hgrow="ALWAYS">
+                        <AnchorPane fx:id="creditCardPane" minWidth="390.0" styleClass="anchor-pane" stylesheets="@../css/anchor-pane.css" HBox.hgrow="ALWAYS">
                            <children>
                               <Label fx:id="creditCardPaneTitle" styleClass="title" text="Credit Cards" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                               <JFXButton fx:id="creditCardPrevButton" stylesheets="@../css/buttons.css" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="60.0">
@@ -78,7 +78,7 @@
                               </HBox>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="monthResumePane" minWidth="390.0" styleClass="anchor-pane" stylesheets="@../css/anchorpane.css" HBox.hgrow="ALWAYS">
+                        <AnchorPane fx:id="monthResumePane" minWidth="390.0" styleClass="anchor-pane" stylesheets="@../css/anchor-pane.css" HBox.hgrow="ALWAYS">
                            <children>
                               <Label fx:id="monthResumePaneTitle" styleClass="title" text="Resume" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                               <AnchorPane fx:id="monthResumeView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
@@ -149,7 +149,7 @@
                <children>
                   <HBox fx:id="rootHBoxBottom" maxWidth="1.7976931348623157E308" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <AnchorPane fx:id="graphPane" minWidth="700.0" styleClass="anchor-pane" stylesheets="@../css/anchorpane.css" HBox.hgrow="ALWAYS">
+                        <AnchorPane fx:id="graphPane" minWidth="700.0" styleClass="anchor-pane" stylesheets="@../css/anchor-pane.css" HBox.hgrow="ALWAYS">
                            <children>
                               <BarChart fx:id="transactionsLast12Months" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <xAxis>
@@ -161,7 +161,7 @@
                               </BarChart>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="lastTransactionsPane" minHeight="300.0" minWidth="500.0" styleClass="anchor-pane" stylesheets="@../css/anchorpane.css" HBox.hgrow="ALWAYS">
+                        <AnchorPane fx:id="lastTransactionsPane" minHeight="300.0" minWidth="500.0" styleClass="anchor-pane" stylesheets="@../css/anchor-pane.css" HBox.hgrow="ALWAYS">
                            <children>
                               <VBox fx:id="lastTransactionsVBox" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0" />
                               <Label fx:id="lastTransactionsPaneTitle" layoutX="10.0" layoutY="17.0" styleClass="title" text="Last Transactions" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />

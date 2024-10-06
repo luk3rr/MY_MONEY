@@ -16,7 +16,7 @@
    <children>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
          <children>
-            <ComboBox fx:id="walletComboBox" promptText="Select the wallet" stylesheets="@../css/combobox.css" VBox.vgrow="ALWAYS" />
+            <ComboBox fx:id="walletComboBox" promptText="Select the wallet" stylesheets="@../css/combo-box.css" VBox.vgrow="ALWAYS" />
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                <children>
                   <Label text="Current balance:" />
@@ -59,8 +59,8 @@
       </HBox>
       <HBox alignment="CENTER" prefHeight="44.0" prefWidth="274.0" spacing="10.0" VBox.vgrow="ALWAYS">
          <children>
-            <ComboBox fx:id="statusComboBox" promptText="Status" stylesheets="@../css/combobox.css" HBox.hgrow="ALWAYS" />
-            <ComboBox fx:id="categoryComboBox" promptText="Category" stylesheets="@../css/combobox.css" HBox.hgrow="ALWAYS" />
+            <ComboBox fx:id="statusComboBox" promptText="Status" stylesheets="@../css/combo-box.css" HBox.hgrow="ALWAYS" />
+            <ComboBox fx:id="categoryComboBox" promptText="Category" stylesheets="@../css/combo-box.css" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
       <DatePicker fx:id="incomeDatePicker" promptText="Select the date" showWeekNumbers="true" />

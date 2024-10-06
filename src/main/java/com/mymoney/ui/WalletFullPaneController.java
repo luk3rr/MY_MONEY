@@ -191,6 +191,26 @@ public class WalletFullPaneController
                         });
     }
 
+    @FXML
+    private void handleRenameWallet()
+    {
+        OpenPopupWindow(Constants.RENAME_WALLET_FXML,
+                        "Rename wallet",
+                        (RenameWalletController controller) -> {
+                            controller.SetWalletComboBox(wallet);
+                        });
+    }
+
+    @FXML
+    private void handleChangeWalletType()
+    {
+        OpenPopupWindow(Constants.CHANGE_WALLET_TYPE_FXML,
+                        "Change wallet type",
+                        (ChangeWalletTypeController controller) -> {
+                            controller.SetWalletComboBox(wallet);
+                        });
+    }
+
     /**
      * Opens a popup window for adding expenses or transfers
      * @param fxmlFileName The FXML file to load
@@ -230,18 +250,6 @@ public class WalletFullPaneController
         {
             e.printStackTrace();
         }
-    }
-
-    @FXML
-    private void handleRenameWallet()
-    {
-        logger.info("Rename Wallet button clicked");
-    }
-
-    @FXML
-    private void handleChangeWalletType()
-    {
-        logger.info("Change Wallet Type button clicked");
     }
 
     /**
@@ -338,8 +346,8 @@ public class WalletFullPaneController
                                 confirmedExpensesSum - creditedTransfersSum +
                                 debitedTransfersSum;
 
-        Double foreseenBalance = wallet.GetBalance() + pendingIncomesSum -
-                                 pendingExpensesSum;
+        Double foreseenBalance =
+            wallet.GetBalance() + pendingIncomesSum - pendingExpensesSum;
 
         SetLabelValue(openingBalanceSign, openingBalanceValue, openingBalance);
         SetLabelValue(incomesSign, incomesValue, confirmedIncomesSum);

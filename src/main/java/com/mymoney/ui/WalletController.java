@@ -17,7 +17,6 @@ import com.mymoney.util.TransactionStatus;
 import com.mymoney.util.TransactionType;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
@@ -367,25 +366,21 @@ public class WalletController
 
                 AnchorPane.setTopAnchor(newContent, 0.0);
                 AnchorPane.setBottomAnchor(newContent, 0.0);
+                AnchorPane.setLeftAnchor(newContent, 0.0);
+                AnchorPane.setRightAnchor(newContent, 0.0);
 
                 switch (i % itemsPerPage)
                 {
                     case 0:
                         walletPane1.getChildren().add(newContent);
-                        AnchorPane.setLeftAnchor(newContent, 0.0);
-                        AnchorPane.setRightAnchor(newContent, 10.0);
                         break;
 
                     case 1:
                         walletPane2.getChildren().add(newContent);
-                        AnchorPane.setLeftAnchor(newContent, 10.0);
-                        AnchorPane.setRightAnchor(newContent, 0.0);
                         break;
 
                     case 2:
                         walletPane3.getChildren().add(newContent);
-                        AnchorPane.setLeftAnchor(newContent, 0.0);
-                        AnchorPane.setRightAnchor(newContent, 10.0);
                         break;
                 }
             }

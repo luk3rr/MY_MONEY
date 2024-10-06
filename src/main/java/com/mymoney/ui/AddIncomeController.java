@@ -144,16 +144,6 @@ public class AddIncomeController
         {
             Double incomeValue = Double.parseDouble(incomeValueString);
 
-            if (incomeValue < 0)
-            {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Error");
-                alert.setHeaderText("Invalid income value");
-                alert.setContentText("Income value must be a positive number.");
-                alert.showAndWait();
-                return;
-            }
-
             Wallet wallet = wallets.stream()
                                 .filter(w -> w.GetName().equals(walletName))
                                 .findFirst()
@@ -211,6 +201,14 @@ public class AddIncomeController
             alert.setTitle("Error");
             alert.setHeaderText("Invalid income value");
             alert.setContentText("Income value must be a number.");
+            alert.showAndWait();
+        }
+        catch (RuntimeException e)
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error while creating income");
+            alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
     }
