@@ -151,7 +151,7 @@
                      <children>
                         <AnchorPane fx:id="graphPane" minWidth="700.0" styleClass="anchor-pane" stylesheets="@../css/anchor-pane.css" HBox.hgrow="ALWAYS">
                            <children>
-                              <BarChart fx:id="transactionsLast12Months" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <BarChart fx:id="transactionsLast12Months" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
                                 <xAxis>
                                   <CategoryAxis side="BOTTOM" />
                                 </xAxis>
@@ -159,6 +159,7 @@
                                   <NumberAxis side="LEFT" />
                                 </yAxis>
                               </BarChart>
+                              <Label fx:id="graphTitle" layoutX="32.0" layoutY="10.0" styleClass="title" text="Money flow" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane fx:id="lastTransactionsPane" minHeight="300.0" minWidth="500.0" styleClass="anchor-pane" stylesheets="@../css/anchor-pane.css" HBox.hgrow="ALWAYS">

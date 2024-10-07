@@ -100,8 +100,8 @@ public final class Constants
         "total-balance-wallets-label";
 
     // Sizes
-    public static final Integer WALLET_TYPE_ICONS_SIZE           = 42; // 32x32 px
-    public static final Integer CRC_OPERATOR_ICONS_SIZE          = 42; // 32x32 px
+    public static final Integer WALLET_TYPE_ICONS_SIZE           = 42; // 42x42 px
+    public static final Integer CRC_OPERATOR_ICONS_SIZE          = 42; // 42x42 px
     public static final Integer HOME_LAST_TRANSACTIONS_SIZE      = 7;
     public static final Integer HOME_LAST_TRANSACTIONS_ICON_SIZE = 32; // 32x32 px
     public static final Integer HOME_LAST_TRANSACTIONS_DESCRIPTION_LABEL_WIDTH = 280;

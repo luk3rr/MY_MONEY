@@ -17,17 +17,30 @@ import com.mymoney.util.TransactionStatus;
 import com.mymoney.util.TransactionType;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
+import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.Axis;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
@@ -51,6 +64,9 @@ public class WalletController
     private AnchorPane walletPane3;
 
     @FXML
+    private AnchorPane moneyFlowBarChartAnchorPane;
+
+    @FXML
     private VBox totalBalancePaneInfoVBox;
 
     @FXML
@@ -68,8 +84,13 @@ public class WalletController
     @FXML
     private ComboBox<String> totalBalancePaneWalletTypeComboBox;
 
+    @FXML
+    private ComboBox<String> moneyFlowPaneWalletTypeComboBox;
+
     @Autowired
     private ConfigurableApplicationContext springContext;
+
+    private BarChart<String, Number> moneyFlowBarChart;
 
     private WalletService walletService;
 
@@ -115,12 +136,19 @@ public class WalletController
         totalBalancePaneWalletTypeComboBox.getItems().addAll(
             walletTypes.stream().map(WalletType::GetName).toList());
 
+        moneyFlowPaneWalletTypeComboBox.getItems().addAll(
+            walletTypes.stream().map(WalletType::GetName).toList());
+
         // Add default wallet type and select it
         totalBalancePaneWalletTypeComboBox.getItems().add(0, "All Wallets");
         totalBalancePaneWalletTypeComboBox.getSelectionModel().selectFirst();
 
+        moneyFlowPaneWalletTypeComboBox.getItems().add(0, "All Wallets");
+        moneyFlowPaneWalletTypeComboBox.getSelectionModel().selectFirst();
+
         UpdateTotalBalanceView();
         UpdateDisplayWallets();
+        CreateNewBarChart();
 
         SetButtonsActions();
     }
@@ -130,8 +158,10 @@ public class WalletController
      */
     private void SetButtonsActions()
     {
-        totalBalancePaneTransferButton.setOnAction(e -> AddTransfer());
         totalBalancePaneWalletTypeComboBox.setOnAction(e -> UpdateTotalBalanceView());
+        moneyFlowPaneWalletTypeComboBox.setOnAction(e -> { CreateNewBarChart(); });
+
+        totalBalancePaneTransferButton.setOnAction(e -> AddTransfer());
         totalBalancePaneAddWalletButton.setOnAction(e -> AddWallet());
 
         walletPrevButton.setOnAction(event -> {
@@ -396,6 +426,218 @@ public class WalletController
         walletNextButton.setDisable(end >= wallets.size());
     }
 
+    private void CreateNewBarChart()
+    {
+        CategoryAxis xAxis = new CategoryAxis();
+        NumberAxis   yAxis = new NumberAxis();
+
+        moneyFlowBarChart = new BarChart<>(xAxis, yAxis);
+
+        moneyFlowBarChartAnchorPane.getChildren().clear();
+
+        moneyFlowBarChartAnchorPane.getChildren().add(moneyFlowBarChart);
+
+        AnchorPane.setTopAnchor(moneyFlowBarChart, 0.0);
+        AnchorPane.setBottomAnchor(moneyFlowBarChart, 0.0);
+        AnchorPane.setLeftAnchor(moneyFlowBarChart, 0.0);
+        AnchorPane.setRightAnchor(moneyFlowBarChart, 0.0);
+
+        // Populate the chart with data
+        UpdateMoneyFlowBarChart();
+    }
+
+    /**
+     * Update the chart with incomes and expenses for the last months
+     */
+    private void UpdateMoneyFlowBarChart()
+    {
+        // LinkedHashMap to keep the order of the months
+        Map<String, Double> monthlyExpenses = new LinkedHashMap<>();
+        Map<String, Double> monthlyIncomes  = new LinkedHashMap<>();
+
+        LocalDateTime     currentDate = LocalDateTime.now();
+        DateTimeFormatter formatter   = DateTimeFormatter.ofPattern("MMM/yy");
+
+        // Filter wallet type according to the selected item
+        // If "All Wallets" is selected, show all transactions
+        Integer selectedIndex =
+            moneyFlowPaneWalletTypeComboBox.getSelectionModel().getSelectedIndex();
+
+        // Collect data for the last months
+        for (Integer i = 0; i < Constants.HOME_BAR_CHART_MONTHS; i++)
+        {
+            // Get the data from the oldest month to the most recent, to keep the order
+            LocalDateTime date =
+                currentDate.minusMonths(Constants.HOME_BAR_CHART_MONTHS - i - 1);
+            Integer month = date.getMonthValue();
+            Integer year  = date.getYear();
+
+            // Get transactions
+            List<WalletTransaction> transactions =
+                walletService.GetAllTransactionsByMonth(month, year);
+            logger.info("Found " + transactions.size() + " transactions for " + month +
+                        "/" + year);
+
+            Double totalExpenses = 0.0;
+            Double totalIncomes  = 0.0;
+
+            if (selectedIndex == 0)
+            {
+                // Calculate total expenses for the month
+                totalExpenses = transactions.stream()
+                                    .filter(t -> t.GetType() == TransactionType.EXPENSE)
+                                    .mapToDouble(WalletTransaction::GetAmount)
+                                    .sum();
+
+                // Calculate total incomes for the month
+                totalIncomes = transactions.stream()
+                                   .filter(t -> t.GetType() == TransactionType.INCOME)
+                                   .mapToDouble(WalletTransaction::GetAmount)
+                                   .sum();
+            }
+            else if (selectedIndex > 0 && selectedIndex - 1 < walletTypes.size())
+            {
+                WalletType selectedWalletType = walletTypes.get(selectedIndex - 1);
+
+                // Calculate total expenses for the month
+                totalExpenses = transactions.stream()
+                                    .filter(t
+                                            -> t.GetWallet().GetType().GetId() ==
+                                                   selectedWalletType.GetId())
+                                    .filter(t -> t.GetType() == TransactionType.EXPENSE)
+                                    .mapToDouble(WalletTransaction::GetAmount)
+                                    .sum();
+
+                // Calculate total incomes for the month
+                totalIncomes = transactions.stream()
+                                   .filter(t
+                                           -> t.GetWallet().GetType().GetId() ==
+                                                  selectedWalletType.GetId())
+                                   .filter(t -> t.GetType() == TransactionType.INCOME)
+                                   .mapToDouble(WalletTransaction::GetAmount)
+                                   .sum();
+            }
+            else
+            {
+                logger.warning("Invalid index: " + selectedIndex);
+            }
+
+            monthlyExpenses.put(date.format(formatter), totalExpenses);
+            monthlyIncomes.put(date.format(formatter), totalIncomes);
+        }
+
+        // Create two series: one for incomes and one for expenses
+        XYChart.Series<String, Number> expensesSeries = new XYChart.Series<>();
+        expensesSeries.setName("Expenses");
+
+        XYChart.Series<String, Number> incomesSeries = new XYChart.Series<>();
+        incomesSeries.setName("Incomes");
+
+        Double maxValue = 0.0;
+
+        // Add data to each series
+        for (Map.Entry<String, Double> entry : monthlyExpenses.entrySet())
+        {
+            String month        = entry.getKey();
+            Double expenseValue = entry.getValue();
+            Double incomeValue  = monthlyIncomes.getOrDefault(month, 0.0);
+
+            expensesSeries.getData().add(
+                new XYChart.Data<>(month, 0.0)); // Start at 0 for animation
+            incomesSeries.getData().add(
+                new XYChart.Data<>(month, 0.0)); // Start at 0 for animation
+
+            maxValue = Math.max(maxValue, Math.max(expenseValue, incomeValue));
+        }
+
+        // Set Y-axis limits based on the maximum value found
+        Axis<?> yAxis = moneyFlowBarChart.getYAxis();
+        if (yAxis instanceof NumberAxis)
+        {
+            NumberAxis numberAxis = (NumberAxis)yAxis;
+            numberAxis.setAutoRanging(false);
+            numberAxis.setLowerBound(0);
+            numberAxis.setUpperBound(maxValue);
+
+            // Set the tick unit based on the maximum value
+            Integer tickUnit = (int)Math.round(
+                ((maxValue / Constants.HOME_BAR_CHART_TICKS) / 10) * 10);
+            numberAxis.setTickUnit(tickUnit);
+        }
+
+        moneyFlowBarChart.setVerticalGridLinesVisible(false);
+
+        moneyFlowBarChart.getData().add(expensesSeries);
+        moneyFlowBarChart.getData().add(incomesSeries);
+
+        for (int i = 0; i < expensesSeries.getData().size(); i++)
+        {
+            XYChart.Data<String, Number> expenseData = expensesSeries.getData().get(i);
+            XYChart.Data<String, Number> incomeData  = incomesSeries.getData().get(i);
+
+            Double targetExpenseValue = monthlyExpenses.get(expenseData.getXValue());
+
+            // Add tooltip to the bars
+            AddTooltipToNode(expenseData.getNode(),
+                             String.format("%.2f", targetExpenseValue));
+
+            Double targetIncomeValue =
+                monthlyIncomes.getOrDefault(expenseData.getXValue(), 0.0);
+
+            AddTooltipToNode(incomeData.getNode(),
+                             String.format("%.2f", targetIncomeValue));
+
+            // Animation for Expenses
+            CreateAnimation(expenseData, targetExpenseValue);
+
+            // Animation for Incomes
+            CreateAnimation(incomeData, targetIncomeValue);
+        }
+    }
+
+    private void CreateAnimation(XYChart.Data<String, Number> data, Double targetValue)
+    {
+        data.setYValue(0.0); // Start at zero
+
+        AnimationTimer timer = new AnimationTimer() {
+            private Long         lastUpdate   = 0L;
+            private Double       currentValue = 0.0;
+            private final Double increment =
+                targetValue / Constants.HOME_BAR_CHART_ANIMATION_FRAMES;
+            Double elapsed = 0.0;
+
+            @Override
+            public void handle(long now)
+            {
+                if (lastUpdate == 0)
+                {
+                    lastUpdate = now;
+                }
+
+                elapsed += (now - lastUpdate) / Constants.ONE_SECOND_IN_NS;
+
+                if (elapsed >= Constants.HOME_BAR_CHART_ANIMATION_DURATION)
+                {
+                    currentValue = targetValue;
+                    data.setYValue(currentValue);
+                    stop();
+                }
+                else
+                {
+                    currentValue += increment;
+                    if (currentValue > targetValue)
+                    {
+                        currentValue = targetValue;
+                    }
+                    data.setYValue(currentValue);
+                }
+
+                lastUpdate = now;
+            }
+        };
+        timer.start();
+    }
+
     /**
      * Add a new wallet
      */
@@ -458,5 +700,24 @@ public class WalletController
         {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Add a tooltip to a node
+     * @param node The node to add the tooltip
+     * @param text The text of the tooltip
+     */
+    private void AddTooltipToNode(Node node, String text)
+    {
+        node.setOnMouseEntered(event -> { node.setStyle("-fx-opacity: 0.7;"); });
+        node.setOnMouseExited(event -> { node.setStyle("-fx-opacity: 1;"); });
+
+        Tooltip tooltip = new Tooltip(text);
+        tooltip.getStyleClass().add(Constants.HOME_TOOLTIP_STYLE);
+        tooltip.setShowDelay(Duration.seconds(Constants.HOME_TOOLTIP_ANIMATION_DELAY));
+        tooltip.setHideDelay(
+            Duration.seconds(Constants.HOME_TOOLTIP_ANIMATION_DURATION));
+
+        Tooltip.install(node, tooltip);
     }
 }

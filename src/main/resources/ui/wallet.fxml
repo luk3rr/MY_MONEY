@@ -2,6 +2,7 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
@@ -76,10 +77,24 @@
                   </HBox>
                </children>
             </AnchorPane>
-            <AnchorPane styleClass="anchor-pane" stylesheets="@../css/anchor-pane.css" VBox.vgrow="ALWAYS">
+            <AnchorPane minHeight="400.0" VBox.vgrow="ALWAYS">
                <children>
-                  <VBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                  <AnchorPane minHeight="400.0" minWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <AnchorPane minHeight="400.0" minWidth="900.0" styleClass="anchor-pane" stylesheets="@../css/anchor-pane.css" HBox.hgrow="ALWAYS">
+                           <children>
+                              <ComboBox fx:id="moneyFlowPaneWalletTypeComboBox" layoutX="413.0" layoutY="18.0" minWidth="150.0" stylesheets="@../css/combo-box.css" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                              <Label fx:id="moneyFlowPaneTitle" layoutX="53.0" layoutY="28.0" styleClass="title" text="Money flow" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                              <AnchorPane fx:id="moneyFlowBarChartAnchorPane" layoutX="42.0" layoutY="132.0" minWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0" />
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane minHeight="400.0" minWidth="400.0" styleClass="anchor-pane" stylesheets="@../css/anchor-pane.css" HBox.hgrow="ALWAYS">
+                           <children>
+                              <PieChart AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0" />
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </HBox>
                </children>
             </AnchorPane>
          </children>

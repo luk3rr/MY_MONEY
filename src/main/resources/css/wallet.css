@@ -39,3 +39,27 @@
   -fx-text-fill: grey;
   -fx-padding: 5px;
 }
+
+.default-color0.chart-bar {
+  -fx-bar-fill: #dc3545;
+}
+
+.default-color1.chart-bar {
+  -fx-bar-fill: #28a745;
+}
+
+.chart-plot-background {
+  -fx-background-color: transparent;
+}
+
+.axis {
+  -fx-border-color: transparent;
+  -fx-tick-mark-visible: false;
+  -fx-minor-tick-visible: false;
+}
+
+.chart-legend {
+  -fx-background-color: transparent;
+  -fx-font-size: 12px;
+  -fx-text-fill: #555;
+}

@@ -483,8 +483,6 @@ public class HomeController
         }
 
         transactionsLast12Months.setVerticalGridLinesVisible(false);
-        transactionsLast12Months.setTitle("Incomes and Expenses for the Last " +
-                                          Constants.HOME_BAR_CHART_MONTHS + " Months");
 
         // Clear previous data and add the new series (expenses and incomes)
         transactionsLast12Months.getData().clear();

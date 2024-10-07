@@ -112,6 +112,7 @@
 .transaction-details {
   -fx-alignment: CENTER_LEFT;
 }
+
 .default-color0.chart-bar {
   -fx-bar-fill: #dc3545;
 }
