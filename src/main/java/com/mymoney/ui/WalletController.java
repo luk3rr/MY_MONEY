@@ -7,6 +7,7 @@
 package com.mymoney.ui;
 
 import com.jfoenix.controls.JFXButton;
+import com.mymoney.charts.DoughnutChart;
 import com.mymoney.entities.Wallet;
 import com.mymoney.entities.WalletTransaction;
 import com.mymoney.entities.WalletType;
@@ -19,11 +20,14 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -33,7 +37,9 @@ import javafx.scene.chart.Axis;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -65,6 +71,12 @@ public class WalletController
 
     @FXML
     private AnchorPane moneyFlowBarChartAnchorPane;
+
+    @FXML
+    private AnchorPane balanceByWalletTypePieChartAnchorPane;
+
+    @FXML
+    private VBox totalBalanceByWalletTypeVBox;
 
     @FXML
     private VBox totalBalancePaneInfoVBox;
@@ -149,6 +161,7 @@ public class WalletController
         UpdateTotalBalanceView();
         UpdateDisplayWallets();
         CreateNewBarChart();
+        UpdateBalanceByWalletTypeChartWithFilter();
 
         SetButtonsActions();
     }
@@ -426,6 +439,89 @@ public class WalletController
         walletNextButton.setDisable(end >= wallets.size());
     }
 
+    /**
+     * Update the balance by wallet type chart with filter
+     */
+    private void UpdateBalanceByWalletTypeChartWithFilter()
+    {
+        LoadWallets();
+        LoadWalletTypes();
+
+        balanceByWalletTypePieChartAnchorPane.getChildren().clear();
+
+        List<CheckBox> checkBoxes = new ArrayList<>();
+
+        for (WalletType wt : walletTypes)
+        {
+            CheckBox checkBox = new CheckBox(wt.GetName());
+            checkBox.getStyleClass().add(Constants.WALLET_CHECK_BOX_STYLE);
+            checkBox.setSelected(true);
+            checkBoxes.add(checkBox);
+            totalBalanceByWalletTypeVBox.getChildren().add(checkBox);
+        }
+
+        UpdateChart(checkBoxes);
+
+        for (CheckBox checkBox : checkBoxes)
+        {
+            checkBox.selectedProperty().addListener(
+                (obs, wasSelected, isNowSelected) -> { UpdateChart(checkBoxes); });
+        }
+    }
+
+    /**
+     * Update the chart with the selected wallet types
+     * @param checkBoxes The list of checkboxes
+     */
+    private void UpdateChart(List<CheckBox> checkBoxes)
+    {
+        ObservableList<PieChart.Data> pieChartData =
+            FXCollections.observableArrayList();
+
+        for (CheckBox checkBox : checkBoxes)
+        {
+            checkBox.getStyleClass().add(Constants.WALLET_CHECK_BOX_STYLE);
+
+            if (checkBox.isSelected())
+            {
+                String     walletTypeName = checkBox.getText();
+                WalletType wt =
+                    walletTypes.stream()
+                        .filter(type -> type.GetName().equals(walletTypeName))
+                        .findFirst()
+                        .orElse(null);
+
+                // If the wallet type is not found, skip
+                if (wt != null)
+                {
+                    Double totalBalance =
+                        wallets.stream()
+                            .filter(w -> w.GetType().GetId() == wt.GetId())
+                            .mapToDouble(Wallet::GetBalance)
+                            .sum();
+                    pieChartData.add(new PieChart.Data(wt.GetName(), totalBalance));
+                }
+            }
+        }
+
+        DoughnutChart doughnutChart = new DoughnutChart(pieChartData);
+        doughnutChart.setLabelsVisible(false);
+
+        // Remove the previous chart and add the new one
+        balanceByWalletTypePieChartAnchorPane.getChildren().removeIf(
+            node -> node instanceof DoughnutChart);
+
+        balanceByWalletTypePieChartAnchorPane.getChildren().add(doughnutChart);
+
+        AnchorPane.setTopAnchor(doughnutChart, 0.0);
+        AnchorPane.setBottomAnchor(doughnutChart, 0.0);
+        AnchorPane.setLeftAnchor(doughnutChart, 0.0);
+        AnchorPane.setRightAnchor(doughnutChart, 0.0);
+    }
+
+    /**
+     * Create a new bar chart
+     */
     private void CreateNewBarChart()
     {
         CategoryAxis xAxis = new CategoryAxis();
@@ -595,6 +691,11 @@ public class WalletController
         }
     }
 
+    /**
+     * Create an animation for a bar
+     * @param data The data to animate
+     * @param targetValue The target value
+     */
     private void CreateAnimation(XYChart.Data<String, Number> data, Double targetValue)
     {
         data.setYValue(0.0); // Start at zero

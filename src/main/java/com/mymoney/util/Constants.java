@@ -98,6 +98,7 @@ public final class Constants
         "total-balance-foreseen-label";
     public static final String WALLET_TOTAL_BALANCE_WALLETS_LABEL_STYLE =
         "total-balance-wallets-label";
+    public static final String WALLET_CHECK_BOX_STYLE = "check-box";
 
     // Sizes
     public static final Integer WALLET_TYPE_ICONS_SIZE           = 42; // 42x42 px

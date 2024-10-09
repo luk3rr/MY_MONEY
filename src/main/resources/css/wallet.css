@@ -63,3 +63,17 @@
   -fx-font-size: 12px;
   -fx-text-fill: #555;
 }
+
+.check-box {
+    -fx-font-size: 12px; /* Tamanho da fonte */
+    -fx-padding: 5px; /* Espaçamento interno */
+    -fx-text-fill: black; /* Cor do texto */
+}
+
+.check-box:selected {
+    -fx-text-fill: black; /* Cor do texto ao selecionar */
+}
+
+.check-box:hover {
+    -fx-background-color: #e0e0e0; /* Cor ao passar o mouse */
+}
