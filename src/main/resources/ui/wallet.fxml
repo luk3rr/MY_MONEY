@@ -69,7 +69,6 @@
                                     <AnchorPane fx:id="walletPane3" minHeight="200.0" minWidth="250.0" HBox.hgrow="ALWAYS" />
                                  </children>
                               </HBox>
-                              <ComboBox layoutX="536.0" layoutY="15.0" minWidth="150.0" stylesheets="@../css/combo-box.css" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
                            </children>
                         </AnchorPane>
                      </children>

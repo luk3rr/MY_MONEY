@@ -15,6 +15,7 @@ import com.mymoney.repositories.TransferRepository;
 import com.mymoney.repositories.WalletRepository;
 import com.mymoney.repositories.WalletTransactionRepository;
 import com.mymoney.repositories.WalletTypeRepository;
+import com.mymoney.util.Constants;
 import com.mymoney.util.LoggerConfig;
 import com.mymoney.util.TransactionStatus;
 import com.mymoney.util.TransactionType;
@@ -541,6 +542,16 @@ public class WalletService
     }
 
     /**
+     * Get all transactions by year
+     * @param year The year of the transactions
+     * @return A list with all transactions of the year
+     */
+    public List<WalletTransaction> GetAllTransactionsByYear(Integer year)
+    {
+        return m_walletTransactionRepository.GetAllTransactionsByYear(year);
+    }
+
+    /**
      * Get all transactions by wallet and month
      * @param walletId The id of the wallet
      * @param month The month of the transactions
@@ -563,6 +574,22 @@ public class WalletService
                                                                  Integer year)
     {
         return m_walletTransactionRepository.GetPendingTransactionsByMonth(month, year);
+    }
+
+    /**
+     * Get all transactions between two dates
+     * @param startDate The start date
+     * @param endDate The end date
+     * @return A list with all transactions between the two dates
+     */
+    public List<WalletTransaction> GetTransactionsBetweenDates(LocalDateTime startDate,
+                                                               LocalDateTime endDate)
+    {
+        String startDateStr = startDate.format(Constants.DATE_TIME_FORMATTER);
+        String endDateStr   = endDate.format(Constants.DATE_TIME_FORMATTER);
+
+        return m_walletTransactionRepository.GetTransactionsBetweenDates(startDateStr,
+                                                                         endDateStr);
     }
 
     /**
@@ -629,5 +656,22 @@ public class WalletService
     GetTransfersByWalletAndMonth(Long walletId, Integer month, Integer year)
     {
         return m_transferRepository.GetTransfersByWalletAndMonth(walletId, month, year);
+    }
+
+    /**
+     * Get the date of the oldest transaction
+     * @return The date of the oldest transaction or the current date if there are no
+     *     transactions
+     */
+    public LocalDateTime GetOldestTransactionDate()
+    {
+        String date = m_walletTransactionRepository.GetOldestTransactionDate();
+
+        if (date == null)
+        {
+            return LocalDateTime.now();
+        }
+
+        return LocalDateTime.parse(date, Constants.DATE_TIME_FORMATTER);
     }
 }

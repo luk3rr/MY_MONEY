@@ -137,28 +137,3 @@
   -fx-text-fill: #555;
 }
 
-.month-resume-positive-label {
-  -fx-font-weight: bold;
-  -fx-text-fill: #28a745;
-}
-
-.month-resume-negative-label {
-  -fx-font-weight: bold;
-  -fx-text-fill: #dc3545;
-}
-
-.month-resume-zero-label {
-  -fx-font-weight: bold;
-  -fx-text-fill: #333;
-}
-
-#monthResumeExpectedIncomeHBox,
-#monthResumeExpectedExpenseHBox,
-#monthResumeExpectedBalanceHBox,
-#monthResumeExpectedSavingsHBox,
-#monthResumeCreditCardPendingPaymentsHBox
-{
-    -fx-font-size: 9px;
-    -fx-text-fill: #333;
-}
-

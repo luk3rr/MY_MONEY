@@ -691,11 +691,6 @@ public class WalletController
         }
     }
 
-    /**
-     * Create an animation for a bar
-     * @param data The data to animate
-     * @param targetValue The target value
-     */
     private void CreateAnimation(XYChart.Data<String, Number> data, Double targetValue)
     {
         data.setYValue(0.0); // Start at zero

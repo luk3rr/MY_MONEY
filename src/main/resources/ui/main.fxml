@@ -13,7 +13,7 @@
    <children>
       <HBox fx:id="rootHBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <VBox fx:id="sidebar" minWidth="80.0" spacing="20.0" HBox.hgrow="NEVER">
+            <VBox fx:id="sidebar" spacing="20.0" HBox.hgrow="NEVER">
                <children>
                   <JFXButton fx:id="menuButton" alignment="BASELINE_LEFT" contentDisplay="GRAPHIC_ONLY" graphicTextGap="15.0" text="Menu" wrapText="true">
                      <font>
@@ -93,11 +93,11 @@
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </JFXButton>
-                  <JFXButton fx:id="categoryButton" alignment="BASELINE_LEFT" contentDisplay="GRAPHIC_ONLY" graphicTextGap="15.0" text="Category" wrapText="true">
+                  <JFXButton fx:id="savingsButton" alignment="BASELINE_LEFT" contentDisplay="GRAPHIC_ONLY" graphicTextGap="15.0" text="Savings" wrapText="true">
                      <graphic>
                         <ImageView fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../icons/sidebar/category.png" />
+                              <Image url="@../icons/sidebar/savings.png" />
                            </image>
                         </ImageView>
                      </graphic>

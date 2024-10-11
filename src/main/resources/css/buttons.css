@@ -30,3 +30,31 @@
     -fx-border-color: #ddd;
     -fx-text-fill: #999;
 }
+
+/* Estilos para MenuButton */
+.menu-button {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-padding: 0 0;
+    -fx-border-color: #ccc;
+    -fx-border-radius: 20;
+    -fx-border-width: 2;
+    -fx-font-size: 14px;
+    -fx-text-fill: #333;
+    -fx-cursor: hand;
+}
+
+.menu-button:hover {
+    -fx-background-color: #e6e6e6;
+}
+
+.menu-button:pressed {
+    -fx-background-color: #ccc;
+    -fx-text-fill: #fff;
+}
+
+.menu-button:disabled {
+    -fx-background-color: #f5f5f5;
+    -fx-border-color: #ddd;
+    -fx-text-fill: #999;
+}

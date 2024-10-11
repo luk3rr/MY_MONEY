@@ -1,0 +1,36 @@
+/*
+ * Filename: table-view.css
+ * Created on: October 10, 2024
+ * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
+ */
+
+.table-view {
+    -fx-background-color: #f8f8f8;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1px;
+}
+
+.table-view .column-header {
+    -fx-background-color: #f2f3f4;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10px;
+}
+
+.table-view .table-cell {
+    -fx-padding: 10px;
+    -fx-font-size: 14px;
+}
+
+.table-view .table-row:selected {
+    -fx-background-color: #2196F3;
+    -fx-text-fill: white;
+}
+
+.table-view .table-row {
+    -fx-background-color: #ffffff;
+}
+
+.table-view .table-row:nth-child(even) {
+    -fx-background-color: #f2f2f2;
+}

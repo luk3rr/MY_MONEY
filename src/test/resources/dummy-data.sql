@@ -114,11 +114,11 @@ INSERT INTO credit_card (id, operator_id, name, billing_due_day, max_debt, last_
 -- Dívidas passadas (já pagas)
 INSERT INTO credit_card_debt (id, crc_id, category_id, date, total_amount, description)
 VALUES
-(1, 1, 1, '2023-05-10', 200.00, 'Compra de supermercado'),
-(2, 1, 2, '2023-06-10', 150.00, 'Transporte público'),
-(3, 2, 3, '2023-07-15', 500.00, 'Viagem de férias'),
-(4, 3, 4, '2023-08-20', 300.00, 'Consulta médica'),
-(5, 4, 5, '2023-09-25', 250.00, 'Material escolar');
+(1, 1, 1, '2023-05-10T00:00:00', 200.00, 'Compra de supermercado'),
+(2, 1, 2, '2023-06-10T00:00:00', 150.00, 'Transporte público'),
+(3, 2, 3, '2023-07-15T00:00:00', 500.00, 'Viagem de férias'),
+(4, 3, 4, '2023-08-20T00:00:00', 300.00, 'Consulta médica'),
+(5, 4, 5, '2023-09-25T00:00:00', 250.00, 'Material escolar');
 
 -- Pagamentos para as dívidas passadas
 INSERT INTO credit_card_payment (id, wallet_id, debt_id, date, amount, installment)

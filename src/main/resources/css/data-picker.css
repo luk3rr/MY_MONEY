@@ -1,0 +1,45 @@
+/*
+ * Filename: data-picker.css
+ * Created on: October 10, 2024
+ * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
+ */
+
+.date-picker {
+  -fx-background-color: white;
+  -fx-background-radius: 20;
+  -fx-padding: 5;
+  -fx-border-color: #ccc;
+  -fx-border-radius: 20;
+  -fx-border-width: 2;
+  -fx-font-size: 14px;
+}
+
+.date-picker .text-field {
+  -fx-background-color: transparent; /* Fundo transparente para o campo de texto */
+  -fx-background-radius: 20;
+}
+
+.date-picker .arrow-button {
+  -fx-background-color: transparent;
+  -fx-background-radius: 20;
+}
+
+.date-picker .arrow {
+  -fx-background-color: #999;
+  -fx-background-radius: 20;
+}
+
+.date-picker-popup .list-view .list-cell {
+  -fx-background-color: white;
+  -fx-background-radius: 20;
+  -fx-text-fill: #333;
+}
+
+.date-picker-popup .list-view .list-cell:hover {
+  -fx-background-color: #e6e6e6;
+  -fx-background-radius: 20;
+}
+
+.date-picker .popup {
+  -fx-background-color: white; /* Cor de fundo do popup */
+}

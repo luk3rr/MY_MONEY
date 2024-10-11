@@ -81,64 +81,7 @@
                         <AnchorPane fx:id="monthResumePane" minWidth="390.0" styleClass="anchor-pane" stylesheets="@../css/anchor-pane.css" HBox.hgrow="ALWAYS">
                            <children>
                               <Label fx:id="monthResumePaneTitle" styleClass="title" text="Resume" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
-                              <AnchorPane fx:id="monthResumeView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
-                                 <children>
-                                    <VBox fx:id="monthResumeVBox" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <children>
-                                          <HBox VBox.vgrow="ALWAYS">
-                                             <children>
-                                                <VBox HBox.hgrow="ALWAYS">
-                                                   <children>
-                                                      <HBox fx:id="monthResumeCurrentIncomeHBox" VBox.vgrow="ALWAYS" />
-                                                      <HBox fx:id="monthResumeExpectedIncomeHBox" VBox.vgrow="ALWAYS" />
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </HBox>
-                                          <HBox VBox.vgrow="ALWAYS">
-                                             <children>
-                                                <VBox HBox.hgrow="ALWAYS">
-                                                   <children>
-                                                      <HBox fx:id="monthResumeCurrentExpenseHBox" VBox.vgrow="ALWAYS" />
-                                                      <HBox fx:id="monthResumeExpectedExpenseHBox" VBox.vgrow="ALWAYS" />
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </HBox>
-                                          <HBox VBox.vgrow="ALWAYS">
-                                             <children>
-                                                <VBox HBox.hgrow="ALWAYS">
-                                                   <children>
-                                                      <HBox fx:id="monthResumeCurrentBalanceHBox" VBox.vgrow="ALWAYS" />
-                                                      <HBox fx:id="monthResumeExpectedBalanceHBox" VBox.vgrow="ALWAYS" />
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </HBox>
-                                          <HBox VBox.vgrow="ALWAYS">
-                                             <children>
-                                                <VBox HBox.hgrow="ALWAYS">
-                                                   <children>
-                                                      <HBox fx:id="monthResumeCurrentSavingsHBox" VBox.vgrow="ALWAYS" />
-                                                      <HBox fx:id="monthResumeExpectedSavingsHBox" VBox.vgrow="ALWAYS" />
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </HBox>
-                                          <HBox VBox.vgrow="ALWAYS">
-                                             <children>
-                                                <VBox HBox.hgrow="ALWAYS">
-                                                   <children>
-                                                      <HBox fx:id="monthResumeCreditCardDebtHBox" VBox.vgrow="ALWAYS" />
-                                                      <HBox fx:id="monthResumeCreditCardPendingPaymentsHBox" VBox.vgrow="ALWAYS" />
-                                                   </children>
-                                                </VBox>
-                                             </children>
-                                          </HBox>
-                                       </children>
-                                    </VBox>
-                                 </children>
-                              </AnchorPane>
+                              <AnchorPane fx:id="monthResumeView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0" />
                            </children>
                         </AnchorPane>
                      </children>

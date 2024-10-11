@@ -6,12 +6,15 @@
 
 .positive-balance {
   -fx-text-fill: #28a745;
+  -fx-font-weight: bold;
 }
 
 .neutral-balance {
   -fx-text-fill: black;
+  -fx-font-weight: bold;
 }
 
 .negative-balance {
   -fx-text-fill: red;
+  -fx-font-weight: bold;
 }

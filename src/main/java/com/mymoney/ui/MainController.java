@@ -51,7 +51,7 @@ public class MainController
     private Button transactionButton;
 
     @FXML
-    private Button categoryButton;
+    private Button savingsButton;
 
     @FXML
     private AnchorPane contentArea;
@@ -67,7 +67,7 @@ public class MainController
     {
         sidebarButtons =
             new Button[] { menuButton,       homeButton,        walletButton,
-                           creditCardButton, transactionButton, categoryButton };
+                           creditCardButton, transactionButton, savingsButton };
 
         rootPane.getStylesheets().add(
             getClass().getResource(Constants.MAIN_STYLE_SHEET).toExternalForm());
@@ -94,9 +94,9 @@ public class MainController
             UpdateSelectedButton(transactionButton);
         });
 
-        categoryButton.setOnAction(event -> {
-            LoadContent(Constants.CATEGORY_FXML, Constants.CATEGORY_STYLE_SHEET);
-            UpdateSelectedButton(categoryButton);
+        savingsButton.setOnAction(event -> {
+            LoadContent(Constants.SAVINGS_FXML, Constants.SAVINGS_STYLE_SHEET);
+            UpdateSelectedButton(savingsButton);
         });
 
         // Load start page

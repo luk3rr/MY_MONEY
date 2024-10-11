@@ -22,12 +22,13 @@ public final class Constants
     public static final String WALLET_FXML             = "/ui/wallet.fxml";
     public static final String CREDIT_CARD_FXML        = "/ui/credit_card.fxml";
     public static final String TRANSACTION_FXML        = "/ui/transaction.fxml";
-    public static final String CATEGORY_FXML           = "/ui/category.fxml";
+    public static final String SAVINGS_FXML            = "/ui/savings.fxml";
     public static final String ADD_WALLET_FXML         = "/ui/add_wallet.fxml";
     public static final String ADD_TRANSFER_FXML       = "/ui/add_transfer.fxml";
     public static final String ADD_EXPENSE_FXML        = "/ui/add_expense.fxml";
     public static final String ADD_INCOME_FXML         = "/ui/add_income.fxml";
     public static final String WALLET_FULL_PANE_FXML   = "/ui/wallet_full_pane.fxml";
+    public static final String RESUME_PANE_FXML        = "/ui/resume_pane.fxml";
     public static final String RENAME_WALLET_FXML      = "/ui/rename_wallet.fxml";
     public static final String CHANGE_WALLET_TYPE_FXML = "/ui/change_wallet_type.fxml";
 
@@ -47,7 +48,7 @@ public final class Constants
     public static final String WALLET_STYLE_SHEET      = "/css/wallet.css";
     public static final String CREDIT_CARD_STYLE_SHEET = "/css/credit-card.css";
     public static final String TRANSACTION_STYLE_SHEET = "/css/transaction.css";
-    public static final String CATEGORY_STYLE_SHEET    = "/css/category.css";
+    public static final String SAVINGS_STYLE_SHEET     = "/css/savings.css";
     public static final String COMMON_STYLE_SHEET      = "/css/common-styles.css";
 
     // Main pane styles

@@ -1,0 +1,34 @@
+/*
+ * Filename: resume-pane.css
+ * Created on: October 10, 2024
+ * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
+ */
+
+.positive-value {
+  -fx-font-size: 13px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #28a745;
+}
+
+.negative-value {
+  -fx-font-size: 13px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #dc3545;
+}
+
+.zero-value {
+  -fx-font-size: 13px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #333;
+}
+
+.current-label {
+  -fx-font-size: 13px;
+  -fx-text-fill: black;
+  -fx-font-weight: bold;
+}
+
+.foreseen-label {
+  -fx-font-size: 10px;
+  -fx-text-fill: #333;
+}

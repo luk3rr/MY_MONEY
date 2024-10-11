@@ -44,6 +44,17 @@ public interface CreditCardPaymentRepository
     GetTotalDebtAmount(@Param("month") Integer month, @Param("year") Integer year);
 
     /**
+     * Get the total debt amount of all credit cards in a year
+     * @param year The year
+     * @return The total debt amount of all credit cards in a year
+     */
+    @Query("SELECT COALESCE(SUM(ccp.amount), 0) "
+           + "FROM CreditCardPayment ccp "
+           + "WHERE strftime('%Y', ccp.date) = printf('%04d', :year)")
+    Double
+    GetTotalDebtAmount(@Param("year") Integer year);
+
+    /**
      * TODO: Create tests
      * Get the total of all pending payments of all credit cards from a specified month
      * and year onward, including future months and the current month
@@ -59,4 +70,18 @@ public interface CreditCardPaymentRepository
            + "AND ccp.wallet IS NULL")
     Double
     GetTotalPendingPayments(@Param("month") Integer month, @Param("year") Integer year);
+
+    /**
+     * Get the total of all pending payments of all credit cards from a specified year
+     * onward, including future years and the current year
+     * @param year The starting year (inclusive)
+     * @return The total of all pending payments of all credit cards from the specified
+     *    year onward
+     */
+    @Query("SELECT COALESCE(SUM(ccp.amount), 0) "
+           + "FROM CreditCardPayment ccp "
+           + "WHERE strftime('%Y', ccp.date) >= printf('%04d', :year) "
+           + "AND ccp.wallet IS NULL")
+    Double
+    GetTotalPendingPayments(@Param("year") Integer year);
 }

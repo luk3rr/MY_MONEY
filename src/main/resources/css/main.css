@@ -42,11 +42,13 @@
   -fx-background-color: #48c9b0;
 }
 
+/*
 #sidebar JFXButton ImageView {
-  -fx-fit-height: 30px;
-  -fx-fit-width: 30px;
+  -fx-fit-height: 40px;
+  -fx-fit-width: 40px;
   -fx-margin-right: 10px;
 }
+*/
 
 #sidebar .sidebar-button-selected {
   -fx-background-color: #48c9b0;

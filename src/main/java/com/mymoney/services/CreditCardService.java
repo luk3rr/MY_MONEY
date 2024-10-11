@@ -6,6 +6,8 @@
 
 package com.mymoney.services;
 
+import static org.mockito.Mockito.after;
+
 import com.mymoney.entities.Category;
 import com.mymoney.entities.CreditCard;
 import com.mymoney.entities.CreditCardDebt;
@@ -233,6 +235,16 @@ public class CreditCardService
     }
 
     /**
+     * Get the total debt amount of all credit cards in a year
+     * @param year The year
+     * @return The total debt amount of all credit cards in a year
+     */
+    public Double GetTotalDebtAmount(Integer year)
+    {
+        return m_creditCardPaymentRepository.GetTotalDebtAmount(year);
+    }
+
+    /**
      * Get the total of all pending payments of all credit cards from a specified month
      * and year onward, including future months and the current month
      * @param month The starting month (inclusive)
@@ -243,5 +255,33 @@ public class CreditCardService
     public Double GetTotalPendingPayments(Integer month, Integer year)
     {
         return m_creditCardPaymentRepository.GetTotalPendingPayments(month, year);
+    }
+
+    /**
+     * Get the total of all pending payments of all credit cards from a specified year
+     * onward, including future years and the current year
+     * @param year The starting year (inclusive)
+     * @return The total of all pending payments of all credit cards from the specified
+     *    year onward
+     */
+    public Double GetTotalPendingPayments(Integer year)
+    {
+        return m_creditCardPaymentRepository.GetTotalPendingPayments(year);
+    }
+
+    /**
+     * Get the date of the oldest debt
+     * @return The date of the oldest debt or the current date if there are no debts
+     */
+    public LocalDateTime GetOldestDebtDate()
+    {
+        String date = m_creditCardDebtRepository.GetOldestDebtDate();
+
+        if (date == null)
+        {
+            return LocalDateTime.now();
+        }
+
+        return LocalDateTime.parse(date, Constants.DATE_TIME_FORMATTER);
     }
 }

@@ -23,8 +23,10 @@ import java.util.Map;
 import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.NumberAxis;
@@ -39,6 +41,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -84,35 +87,8 @@ public class HomeController
     @FXML
     private Label monthResumePaneTitle;
 
-    @FXML
-    private HBox monthResumeCurrentIncomeHBox;
-
-    @FXML
-    private HBox monthResumeExpectedIncomeHBox;
-
-    @FXML
-    private HBox monthResumeCurrentExpenseHBox;
-
-    @FXML
-    private HBox monthResumeExpectedExpenseHBox;
-
-    @FXML
-    private HBox monthResumeCurrentBalanceHBox;
-
-    @FXML
-    private HBox monthResumeExpectedBalanceHBox;
-
-    @FXML
-    private HBox monthResumeCurrentSavingsHBox;
-
-    @FXML
-    private HBox monthResumeExpectedSavingsHBox;
-
-    @FXML
-    private HBox monthResumeCreditCardDebtHBox;
-
-    @FXML
-    private HBox monthResumeCreditCardPendingPaymentsHBox;
+    @Autowired
+    private ConfigurableApplicationContext springContext;
 
     private List<Wallet> wallets;
 
@@ -546,356 +522,39 @@ public class HomeController
      */
     private void UpdateMonthResume()
     {
-        LocalDateTime currentDate = LocalDateTime.now();
-        Integer       month       = currentDate.getMonthValue();
-        Integer       year        = currentDate.getYear();
-
-        List<WalletTransaction> confirmedTransactions =
-            walletService.GetConfirmedTransactionsByMonth(month, year);
-
-        Double totalConfirmedIncome =
-            confirmedTransactions.stream()
-                .filter(t -> t.GetType() == TransactionType.INCOME)
-                .mapToDouble(WalletTransaction::GetAmount)
-                .sum();
-
-        Double totalConfirmedExpenses =
-            confirmedTransactions.stream()
-                .filter(t -> t.GetType() == TransactionType.EXPENSE)
-                .mapToDouble(WalletTransaction::GetAmount)
-                .sum();
-
-        List<WalletTransaction> allMonthTransactions =
-            walletService.GetAllTransactionsByMonth(month, year);
-
-        Double allMonthExpectedIncome =
-            allMonthTransactions.stream()
-                .filter(t -> t.GetType() == TransactionType.INCOME)
-                .mapToDouble(WalletTransaction::GetAmount)
-                .sum();
-
-        Double allMonthExpectedExpenses =
-            allMonthTransactions.stream()
-                .filter(t -> t.GetType() == TransactionType.EXPENSE)
-                .mapToDouble(WalletTransaction::GetAmount)
-                .sum();
-
-        Double totalDebtAmount = creditCardService.GetTotalDebtAmount(month, year);
-        Double totalPendingPayments =
-            creditCardService.GetTotalPendingPayments(month, year);
-
-        Double balance = totalConfirmedIncome - totalConfirmedExpenses;
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM/yy");
-        monthResumePaneTitle.setText(currentDate.format(formatter) + " Resume");
-
-        // Total Income
-        Label incomeTextLabel = new Label("Incomes: ");
-        incomeTextLabel.setMinWidth(Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
-
-        Label incomeValueLabel =
-            new Label(String.format("$ %.2f", totalConfirmedIncome));
-        incomeValueLabel.getStyleClass().add(
-            Constants.HOME_MONTH_RESUME_POSITIVE_LABEL_STYLE);
-
-        Label incomeSignLabel = new Label("");
-        incomeSignLabel.setMinWidth(Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
-
-        Label incomeExpectedIncomeLabel = new Label("Foreseen: ");
-        incomeExpectedIncomeLabel.setMinWidth(
-            Constants.HOME_MONTH_RESUME_TEXT_EXPECTED_LABEL_WIDTH);
-
-        Label incomeExpectedIncomeValueLabel =
-            new Label(String.format("$ %.2f", allMonthExpectedIncome));
-
-        // Total Expenses
-        Label expensesTextLabel = new Label("Expenses: ");
-        expensesTextLabel.setMinWidth(Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
-
-        Label expensesLabel =
-            new Label(String.format("$ %.2f", totalConfirmedExpenses));
-        expensesLabel.getStyleClass().add(
-            Constants.HOME_MONTH_RESUME_NEGATIVE_LABEL_STYLE);
-
-        Label expensesSignLabel = new Label("");
-        expensesSignLabel.setMinWidth(Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
-
-        Label expectedExpensesLabel = new Label("Foreseen: ");
-        expectedExpensesLabel.setMinWidth(
-            Constants.HOME_MONTH_RESUME_TEXT_EXPECTED_LABEL_WIDTH);
-
-        Label expectedExpensesValueLabel =
-            new Label(String.format("$ %.2f", allMonthExpectedExpenses));
-
-        // Balance
-        Label balanceTextLabel = new Label("Balance: ");
-        balanceTextLabel.setMinWidth(Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
-
-        Label balanceSignLabel;
-        Label balanceLabel;
-
-        // Set the balance label and sign label according to the balance value
-        if (balance > 0)
+        try
         {
-            balanceLabel     = new Label(String.format("$ %.2f", balance));
-            balanceSignLabel = new Label("+");
+            FXMLLoader loader =
+                new FXMLLoader(getClass().getResource(Constants.RESUME_PANE_FXML));
+            loader.setControllerFactory(springContext::getBean);
+            Parent newContent = loader.load();
 
-            balanceLabel.getStyleClass().add(
-                Constants.HOME_MONTH_RESUME_POSITIVE_LABEL_STYLE);
+            // Add style class to the wallet pane
+            newContent.getStylesheets().add(
+                getClass().getResource(Constants.COMMON_STYLE_SHEET).toExternalForm());
 
-            balanceSignLabel.getStyleClass().add(
-                Constants.HOME_MONTH_RESUME_POSITIVE_LABEL_STYLE);
+            ResumePaneController resumePaneController = loader.getController();
+
+            LocalDateTime currentDate = LocalDateTime.now();
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM/yy");
+            monthResumePaneTitle.setText(currentDate.format(formatter) + " Resume");
+
+            resumePaneController.UpdateResumePane(currentDate.getMonthValue(),
+                                                  currentDate.getYear());
+
+            AnchorPane.setTopAnchor(newContent, 0.0);
+            AnchorPane.setBottomAnchor(newContent, 0.0);
+            AnchorPane.setLeftAnchor(newContent, 0.0);
+            AnchorPane.setRightAnchor(newContent, 0.0);
+
+            monthResumeView.getChildren().clear();
+            monthResumeView.getChildren().add(newContent);
         }
-        else if (balance < 0)
+        catch (Exception e)
         {
-            balanceLabel     = new Label(String.format("$ %.2f", -balance));
-            balanceSignLabel = new Label("-");
-
-            balanceLabel.getStyleClass().add(
-                Constants.HOME_MONTH_RESUME_NEGATIVE_LABEL_STYLE);
-
-            balanceSignLabel.getStyleClass().add(
-                Constants.HOME_MONTH_RESUME_NEGATIVE_LABEL_STYLE);
+            logger.severe("Error updating month resume: " + e.getMessage());
         }
-        else
-        {
-            balanceLabel     = new Label("$ 0.00");
-            balanceSignLabel = new Label("");
-
-            balanceLabel.getStyleClass().add(
-                Constants.HOME_MONTH_RESUME_ZERO_LABEL_STYLE);
-        }
-
-        balanceSignLabel.setMinWidth(Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
-
-        Double expectedBalance = allMonthExpectedIncome - allMonthExpectedExpenses;
-
-        Label expectedBalanceTextLabel = new Label("Foreseen: ");
-        expectedBalanceTextLabel.setMinWidth(
-            Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
-
-        Label expectedBalanceValueLabel;
-        Label expectedBalanceSignLabel;
-
-        if (expectedBalance > 0)
-        {
-            expectedBalanceValueLabel =
-                new Label(String.format("$ %.2f", expectedBalance));
-
-            expectedBalanceSignLabel = new Label("+");
-        }
-        else if (expectedBalance < 0)
-        {
-            expectedBalanceValueLabel =
-                new Label(String.format("$ %.2f", -expectedBalance));
-
-            expectedBalanceSignLabel = new Label("-");
-        }
-        else
-        {
-            expectedBalanceValueLabel = new Label("$ 0.00");
-            expectedBalanceSignLabel  = new Label("");
-        }
-
-        expectedBalanceSignLabel.setMinWidth(
-            Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
-
-        // Mensal Economies
-
-        logger.info("Total confirmed income: " + totalConfirmedIncome);
-        logger.info("Total confirmed expenses: " + totalConfirmedExpenses);
-
-        Double economyPercentage = 0.0;
-
-        if (totalConfirmedIncome <= 0)
-        {
-            economyPercentage = 0.0;
-        }
-        else
-        {
-            economyPercentage = (totalConfirmedIncome - totalConfirmedExpenses) /
-                                totalConfirmedIncome * 100;
-        }
-
-        Label mensalEconomiesTextLabel;
-        Label mensalEconomiesSignLabel;
-        Label mensalEconomiesPercentLabel;
-
-        // Set the economy label and sign label according to the economy value
-        if (economyPercentage > 0)
-        {
-            mensalEconomiesTextLabel = new Label("Savings: ");
-            mensalEconomiesSignLabel = new Label("");
-
-            mensalEconomiesPercentLabel =
-                new Label(String.format("%.2f %%", economyPercentage));
-
-            mensalEconomiesPercentLabel.getStyleClass().add(
-                Constants.HOME_MONTH_RESUME_POSITIVE_LABEL_STYLE);
-
-            mensalEconomiesSignLabel.getStyleClass().add(
-                Constants.HOME_MONTH_RESUME_POSITIVE_LABEL_STYLE);
-        }
-        else if (economyPercentage < 0)
-        {
-            mensalEconomiesTextLabel = new Label("No savings: ");
-            mensalEconomiesSignLabel = new Label("-");
-
-            mensalEconomiesPercentLabel =
-                new Label(String.format("%.2f %%", -economyPercentage));
-
-            mensalEconomiesPercentLabel.getStyleClass().add(
-                Constants.HOME_MONTH_RESUME_NEGATIVE_LABEL_STYLE);
-
-            mensalEconomiesSignLabel.getStyleClass().add(
-                Constants.HOME_MONTH_RESUME_NEGATIVE_LABEL_STYLE);
-        }
-        else
-        {
-            mensalEconomiesTextLabel = new Label("No savings: ");
-            mensalEconomiesSignLabel = new Label("");
-
-            mensalEconomiesPercentLabel = new Label("0.00 %");
-
-            mensalEconomiesPercentLabel.getStyleClass().add(
-                Constants.HOME_MONTH_RESUME_ZERO_LABEL_STYLE);
-        }
-
-        mensalEconomiesTextLabel.setMinWidth(
-            Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
-
-        mensalEconomiesSignLabel.setMinWidth(
-            Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
-
-        Label expectedSavingsLabel = new Label("Foreseen: ");
-
-        Double expectedSavingsPercentage = 0.0;
-
-        if (allMonthExpectedIncome <= 0)
-        {
-            expectedSavingsPercentage = 0.0;
-        }
-        else
-        {
-            expectedSavingsPercentage =
-                (allMonthExpectedIncome - allMonthExpectedExpenses) /
-                allMonthExpectedIncome * 100;
-        }
-
-        Label expectedSavingsPercentLabel;
-        Label expectedSavingsSignLabel;
-
-        if (expectedSavingsPercentage > 0)
-        {
-            expectedSavingsPercentLabel =
-                new Label(String.format("%.2f %%", expectedSavingsPercentage));
-
-            expectedSavingsSignLabel = new Label("");
-        }
-        else if (expectedSavingsPercentage < 0)
-        {
-
-            expectedSavingsPercentLabel =
-                new Label(String.format("%.2f %%", -expectedSavingsPercentage));
-
-            expectedSavingsSignLabel = new Label("-");
-        }
-        else
-        {
-            expectedSavingsPercentLabel = new Label("0.00 %");
-            expectedSavingsSignLabel    = new Label("");
-        }
-
-        expectedSavingsLabel.setMinWidth(Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
-
-        expectedSavingsSignLabel.setMinWidth(
-            Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
-
-        // Credit card debt
-        Label creditCardDebtLabel = new Label("Credit cards: ");
-        creditCardDebtLabel.setMinWidth(Constants.HOME_MONTH_RESUME_TEXT_LABEL_WIDTH);
-
-        Label creditCardDebtValueLabel =
-            new Label(String.format("$ %.2f", totalDebtAmount));
-
-        Label creditCardSignLabel = new Label("");
-        creditCardSignLabel.setMinWidth(Constants.HOME_MONTH_RESUME_SIGN_LABEL_WIDTH);
-
-        creditCardDebtValueLabel.getStyleClass().add(
-            Constants.HOME_MONTH_RESUME_ZERO_LABEL_STYLE);
-
-        creditCardDebtValueLabel.setAlignment(Pos.CENTER_RIGHT);
-
-        Label pendingPaymentsLabel = new Label("Total invoices to pay: ");
-        pendingPaymentsLabel.setMinWidth(
-            Constants.HOME_MONTH_RESUME_TEXT_EXPECTED_LABEL_WIDTH);
-
-        Label pendingPaymentsValueLabel =
-            new Label(String.format("$ %.2f", totalPendingPayments));
-
-        // Clear the HBoxes and add the labels
-        monthResumeCurrentIncomeHBox.getChildren().clear();
-        monthResumeExpectedIncomeHBox.getChildren().clear();
-        monthResumeCurrentExpenseHBox.getChildren().clear();
-        monthResumeExpectedExpenseHBox.getChildren().clear();
-        monthResumeCurrentBalanceHBox.getChildren().clear();
-        monthResumeExpectedBalanceHBox.getChildren().clear();
-        monthResumeCurrentSavingsHBox.getChildren().clear();
-        monthResumeExpectedSavingsHBox.getChildren().clear();
-        monthResumeCreditCardDebtHBox.getChildren().clear();
-        monthResumeCreditCardPendingPaymentsHBox.getChildren().clear();
-
-        monthResumeCurrentIncomeHBox.getChildren().addAll(incomeTextLabel,
-                                                          incomeSignLabel,
-                                                          incomeValueLabel);
-
-        monthResumeExpectedIncomeHBox.getChildren().addAll(
-            incomeExpectedIncomeLabel,
-            incomeExpectedIncomeValueLabel);
-
-        monthResumeCurrentExpenseHBox.getChildren().addAll(expensesTextLabel,
-                                                           expensesSignLabel,
-                                                           expensesLabel);
-
-        monthResumeExpectedExpenseHBox.getChildren().addAll(expectedExpensesLabel,
-                                                            expectedExpensesValueLabel);
-
-        monthResumeCurrentBalanceHBox.getChildren().addAll(balanceTextLabel,
-                                                           balanceSignLabel,
-                                                           balanceLabel);
-
-        monthResumeExpectedBalanceHBox.getChildren().addAll(expectedBalanceTextLabel,
-                                                            expectedBalanceSignLabel,
-                                                            expectedBalanceValueLabel);
-
-        monthResumeCurrentSavingsHBox.getChildren().addAll(mensalEconomiesTextLabel,
-                                                           mensalEconomiesSignLabel,
-                                                           mensalEconomiesPercentLabel);
-
-        monthResumeExpectedSavingsHBox.getChildren().addAll(
-            expectedSavingsLabel,
-            expectedSavingsSignLabel,
-            expectedSavingsPercentLabel);
-
-        monthResumeCreditCardDebtHBox.getChildren().addAll(creditCardDebtLabel,
-                                                           creditCardSignLabel,
-                                                           creditCardDebtValueLabel);
-
-        monthResumeCreditCardPendingPaymentsHBox.getChildren().addAll(
-            pendingPaymentsLabel,
-            pendingPaymentsValueLabel);
-
-        // Alignment for the HBoxes
-        monthResumeCurrentIncomeHBox.setAlignment(Pos.CENTER_LEFT);
-        monthResumeExpectedIncomeHBox.setAlignment(Pos.TOP_LEFT);
-        monthResumeCurrentExpenseHBox.setAlignment(Pos.CENTER_LEFT);
-        monthResumeExpectedExpenseHBox.setAlignment(Pos.TOP_LEFT);
-        monthResumeCurrentBalanceHBox.setAlignment(Pos.CENTER_LEFT);
-        monthResumeExpectedBalanceHBox.setAlignment(Pos.TOP_LEFT);
-        monthResumeCurrentSavingsHBox.setAlignment(Pos.CENTER_LEFT);
-        monthResumeExpectedSavingsHBox.setAlignment(Pos.TOP_LEFT);
-        monthResumeCreditCardDebtHBox.setAlignment(Pos.CENTER_LEFT);
-        monthResumeCreditCardPendingPaymentsHBox.setAlignment(Pos.TOP_LEFT);
     }
 
     /**

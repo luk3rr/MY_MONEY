@@ -8,6 +8,7 @@ package com.mymoney.repositories;
 
 import com.mymoney.entities.Transfer;
 import com.mymoney.entities.WalletTransaction;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -50,6 +51,18 @@ public interface WalletTransactionRepository
                               @Param("year") Integer  year);
 
     /**
+     * Get the all transactions by year
+     * @param year The year
+     * @return A list with the transactions by year
+     */
+    @Query("SELECT wt "
+           + "FROM WalletTransaction wt "
+           + "WHERE strftime('%Y', wt.date) = printf('%04d', :year) "
+           + "ORDER BY wt.date DESC")
+    List<WalletTransaction>
+    GetAllTransactionsByYear(@Param("year") Integer year);
+
+    /**
      * Get the transactions by wallet and month
      * @param walletId The id of the wallet
      * @param month The month
@@ -84,6 +97,21 @@ public interface WalletTransactionRepository
                                   @Param("year") Integer  year);
 
     /**
+     * Get all transactions between two dates
+     * @param startDate The start date
+     * @param endDate The end date
+     * @return A list with the transactions between the two dates
+     */
+    @Query("SELECT wt "
+           + "FROM WalletTransaction wt "
+           + "WHERE wt.date >= :startDate "
+           + "AND wt.date <= :endDate "
+           + "ORDER BY wt.date DESC")
+    List<WalletTransaction>
+    GetTransactionsBetweenDates(@Param("startDate") String startDate,
+                                @Param("endDate") String endDate);
+
+    /**
      * Get the confirmed transactions by month and year
      * @param month The month
      * @param year The year
@@ -115,10 +143,20 @@ public interface WalletTransactionRepository
     /**
      * Get the last n transactions of all wallets
      * @param pageable The pageable object
+     * @return A list with the last n transactions of all wallets
      */
     @Query("SELECT wt "
            + "FROM WalletTransaction wt "
            + "ORDER BY wt.date DESC")
     List<WalletTransaction>
     GetLastTransactions(Pageable pageable);
+
+    /**
+     * Get the date of the oldest transaction
+     * @return The date of the oldest transaction
+     */
+    @Query("SELECT MIN(wt.date) "
+           + "FROM WalletTransaction wt")
+    String
+    GetOldestTransactionDate();
 }

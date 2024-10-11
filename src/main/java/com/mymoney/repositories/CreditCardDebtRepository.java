@@ -25,4 +25,11 @@ public interface CreditCardDebtRepository extends JpaRepository<CreditCardDebt, 
            + "WHERE cc.id = :creditCardId")
     Double
     GetTotalDebt(@Param("creditCardId") Long creditCardId);
+
+    /**
+     * Get the date of the oldest debt
+     * @return The date of the oldest debt
+     */
+    @Query("SELECT MIN(ccd.date) FROM CreditCardDebt ccd")
+    String GetOldestDebtDate();
 }
