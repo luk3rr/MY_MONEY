@@ -7,15 +7,6 @@
 package org.mymoney.ui.main;
 
 import com.jfoenix.controls.JFXButton;
-import org.mymoney.entities.CreditCard;
-import org.mymoney.entities.Wallet;
-import org.mymoney.entities.WalletTransaction;
-import org.mymoney.services.CreditCardService;
-import org.mymoney.services.WalletService;
-import org.mymoney.ui.common.ResumePaneController;
-import org.mymoney.util.Constants;
-import org.mymoney.util.LoggerConfig;
-import org.mymoney.util.TransactionType;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
@@ -23,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -33,6 +26,9 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -41,6 +37,15 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import org.mymoney.entities.CreditCard;
+import org.mymoney.entities.Wallet;
+import org.mymoney.entities.WalletTransaction;
+import org.mymoney.services.CreditCardService;
+import org.mymoney.services.WalletService;
+import org.mymoney.ui.common.ResumePaneController;
+import org.mymoney.util.Constants;
+import org.mymoney.util.LoggerConfig;
+import org.mymoney.util.TransactionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -80,13 +85,13 @@ public class HomeController
     private JFXButton creditCardNextButton;
 
     @FXML
-    private VBox lastTransactionsVBox;
-
-    @FXML
     private BarChart<String, Double> transactionsLast12Months;
 
     @FXML
     private Label monthResumePaneTitle;
+
+    @FXML
+    private TableView<WalletTransaction> transactionsTableView;
 
     @Autowired
     private ConfigurableApplicationContext springContext;
@@ -290,90 +295,104 @@ public class HomeController
      */
     private void UpdateDisplayLastTransactions()
     {
-        lastTransactionsVBox.getChildren().clear();
+        transactionsTableView.getColumns().clear();
 
-        // Add the transactions to the VBox
-        for (WalletTransaction transaction : transactions)
-        {
-            ImageView icon = transaction.GetType() == TransactionType.INCOME
-                                 ? new ImageView(Constants.HOME_INCOME_ICON)
-                                 : new ImageView(Constants.HOME_EXPENSE_ICON);
+        TableColumn<WalletTransaction, WalletTransaction> transactionColumn =
+            new TableColumn<>("Last " + Constants.HOME_LAST_TRANSACTIONS_SIZE +
+                              " Transactions");
 
-            icon.setFitHeight(Constants.HOME_LAST_TRANSACTIONS_ICON_SIZE);
-            icon.setFitWidth(Constants.HOME_LAST_TRANSACTIONS_ICON_SIZE);
+        transactionColumn.setCellValueFactory(
+            param -> new SimpleObjectProperty<>(param.getValue()));
 
-            // Labels
-            Label descriptionLabel = new Label(transaction.GetDescription());
-            descriptionLabel.setMinWidth(
-                Constants.HOME_LAST_TRANSACTIONS_DESCRIPTION_LABEL_WIDTH);
+        // Set the cell factory to display the transaction information
+        transactionColumn.setCellFactory(
+            column -> new TableCell<WalletTransaction, WalletTransaction>() {
+                @Override
+                protected void updateItem(WalletTransaction transaction, boolean empty)
+                {
+                    super.updateItem(transaction, empty);
+                    if (empty || transaction == null)
+                    {
+                        setGraphic(null);
+                    }
+                    else
+                    {
+                        ImageView icon =
+                            transaction.GetType() == TransactionType.INCOME
+                                ? new ImageView(Constants.HOME_INCOME_ICON)
+                                : new ImageView(Constants.HOME_EXPENSE_ICON);
 
-            Label valueLabel =
-                new Label(String.format("$ %.2f", transaction.GetAmount()));
-            valueLabel.setMinWidth(Constants.HOME_LAST_TRANSACTIONS_VALUE_LABEL_WIDTH);
+                        icon.setFitHeight(Constants.HOME_LAST_TRANSACTIONS_ICON_SIZE);
+                        icon.setFitWidth(Constants.HOME_LAST_TRANSACTIONS_ICON_SIZE);
 
-            Label walletLabel = new Label(transaction.GetWallet().GetName());
-            walletLabel.setMinWidth(
-                Constants.HOME_LAST_TRANSACTIONS_WALLET_LABEL_WIDTH);
+                        Label descriptionLabel =
+                            new Label(transaction.GetDescription());
+                        descriptionLabel.setMinWidth(
+                            Constants.HOME_LAST_TRANSACTIONS_DESCRIPTION_LABEL_WIDTH);
 
-            AddTooltipToNode(walletLabel, "Wallet");
+                        Label valueLabel =
+                            new Label(String.format("$ %.2f", transaction.GetAmount()));
+                        valueLabel.setMinWidth(
+                            Constants.HOME_LAST_TRANSACTIONS_VALUE_LABEL_WIDTH);
 
-            Label dateLabel = new Label(transaction.GetDate().format(
-                DateTimeFormatter.ofPattern(Constants.DATE_FORMAT_NO_TIME)));
-            dateLabel.setMinWidth(Constants.HOME_LAST_TRANSACTIONS_DATE_LABEL_WIDTH);
+                        Label walletLabel =
+                            new Label(transaction.GetWallet().GetName());
+                        walletLabel.setMinWidth(
+                            Constants.HOME_LAST_TRANSACTIONS_WALLET_LABEL_WIDTH);
 
-            Label transactionStatusLabel = new Label(StringUtils.capitalize(
-                transaction.GetStatus().toString().toLowerCase()));
+                        Label dateLabel = new Label(
+                            transaction.GetDate().format(DateTimeFormatter.ofPattern(
+                                Constants.DATE_FORMAT_NO_TIME)));
+                        dateLabel.setMinWidth(
+                            Constants.HOME_LAST_TRANSACTIONS_DATE_LABEL_WIDTH);
 
-            transactionStatusLabel.setMinWidth(
-                Constants.HOME_LAST_TRANSACTIONS_STATUS_LABEL_WIDTH);
+                        Label transactionStatusLabel = new Label(StringUtils.capitalize(
+                            transaction.GetStatus().toString().toLowerCase()));
+                        transactionStatusLabel.setMinWidth(
+                            Constants.HOME_LAST_TRANSACTIONS_STATUS_LABEL_WIDTH);
 
-            AddTooltipToNode(transactionStatusLabel, "Status");
+                        Label transactionCategoryLabel =
+                            new Label(transaction.GetCategory().GetName());
+                        transactionCategoryLabel.setMinWidth(
+                            Constants.HOME_LAST_TRANSACTIONS_CATEGORY_LABEL_WIDTH);
 
-            Label transactionCategoryLabel =
-                new Label(transaction.GetCategory().GetName());
-            transactionCategoryLabel.setMinWidth(
-                Constants.HOME_LAST_TRANSACTIONS_CATEGORY_LABEL_WIDTH);
+                        HBox descriptionValueBox =
+                            new HBox(descriptionLabel, valueLabel);
+                        descriptionValueBox.setAlignment(Pos.CENTER_LEFT);
 
-            AddTooltipToNode(transactionCategoryLabel, "Category");
+                        HBox walletCategoryStatusDateBox =
+                            new HBox(walletLabel,
+                                     transactionCategoryLabel,
+                                     transactionStatusLabel,
+                                     dateLabel);
+                        walletCategoryStatusDateBox.setAlignment(Pos.CENTER_LEFT);
 
-            HBox descriptionValueBox = new HBox();
-            descriptionValueBox.getStyleClass().add(
-                Constants.HOME_LAST_TRANSACTIONS_DESCRIPTION_VALUE_STYLE);
-            descriptionValueBox.getChildren().addAll(descriptionLabel, valueLabel);
+                        VBox vbox = new VBox(5,
+                                             descriptionValueBox,
+                                             walletCategoryStatusDateBox);
+                        HBox hbox = new HBox(10, icon, vbox);
+                        hbox.setAlignment(Pos.CENTER_LEFT);
 
-            HBox.setHgrow(descriptionLabel, Priority.ALWAYS);
-            descriptionValueBox.setAlignment(Pos.CENTER_LEFT);
+                        // Set style class based on the transaction type
+                        if (transaction.GetType() == TransactionType.INCOME)
+                        {
+                            hbox.getStyleClass().add(
+                                Constants.HOME_LAST_TRANSACTIONS_INCOME_ITEM_STYLE);
+                        }
+                        else
+                        {
+                            hbox.getStyleClass().add(
+                                Constants.HOME_LAST_TRANSACTIONS_EXPENSE_ITEM_STYLE);
+                        }
 
-            HBox walletCategoryStatusDateBox = new HBox();
-            walletCategoryStatusDateBox.getStyleClass().add(
-                Constants.HOME_LAST_TRANSACTIONS_WALLET_DATE_STYLE);
-            walletCategoryStatusDateBox.getChildren().addAll(walletLabel,
-                                                             transactionCategoryLabel,
-                                                             transactionStatusLabel,
-                                                             dateLabel);
+                        setGraphic(hbox);
+                    }
+                }
+            });
 
-            HBox.setHgrow(walletLabel, Priority.ALWAYS);
-            walletCategoryStatusDateBox.setAlignment(Pos.CENTER_LEFT);
+        transactionsTableView.getColumns().add(transactionColumn);
 
-            VBox vbox = new VBox(5, descriptionValueBox, walletCategoryStatusDateBox);
-            vbox.getStyleClass().add(
-                Constants.HOME_LAST_TRANSACTIONS_TRANSACTION_DETAILS_STYLE);
-
-            HBox hbox = new HBox(10, icon, vbox);
-            hbox.setAlignment(Pos.CENTER_LEFT);
-
-            if (transaction.GetType() == TransactionType.INCOME)
-            {
-                hbox.getStyleClass().add(
-                    Constants.HOME_LAST_TRANSACTIONS_INCOME_ITEM_STYLE);
-            }
-            else
-            {
-                hbox.getStyleClass().add(
-                    Constants.HOME_LAST_TRANSACTIONS_EXPENSE_ITEM_STYLE);
-            }
-            lastTransactionsVBox.getChildren().add(hbox);
-        }
+        transactionsTableView.setItems(FXCollections.observableArrayList(transactions));
     }
 
     /**

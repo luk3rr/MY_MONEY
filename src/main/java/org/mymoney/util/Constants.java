@@ -114,7 +114,7 @@ public final class Constants
     // Sizes
     public static final Integer WALLET_TYPE_ICONS_SIZE           = 42; // 42x42 px
     public static final Integer CRC_OPERATOR_ICONS_SIZE          = 42; // 42x42 px
-    public static final Integer HOME_LAST_TRANSACTIONS_SIZE      = 7;
+    public static final Integer HOME_LAST_TRANSACTIONS_SIZE      = 15;
     public static final Integer HOME_LAST_TRANSACTIONS_ICON_SIZE = 32; // 32x32 px
     public static final Integer HOME_LAST_TRANSACTIONS_DESCRIPTION_LABEL_WIDTH = 280;
     public static final Integer HOME_LAST_TRANSACTIONS_VALUE_LABEL_WIDTH       = 70;
