@@ -208,17 +208,23 @@ public class TransactionController
     @FXML
     private void handleRemoveIncome()
     {
-        OpenPopupWindow(Constants.REMOVE_INCOME_FXML,
+        OpenPopupWindow(Constants.REMOVE_TRANSACTION_FXML,
                         "Remove income",
-                        (RemoveIncomeController controller) -> {});
+                        (RemoveTransactionController controller) -> {
+                            controller.InitializeWithTransactionType(
+                                TransactionType.INCOME);
+                        });
     }
 
     @FXML
     private void handleRemoveExpense()
     {
-        OpenPopupWindow(Constants.REMOVE_EXPENSE_FXML,
+        OpenPopupWindow(Constants.REMOVE_TRANSACTION_FXML,
                         "Remove expense",
-                        (RemoveExpenseController controller) -> {});
+                        (RemoveTransactionController controller) -> {
+                            controller.InitializeWithTransactionType(
+                                TransactionType.EXPENSE);
+                        });
     }
 
     /**
@@ -687,8 +693,8 @@ public class TransactionController
                     {
                         setText(item.toString());
                         setAlignment(Pos.CENTER);
-                        setStyle("-fx-padding: 0;"); // set padding to zero to ensure the
-                                                    // text is centered
+                        setStyle("-fx-padding: 0;"); // set padding to zero to ensure
+                                                     // the text is centered
                     }
                 }
             };

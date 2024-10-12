@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="10.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mymoney.ui.RemoveIncomeController">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="10.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mymoney.ui.RemoveTransactionController">
    <children>
       <HBox alignment="CENTER_LEFT" spacing="5.0">
          <children>
@@ -16,7 +16,7 @@
             <TextField fx:id="searchField" promptText="Enter ID or Description" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
-      <Label text="Select the income" />
+      <Label text="Select the transaction" />
       <TableView fx:id="transactionsTableView" maxHeight="300.0" minWidth="1225.0" stylesheets="@../css/table-view.css">
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

@@ -1,5 +1,5 @@
 /*
- * Filename: RemoveIncomeController.fxml
+ * Filename: RemoveTransactionController.fxml
  * Created on: October 12, 2024
  * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
  */
@@ -8,6 +8,7 @@ package com.mymoney.ui;
 
 import com.mymoney.entities.WalletTransaction;
 import com.mymoney.services.WalletService;
+import com.mymoney.util.TransactionType;
 import java.util.List;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -22,10 +23,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+/**
+ * Controller for the Remove Transaction dialog
+ * @note Make sure to set the transaction type before calling the initialize method
+ */
 @Component
-public class RemoveIncomeController
+@Scope("prototype") // Create a new instance each time it is requested
+public class RemoveTransactionController
 {
     @FXML
     private TableView<WalletTransaction> transactionsTableView;
@@ -37,14 +44,30 @@ public class RemoveIncomeController
 
     private WalletService walletService;
 
-    public RemoveIncomeController(WalletService walletService)
+    private TransactionType transactionType;
+
+    public RemoveTransactionController(WalletService walletService)
     {
         this.walletService = walletService;
     }
 
     @FXML
     public void initialize()
+    { }
+
+    /**
+     * Initializes the controller with the transaction type
+     * @param transactionType TransactionType
+     */
+    public void InitializeWithTransactionType(TransactionType transactionType)
     {
+        this.transactionType = transactionType;
+
+        if (transactionType == null)
+        {
+            throw new IllegalStateException("Transaction type not set");
+        }
+
         ConfigureTableView();
         LoadTransaction();
 
@@ -70,7 +93,9 @@ public class RemoveIncomeController
         // Confirm the deletion
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirm Deletion");
-        alert.setHeaderText("Are you sure you want to remove this income?");
+
+        alert.setHeaderText("Are you sure you want to remove this " +
+                            transactionType.toString().toLowerCase() + "?");
 
         Text descriptionBold = new Text("Description: ");
         descriptionBold.setStyle("-fx-font-weight: bold;");
@@ -95,10 +120,23 @@ public class RemoveIncomeController
 
         Text afterDeletionBold = new Text("Wallet balance after deletion: ");
         afterDeletionBold.setStyle("-fx-font-weight: bold;");
-        Text afterDeletionNormal = new Text(
-            "$ " +
-            (selectedIncome.GetWallet().GetBalance() - selectedIncome.GetAmount()) +
-            "\n");
+
+        Text afterDeletionNormal;
+
+        if (transactionType == TransactionType.EXPENSE)
+        {
+            afterDeletionNormal = new Text(
+                "$ " +
+                (selectedIncome.GetWallet().GetBalance() + selectedIncome.GetAmount()) +
+                "\n");
+        }
+        else
+        {
+            afterDeletionNormal = new Text(
+                "$ " +
+                (selectedIncome.GetWallet().GetBalance() - selectedIncome.GetAmount()) +
+                "\n");
+        }
 
         alert.getDialogPane().setContent(new TextFlow(descriptionBold,
                                                       descriptionNormal,
@@ -130,10 +168,16 @@ public class RemoveIncomeController
         stage.close();
     }
 
-    @FXML
     private void LoadTransaction()
     {
-        incomes = walletService.GetAllIncomes();
+        if (transactionType == TransactionType.EXPENSE)
+        {
+            incomes = walletService.GetAllExpenses();
+        }
+        else
+        {
+            incomes = walletService.GetAllIncomes();
+        }
     }
 
     private void UpdateTransactionTableView()
