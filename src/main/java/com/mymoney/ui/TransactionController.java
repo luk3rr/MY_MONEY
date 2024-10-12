@@ -214,9 +214,9 @@ public class TransactionController
     @FXML
     private void handleRemoveExpense()
     {
-        // OpenPopupWindow(Constants.ADD_EXPENSE_FXML,
-        //                 "Add new expense",
-        //                 (AddExpenseController controller) -> {});
+        OpenPopupWindow(Constants.REMOVE_EXPENSE_FXML,
+                        "Remove expense",
+                        (RemoveExpenseController controller) -> {});
     }
 
     /**

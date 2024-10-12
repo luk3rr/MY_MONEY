@@ -28,6 +28,7 @@ public final class Constants
     public static final String ADD_EXPENSE_FXML        = "/ui/add_expense.fxml";
     public static final String ADD_INCOME_FXML         = "/ui/add_income.fxml";
     public static final String REMOVE_INCOME_FXML      = "/ui/remove_income.fxml";
+    public static final String REMOVE_EXPENSE_FXML     = "/ui/remove_expense.fxml";
     public static final String WALLET_FULL_PANE_FXML   = "/ui/wallet_full_pane.fxml";
     public static final String RESUME_PANE_FXML        = "/ui/resume_pane.fxml";
     public static final String RENAME_WALLET_FXML      = "/ui/rename_wallet.fxml";

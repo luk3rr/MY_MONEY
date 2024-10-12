@@ -1,5 +1,5 @@
 /*
- * Filename: RemoveIncomeController.fxml
+ * Filename: RemoveExpenseController.fxml
  * Created on: October 12, 2024
  * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
  */
@@ -15,7 +15,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -26,7 +25,7 @@ import javafx.stage.Stage;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RemoveIncomeController
+public class RemoveExpenseController
 {
     @FXML
     private TableView<WalletTransaction> transactionsTableView;
@@ -34,11 +33,11 @@ public class RemoveIncomeController
     @FXML
     private TextField searchField;
 
-    private List<WalletTransaction> incomes;
+    private List<WalletTransaction> expenses;
 
     private WalletService walletService;
 
-    public RemoveIncomeController(WalletService walletService)
+    public RemoveExpenseController(WalletService walletService)
     {
         this.walletService = walletService;
     }
@@ -59,11 +58,11 @@ public class RemoveIncomeController
     @FXML
     public void handleRemove()
     {
-        WalletTransaction selectedIncome =
+        WalletTransaction selectedExpense =
             transactionsTableView.getSelectionModel().getSelectedItem();
 
-        // If no income is selected, do nothing
-        if (selectedIncome == null)
+        // If no expense is selected, do nothing
+        if (selectedExpense == null)
         {
             return;
         }
@@ -71,34 +70,34 @@ public class RemoveIncomeController
         // Confirm the deletion
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirm Deletion");
-        alert.setHeaderText("Are you sure you want to remove this income?");
+        alert.setHeaderText("Are you sure you want to remove this expense?");
 
         Text descriptionBold = new Text("Description: ");
         descriptionBold.setStyle("-fx-font-weight: bold;");
-        Text descriptionNormal = new Text(selectedIncome.GetDescription() + "\n");
+        Text descriptionNormal = new Text(selectedExpense.GetDescription() + "\n");
 
         Text amountBold = new Text("Amount: ");
         amountBold.setStyle("-fx-font-weight: bold;");
-        Text amountNormal = new Text("$ " + selectedIncome.GetAmount() + "\n");
+        Text amountNormal = new Text("$ " + selectedExpense.GetAmount() + "\n");
 
         Text dateBold = new Text("Date: ");
         dateBold.setStyle("-fx-font-weight: bold;");
-        Text dateNormal = new Text(selectedIncome.GetDate() + "\n");
+        Text dateNormal = new Text(selectedExpense.GetDate() + "\n");
 
         Text walletBold = new Text("Wallet: ");
         walletBold.setStyle("-fx-font-weight: bold;");
-        Text walletNormal = new Text(selectedIncome.GetWallet().GetName() + "\n");
+        Text walletNormal = new Text(selectedExpense.GetWallet().GetName() + "\n");
 
         Text balanceBold = new Text("Wallet balance: ");
         balanceBold.setStyle("-fx-font-weight: bold;");
         Text balanceNormal =
-            new Text("$ " + selectedIncome.GetWallet().GetBalance() + "\n");
+            new Text("$ " + selectedExpense.GetWallet().GetBalance() + "\n");
 
         Text afterDeletionBold = new Text("Wallet balance after deletion: ");
         afterDeletionBold.setStyle("-fx-font-weight: bold;");
         Text afterDeletionNormal = new Text(
             "$ " +
-            (selectedIncome.GetWallet().GetBalance() - selectedIncome.GetAmount()) +
+            (selectedExpense.GetWallet().GetBalance() + selectedExpense.GetAmount()) +
             "\n");
 
         alert.getDialogPane().setContent(new TextFlow(descriptionBold,
@@ -119,8 +118,8 @@ public class RemoveIncomeController
 
         if (result == ButtonType.OK)
         {
-            walletService.DeleteTransaction(selectedIncome.GetId());
-            transactionsTableView.getItems().remove(selectedIncome);
+            walletService.DeleteTransaction(selectedExpense.GetId());
+            transactionsTableView.getItems().remove(selectedExpense);
         }
     }
 
@@ -134,7 +133,7 @@ public class RemoveIncomeController
     @FXML
     private void LoadTransaction()
     {
-        incomes = walletService.GetAllIncomes();
+        expenses = walletService.GetAllExpenses();
     }
 
     private void UpdateTransactionTableView()
@@ -145,12 +144,12 @@ public class RemoveIncomeController
 
         if (similarTextOrId.isEmpty())
         {
-            transactionsTableView.getItems().addAll(incomes);
+            transactionsTableView.getItems().addAll(expenses);
             transactionsTableView.refresh();
             return;
         }
 
-        incomes.stream()
+        expenses.stream()
             .filter(
                 transaction
                 -> transaction.GetDescription().contains(similarTextOrId) ||
@@ -161,7 +160,7 @@ public class RemoveIncomeController
     }
 
     /**
-     * Configures the TableView to display the incomes.
+     * Configures the TableView to display the expenses.
      */
     private void ConfigureTableView()
     {
