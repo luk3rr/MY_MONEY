@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="root" alignment="CENTER_LEFT" spacing="5.0" stylesheets="@../../css/scene/resume-pane.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mymoney.ui.common.ResumePaneController">
+   <children>
+      <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
+         <children>
+            <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox fx:id="currentIncomeHBox" alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="current-label" text="Incomes" HBox.hgrow="ALWAYS" />
+                        <AnchorPane HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Label fx:id="incomesCurrentSign" alignment="CENTER" minWidth="10.0" styleClass="zero-value" text="-" />
+                                    <Label fx:id="incomesCurrentValue" styleClass="zero-value" text="\$ 0.00" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children></HBox>
+                  <HBox fx:id="foreseenIncomeHBox" alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label alignment="CENTER" styleClass="foreseen-label" text="Foreseen" />
+                        <AnchorPane HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Label fx:id="incomesForeseenSign" alignment="CENTER" minWidth="10.0" styleClass="foreseen-label" text="-" />
+                                    <Label fx:id="incomesForeseenValue" styleClass="foreseen-label" text="\$ 0.00" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children></HBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
+         <children>
+            <VBox HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox fx:id="currentExpenseHBox" alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="current-label" text="Expenses" />
+                        <AnchorPane HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Label fx:id="expensesCurrentSign" alignment="CENTER" minWidth="10.0" styleClass="zero-value" text="-" />
+                                    <Label fx:id="expensesCurrentValue" styleClass="zero-value" text="\$ 0.00" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children></HBox>
+                  <HBox fx:id="expectedExpenseHBox" alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="foreseen-label" text="Foreseen" />
+                        <AnchorPane HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Label fx:id="expensesForeseenSign" alignment="CENTER" minWidth="10.0" styleClass="foreseen-label" text="-" />
+                                    <Label fx:id="expensesForeseenValue" styleClass="foreseen-label" text="\$ 0.00" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children></HBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
+         <children>
+            <VBox HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox fx:id="currentBalanceHBox" alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="current-label" text="Balance" />
+                        <AnchorPane HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Label fx:id="balanceCurrentSign" alignment="CENTER" minWidth="10.0" styleClass="zero-value" text="-" />
+                                    <Label fx:id="balanceCurrentValue" styleClass="zero-value" text="\$ 0.00" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children></HBox>
+                  <HBox fx:id="foreseenBalanceHBox" alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="foreseen-label" text="Foreseen" />
+                        <AnchorPane HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Label fx:id="balanceForeseenSign" alignment="CENTER" minWidth="10.0" styleClass="foreseen-label" text="-" />
+                                    <Label fx:id="balanceForeseenValue" styleClass="foreseen-label" text="\$ 0.00" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children></HBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
+         <children>
+            <VBox HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox fx:id="currentSavingsHBox" alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label fx:id="savingsLabel" styleClass="current-label" text="Savings" HBox.hgrow="ALWAYS" />
+                        <AnchorPane HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Label fx:id="savingsCurrentSign" alignment="CENTER" minWidth="10.0" styleClass="zero-value" text="-" />
+                                    <Label fx:id="savingsCurrentValue" styleClass="zero-value" text="\$ 0.00" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children></HBox>
+                  <HBox fx:id="foreseenSavingsHBox" alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="foreseen-label" text="Foreseen" />
+                        <AnchorPane HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Label fx:id="savingsForeseenSign" alignment="CENTER" minWidth="10.0" styleClass="foreseen-label" text="-" />
+                                    <Label fx:id="savingsForeseenValue" styleClass="foreseen-label" text="\$ 0.00" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children></HBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
+         <children>
+            <VBox HBox.hgrow="ALWAYS">
+               <children>
+                  <HBox fx:id="creditCardDebtHBox" alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="current-label" text="Credit Cards" />
+                        <AnchorPane HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Label fx:id="creditCardsCurrentSign" alignment="CENTER" minWidth="10.0" styleClass="zero-value" text="-" />
+                                    <Label fx:id="creditCardsCurrentValue" styleClass="zero-value" text="\$ 0.00" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children></HBox>
+                  <HBox fx:id="creditCardPendingPaymentsHBox" alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="foreseen-label" text="Total invoices to pay" />
+                        <AnchorPane HBox.hgrow="ALWAYS">
+                           <children>
+                              <HBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Label fx:id="creditCardsForeseenSign" alignment="CENTER" minWidth="10.0" styleClass="foreseen-label" text="-" />
+                                    <Label fx:id="creditCardsForeseenValue" styleClass="foreseen-label" text="\$ 0.00" HBox.hgrow="ALWAYS" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children></HBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</VBox>

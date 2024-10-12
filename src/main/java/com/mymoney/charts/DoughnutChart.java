@@ -1,3 +1,9 @@
+/*
+ * Filename: DoughnutChart.java
+ * Created on: October 7, 2024
+ * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
+ */
+
 package com.mymoney.charts;
 
 import javafx.animation.ScaleTransition;

@@ -16,41 +16,50 @@ public final class Constants
     public static final String LOG_FILE = "log/mymoney.log";
     public static final String APP_NAME = "My Money";
 
-    // FXML files
-    public static final String MAIN_FXML               = "/ui/main.fxml";
-    public static final String HOME_FXML               = "/ui/home.fxml";
-    public static final String WALLET_FXML             = "/ui/wallet.fxml";
-    public static final String CREDIT_CARD_FXML        = "/ui/credit_card.fxml";
-    public static final String TRANSACTION_FXML        = "/ui/transaction.fxml";
-    public static final String SAVINGS_FXML            = "/ui/savings.fxml";
-    public static final String ADD_WALLET_FXML         = "/ui/add_wallet.fxml";
-    public static final String ADD_TRANSFER_FXML       = "/ui/add_transfer.fxml";
-    public static final String ADD_EXPENSE_FXML        = "/ui/add_expense.fxml";
-    public static final String ADD_INCOME_FXML         = "/ui/add_income.fxml";
-    public static final String REMOVE_TRANSACTION_FXML = "/ui/remove_transaction.fxml";
-    public static final String WALLET_FULL_PANE_FXML   = "/ui/wallet_full_pane.fxml";
-    public static final String RESUME_PANE_FXML        = "/ui/resume_pane.fxml";
-    public static final String RENAME_WALLET_FXML      = "/ui/rename_wallet.fxml";
-    public static final String CHANGE_WALLET_TYPE_FXML = "/ui/change_wallet_type.fxml";
+    // main fxml
+    public static final String MAIN_FXML        = "/ui/main/main.fxml";
+    public static final String HOME_FXML        = "/ui/main/home.fxml";
+    public static final String WALLET_FXML      = "/ui/main/wallet.fxml";
+    public static final String CREDIT_CARD_FXML = "/ui/main/credit_card.fxml";
+    public static final String TRANSACTION_FXML = "/ui/main/transaction.fxml";
+    public static final String SAVINGS_FXML     = "/ui/main/savings.fxml";
 
-    // Icons
+    // dialog fxml
+    public static final String ADD_WALLET_FXML   = "/ui/dialog/add_wallet.fxml";
+    public static final String ADD_TRANSFER_FXML = "/ui/dialog/add_transfer.fxml";
+    public static final String ADD_EXPENSE_FXML  = "/ui/dialog/add_expense.fxml";
+    public static final String ADD_INCOME_FXML   = "/ui/dialog/add_income.fxml";
+    public static final String REMOVE_TRANSACTION_FXML =
+        "/ui/dialog/remove_transaction.fxml";
+    public static final String CHANGE_WALLET_TYPE_FXML =
+        "/ui/dialog/change_wallet_type.fxml";
+    public static final String RENAME_WALLET_FXML = "/ui/dialog/rename_wallet.fxml";
+
+    // common fxml
+    public static final String WALLET_FULL_PANE_FXML =
+        "/ui/common/wallet_full_pane.fxml";
+    public static final String RESUME_PANE_FXML = "/ui/common/resume_pane.fxml";
+
+    // Icons paths
     public static final String WALLET_TYPE_ICONS_PATH  = "/icons/wallet_type/";
     public static final String SIDEBAR_ICONS_PATH      = "/icons/sidebar/";
     public static final String CRC_OPERATOR_ICONS_PATH = "/icons/crc_operator/";
-    public static final String HOME_ICONS_PATH         = "/icons/home/";
+    public static final String COMMON_ICONS_PATH       = "/icons/common/";
 
-    public static final String HOME_EXPENSE_ICON = "/icons/home/expense.png";
-    public static final String HOME_INCOME_ICON  = "/icons/home/income.png";
-    public static final String ETC_ICONS_PATH    = "/icons/etc/";
+    // Icons
+    public static final String HOME_EXPENSE_ICON = "/icons/common/expense.png";
+    public static final String HOME_INCOME_ICON  = "/icons/common/income.png";
 
-    // Stylesheets
-    public static final String MAIN_STYLE_SHEET        = "/css/main.css";
-    public static final String HOME_STYLE_SHEET        = "/css/home.css";
-    public static final String WALLET_STYLE_SHEET      = "/css/wallet.css";
-    public static final String CREDIT_CARD_STYLE_SHEET = "/css/credit-card.css";
-    public static final String TRANSACTION_STYLE_SHEET = "/css/transaction.css";
-    public static final String SAVINGS_STYLE_SHEET     = "/css/savings.css";
-    public static final String COMMON_STYLE_SHEET      = "/css/common-styles.css";
+    // Scenes styles
+    public static final String MAIN_STYLE_SHEET        = "/css/scene/main.css";
+    public static final String HOME_STYLE_SHEET        = "/css/scene/home.css";
+    public static final String WALLET_STYLE_SHEET      = "/css/scene/wallet.css";
+    public static final String CREDIT_CARD_STYLE_SHEET = "/css/scene/credit-card.css";
+    public static final String TRANSACTION_STYLE_SHEET = "/css/scene/transaction.css";
+    public static final String SAVINGS_STYLE_SHEET     = "/css/scene/savings.css";
+
+    // Common styles
+    public static final String COMMON_STYLE_SHEET = "/css/common/common-styles.css";
 
     // Main pane styles
     public static final String SIDEBAR_SELECTED_BUTTON_STYLE =

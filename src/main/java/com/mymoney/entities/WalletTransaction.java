@@ -9,10 +9,6 @@ package com.mymoney.entities;
 import com.mymoney.util.Constants;
 import com.mymoney.util.TransactionStatus;
 import com.mymoney.util.TransactionType;
-
-import org.hibernate.annotations.OnDelete;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
