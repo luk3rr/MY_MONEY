@@ -409,11 +409,11 @@ public class WalletService
                                                          transactionId + " not found"));
 
         Wallet wallet = transaction.GetWallet();
-        Double amount = transaction.GetAmount();
 
         // Update the wallet balance if the transaction is confirmed
         if (transaction.GetStatus() == TransactionStatus.CONFIRMED)
         {
+            Double amount = transaction.GetAmount();
             if (transaction.GetType() == TransactionType.INCOME)
             {
                 wallet.SetBalance(wallet.GetBalance() - amount);
@@ -485,6 +485,33 @@ public class WalletService
     public List<Wallet> GetAllWallets()
     {
         return m_walletRepository.findAll();
+    }
+
+    /**
+     * Get all transactions
+     * @return A list with all transactions
+     */
+    public List<WalletTransaction> GetAllTransactions()
+    {
+        return m_walletTransactionRepository.findAll();
+    }
+
+    /**
+     * Get all income transactions
+     * @return A list with all income transactions
+     */
+    public List<WalletTransaction> GetAllIncomes()
+    {
+        return m_walletTransactionRepository.GetAllIncomeTransactions();
+    }
+
+    /**
+     * Get all expense transactions
+     * @return A list with all expense transactions
+     */
+    public List<WalletTransaction> GetAllExpenses()
+    {
+        return m_walletTransactionRepository.GetAllExpenseTransactions();
     }
 
     /**

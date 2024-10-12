@@ -28,6 +28,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -89,6 +91,8 @@ public class AddIncomeController
     @FXML
     private void initialize()
     {
+        ConfigureDatePicker();
+
         LoadWallets();
         LoadCategories();
 
@@ -201,6 +205,27 @@ public class AddIncomeController
             alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
+    }
+
+    /**
+     * Configure date picker
+     */
+    private void ConfigureDatePicker()
+    {
+        // Set how the date is displayed in the date picker
+        incomeDatePicker.setConverter(new StringConverter<LocalDate>() {
+            @Override
+            public String toString(LocalDate date)
+            {
+                return date != null ? date.format(Constants.DATE_FORMATTER_NO_TIME) : "";
+            }
+
+            @Override
+            public LocalDate fromString(String string)
+            {
+                return LocalDate.parse(string, Constants.DATE_FORMATTER_NO_TIME);
+            }
+        });
     }
 
     private void UpdateWalletBalance()

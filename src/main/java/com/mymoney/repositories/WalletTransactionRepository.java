@@ -49,6 +49,28 @@ public interface WalletTransactionRepository
                               @Param("year") Integer  year);
 
     /**
+     * Get all income transactions
+     * @return A list with all income transactions
+     */
+    @Query("SELECT wt "
+           + "FROM WalletTransaction wt "
+           + "WHERE wt.type = 'INCOME' "
+           + "ORDER BY wt.date DESC")
+    List<WalletTransaction>
+    GetAllIncomeTransactions();
+
+    /**
+     * Get all expense transactions
+     * @return A list with all expense transactions
+     */
+    @Query("SELECT wt "
+           + "FROM WalletTransaction wt "
+           + "WHERE wt.type = 'EXPENSE' "
+           + "ORDER BY wt.date DESC")
+    List<WalletTransaction>
+    GetAllExpenseTransactions();
+
+    /**
      * Get the all transactions by year
      * @param year The year
      * @return A list with the transactions by year
@@ -107,7 +129,7 @@ public interface WalletTransactionRepository
            + "ORDER BY wt.date DESC")
     List<WalletTransaction>
     GetTransactionsBetweenDates(@Param("startDate") String startDate,
-                                @Param("endDate") String endDate);
+                                @Param("endDate") String   endDate);
 
     /**
      * Get the confirmed transactions by month and year

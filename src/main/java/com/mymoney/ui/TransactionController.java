@@ -56,6 +56,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Controller class for the transaction view
+ * TODO: Load information from the database only when necessary
  */
 @Component
 public class TransactionController
@@ -95,9 +96,6 @@ public class TransactionController
 
     @FXML
     private MenuItem addExpenseMenuItem;
-
-    @FXML
-    private MenuItem addTransferMenuItem;
 
     @Autowired
     private ConfigurableApplicationContext springContext;
@@ -206,19 +204,11 @@ public class TransactionController
     }
 
     @FXML
-    private void handleAddTransfer()
-    {
-        OpenPopupWindow(Constants.ADD_TRANSFER_FXML,
-                        "Add new transfer",
-                        (AddTransferController controller) -> {});
-    }
-
-    @FXML
     private void handleRemoveIncome()
     {
-        // OpenPopupWindow(Constants.ADD_INCOME_FXML,
-        //                 "Add new income",
-        //                 (AddIncomeController controller) -> {});
+        OpenPopupWindow(Constants.REMOVE_INCOME_FXML,
+                        "Remove income",
+                        (RemoveIncomeController controller) -> {});
     }
 
     @FXML
@@ -227,14 +217,6 @@ public class TransactionController
         // OpenPopupWindow(Constants.ADD_EXPENSE_FXML,
         //                 "Add new expense",
         //                 (AddExpenseController controller) -> {});
-    }
-
-    @FXML
-    private void handleRemoveTransfer()
-    {
-        // OpenPopupWindow(Constants.ADD_TRANSFER_FXML,
-        //                 "Add new transfer",
-        //                 (AddTransferController controller) -> {});
     }
 
     /**
@@ -652,7 +634,8 @@ public class TransactionController
             @Override
             public String toString(LocalDate date)
             {
-                return date != null ? date.format(Constants.DATE_FORMATTER_NO_TIME) : "";
+                return date != null ? date.format(Constants.DATE_FORMATTER_NO_TIME)
+                                    : "";
             }
 
             @Override
@@ -666,7 +649,8 @@ public class TransactionController
             @Override
             public String toString(LocalDate date)
             {
-                return date != null ? date.format(Constants.DATE_FORMATTER_NO_TIME) : "";
+                return date != null ? date.format(Constants.DATE_FORMATTER_NO_TIME)
+                                    : "";
             }
 
             @Override
@@ -715,9 +699,15 @@ public class TransactionController
         descriptionColumn.setCellValueFactory(
             param -> new SimpleStringProperty(param.getValue().GetDescription()));
 
+        TableColumn<WalletTransaction, String> walletNameColumn =
+            new TableColumn<>("Wallet");
+        walletNameColumn.setCellValueFactory(
+            param -> new SimpleStringProperty(param.getValue().GetWallet().GetName()));
+
         transactionsListTableView.getColumns().addAll(idColumn,
                                                       descriptionColumn,
                                                       amountColumn,
+                                                      walletNameColumn,
                                                       dateColumn,
                                                       typeColumn,
                                                       categoryColumn,

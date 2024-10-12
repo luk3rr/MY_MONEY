@@ -75,7 +75,6 @@
                                             <items>
                                               <MenuItem fx:id="addIncomeMenuItem" mnemonicParsing="false" onAction="#handleAddIncome" text="Add Income" />
                                               <MenuItem fx:id="addExpenseMenuItem" mnemonicParsing="false" onAction="#handleAddExpense" text="Add Expense" />
-                                                <MenuItem fx:id="addTransferMenuItem" mnemonicParsing="false" onAction="#handleAddTransfer" text="Add Transfer" />
                                             </items>
                                              <graphic>
                                                 <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
@@ -89,7 +88,6 @@
                                              <items>
                                                 <MenuItem fx:id="removeIncomeMenuButton" mnemonicParsing="false" onAction="#handleRemoveIncome" text="Remove Income" />
                                                 <MenuItem fx:id="removeExpenseMenuItem" mnemonicParsing="false" onAction="#handleRemoveExpense" text="Remove Expense" />
-                                                <MenuItem fx:id="removeTransferMenuItem" mnemonicParsing="false" onAction="#handleRemoveTransfer" text="Remove Transfer" />
                                              </items>
                                              <graphic>
                                                 <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
@@ -178,7 +176,7 @@
                                                                   <Font size="10.0" />
                                                                </font>
                                                             </Label>
-                                                            <DatePicker fx:id="transactionsListStartDatePicker" stylesheets="@../css/data-picker.css" />
+                                                            <DatePicker fx:id="transactionsListStartDatePicker" maxWidth="150.0" stylesheets="@../css/data-picker.css" />
                                                          </children>
                                                       </VBox>
                                                       <VBox alignment="CENTER">
@@ -188,7 +186,7 @@
                                                                   <Font size="10.0" />
                                                                </font>
                                                             </Label>
-                                                            <DatePicker fx:id="transactionsListEndDatePicker" stylesheets="@../css/data-picker.css" />
+                                                            <DatePicker fx:id="transactionsListEndDatePicker" maxWidth="150.0" stylesheets="@../css/data-picker.css" />
                                                          </children>
                                                       </VBox>
                                                    </children>

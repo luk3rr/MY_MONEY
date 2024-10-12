@@ -14,12 +14,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * Represents a wallet
  * A wallet is a container for money
+ * TODO: If wallet is deleted, all transactions should be deleted ?
  */
 @Entity
 @Table(name = "wallet")
@@ -31,7 +30,6 @@ public class Wallet
     private Long id;
 
     @ManyToOne
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
     @JoinColumn(name = "type_id", referencedColumnName = "id")
     private WalletType type;
 
@@ -57,8 +55,8 @@ public class Wallet
      */
     public Wallet(Long id, String name, Double balance)
     {
-        this.id = id;
-        this.name = name;
+        this.id      = id;
+        this.name    = name;
         this.balance = balance;
     }
 

@@ -9,6 +9,9 @@ package com.mymoney.entities;
 import com.mymoney.util.Constants;
 import com.mymoney.util.TransactionStatus;
 import com.mymoney.util.TransactionType;
+
+import org.hibernate.annotations.OnDelete;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,7 +37,7 @@ public class WalletTransaction
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "wallet_id", referencedColumnName = "id", nullable = false)
     private Wallet wallet;
 

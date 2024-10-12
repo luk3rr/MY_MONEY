@@ -12,9 +12,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="335.0" prefWidth="320.0" spacing="10.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mymoney.ui.AddIncomeController">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="335.0" prefWidth="320.0" spacing="10.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mymoney.ui.AddExpenseController">
    <children>
-      <VBox alignment="CENTER" spacing="10.0">
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
          <children>
             <ComboBox fx:id="walletComboBox" promptText="Select the wallet" stylesheets="@../css/combo-box.css" VBox.vgrow="ALWAYS" />
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
@@ -26,9 +26,9 @@
                      </font></Label>
                </children>
             </HBox>
-            <HBox alignment="CENTER" spacing="20.0">
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                <children>
-                  <Label text="Balance after income:" />
+                  <Label text="Balance after expense:" />
                   <Label fx:id="walletAfterBalanceValueLabel" text="-">
                      <font>
                         <Font name="System Bold" size="13.0" />
@@ -37,7 +37,7 @@
             </HBox>
          </children>
       </VBox>
-      <HBox alignment="CENTER_LEFT" spacing="5.0">
+      <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
          <children>
             <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -47,24 +47,24 @@
             <TextField fx:id="descriptionField" promptText="Description" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
-      <HBox alignment="CENTER_LEFT" spacing="5.0">
+      <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
          <children>
             <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../icons/etc/coin.png" />
                </image>
             </ImageView>
-            <TextField fx:id="incomeValueField" promptText="\$ 0.00" HBox.hgrow="ALWAYS" />
+            <TextField fx:id="expenseValueField" promptText="\$ 0.00" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
-      <HBox alignment="CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
+      <HBox alignment="CENTER" prefHeight="44.0" prefWidth="274.0" spacing="10.0" VBox.vgrow="ALWAYS">
          <children>
             <ComboBox fx:id="statusComboBox" promptText="Status" stylesheets="@../css/combo-box.css" HBox.hgrow="ALWAYS" />
             <ComboBox fx:id="categoryComboBox" promptText="Category" stylesheets="@../css/combo-box.css" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
-      <DatePicker fx:id="incomeDatePicker" promptText="Select the date" showWeekNumbers="true" stylesheets="@../css/data-picker.css" />
-      <HBox alignment="CENTER" spacing="20.0">
+      <DatePicker fx:id="expenseDatePicker" promptText="Select the date" showWeekNumbers="true" stylesheets="@../css/data-picker.css" />
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
          <children>
             <JFXButton onAction="#handleSave" stylesheets="@../css/buttons.css" text="Save" />
             <JFXButton onAction="#handleCancel" stylesheets="@../css/buttons.css" text="Cancel" />

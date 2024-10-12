@@ -28,6 +28,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -89,6 +91,8 @@ public class AddExpenseController
     @FXML
     private void initialize()
     {
+        ConfigureDatePicker();
+
         LoadWallets();
         LoadCategories();
 
@@ -103,12 +107,12 @@ public class AddExpenseController
 
         walletComboBox.setOnAction(e -> {
             UpdateWalletBalance();
-            walletAfterBalance();
+            WalletAfterBalance();
         });
 
         // Update wallet after balance when the value field changes
         expenseValueField.textProperty().addListener(
-            (observable, oldValue, newValue) -> { walletAfterBalance(); });
+            (observable, oldValue, newValue) -> { WalletAfterBalance(); });
     }
 
     @FXML
@@ -202,6 +206,27 @@ public class AddExpenseController
         }
     }
 
+    /**
+     * Configure date picker
+     */
+    private void ConfigureDatePicker()
+    {
+        // Set how the date is displayed in the date picker
+        expenseDatePicker.setConverter(new StringConverter<LocalDate>() {
+            @Override
+            public String toString(LocalDate date)
+            {
+                return date != null ? date.format(Constants.DATE_FORMATTER_NO_TIME) : "";
+            }
+
+            @Override
+            public LocalDate fromString(String string)
+            {
+                return LocalDate.parse(string, Constants.DATE_FORMATTER_NO_TIME);
+            }
+        });
+    }
+
     private void UpdateWalletBalance()
     {
         String walletName = walletComboBox.getValue();
@@ -220,7 +245,7 @@ public class AddExpenseController
             String.format("$ %.2f", wallet.GetBalance()));
     }
 
-    private void walletAfterBalance()
+    private void WalletAfterBalance()
     {
         String expenseValueString = expenseValueField.getText();
         String walletName         = walletComboBox.getValue();
@@ -247,17 +272,17 @@ public class AddExpenseController
                                 .findFirst()
                                 .get();
 
-            Double walletAfterBalance = wallet.GetBalance() - expenseValue;
+            Double WalletAfterBalance = wallet.GetBalance() - expenseValue;
 
             // Episilon is used to avoid floating point arithmetic errors
-            if (walletAfterBalance < Constants.EPSILON)
+            if (WalletAfterBalance < Constants.EPSILON)
             {
                 // Remove old style and add negative style
                 SetLabelStyle(walletAfterBalanceValueLabel,
                               Constants.NEGATIVE_BALANCE_STYLE);
 
                 walletAfterBalanceValueLabel.setText(
-                    String.format("- $ %.2f", -walletAfterBalance));
+                    String.format("- $ %.2f", -WalletAfterBalance));
             }
             else
             {
@@ -266,7 +291,7 @@ public class AddExpenseController
                               Constants.NEUTRAL_BALANCE_STYLE);
 
                 walletAfterBalanceValueLabel.setText(
-                    String.format("$ %.2f", walletAfterBalance));
+                    String.format("$ %.2f", WalletAfterBalance));
             }
         }
         catch (NumberFormatException e)
