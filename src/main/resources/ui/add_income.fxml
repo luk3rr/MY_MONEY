@@ -63,7 +63,7 @@
             <ComboBox fx:id="categoryComboBox" promptText="Category" stylesheets="@../css/combo-box.css" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
-      <DatePicker fx:id="incomeDatePicker" promptText="Select the date" showWeekNumbers="true" />
+      <DatePicker fx:id="incomeDatePicker" promptText="Select the date" showWeekNumbers="true" stylesheets="@../css/data-picker.css" />
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
          <children>
             <JFXButton onAction="#handleSave" stylesheets="@../css/buttons.css" text="Save" />

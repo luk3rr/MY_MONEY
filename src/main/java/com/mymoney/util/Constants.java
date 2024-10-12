@@ -136,10 +136,14 @@ public final class Constants
     public static final Double  HOME_TOOLTIP_ANIMATION_DURATION   = 0.5; // s
     public static final Double  HOME_TOOLTIP_ANIMATION_DELAY      = 0.5; // s
 
-    public static final String            DATE_FORMAT         = "yyyy-MM-dd'T'HH:mm:ss";
-    public static final String            DATE_FORMAT_NO_TIME = "yyyy-MM-dd";
-    public static final DateTimeFormatter DATE_TIME_FORMATTER =
-        DateTimeFormatter.ofPattern(DATE_FORMAT);
+    public static final String DATE_FORMAT_WITH_TIME = "yyyy-MM-dd'T'HH:mm:ss";
+    public static final String DATE_FORMAT_NO_TIME   = "yyyy-MM-dd";
+
+    public static final DateTimeFormatter DATE_TIME_FORMATTER_WITH_TIME =
+        DateTimeFormatter.ofPattern(DATE_FORMAT_WITH_TIME);
+
+    public static final DateTimeFormatter DATE_FORMATTER_NO_TIME =
+        DateTimeFormatter.ofPattern(DATE_FORMAT_NO_TIME);
 
     // Prevent instantiation
     private Constants() { }

@@ -11,14 +11,14 @@ import com.mymoney.entities.Wallet;
 import com.mymoney.entities.WalletTransaction;
 import com.mymoney.services.WalletService;
 import com.mymoney.util.Constants;
-import com.mymoney.util.LoggerConfig;
+//import com.mymoney.util.LoggerConfig;
 import com.mymoney.util.TransactionStatus;
 import com.mymoney.util.TransactionType;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -142,7 +142,7 @@ public class WalletFullPaneController
 
     private List<Transfer> transfers;
 
-    private static final Logger logger = LoggerConfig.GetLogger();
+    // private static final Logger logger = LoggerConfig.GetLogger();
 
     public WalletFullPaneController() { }
 

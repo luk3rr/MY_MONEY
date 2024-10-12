@@ -31,7 +31,6 @@
     -fx-text-fill: #999;
 }
 
-/* Estilos para MenuButton */
 .menu-button {
     -fx-background-color: white;
     -fx-background-radius: 20;
@@ -57,4 +56,18 @@
     -fx-background-color: #f5f5f5;
     -fx-border-color: #ddd;
     -fx-text-fill: #999;
+}
+
+.menu-item {
+    -fx-background-color: transparent;
+    -fx-background-radius: 20;
+}
+
+.menu-item .label{
+    -fx-text-fill: black;
+}
+
+.menu-item:hover {
+    -fx-background-color: #e6e6e6;
+    -fx-background-radius: 20;
 }

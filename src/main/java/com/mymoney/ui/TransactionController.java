@@ -126,6 +126,7 @@ public class TransactionController
     private void initialize()
     {
         ConfigureTableView();
+        ConfigureDatePicker();
 
         PopulateMonthResumeComboBox();
         PopulateYearComboBox();
@@ -210,6 +211,30 @@ public class TransactionController
         OpenPopupWindow(Constants.ADD_TRANSFER_FXML,
                         "Add new transfer",
                         (AddTransferController controller) -> {});
+    }
+
+    @FXML
+    private void handleRemoveIncome()
+    {
+        // OpenPopupWindow(Constants.ADD_INCOME_FXML,
+        //                 "Add new income",
+        //                 (AddIncomeController controller) -> {});
+    }
+
+    @FXML
+    private void handleRemoveExpense()
+    {
+        // OpenPopupWindow(Constants.ADD_EXPENSE_FXML,
+        //                 "Add new expense",
+        //                 (AddExpenseController controller) -> {});
+    }
+
+    @FXML
+    private void handleRemoveTransfer()
+    {
+        // OpenPopupWindow(Constants.ADD_TRANSFER_FXML,
+        //                 "Add new transfer",
+        //                 (AddTransferController controller) -> {});
     }
 
     /**
@@ -412,8 +437,8 @@ public class TransactionController
 
             AnchorPane.setTopAnchor(newContent, 0.0);
             AnchorPane.setBottomAnchor(newContent, 0.0);
-            AnchorPane.setLeftAnchor(newContent, 0.0);
-            AnchorPane.setRightAnchor(newContent, 0.0);
+            AnchorPane.setLeftAnchor(newContent, 10.0);
+            AnchorPane.setRightAnchor(newContent, 10.0);
 
             yearResumeView.getChildren().clear();
             yearResumeView.getChildren().add(newContent);
@@ -446,8 +471,8 @@ public class TransactionController
 
             AnchorPane.setTopAnchor(newContent, 0.0);
             AnchorPane.setBottomAnchor(newContent, 0.0);
-            AnchorPane.setLeftAnchor(newContent, 0.0);
-            AnchorPane.setRightAnchor(newContent, 0.0);
+            AnchorPane.setLeftAnchor(newContent, 10.0);
+            AnchorPane.setRightAnchor(newContent, 10.0);
 
             monthResumeView.getChildren().clear();
             monthResumeView.getChildren().add(newContent);
@@ -613,6 +638,41 @@ public class TransactionController
             public YearMonth fromString(String string)
             {
                 return YearMonth.parse(string, formatter);
+            }
+        });
+    }
+
+    /**
+     * Configure date picker
+     */
+    private void ConfigureDatePicker()
+    {
+        // Set how the date is displayed in the date picker
+        transactionsListStartDatePicker.setConverter(new StringConverter<LocalDate>() {
+            @Override
+            public String toString(LocalDate date)
+            {
+                return date != null ? date.format(Constants.DATE_FORMATTER_NO_TIME) : "";
+            }
+
+            @Override
+            public LocalDate fromString(String string)
+            {
+                return LocalDate.parse(string, Constants.DATE_FORMATTER_NO_TIME);
+            }
+        });
+
+        transactionsListEndDatePicker.setConverter(new StringConverter<LocalDate>() {
+            @Override
+            public String toString(LocalDate date)
+            {
+                return date != null ? date.format(Constants.DATE_FORMATTER_NO_TIME) : "";
+            }
+
+            @Override
+            public LocalDate fromString(String string)
+            {
+                return LocalDate.parse(string, Constants.DATE_FORMATTER_NO_TIME);
             }
         });
     }

@@ -75,7 +75,7 @@ public class Transfer
         this.id             = id;
         this.senderWallet   = senderWallet;
         this.receiverWallet = receiverWallet;
-        this.date           = date.format(Constants.DATE_TIME_FORMATTER);
+        this.date           = date.format(Constants.DATE_TIME_FORMATTER_WITH_TIME);
         this.amount         = amount;
         this.description    = description;
     }
@@ -96,7 +96,7 @@ public class Transfer
     {
         this.senderWallet   = senderWallet;
         this.receiverWallet = receiverWallet;
-        this.date           = date.format(Constants.DATE_TIME_FORMATTER);
+        this.date           = date.format(Constants.DATE_TIME_FORMATTER_WITH_TIME);
         this.amount         = amount;
         this.description    = description;
     }
@@ -134,7 +134,7 @@ public class Transfer
      */
     public LocalDateTime GetDate()
     {
-        return LocalDateTime.parse(date, Constants.DATE_TIME_FORMATTER);
+        return LocalDateTime.parse(date, Constants.DATE_TIME_FORMATTER_WITH_TIME);
     }
 
     /**
@@ -179,7 +179,7 @@ public class Transfer
      */
     public void SetDate(LocalDateTime date)
     {
-        this.date = date.format(Constants.DATE_TIME_FORMATTER);
+        this.date = date.format(Constants.DATE_TIME_FORMATTER_WITH_TIME);
     }
 
     /**

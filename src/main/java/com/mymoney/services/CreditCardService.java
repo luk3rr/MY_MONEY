@@ -6,8 +6,6 @@
 
 package com.mymoney.services;
 
-import static org.mockito.Mockito.after;
-
 import com.mymoney.entities.Category;
 import com.mymoney.entities.CreditCard;
 import com.mymoney.entities.CreditCardDebt;
@@ -282,6 +280,6 @@ public class CreditCardService
             return LocalDateTime.now();
         }
 
-        return LocalDateTime.parse(date, Constants.DATE_TIME_FORMATTER);
+        return LocalDateTime.parse(date, Constants.DATE_TIME_FORMATTER_WITH_TIME);
     }
 }

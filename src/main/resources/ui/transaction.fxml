@@ -23,67 +23,106 @@
                <children>
                   <HBox layoutX="89.0" layoutY="40.0" minHeight="400.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <AnchorPane fx:id="monthResumePane" styleClass="anchor-pane" stylesheets="@../css/anchor-pane.css">
+                        <VBox alignment="CENTER" spacing="10.0">
                            <children>
-                              <VBox alignment="TOP_CENTER" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <HBox spacing="10.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <HBox alignment="CENTER_LEFT">
+                                    <AnchorPane styleClass="anchor-pane" stylesheets="@../css/anchor-pane.css" HBox.hgrow="ALWAYS">
                                        <children>
-                                          <Label fx:id="monthResumeTitle" styleClass="title" text="Resume" HBox.hgrow="ALWAYS" />
-                                          <AnchorPane HBox.hgrow="ALWAYS">
+                                          <VBox alignment="TOP_CENTER" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <children>
-                                                <ComboBox fx:id="monthResumeComboBox" minWidth="120.0" stylesheets="@../css/combo-box.css" AnchorPane.rightAnchor="0.0" />
+                                                <HBox alignment="CENTER_LEFT">
+                                                   <children>
+                                                      <Label styleClass="title" text="Resume" HBox.hgrow="ALWAYS" />
+                                                      <AnchorPane HBox.hgrow="ALWAYS">
+                                                         <children>
+                                                            <ComboBox fx:id="yearResumeComboBox" minWidth="90.0" stylesheets="@../css/combo-box.css" AnchorPane.rightAnchor="0.0" />
+                                                         </children>
+                                                      </AnchorPane>
+                                                   </children>
+                                                </HBox>
+                                                <AnchorPane fx:id="yearResumeView" minHeight="200.0" VBox.vgrow="ALWAYS" />
                                              </children>
-                                          </AnchorPane>
+                                          </VBox>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane fx:id="monthResumePane" styleClass="anchor-pane" stylesheets="@../css/anchor-pane.css" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <VBox alignment="TOP_CENTER" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT">
+                                                   <children>
+                                                      <Label fx:id="monthResumeTitle" styleClass="title" text="Resume" HBox.hgrow="ALWAYS" />
+                                                      <AnchorPane HBox.hgrow="ALWAYS">
+                                                         <children>
+                                                            <ComboBox fx:id="monthResumeComboBox" minWidth="90.0" stylesheets="@../css/combo-box.css" AnchorPane.rightAnchor="0.0" />
+                                                         </children>
+                                                      </AnchorPane>
+                                                   </children>
+                                                </HBox>
+                                                <AnchorPane fx:id="monthResumeView" minHeight="200.0" VBox.vgrow="ALWAYS" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </AnchorPane>
+                                 </children>
+                              </HBox>
+                              <AnchorPane styleClass="anchor-pane" stylesheets="@../css/anchor-pane.css">
+                                 <children>
+                                    <HBox alignment="CENTER" fillHeight="false" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                       <children>
+                                          <MenuButton fx:id="addTransactionMenuButton" mnemonicParsing="false" stylesheets="@../css/buttons.css" text="New transaction">
+                                            <items>
+                                              <MenuItem fx:id="addIncomeMenuItem" mnemonicParsing="false" onAction="#handleAddIncome" text="Add Income" />
+                                              <MenuItem fx:id="addExpenseMenuItem" mnemonicParsing="false" onAction="#handleAddExpense" text="Add Expense" />
+                                                <MenuItem fx:id="addTransferMenuItem" mnemonicParsing="false" onAction="#handleAddTransfer" text="Add Transfer" />
+                                            </items>
+                                             <graphic>
+                                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../icons/etc/transaction.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </MenuButton>
+                                          <MenuButton fx:id="removeTransactionMenuButton" mnemonicParsing="false" stylesheets="@../css/buttons.css" text="Remove transaction">
+                                             <items>
+                                                <MenuItem fx:id="removeIncomeMenuButton" mnemonicParsing="false" onAction="#handleRemoveIncome" text="Remove Income" />
+                                                <MenuItem fx:id="removeExpenseMenuItem" mnemonicParsing="false" onAction="#handleRemoveExpense" text="Remove Expense" />
+                                                <MenuItem fx:id="removeTransferMenuItem" mnemonicParsing="false" onAction="#handleRemoveTransfer" text="Remove Transfer" />
+                                             </items>
+                                             <graphic>
+                                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../icons/etc/remove.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </MenuButton>
+                                          <JFXButton fx:id="addCategoryButton" stylesheets="@../css/buttons.css" text="New category">
+                                             <graphic>
+                                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../icons/etc/category.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </JFXButton>
+                                          <JFXButton fx:id="removeCategoryButton" stylesheets="@../css/buttons.css" text="Remove category">
+                                             <graphic>
+                                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../icons/etc/remove.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </JFXButton>
                                        </children>
                                     </HBox>
-                                    <AnchorPane fx:id="monthResumeView" minHeight="200.0" minWidth="250.0" VBox.vgrow="ALWAYS" />
-                                    <JFXButton fx:id="monthResumeAddCategoryButton" stylesheets="@../css/buttons.css" text="Add category">
-                                       <graphic>
-                                          <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../icons/wallet/add_wallet.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </JFXButton>
                                  </children>
-                              </VBox>
+                              </AnchorPane>
                            </children>
-                        </AnchorPane>
-                        <AnchorPane styleClass="anchor-pane" stylesheets="@../css/anchor-pane.css">
-                           <children>
-                              <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <children>
-                                    <HBox alignment="CENTER_LEFT">
-                                       <children>
-                                          <Label styleClass="title" text="Resume" HBox.hgrow="ALWAYS" />
-                                          <AnchorPane HBox.hgrow="ALWAYS">
-                                             <children>
-                                                <ComboBox fx:id="yearResumeComboBox" minWidth="90.0" stylesheets="@../css/combo-box.css" AnchorPane.rightAnchor="0.0" />
-                                             </children>
-                                          </AnchorPane>
-                                       </children>
-                                    </HBox>
-                                    <AnchorPane fx:id="yearResumeView" minHeight="200.0" minWidth="250.0" VBox.vgrow="ALWAYS" />
-                                    <MenuButton fx:id="monthResumeAddTransactionButton" mnemonicParsing="false" stylesheets="@../css/buttons.css" text="Add Transaction">
-                                      <items>
-                                        <MenuItem fx:id="addIncomeMenuItem" mnemonicParsing="false" onAction="#handleAddIncome" text="Add Income" />
-                                        <MenuItem fx:id="addExpenseMenuItem" mnemonicParsing="false" onAction="#handleAddExpense" text="Add Expense" />
-                                          <MenuItem fx:id="addTransferMenuItem" mnemonicParsing="false" onAction="#handleAddTransfer" text="Add Transfer" />
-                                      </items>
-                                       <graphic>
-                                          <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../icons/wallet/transfer.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </MenuButton>
-                                 </children>
-                              </VBox>
-                           </children>
-                        </AnchorPane>
+                        </VBox>
                         <AnchorPane fx:id="barchartPane" styleClass="anchor-pane" stylesheets="@../css/anchor-pane.css" HBox.hgrow="ALWAYS">
                            <children>
                               <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -98,7 +137,7 @@
                                           </AnchorPane>
                                        </children>
                                     </HBox>
-                                    <AnchorPane fx:id="moneyFlowView" minWidth="400.0" VBox.vgrow="ALWAYS" />
+                                    <AnchorPane fx:id="moneyFlowView" minWidth="500.0" VBox.vgrow="ALWAYS" />
                                  </children>
                               </VBox>
                            </children>

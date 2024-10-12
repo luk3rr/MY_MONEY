@@ -6,6 +6,7 @@
 
 package com.mymoney.entities;
 
+import com.mymoney.util.Constants;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,8 +16,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
-
-import com.mymoney.util.Constants;
 
 /**
  * Represents a credit card debt
@@ -61,15 +60,15 @@ public class CreditCardDebt
      * @param totalAmount The total amount of the debt
      * @param description The description of the debt
      */
-    public CreditCardDebt(CreditCard creditCard,
-                          Category   category,
-                          LocalDateTime  date,
-                          Double     totalAmount,
-                          String     description)
+    public CreditCardDebt(CreditCard    creditCard,
+                          Category      category,
+                          LocalDateTime date,
+                          Double        totalAmount,
+                          String        description)
     {
         this.creditCard  = creditCard;
         this.category    = category;
-        this.date        = date.format(Constants.DATE_TIME_FORMATTER);
+        this.date        = date.format(Constants.DATE_TIME_FORMATTER_WITH_TIME);
         this.totalAmount = totalAmount;
         this.description = description;
     }
@@ -107,7 +106,7 @@ public class CreditCardDebt
      */
     public LocalDateTime GetDate()
     {
-        return LocalDateTime.parse(date, Constants.DATE_TIME_FORMATTER);
+        return LocalDateTime.parse(date, Constants.DATE_TIME_FORMATTER_WITH_TIME);
     }
 
     /**
@@ -152,7 +151,7 @@ public class CreditCardDebt
      */
     public void SetDate(LocalDateTime date)
     {
-        this.date = date.format(Constants.DATE_TIME_FORMATTER);
+        this.date = date.format(Constants.DATE_TIME_FORMATTER_WITH_TIME);
     }
 
     /**

@@ -41,7 +41,7 @@
                            <graphic>
                               <ImageView fx:id="addButtonIcon" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../icons/wallet/add_wallet.png" />
+                                    <Image url="@../icons/etc/add.png" />
                                  </image>
                               </ImageView>
                            </graphic>

@@ -6,9 +6,7 @@
 
 package com.mymoney.repositories;
 
-import com.mymoney.entities.Transfer;
 import com.mymoney.entities.WalletTransaction;
-import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

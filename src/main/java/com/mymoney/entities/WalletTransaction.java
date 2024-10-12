@@ -85,7 +85,7 @@ public class WalletTransaction
         this.category    = category;
         this.type        = type;
         this.status      = status;
-        this.date        = date.format(Constants.DATE_TIME_FORMATTER);
+        this.date        = date.format(Constants.DATE_TIME_FORMATTER_WITH_TIME);
         this.amount      = amount;
         this.description = description;
     }
@@ -123,7 +123,7 @@ public class WalletTransaction
      */
     public LocalDateTime GetDate()
     {
-        return LocalDateTime.parse(date, Constants.DATE_TIME_FORMATTER);
+        return LocalDateTime.parse(date, Constants.DATE_TIME_FORMATTER_WITH_TIME);
     }
 
     /**
@@ -186,7 +186,7 @@ public class WalletTransaction
      */
     public void SetDate(LocalDateTime date)
     {
-        this.date = date.format(Constants.DATE_TIME_FORMATTER);
+        this.date = date.format(Constants.DATE_TIME_FORMATTER_WITH_TIME);
     }
 
     /**

@@ -85,7 +85,7 @@
             <TextField fx:id="transferValueField" promptText="\$ 0.00" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
-      <DatePicker fx:id="transferDatePicker" prefHeight="26.0" prefWidth="149.0" promptText="Select the date" showWeekNumbers="true" />
+      <DatePicker fx:id="transferDatePicker" promptText="Select the date" showWeekNumbers="true" stylesheets="@../css/data-picker.css" />
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
          <children>
             <JFXButton onAction="#handleSave" stylesheets="@../css/buttons.css" text="Save" />

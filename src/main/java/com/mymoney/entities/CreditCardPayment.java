@@ -6,6 +6,7 @@
 
 package com.mymoney.entities;
 
+import com.mymoney.util.Constants;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,8 +16,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
-
-import com.mymoney.util.Constants;
 
 /**
  * Represents a credit card payment
@@ -63,13 +62,13 @@ public class CreditCardPayment
      */
     public CreditCardPayment(Wallet         wallet,
                              CreditCardDebt debt,
-                             LocalDateTime      date,
+                             LocalDateTime  date,
                              Double         amount,
                              Integer        installment)
     {
         this.wallet         = wallet;
         this.creditCardDebt = debt;
-        this.date           = date.format(Constants.DATE_TIME_FORMATTER);
+        this.date           = date.format(Constants.DATE_TIME_FORMATTER_WITH_TIME);
         this.amount         = amount;
         this.installment    = installment;
     }
@@ -82,12 +81,12 @@ public class CreditCardPayment
      * @param installment The installment of the payment
      */
     public CreditCardPayment(CreditCardDebt debt,
-                             LocalDateTime      date,
+                             LocalDateTime  date,
                              Double         amount,
                              Integer        installment)
     {
         this.creditCardDebt = debt;
-        this.date           = date.format(Constants.DATE_TIME_FORMATTER);
+        this.date           = date.format(Constants.DATE_TIME_FORMATTER_WITH_TIME);
         this.amount         = amount;
         this.installment    = installment;
     }
@@ -125,7 +124,7 @@ public class CreditCardPayment
      */
     public LocalDateTime GetDate()
     {
-        return LocalDateTime.parse(date, Constants.DATE_TIME_FORMATTER);
+        return LocalDateTime.parse(date, Constants.DATE_TIME_FORMATTER_WITH_TIME);
     }
 
     /**
@@ -170,7 +169,7 @@ public class CreditCardPayment
      */
     public void SetDate(LocalDateTime date)
     {
-        this.date = date.format(Constants.DATE_TIME_FORMATTER);
+        this.date = date.format(Constants.DATE_TIME_FORMATTER_WITH_TIME);
     }
 
     /**
