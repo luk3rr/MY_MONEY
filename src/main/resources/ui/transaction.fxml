@@ -27,25 +27,6 @@
                            <children>
                               <HBox spacing="10.0" VBox.vgrow="ALWAYS">
                                  <children>
-                                    <AnchorPane styleClass="anchor-pane" stylesheets="@../css/anchor-pane.css" HBox.hgrow="ALWAYS">
-                                       <children>
-                                          <VBox alignment="TOP_CENTER" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <children>
-                                                <HBox alignment="CENTER_LEFT">
-                                                   <children>
-                                                      <Label styleClass="title" text="Resume" HBox.hgrow="ALWAYS" />
-                                                      <AnchorPane HBox.hgrow="ALWAYS">
-                                                         <children>
-                                                            <ComboBox fx:id="yearResumeComboBox" minWidth="90.0" stylesheets="@../css/combo-box.css" AnchorPane.rightAnchor="0.0" />
-                                                         </children>
-                                                      </AnchorPane>
-                                                   </children>
-                                                </HBox>
-                                                <AnchorPane fx:id="yearResumeView" minHeight="200.0" VBox.vgrow="ALWAYS" />
-                                             </children>
-                                          </VBox>
-                                       </children>
-                                    </AnchorPane>
                                     <AnchorPane fx:id="monthResumePane" styleClass="anchor-pane" stylesheets="@../css/anchor-pane.css" HBox.hgrow="ALWAYS">
                                        <children>
                                           <VBox alignment="TOP_CENTER" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -61,6 +42,25 @@
                                                    </children>
                                                 </HBox>
                                                 <AnchorPane fx:id="monthResumeView" minHeight="200.0" VBox.vgrow="ALWAYS" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane styleClass="anchor-pane" stylesheets="@../css/anchor-pane.css" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <VBox alignment="TOP_CENTER" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT">
+                                                   <children>
+                                                      <Label styleClass="title" text="Resume" HBox.hgrow="ALWAYS" />
+                                                      <AnchorPane HBox.hgrow="ALWAYS">
+                                                         <children>
+                                                            <ComboBox fx:id="yearResumeComboBox" minWidth="90.0" stylesheets="@../css/combo-box.css" AnchorPane.rightAnchor="0.0" />
+                                                         </children>
+                                                      </AnchorPane>
+                                                   </children>
+                                                </HBox>
+                                                <AnchorPane fx:id="yearResumeView" minHeight="200.0" VBox.vgrow="ALWAYS" />
                                              </children>
                                           </VBox>
                                        </children>

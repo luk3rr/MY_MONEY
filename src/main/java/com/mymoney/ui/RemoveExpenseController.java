@@ -138,7 +138,7 @@ public class RemoveExpenseController
 
     private void UpdateTransactionTableView()
     {
-        String similarTextOrId = searchField.getText();
+        String similarTextOrId = searchField.getText().toLowerCase();
 
         transactionsTableView.getItems().clear();
 
@@ -152,7 +152,8 @@ public class RemoveExpenseController
         expenses.stream()
             .filter(
                 transaction
-                -> transaction.GetDescription().contains(similarTextOrId) ||
+                -> transaction.GetDescription().toLowerCase().contains(
+                       similarTextOrId) ||
                        String.valueOf(transaction.GetId()).contains(similarTextOrId))
             .forEach(transactionsTableView.getItems()::add);
 
@@ -183,6 +184,8 @@ public class RemoveExpenseController
                     {
                         setText(item.toString());
                         setAlignment(Pos.CENTER);
+                        setStyle("-fx-padding: 0;"); // set padding to zero to ensure
+                                                     // the text is centered
                     }
                 }
             };

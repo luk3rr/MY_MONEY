@@ -15,7 +15,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -139,7 +138,7 @@ public class RemoveIncomeController
 
     private void UpdateTransactionTableView()
     {
-        String similarTextOrId = searchField.getText();
+        String similarTextOrId = searchField.getText().toLowerCase();
 
         transactionsTableView.getItems().clear();
 
@@ -153,7 +152,8 @@ public class RemoveIncomeController
         incomes.stream()
             .filter(
                 transaction
-                -> transaction.GetDescription().contains(similarTextOrId) ||
+                -> transaction.GetDescription().toLowerCase().contains(
+                       similarTextOrId) ||
                        String.valueOf(transaction.GetId()).contains(similarTextOrId))
             .forEach(transactionsTableView.getItems()::add);
 
@@ -184,6 +184,8 @@ public class RemoveIncomeController
                     {
                         setText(item.toString());
                         setAlignment(Pos.CENTER);
+                        setStyle("-fx-padding: 0;"); // set padding to zero to ensure
+                                                     // the text is centered
                     }
                 }
             };

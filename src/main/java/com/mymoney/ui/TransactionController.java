@@ -33,6 +33,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -43,6 +44,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
@@ -669,6 +671,28 @@ public class TransactionController
         TableColumn<WalletTransaction, Long> idColumn = new TableColumn<>("ID");
         idColumn.setCellValueFactory(
             param -> new SimpleObjectProperty<>(param.getValue().GetId()));
+
+        // Align the ID column to the center
+        idColumn.setCellFactory(column -> {
+            return new TableCell<WalletTransaction, Long>() {
+                @Override
+                protected void updateItem(Long item, boolean empty)
+                {
+                    super.updateItem(item, empty);
+                    if (item == null || empty)
+                    {
+                        setText(null);
+                    }
+                    else
+                    {
+                        setText(item.toString());
+                        setAlignment(Pos.CENTER);
+                        setStyle("-fx-padding: 0;"); // set padding to zero to ensure the
+                                                    // text is centered
+                    }
+                }
+            };
+        });
 
         TableColumn<WalletTransaction, String> categoryColumn =
             new TableColumn<>("Category");
