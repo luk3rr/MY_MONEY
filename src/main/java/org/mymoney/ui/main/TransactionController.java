@@ -34,6 +34,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.StringConverter;
 import org.mymoney.entities.Category;
@@ -91,6 +92,9 @@ public class TransactionController
 
     @FXML
     private AnchorPane moneyFlowView;
+
+    @FXML
+    private TextField transactionsSearchField;
 
     @Autowired
     private ConfigurableApplicationContext springContext;
@@ -183,6 +187,10 @@ public class TransactionController
 
         transactionsListEndDatePicker.setOnAction(
             event -> { UpdateTransactionTableView(); });
+
+        // Add listener to the search field
+        transactionsSearchField.textProperty().addListener(
+            (observable, oldValue, newValue) -> { UpdateTransactionTableView(); });
     }
 
     @FXML
@@ -232,6 +240,9 @@ public class TransactionController
      */
     private void UpdateTransactionTableView()
     {
+        // Get the search text
+        String similarTextOrId = transactionsSearchField.getText().toLowerCase();
+
         // Get selected values from the comboboxes
         TransactionType selectedTransactionType =
             transactionsListTransactionTypeComboBox.getValue();
@@ -245,19 +256,30 @@ public class TransactionController
         transactionsListTableView.getItems().clear();
 
         // Fetch all transactions within the selected range and filter by transaction
-        // type
-        // If transaction type is null, all transactions are fetched
-        List<WalletTransaction> filteredTransactions =
+        // type. If transaction type is null, all transactions are fetched
+        if (similarTextOrId.isEmpty())
+        {
             walletService.GetTransactionsBetweenDates(startDate, endDate)
                 .stream()
                 .filter(t
                         -> selectedTransactionType == null ||
                                t.GetType().equals(selectedTransactionType))
-                .toList();
-        // Preenche o TableView com uma lista de transações filtradas
-        ObservableList<WalletTransaction> transactions =
-            FXCollections.observableArrayList(filteredTransactions);
-        transactionsListTableView.setItems(transactions);
+                .forEach(transactionsListTableView.getItems()::add);
+        }
+        else
+        {
+            walletService.GetTransactionsBetweenDates(startDate, endDate)
+                .stream()
+                .filter(t
+                        -> selectedTransactionType == null ||
+                               t.GetType().equals(selectedTransactionType))
+                .filter(t
+                        -> t.GetDescription().toLowerCase().contains(similarTextOrId) ||
+                               String.valueOf(t.GetId()).contains(similarTextOrId))
+                .forEach(transactionsListTableView.getItems()::add);
+        }
+
+        transactionsListTableView.refresh();
     }
 
     /**

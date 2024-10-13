@@ -5,6 +5,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
@@ -12,7 +14,11 @@
    <children>
       <HBox alignment="CENTER_LEFT" spacing="5.0">
          <children>
-            <Label text="Search by ID or Description:" />
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../icon/common/find.png" />
+               </image>
+            </ImageView>
             <TextField fx:id="searchField" promptText="Enter ID or Description" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>

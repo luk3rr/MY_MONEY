@@ -6,8 +6,6 @@
 
 package org.mymoney.ui.dialog;
 
-import static org.mockito.ArgumentMatchers.shortThat;
-
 import java.util.List;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -201,11 +199,9 @@ public class RemoveTransactionController
         }
 
         incomes.stream()
-            .filter(
-                transaction
-                -> transaction.GetDescription().toLowerCase().contains(
-                       similarTextOrId) ||
-                       String.valueOf(transaction.GetId()).contains(similarTextOrId))
+            .filter(t
+                    -> t.GetDescription().toLowerCase().contains(similarTextOrId) ||
+                           String.valueOf(t.GetId()).contains(similarTextOrId))
             .forEach(transactionsTableView.getItems()::add);
 
         transactionsTableView.refresh();
