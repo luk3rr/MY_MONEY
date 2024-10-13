@@ -6,16 +6,17 @@
 
 package org.mymoney.ui.common;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import org.mymoney.entities.WalletTransaction;
 import org.mymoney.services.CreditCardService;
 import org.mymoney.services.WalletService;
 import org.mymoney.util.Constants;
 import org.mymoney.util.TransactionStatus;
 import org.mymoney.util.TransactionType;
-import java.time.LocalDateTime;
-import java.util.List;
-import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import org.mymoney.util.UIUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -143,30 +144,30 @@ public class ResumePaneController
 
         Double balance = totalConfirmedIncome - totalConfirmedExpenses;
 
-        incomesCurrentValue.setText(String.format("$ %.2f", totalConfirmedIncome));
+        incomesCurrentValue.setText(UIUtils.FormatCurrency(totalConfirmedIncome));
         incomesCurrentSign.setText(" "); // default
         incomesCurrentValue.getStyleClass().clear();
         incomesCurrentValue.getStyleClass().add(Constants.POSITIVE_BALANCE_STYLE);
 
-        incomesForeseenValue.setText(String.format("$ %.2f", totalForeseenIncome));
+        incomesForeseenValue.setText(UIUtils.FormatCurrency(totalForeseenIncome));
         incomesForeseenSign.setText(" "); // default
 
         // Total Expenses
-        expensesCurrentValue.setText(String.format("$ %.2f", totalConfirmedExpenses));
+        expensesCurrentValue.setText(UIUtils.FormatCurrency(totalConfirmedExpenses));
         expensesCurrentSign.setText(" "); // default
         expensesCurrentValue.getStyleClass().clear();
         expensesCurrentValue.getStyleClass().add(Constants.NEGATIVE_BALANCE_STYLE);
 
-        expensesForeseenValue.setText(String.format("$ %.2f", totalForeseenExpenses));
+        expensesForeseenValue.setText(UIUtils.FormatCurrency(totalForeseenExpenses));
         expensesForeseenSign.setText(" "); // default
 
         // Balance
-        balanceCurrentValue.setText(String.format("$ %.2f", balance));
+        balanceCurrentValue.setText(UIUtils.FormatCurrency(balance));
 
         // Set the balance label and sign label according to the balance value
         if (balance > 0)
         {
-            balanceCurrentValue.setText(String.format("$ %.2f", balance));
+            balanceCurrentValue.setText(UIUtils.FormatCurrency(balance));
             balanceCurrentSign.setText("+");
 
             balanceCurrentValue.getStyleClass().clear();
@@ -177,7 +178,7 @@ public class ResumePaneController
         }
         else if (balance < 0)
         {
-            balanceCurrentValue.setText(String.format("$ %.2f", -balance));
+            balanceCurrentValue.setText(UIUtils.FormatCurrency(-balance));
             balanceCurrentSign.setText("-");
 
             balanceCurrentValue.getStyleClass().clear();
@@ -188,7 +189,7 @@ public class ResumePaneController
         }
         else
         {
-            balanceCurrentValue.setText("$ 0.00");
+            balanceCurrentValue.setText(UIUtils.FormatCurrency(0.0));
             balanceCurrentSign.setText("");
 
             balanceCurrentValue.getStyleClass().clear();
@@ -202,17 +203,17 @@ public class ResumePaneController
 
         if (foreseenBalance > 0)
         {
-            balanceForeseenValue.setText(String.format("$ %.2f", foreseenBalance));
+            balanceForeseenValue.setText(UIUtils.FormatCurrency(foreseenBalance));
             balanceForeseenSign.setText("+");
         }
         else if (foreseenBalance < 0)
         {
-            balanceForeseenValue.setText(String.format("$ %.2f", -foreseenBalance));
+            balanceForeseenValue.setText(UIUtils.FormatCurrency(-foreseenBalance));
             balanceForeseenSign.setText("-");
         }
         else
         {
-            balanceForeseenValue.setText("$ 0.00");
+            balanceForeseenValue.setText(UIUtils.FormatCurrency(0.0));
             balanceForeseenSign.setText("");
         }
 
@@ -233,7 +234,7 @@ public class ResumePaneController
         if (savingsPercentage > 0)
         {
             savingsLabel.setText("Savings");
-            savingsCurrentValue.setText(String.format("%.2f %%", savingsPercentage));
+            savingsCurrentValue.setText(UIUtils.FormatPercentage(savingsPercentage));
             savingsCurrentSign.setText("+");
 
             savingsCurrentValue.getStyleClass().clear();
@@ -245,7 +246,7 @@ public class ResumePaneController
         else if (savingsPercentage < 0)
         {
             savingsLabel.setText("No savings");
-            savingsCurrentValue.setText(String.format("%.2f %%", -savingsPercentage));
+            savingsCurrentValue.setText(UIUtils.FormatPercentage(-savingsPercentage));
             savingsCurrentSign.setText("-");
 
             savingsCurrentValue.getStyleClass().clear();
@@ -257,7 +258,7 @@ public class ResumePaneController
         else
         {
             savingsLabel.setText("No savings");
-            savingsCurrentValue.setText("0.00 %");
+            savingsCurrentValue.setText(UIUtils.FormatPercentage(0.0));
             savingsCurrentSign.setText(" ");
 
             savingsCurrentValue.getStyleClass().clear();
@@ -278,27 +279,27 @@ public class ResumePaneController
         if (foreseenSavingsPercentage > 0)
         {
             savingsForeseenValue.setText(
-                String.format("%.2f %%", foreseenSavingsPercentage));
+                UIUtils.FormatPercentage(foreseenSavingsPercentage));
             savingsForeseenSign.setText("+");
         }
         else if (foreseenSavingsPercentage < 0)
         {
             savingsForeseenValue.setText(
-                String.format("%.2f %%", -foreseenSavingsPercentage));
+                UIUtils.FormatPercentage(-foreseenSavingsPercentage));
             savingsForeseenSign.setText("-");
         }
         else
         {
-            savingsForeseenValue.setText("0.00 %");
+            savingsForeseenValue.setText(UIUtils.FormatPercentage(0.0));
             savingsForeseenSign.setText(" ");
         }
 
         // Credit Card
-        creditCardsCurrentValue.setText(String.format("$ %.2f", crcTotalDebtAmount));
+        creditCardsCurrentValue.setText(UIUtils.FormatCurrency(crcTotalDebtAmount));
         creditCardsCurrentSign.setText(" "); // default
 
         creditCardsForeseenValue.setText(
-            String.format("$ %.2f", crcTotalPendingPayments));
+            String.format(UIUtils.FormatCurrency(crcTotalPendingPayments)));
         creditCardsForeseenSign.setText(" "); // default
     }
 

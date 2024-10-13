@@ -23,7 +23,7 @@
                               <Label fx:id="totalBalancePaneTitle" styleClass="title" text="Total balance" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                               <ComboBox fx:id="totalBalancePaneWalletTypeComboBox" minWidth="150.0" stylesheets="@../../css/component/combo-box.css" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
                               <VBox fx:id="totalBalancePaneInfoVBox" alignment="CENTER_LEFT" layoutX="5.0" layoutY="50.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="60.0" />
-                              <JFXButton fx:id="totalBalancePaneTransferButton" stylesheets="@../../css/component/buttons.css" text="Transfer" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
+                              <JFXButton fx:id="totalBalancePaneTransferButton" onAction="#handleAddTransfer" stylesheets="@../../css/component/buttons.css" text="Transfer" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
                                  <graphic>
                                     <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
@@ -32,7 +32,7 @@
                                     </ImageView>
                                  </graphic>
                               </JFXButton>
-                              <JFXButton fx:id="totalBalancePaneAddWalletButton" stylesheets="@../../css/component/buttons.css" text="Add new wallet" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="130.0">
+                              <JFXButton fx:id="totalBalancePaneAddWalletButton" onAction="#handleAddWallet" stylesheets="@../../css/component/buttons.css" text="Add new wallet" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="130.0">
                                  <graphic>
                                     <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                                        <image>

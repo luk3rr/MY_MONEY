@@ -68,7 +68,7 @@ public class CreditCardPayment
     {
         this.wallet         = wallet;
         this.creditCardDebt = debt;
-        this.date           = date.format(Constants.DATE_TIME_FORMATTER_WITH_TIME);
+        this.date           = date.format(Constants.DB_DATE_FORMATTER);
         this.amount         = amount;
         this.installment    = installment;
     }
@@ -86,7 +86,7 @@ public class CreditCardPayment
                              Integer        installment)
     {
         this.creditCardDebt = debt;
-        this.date           = date.format(Constants.DATE_TIME_FORMATTER_WITH_TIME);
+        this.date           = date.format(Constants.DB_DATE_FORMATTER);
         this.amount         = amount;
         this.installment    = installment;
     }
@@ -124,7 +124,7 @@ public class CreditCardPayment
      */
     public LocalDateTime GetDate()
     {
-        return LocalDateTime.parse(date, Constants.DATE_TIME_FORMATTER_WITH_TIME);
+        return LocalDateTime.parse(date, Constants.DB_DATE_FORMATTER);
     }
 
     /**
@@ -169,7 +169,7 @@ public class CreditCardPayment
      */
     public void SetDate(LocalDateTime date)
     {
-        this.date = date.format(Constants.DATE_TIME_FORMATTER_WITH_TIME);
+        this.date = date.format(Constants.DB_DATE_FORMATTER);
     }
 
     /**

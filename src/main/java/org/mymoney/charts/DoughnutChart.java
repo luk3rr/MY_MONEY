@@ -18,6 +18,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
+import org.mymoney.util.UIUtils;
 
 public class DoughnutChart extends PieChart
 {
@@ -47,7 +48,7 @@ public class DoughnutChart extends PieChart
             Node node = data.getNode();
 
             double  percentage = (data.getPieValue() / seriesTotal) * 100;
-            Tooltip tooltip    = new Tooltip(String.format("%.2f%%", percentage));
+            Tooltip tooltip    = new Tooltip(UIUtils.FormatPercentage(percentage));
 
             // Set the tooltip behavior
             tooltip.showDelayProperty().setValue(Duration.ZERO);
@@ -85,7 +86,7 @@ public class DoughnutChart extends PieChart
         addInnerCircleIfNotPresent();
         updateInnerCircleLayout();
 
-        setCenterLabelTextStyle(String.format("$ %.2f", seriesTotal),
+        setCenterLabelTextStyle(UIUtils.FormatCurrency(seriesTotal),
                                 "-fx-font-size: 16px; -fx-font-weight: bold;");
     }
 

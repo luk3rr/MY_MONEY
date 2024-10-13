@@ -6,13 +6,6 @@
 
 package org.mymoney.ui.dialog;
 
-import org.mymoney.entities.Category;
-import org.mymoney.entities.Wallet;
-import org.mymoney.services.CategoryService;
-import org.mymoney.services.WalletService;
-import org.mymoney.util.Constants;
-import org.mymoney.util.LoggerConfig;
-import org.mymoney.util.TransactionStatus;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -29,6 +22,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import org.mymoney.entities.Category;
+import org.mymoney.entities.Wallet;
+import org.mymoney.services.CategoryService;
+import org.mymoney.services.WalletService;
+import org.mymoney.util.Constants;
+import org.mymoney.util.LoggerConfig;
+import org.mymoney.util.TransactionStatus;
+import org.mymoney.util.UIUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -172,10 +173,10 @@ public class AddExpenseController
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
 
-            alert.setGraphic(new ImageView(
-                new Image(this.getClass()
-                              .getResource(Constants.COMMON_ICONS_PATH + "success.png")
-                              .toString())));
+            alert.setGraphic(new ImageView(new Image(
+                this.getClass()
+                    .getResource(Constants.COMMON_ICONS_PATH + "success.png")
+                    .toString())));
 
             alert.setTitle("Success");
             alert.setHeaderText("Expense created");
@@ -242,7 +243,7 @@ public class AddExpenseController
                             .get();
 
         walletCurrentBalanceValueLabel.setText(
-            String.format("$ %.2f", wallet.GetBalance()));
+            UIUtils.FormatCurrency(wallet.GetBalance()));
     }
 
     private void WalletAfterBalance()
@@ -272,27 +273,24 @@ public class AddExpenseController
                                 .findFirst()
                                 .get();
 
-            Double WalletAfterBalance = wallet.GetBalance() - expenseValue;
+            Double walletAfterBalanceValue = wallet.GetBalance() - expenseValue;
 
             // Episilon is used to avoid floating point arithmetic errors
-            if (WalletAfterBalance < Constants.EPSILON)
+            if (walletAfterBalanceValue < Constants.EPSILON)
             {
                 // Remove old style and add negative style
                 SetLabelStyle(walletAfterBalanceValueLabel,
                               Constants.NEGATIVE_BALANCE_STYLE);
-
-                walletAfterBalanceValueLabel.setText(
-                    String.format("- $ %.2f", -WalletAfterBalance));
             }
             else
             {
                 // Remove old style and add neutral style
                 SetLabelStyle(walletAfterBalanceValueLabel,
                               Constants.NEUTRAL_BALANCE_STYLE);
-
-                walletAfterBalanceValueLabel.setText(
-                    String.format("$ %.2f", WalletAfterBalance));
             }
+
+            walletAfterBalanceValueLabel.setText(
+                UIUtils.FormatCurrency(walletAfterBalanceValue));
         }
         catch (NumberFormatException e)
         {

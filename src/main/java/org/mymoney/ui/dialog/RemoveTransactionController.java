@@ -6,9 +6,8 @@
 
 package org.mymoney.ui.dialog;
 
-import org.mymoney.entities.WalletTransaction;
-import org.mymoney.services.WalletService;
-import org.mymoney.util.TransactionType;
+import static org.mockito.ArgumentMatchers.shortThat;
+
 import java.util.List;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -23,6 +22,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
+import org.mymoney.entities.WalletTransaction;
+import org.mymoney.services.WalletService;
+import org.mymoney.util.Constants;
+import org.mymoney.util.TransactionType;
+import org.mymoney.util.UIUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
@@ -103,11 +107,14 @@ public class RemoveTransactionController
 
         Text amountBold = new Text("Amount: ");
         amountBold.setStyle("-fx-font-weight: bold;");
-        Text amountNormal = new Text("$ " + selectedIncome.GetAmount() + "\n");
+        Text amountNormal =
+            new Text(UIUtils.FormatCurrency(selectedIncome.GetAmount()) + "\n");
 
         Text dateBold = new Text("Date: ");
         dateBold.setStyle("-fx-font-weight: bold;");
-        Text dateNormal = new Text(selectedIncome.GetDate() + "\n");
+        Text dateNormal = new Text(
+            selectedIncome.GetDate().format(Constants.DATE_FORMATTER_WITH_TIME) +
+            "\n");
 
         Text walletBold = new Text("Wallet: ");
         walletBold.setStyle("-fx-font-weight: bold;");
@@ -115,8 +122,8 @@ public class RemoveTransactionController
 
         Text balanceBold = new Text("Wallet balance: ");
         balanceBold.setStyle("-fx-font-weight: bold;");
-        Text balanceNormal =
-            new Text("$ " + selectedIncome.GetWallet().GetBalance() + "\n");
+        Text balanceNormal = new Text(
+            UIUtils.FormatCurrency(selectedIncome.GetWallet().GetBalance()) + "\n");
 
         Text afterDeletionBold = new Text("Wallet balance after deletion: ");
         afterDeletionBold.setStyle("-fx-font-weight: bold;");
@@ -126,15 +133,15 @@ public class RemoveTransactionController
         if (transactionType == TransactionType.EXPENSE)
         {
             afterDeletionNormal = new Text(
-                "$ " +
-                (selectedIncome.GetWallet().GetBalance() + selectedIncome.GetAmount()) +
+                UIUtils.FormatCurrency(selectedIncome.GetWallet().GetBalance() +
+                                       selectedIncome.GetAmount()) +
                 "\n");
         }
         else
         {
             afterDeletionNormal = new Text(
-                "$ " +
-                (selectedIncome.GetWallet().GetBalance() - selectedIncome.GetAmount()) +
+                UIUtils.FormatCurrency(selectedIncome.GetWallet().GetBalance() -
+                                       selectedIncome.GetAmount()) +
                 "\n");
         }
 
@@ -248,17 +255,21 @@ public class RemoveTransactionController
 
         TableColumn<WalletTransaction, String> dateColumn = new TableColumn<>("Date");
         dateColumn.setCellValueFactory(
-            param -> new SimpleStringProperty(param.getValue().GetDate().toString()));
+            param
+            -> new SimpleStringProperty(
+                param.getValue().GetDate().format(Constants.DATE_FORMATTER_WITH_TIME)));
 
         TableColumn<WalletTransaction, String> walletNameColumn =
             new TableColumn<>("Wallet");
         walletNameColumn.setCellValueFactory(
             param -> new SimpleStringProperty(param.getValue().GetWallet().GetName()));
 
-        TableColumn<WalletTransaction, Double> amountColumn =
+        TableColumn<WalletTransaction, String> amountColumn =
             new TableColumn<>("Amount");
         amountColumn.setCellValueFactory(
-            param -> new SimpleObjectProperty<>(param.getValue().GetAmount()));
+            param
+            -> new SimpleObjectProperty<>(
+                UIUtils.FormatCurrency(param.getValue().GetAmount())));
 
         TableColumn<WalletTransaction, String> descriptionColumn =
             new TableColumn<>("Description");

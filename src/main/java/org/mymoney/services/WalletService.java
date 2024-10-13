@@ -612,8 +612,8 @@ public class WalletService
     public List<WalletTransaction> GetTransactionsBetweenDates(LocalDateTime startDate,
                                                                LocalDateTime endDate)
     {
-        String startDateStr = startDate.format(Constants.DATE_TIME_FORMATTER_WITH_TIME);
-        String endDateStr   = endDate.format(Constants.DATE_TIME_FORMATTER_WITH_TIME);
+        String startDateStr = startDate.format(Constants.DB_DATE_FORMATTER);
+        String endDateStr   = endDate.format(Constants.DB_DATE_FORMATTER);
 
         return m_walletTransactionRepository.GetTransactionsBetweenDates(startDateStr,
                                                                          endDateStr);
@@ -699,6 +699,6 @@ public class WalletService
             return LocalDateTime.now();
         }
 
-        return LocalDateTime.parse(date, Constants.DATE_TIME_FORMATTER_WITH_TIME);
+        return LocalDateTime.parse(date, Constants.DB_DATE_FORMATTER);
     }
 }

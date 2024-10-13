@@ -13,13 +13,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import javafx.animation.AnimationTimer;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.BarChart;
@@ -29,23 +27,23 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
 import org.mymoney.entities.CreditCard;
 import org.mymoney.entities.Wallet;
 import org.mymoney.entities.WalletTransaction;
 import org.mymoney.services.CreditCardService;
 import org.mymoney.services.WalletService;
 import org.mymoney.ui.common.ResumePaneController;
+import org.mymoney.util.Animation;
 import org.mymoney.util.Constants;
 import org.mymoney.util.LoggerConfig;
 import org.mymoney.util.TransactionType;
+import org.mymoney.util.UIUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -85,7 +83,7 @@ public class HomeController
     private JFXButton creditCardNextButton;
 
     @FXML
-    private BarChart<String, Double> transactionsLast12Months;
+    private BarChart<String, Number> transactionsLast12Months;
 
     @FXML
     private Label monthResumePaneTitle;
@@ -331,7 +329,7 @@ public class HomeController
                             Constants.HOME_LAST_TRANSACTIONS_DESCRIPTION_LABEL_WIDTH);
 
                         Label valueLabel =
-                            new Label(String.format("$ %.2f", transaction.GetAmount()));
+                            new Label(UIUtils.FormatCurrency(transaction.GetAmount()));
                         valueLabel.setMinWidth(
                             Constants.HOME_LAST_TRANSACTIONS_VALUE_LABEL_WIDTH);
 
@@ -408,11 +406,11 @@ public class HomeController
         DateTimeFormatter formatter   = DateTimeFormatter.ofPattern("MMM/yy");
 
         // Collect data for the last months
-        for (Integer i = 0; i < Constants.HOME_BAR_CHART_MONTHS; i++)
+        for (Integer i = 0; i < Constants.XYBAR_CHART_MONTHS; i++)
         {
             // Get the data from the oldest month to the most recent, to keep the order
             LocalDateTime date =
-                currentDate.minusMonths(Constants.HOME_BAR_CHART_MONTHS - i - 1);
+                currentDate.minusMonths(Constants.XYBAR_CHART_MONTHS - i - 1);
             Integer month = date.getMonthValue();
             Integer year  = date.getYear();
 
@@ -441,10 +439,10 @@ public class HomeController
         }
 
         // Create two series: one for incomes and one for expenses
-        XYChart.Series<String, Double> expensesSeries = new XYChart.Series<>();
+        XYChart.Series<String, Number> expensesSeries = new XYChart.Series<>();
         expensesSeries.setName("Expenses");
 
-        XYChart.Series<String, Double> incomesSeries = new XYChart.Series<>();
+        XYChart.Series<String, Number> incomesSeries = new XYChart.Series<>();
         incomesSeries.setName("Incomes");
 
         Double maxValue = 0.0;
@@ -473,8 +471,8 @@ public class HomeController
 
             // Set the tick unit based on the maximum value
             // The tick unit must be a multiple of 10
-            Integer tickUnit = (int)Math.round(
-                ((maxValue / Constants.HOME_BAR_CHART_TICKS) / 10) * 10);
+            Integer tickUnit =
+                (int)Math.round(((maxValue / Constants.XYBAR_CHART_TICKS) / 10) * 10);
             numberAxis.setTickUnit(tickUnit);
         }
 
@@ -485,55 +483,27 @@ public class HomeController
         transactionsLast12Months.getData().add(expensesSeries);
         transactionsLast12Months.getData().add(incomesSeries);
 
-        // Add tooltips to the bars
-        AddTooltipToBars(expensesSeries);
-        AddTooltipToBars(incomesSeries);
-
-        for (XYChart.Series<String, Double> series : transactionsLast12Months.getData())
+        // Add tooltips and animations to the bars
+        // expensesSeries and incomesSeries have the same size
+        for (Integer i = 0; i < expensesSeries.getData().size(); i++)
         {
-            for (XYChart.Data<String, Double> data : series.getData())
-            {
-                Double targetValue = data.getYValue();
-                data.setYValue(0.0);
+            XYChart.Data<String, Number> expenseData = expensesSeries.getData().get(i);
+            XYChart.Data<String, Number> incomeData  = incomesSeries.getData().get(i);
 
-                AnimationTimer timer = new AnimationTimer() {
-                    private Long         lastUpdate   = 0L;
-                    private Double       currentValue = 0.0;
-                    private final Double increment =
-                        targetValue / Constants.HOME_BAR_CHART_ANIMATION_FRAMES;
-                    Double elapsed = 0.0;
+            Double targetExpenseValue = monthlyExpenses.get(expenseData.getXValue());
+            Double targetIncomeValue =
+                monthlyIncomes.getOrDefault(expenseData.getXValue(), 0.0);
 
-                    @Override
-                    public void handle(long now)
-                    {
-                        if (lastUpdate == 0)
-                        {
-                            lastUpdate = now;
-                        }
+            // Add tooltip to the bars
+            UIUtils.AddTooltipToXYChartNode(expenseData.getNode(),
+                                            UIUtils.FormatCurrency(targetExpenseValue));
 
-                        elapsed += (now - lastUpdate) / Constants.ONE_SECOND_IN_NS;
+            UIUtils.AddTooltipToXYChartNode(incomeData.getNode(),
+                                            UIUtils.FormatCurrency(targetIncomeValue));
 
-                        if (elapsed >= Constants.HOME_BAR_CHART_ANIMATION_DURATION)
-                        {
-                            currentValue = targetValue;
-                            data.setYValue(currentValue);
-                            stop();
-                        }
-                        else
-                        {
-                            currentValue += increment;
-                            if (currentValue > targetValue)
-                            {
-                                currentValue = targetValue;
-                            }
-                            data.setYValue(currentValue);
-                        }
-
-                        lastUpdate = now;
-                    }
-                };
-                timer.start();
-            }
+            // Animation for the bars
+            Animation.XYChartAnimation(expenseData, targetExpenseValue);
+            Animation.XYChartAnimation(incomeData, targetIncomeValue);
         }
     }
 
@@ -592,26 +562,26 @@ public class HomeController
 
         Label nameLabel = new Label(creditCard.GetName());
         nameLabel.getStyleClass().add(Constants.HOME_CREDIT_CARD_ITEM_NAME_STYLE);
-        AddTooltipToNode(nameLabel, "Credit card name");
+        UIUtils.AddTooltipToNode(nameLabel, "Credit card name");
 
         Label crcOperatorLabel = new Label(creditCard.GetOperator().GetName());
         crcOperatorLabel.getStyleClass().add(
             Constants.HOME_CREDIT_CARD_ITEM_OPERATOR_STYLE);
         crcOperatorLabel.setAlignment(Pos.TOP_LEFT);
-        AddTooltipToNode(crcOperatorLabel, "Credit card operator");
+        UIUtils.AddTooltipToNode(crcOperatorLabel, "Credit card operator");
 
-        Label availableCredit = new Label(
-            String.format("$ %.2f",
-                          creditCardService.GetAvailableCredit(creditCard.GetId())));
+        Label availableCredit = new Label(UIUtils.FormatCurrency(
+            creditCardService.GetAvailableCredit(creditCard.GetId())));
+
         availableCredit.getStyleClass().add(
             Constants.HOME_CREDIT_CARD_ITEM_BALANCE_STYLE);
 
-        AddTooltipToNode(availableCredit, "Available credit");
+        UIUtils.AddTooltipToNode(availableCredit, "Available credit");
 
         Label digitsLabel =
             new Label("**** **** **** " + creditCard.GetLastFourDigits());
         digitsLabel.getStyleClass().add(Constants.HOME_CREDIT_CARD_ITEM_DIGITS_STYLE);
-        AddTooltipToNode(digitsLabel, "Credit card number");
+        UIUtils.AddTooltipToNode(digitsLabel, "Credit card number");
 
         infoVbox.getChildren().addAll(nameLabel,
                                       crcOperatorLabel,
@@ -651,16 +621,16 @@ public class HomeController
 
         Label nameLabel = new Label(wallet.GetName());
         nameLabel.getStyleClass().add(Constants.HOME_WALLET_ITEM_NAME_STYLE);
-        AddTooltipToNode(nameLabel, "Wallet name");
+        UIUtils.AddTooltipToNode(nameLabel, "Wallet name");
 
         Label walletTypeLabel = new Label(wallet.GetType().GetName());
         walletTypeLabel.getStyleClass().add(Constants.HOME_WALLET_TYPE_STYLE);
         walletTypeLabel.setAlignment(Pos.TOP_LEFT);
-        AddTooltipToNode(walletTypeLabel, "Wallet type");
+        UIUtils.AddTooltipToNode(walletTypeLabel, "Wallet type");
 
-        Label balanceLabel = new Label(String.format("$ %.2f", wallet.GetBalance()));
+        Label balanceLabel = new Label(UIUtils.FormatCurrency(wallet.GetBalance()));
         balanceLabel.getStyleClass().add(Constants.HOME_WALLET_ITEM_BALANCE_STYLE);
-        AddTooltipToNode(balanceLabel, "Wallet balance");
+        UIUtils.AddTooltipToNode(balanceLabel, "Wallet balance");
 
         infoVbox.getChildren().addAll(nameLabel, walletTypeLabel, balanceLabel);
 
@@ -680,39 +650,5 @@ public class HomeController
         rootHbox.getChildren().addAll(infoVbox, spacer, iconVBox);
 
         return rootHbox;
-    }
-
-    /**
-     * Add a tooltip to the bars of the chart
-     * @param series The series to add the tooltip
-     */
-    private void AddTooltipToBars(XYChart.Series<String, Double> series)
-    {
-        for (XYChart.Data<String, Double> data : series.getData())
-        {
-            String tooltipText = String.format("%.2f", data.getYValue());
-            AddTooltipToNode(data.getNode(), tooltipText);
-
-            data.getNode().setOnMouseEntered(
-                event -> { data.getNode().setStyle("-fx-opacity: 0.7;"); });
-            data.getNode().setOnMouseExited(
-                event -> { data.getNode().setStyle("-fx-opacity: 1;"); });
-        }
-    }
-
-    /**
-     * Add a tooltip to a node
-     * @param node The node to add the tooltip
-     * @param text The text of the tooltip
-     */
-    private void AddTooltipToNode(Node node, String text)
-    {
-        Tooltip tooltip = new Tooltip(text);
-        tooltip.getStyleClass().add(Constants.HOME_TOOLTIP_STYLE);
-        tooltip.setShowDelay(Duration.seconds(Constants.HOME_TOOLTIP_ANIMATION_DELAY));
-        tooltip.setHideDelay(
-            Duration.seconds(Constants.HOME_TOOLTIP_ANIMATION_DURATION));
-
-        Tooltip.install(node, tooltip);
     }
 }

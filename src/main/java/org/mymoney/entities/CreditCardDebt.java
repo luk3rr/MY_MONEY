@@ -68,7 +68,7 @@ public class CreditCardDebt
     {
         this.creditCard  = creditCard;
         this.category    = category;
-        this.date        = date.format(Constants.DATE_TIME_FORMATTER_WITH_TIME);
+        this.date        = date.format(Constants.DB_DATE_FORMATTER);
         this.totalAmount = totalAmount;
         this.description = description;
     }
@@ -106,7 +106,7 @@ public class CreditCardDebt
      */
     public LocalDateTime GetDate()
     {
-        return LocalDateTime.parse(date, Constants.DATE_TIME_FORMATTER_WITH_TIME);
+        return LocalDateTime.parse(date, Constants.DB_DATE_FORMATTER);
     }
 
     /**
@@ -151,7 +151,7 @@ public class CreditCardDebt
      */
     public void SetDate(LocalDateTime date)
     {
-        this.date = date.format(Constants.DATE_TIME_FORMATTER_WITH_TIME);
+        this.date = date.format(Constants.DB_DATE_FORMATTER);
     }
 
     /**

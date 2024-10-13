@@ -280,6 +280,6 @@ public class CreditCardService
             return LocalDateTime.now();
         }
 
-        return LocalDateTime.parse(date, Constants.DATE_TIME_FORMATTER_WITH_TIME);
+        return LocalDateTime.parse(date, Constants.DB_DATE_FORMATTER);
     }
 }

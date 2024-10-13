@@ -100,7 +100,7 @@ public final class Constants
         "month-resume-zero-label";
     public static final String HOME_MONTH_RESUME_EXPECTED_LABEL_STYLE =
         "month-resume-expected-label";
-    public static final String HOME_TOOLTIP_STYLE = "tooltip";
+    public static final String TOOLTIP_STYLE = "tooltip";
 
     // Wallet pane styles
     public static final String WALLET_TOTAL_BALANCE_VALUE_LABEL_STYLE =
@@ -111,11 +111,13 @@ public final class Constants
         "total-balance-wallets-label";
     public static final String WALLET_CHECK_BOX_STYLE = "check-box";
 
-    // Sizes
+    // Icons sizes
     public static final Integer WALLET_TYPE_ICONS_SIZE           = 42; // 42x42 px
     public static final Integer CRC_OPERATOR_ICONS_SIZE          = 42; // 42x42 px
-    public static final Integer HOME_LAST_TRANSACTIONS_SIZE      = 15;
     public static final Integer HOME_LAST_TRANSACTIONS_ICON_SIZE = 32; // 32x32 px
+
+    // Home pane constants
+    public static final Integer HOME_LAST_TRANSACTIONS_SIZE                    = 15;
     public static final Integer HOME_LAST_TRANSACTIONS_DESCRIPTION_LABEL_WIDTH = 280;
     public static final Integer HOME_LAST_TRANSACTIONS_VALUE_LABEL_WIDTH       = 70;
     public static final Integer HOME_LAST_TRANSACTIONS_DATE_LABEL_WIDTH        = 80;
@@ -123,8 +125,8 @@ public final class Constants
     public static final Integer HOME_LAST_TRANSACTIONS_CATEGORY_LABEL_WIDTH    = 100;
     public static final Integer HOME_LAST_TRANSACTIONS_STATUS_LABEL_WIDTH      = 80;
     public static final Integer HOME_PANES_ITEMS_PER_PAGE                      = 2;
-    public static final Integer HOME_BAR_CHART_MONTHS                          = 12;
-    public static final Integer HOME_BAR_CHART_TICKS                           = 6;
+    public static final Integer XYBAR_CHART_MONTHS                             = 12;
+    public static final Integer XYBAR_CHART_TICKS                              = 6;
     public static final Integer HOME_MONTH_RESUME_TEXT_LABEL_WIDTH             = 120;
     public static final Integer HOME_MONTH_RESUME_SIGN_LABEL_WIDTH             = 10;
     public static final Integer HOME_MONTH_RESUME_TEXT_EXPECTED_LABEL_WIDTH =
@@ -138,22 +140,38 @@ public final class Constants
     public static final Short   MAX_INSTALLMENTS    = 12 * 3;
 
     // Animation constants
-    public static final Double  MENU_COLLAPSED_WIDTH              = 80.0;
-    public static final Double  MENU_EXPANDED_WIDTH               = 220.0;
-    public static final Double  MENU_ANIMATION_DURATION           = 200.0; // ms
-    public static final Integer HOME_BAR_CHART_ANIMATION_FRAMES   = 30;
-    public static final Double  HOME_BAR_CHART_ANIMATION_DURATION = 0.7; // s
-    public static final Double  HOME_TOOLTIP_ANIMATION_DURATION   = 0.5; // s
-    public static final Double  HOME_TOOLTIP_ANIMATION_DELAY      = 0.5; // s
+    public static final Double MENU_COLLAPSED_WIDTH = 80.0;
+    public static final Double MENU_EXPANDED_WIDTH  = 220.0;
 
-    public static final String DATE_FORMAT_WITH_TIME = "yyyy-MM-dd'T'HH:mm:ss";
+    public static final Double FADE_IN_ANIMATION_DURATION  = 1.0; // s
+    public static final Double FADE_OUT_ANIMATION_DURATION = 1.0; // s
+    public static final Double SLIDE_ANIMATION_DURANTION   = 1.0; // s
+
+    public static final Double  MENU_ANIMATION_DURATION        = 200.0; // ms
+    public static final Integer XYBAR_CHART_ANIMATION_FRAMES   = 30;
+    public static final Double  XYBAR_CHART_ANIMATION_DURATION = 0.7; // s
+    public static final Double  TOOLTIP_ANIMATION_DURATION     = 0.5; // s
+    public static final Double  TOOLTIP_ANIMATION_DELAY        = 0.5; // s
+
+    // Date formats
+    public static final String DB_DATE_FORMAT        = "yyyy-MM-dd'T'HH:mm:ss";
     public static final String DATE_FORMAT_NO_TIME   = "yyyy-MM-dd";
+    public static final String DATE_FORMAT_WITH_TIME = "yyyy-MM-dd HH:mm:ss";
 
-    public static final DateTimeFormatter DATE_TIME_FORMATTER_WITH_TIME =
-        DateTimeFormatter.ofPattern(DATE_FORMAT_WITH_TIME);
+    public static final DateTimeFormatter DB_DATE_FORMATTER =
+        DateTimeFormatter.ofPattern(DB_DATE_FORMAT);
 
     public static final DateTimeFormatter DATE_FORMATTER_NO_TIME =
         DateTimeFormatter.ofPattern(DATE_FORMAT_NO_TIME);
+
+    public static final DateTimeFormatter DATE_FORMATTER_WITH_TIME =
+        DateTimeFormatter.ofPattern(DATE_FORMAT_WITH_TIME);
+
+    // Define the pattern for positive and negative currency values
+    public static final String CURRENCY_FORMAT = "$ #,##0.00; - $ #,##0.00";
+
+    // Percentage with two decimal places
+    public static final String PERCENTAGE_FORMAT = "0.00";
 
     // Prevent instantiation
     private Constants() { }

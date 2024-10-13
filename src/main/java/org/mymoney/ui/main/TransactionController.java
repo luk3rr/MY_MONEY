@@ -6,6 +6,36 @@
 
 package org.mymoney.ui.main;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Year;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.StackedBarChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.AnchorPane;
+import javafx.util.StringConverter;
 import org.mymoney.entities.Category;
 import org.mymoney.entities.WalletTransaction;
 import org.mymoney.services.CategoryService;
@@ -15,47 +45,12 @@ import org.mymoney.ui.common.ResumePaneController;
 import org.mymoney.ui.dialog.AddExpenseController;
 import org.mymoney.ui.dialog.AddIncomeController;
 import org.mymoney.ui.dialog.RemoveTransactionController;
+import org.mymoney.util.Animation;
 import org.mymoney.util.Constants;
 import org.mymoney.util.LoggerConfig;
 import org.mymoney.util.TransactionType;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Year;
-import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.logging.Logger;
-import javafx.animation.AnimationTimer;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.StackedBarChart;
-import javafx.scene.chart.XYChart;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.Tooltip;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
-import javafx.util.Duration;
-import javafx.util.StringConverter;
+import org.mymoney.util.UIUtils;
+import org.mymoney.util.WindowUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -97,16 +92,10 @@ public class TransactionController
     @FXML
     private AnchorPane moneyFlowView;
 
-    @FXML
-    private MenuItem addIncomeMenuItem;
-
-    @FXML
-    private MenuItem addExpenseMenuItem;
-
     @Autowired
     private ConfigurableApplicationContext springContext;
 
-    private StackedBarChart<String, Number> moneyFlowBarChart;
+    private StackedBarChart<String, Number> moneyFlowStackedBarChart;
 
     private WalletService walletService;
 
@@ -196,39 +185,43 @@ public class TransactionController
     @FXML
     private void handleAddIncome()
     {
-        OpenPopupWindow(Constants.ADD_INCOME_FXML,
-                        "Add new income",
-                        (AddIncomeController controller) -> {});
+        WindowUtils.OpenModalWindow(Constants.ADD_INCOME_FXML,
+                                    "Add new income",
+                                    springContext,
+                                    (AddIncomeController controller) -> {});
     }
 
     @FXML
     private void handleAddExpense()
     {
-        OpenPopupWindow(Constants.ADD_EXPENSE_FXML,
-                        "Add new expense",
-                        (AddExpenseController controller) -> {});
+        WindowUtils.OpenModalWindow(Constants.ADD_EXPENSE_FXML,
+                                    "Add new expense",
+                                    springContext,
+                                    (AddExpenseController controller) -> {});
     }
 
     @FXML
     private void handleRemoveIncome()
     {
-        OpenPopupWindow(Constants.REMOVE_TRANSACTION_FXML,
-                        "Remove income",
-                        (RemoveTransactionController controller) -> {
-                            controller.InitializeWithTransactionType(
-                                TransactionType.INCOME);
-                        });
+        WindowUtils.OpenModalWindow(Constants.REMOVE_TRANSACTION_FXML,
+                                    "Remove income",
+                                    springContext,
+                                    (RemoveTransactionController controller) -> {
+                                        controller.InitializeWithTransactionType(
+                                            TransactionType.INCOME);
+                                    });
     }
 
     @FXML
     private void handleRemoveExpense()
     {
-        OpenPopupWindow(Constants.REMOVE_TRANSACTION_FXML,
-                        "Remove expense",
-                        (RemoveTransactionController controller) -> {
-                            controller.InitializeWithTransactionType(
-                                TransactionType.EXPENSE);
-                        });
+        WindowUtils.OpenModalWindow(Constants.REMOVE_TRANSACTION_FXML,
+                                    "Remove expense",
+                                    springContext,
+                                    (RemoveTransactionController controller) -> {
+                                        controller.InitializeWithTransactionType(
+                                            TransactionType.EXPENSE);
+                                    });
     }
 
     /**
@@ -274,18 +267,18 @@ public class TransactionController
 
         CategoryAxis categoryAxis = new CategoryAxis();
         NumberAxis   numberAxis   = new NumberAxis();
-        moneyFlowBarChart         = new StackedBarChart<>(categoryAxis, numberAxis);
+        moneyFlowStackedBarChart  = new StackedBarChart<>(categoryAxis, numberAxis);
 
-        moneyFlowBarChart.setVerticalGridLinesVisible(false);
+        moneyFlowStackedBarChart.setVerticalGridLinesVisible(false);
         moneyFlowView.getChildren().clear();
-        moneyFlowView.getChildren().add(moneyFlowBarChart);
+        moneyFlowView.getChildren().add(moneyFlowStackedBarChart);
 
-        AnchorPane.setTopAnchor(moneyFlowBarChart, 0.0);
-        AnchorPane.setBottomAnchor(moneyFlowBarChart, 0.0);
-        AnchorPane.setLeftAnchor(moneyFlowBarChart, 0.0);
-        AnchorPane.setRightAnchor(moneyFlowBarChart, 0.0);
+        AnchorPane.setTopAnchor(moneyFlowStackedBarChart, 0.0);
+        AnchorPane.setBottomAnchor(moneyFlowStackedBarChart, 0.0);
+        AnchorPane.setLeftAnchor(moneyFlowStackedBarChart, 0.0);
+        AnchorPane.setRightAnchor(moneyFlowStackedBarChart, 0.0);
 
-        moneyFlowBarChart.getData().clear();
+        moneyFlowStackedBarChart.getData().clear();
 
         LocalDateTime     currentDate = LocalDateTime.now();
         DateTimeFormatter formatter   = DateTimeFormatter.ofPattern("MMM/yy");
@@ -294,11 +287,11 @@ public class TransactionController
         Map<YearMonth, Map<Category, Double>> monthlyTotals = new LinkedHashMap<>();
 
         // Loop through the last few months
-        for (int i = 0; i < Constants.HOME_BAR_CHART_MONTHS; i++)
+        for (Integer i = 0; i < Constants.XYBAR_CHART_MONTHS; i++)
         {
             // Get the date for the current month
             LocalDateTime date =
-                currentDate.minusMonths(Constants.HOME_BAR_CHART_MONTHS - i - 1);
+                currentDate.minusMonths(Constants.XYBAR_CHART_MONTHS - i - 1);
             YearMonth yearMonth = YearMonth.of(date.getYear(), date.getMonthValue());
 
             // Get confirmed transactions for the month
@@ -356,7 +349,7 @@ public class TransactionController
             if (series.getData().stream().anyMatch(
                     data -> (Double)data.getYValue() > 0))
             {
-                moneyFlowBarChart.getData().add(series);
+                moneyFlowStackedBarChart.getData().add(series);
             }
         }
 
@@ -379,12 +372,11 @@ public class TransactionController
             numberAxis.setUpperBound(maxTotal);
 
             // Calculate the tick unit based on the maximum total
-            int tickUnit = (int)Math.ceil(maxTotal / Constants.HOME_BAR_CHART_TICKS);
+            int tickUnit = (int)Math.ceil(maxTotal / Constants.XYBAR_CHART_TICKS);
             numberAxis.setTickUnit(tickUnit);
         }
 
-        // Add tooltips to the bars
-        for (XYChart.Series<String, Number> series : moneyFlowBarChart.getData())
+        for (XYChart.Series<String, Number> series : moneyFlowStackedBarChart.getData())
         {
             for (XYChart.Data<String, Number> data : series.getData())
             {
@@ -402,10 +394,14 @@ public class TransactionController
                 double percentage = (monthTotal > 0) ? (value / monthTotal) * 100 : 0;
 
                 // Add tooltip with value and percentage
-                AddTooltipToNode(data.getNode(),
-                                 series.getName() + ": $ " + value + " (" +
-                                     String.format("%.2f", percentage) + "%)");
-                CreateAnimation(data, value);
+                UIUtils.AddTooltipToXYChartNode(
+                    data.getNode(),
+                    series.getName() + ": " + UIUtils.FormatCurrency(value) + " (" +
+                        UIUtils.FormatPercentage(percentage) + ")");
+
+                // Animate the data after setting up the tooltip
+                Animation.StackedXYChartAnimation(Collections.singletonList(data),
+                                                  Collections.singletonList(value));
             }
         }
     }
@@ -478,8 +474,8 @@ public class TransactionController
     }
 
     /**
-     * Populate the year combo box with the years between the oldest transaction date
-     * and the current date
+     * Populate the year combo box with the years between the oldest transaction
+     * date and the current date
      */
     private void PopulateYearComboBox()
     {
@@ -548,7 +544,8 @@ public class TransactionController
 
         transactionsListTransactionTypeComboBox.setItems(transactionTypesWithNull);
 
-        // Custom string converter to format the TransactionType as "TransactionType"
+        // Custom string converter to format the TransactionType as
+        // "TransactionType"
         moneyFlowComboBox.setConverter(new StringConverter<TransactionType>() {
             @Override
             public String toString(TransactionType transactionType)
@@ -600,8 +597,8 @@ public class TransactionController
 
         LocalDate now = LocalDate.now();
 
-        // Generate a list of YearMonth objects from the oldest transaction date to the
-        // current date
+        // Generate a list of YearMonth objects from the oldest transaction date to
+        // the current date
         YearMonth startMonth   = YearMonth.from(oldest);
         YearMonth currentMonth = YearMonth.from(now);
 
@@ -697,8 +694,8 @@ public class TransactionController
                     {
                         setText(item.toString());
                         setAlignment(Pos.CENTER);
-                        setStyle("-fx-padding: 0;"); // set padding to zero to ensure
-                                                     // the text is centered
+                        setStyle("-fx-padding: 0;"); // set padding to zero to
+                                                     // ensure the text is centered
                     }
                 }
             };
@@ -721,12 +718,16 @@ public class TransactionController
 
         TableColumn<WalletTransaction, String> dateColumn = new TableColumn<>("Date");
         dateColumn.setCellValueFactory(
-            param -> new SimpleStringProperty(param.getValue().GetDate().toString()));
+            param
+            -> new SimpleStringProperty(
+                param.getValue().GetDate().format(Constants.DATE_FORMATTER_WITH_TIME)));
 
-        TableColumn<WalletTransaction, Double> amountColumn =
+        TableColumn<WalletTransaction, String> amountColumn =
             new TableColumn<>("Amount");
         amountColumn.setCellValueFactory(
-            param -> new SimpleObjectProperty<>(param.getValue().GetAmount()));
+            param
+            -> new SimpleObjectProperty<>(
+                UIUtils.FormatCurrency(param.getValue().GetAmount())));
 
         TableColumn<WalletTransaction, String> descriptionColumn =
             new TableColumn<>("Description");
@@ -746,110 +747,5 @@ public class TransactionController
                                                       typeColumn,
                                                       categoryColumn,
                                                       statusColumn);
-    }
-
-    /**
-     * Create an animation for a bar in the bar chart
-     * @param data The data to animate
-     * @param targetValue The target value for the animation
-     */
-    private void CreateAnimation(XYChart.Data<String, Number> data, Double targetValue)
-    {
-        data.setYValue(0.0); // Start at zero
-
-        AnimationTimer timer = new AnimationTimer() {
-            private Long         lastUpdate   = 0L;
-            private Double       currentValue = 0.0;
-            private final Double increment =
-                targetValue / Constants.HOME_BAR_CHART_ANIMATION_FRAMES;
-            Double elapsed = 0.0;
-
-            @Override
-            public void handle(long now)
-            {
-                if (lastUpdate == 0)
-                {
-                    lastUpdate = now;
-                }
-
-                elapsed += (now - lastUpdate) / Constants.ONE_SECOND_IN_NS;
-
-                if (elapsed >= Constants.HOME_BAR_CHART_ANIMATION_DURATION)
-                {
-                    currentValue = targetValue;
-                    data.setYValue(currentValue);
-                    stop();
-                }
-                else
-                {
-                    currentValue += increment;
-                    if (currentValue > targetValue)
-                    {
-                        currentValue = targetValue;
-                    }
-                    data.setYValue(currentValue);
-                }
-
-                lastUpdate = now;
-            }
-        };
-        timer.start();
-    }
-
-    /**
-     * Add a tooltip to a node
-     * @param node The node to add the tooltip
-     * @param text The text of the tooltip
-     */
-    private void AddTooltipToNode(Node node, String text)
-    {
-        node.setOnMouseEntered(event -> { node.setStyle("-fx-opacity: 0.7;"); });
-        node.setOnMouseExited(event -> { node.setStyle("-fx-opacity: 1;"); });
-
-        Tooltip tooltip = new Tooltip(text);
-        tooltip.getStyleClass().add(Constants.HOME_TOOLTIP_STYLE);
-        tooltip.setShowDelay(Duration.seconds(Constants.HOME_TOOLTIP_ANIMATION_DELAY));
-        tooltip.setHideDelay(
-            Duration.seconds(Constants.HOME_TOOLTIP_ANIMATION_DURATION));
-
-        Tooltip.install(node, tooltip);
-    }
-
-    /**
-     * Opens a popup window for adding expenses or transfers
-     * @param fxmlFileName The FXML file to load
-     * @param title The title of the popup window
-     * @param controllerSetup A consumer that accepts the controller for additional
-     *     setup
-     * @param <T> The type of the controller
-     */
-    private <T> void
-    OpenPopupWindow(String fxmlFileName, String title, Consumer<T> controllerSetup)
-    {
-        try
-        {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFileName));
-            loader.setControllerFactory(springContext::getBean);
-            Parent root = loader.load();
-
-            Stage popupStage = new Stage();
-            Scene scene      = new Scene(root);
-            scene.getStylesheets().add(
-                getClass().getResource(Constants.COMMON_STYLE_SHEET).toExternalForm());
-
-            T controller = loader.getController();
-            controllerSetup.accept(controller);
-
-            popupStage.setTitle(title);
-            popupStage.setScene(scene);
-
-            popupStage.setOnHidden(e -> {});
-
-            popupStage.showAndWait();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
     }
 }

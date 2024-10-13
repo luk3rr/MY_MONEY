@@ -6,12 +6,6 @@
 
 package org.mymoney.ui.dialog;
 
-import org.mymoney.entities.Transfer;
-import org.mymoney.entities.Wallet;
-import org.mymoney.repositories.TransferRepository;
-import org.mymoney.services.WalletService;
-import org.mymoney.util.Constants;
-import org.mymoney.util.LoggerConfig;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -26,6 +20,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import org.mymoney.entities.Transfer;
+import org.mymoney.entities.Wallet;
+import org.mymoney.repositories.TransferRepository;
+import org.mymoney.services.WalletService;
+import org.mymoney.util.Constants;
+import org.mymoney.util.LoggerConfig;
+import org.mymoney.util.UIUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -168,10 +169,10 @@ public class AddTransferController
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
 
-            alert.setGraphic(new ImageView(
-                new Image(this.getClass()
-                              .getResource(Constants.COMMON_ICONS_PATH + "success.png")
-                              .toString())));
+            alert.setGraphic(new ImageView(new Image(
+                this.getClass()
+                    .getResource(Constants.COMMON_ICONS_PATH + "success.png")
+                    .toString())));
 
             alert.setTitle("Success");
             alert.setHeaderText("Transfer created");
@@ -221,7 +222,7 @@ public class AddTransferController
                                   .get();
 
         senderWalletCurrentBalanceValueLabel.setText(
-            String.format("$ %.2f", senderWallet.GetBalance()));
+            UIUtils.FormatCurrency(senderWallet.GetBalance()));
     }
 
     private void UpdateReceiverWalletBalance()
@@ -239,7 +240,7 @@ public class AddTransferController
                                     .get();
 
         receiverWalletCurrentBalanceValueLabel.setText(
-            String.format("$ %.2f", receiverWallet.GetBalance()));
+            UIUtils.FormatCurrency(receiverWallet.GetBalance()));
     }
 
     private void UpdateSenderWalletAfterBalance()
@@ -277,19 +278,16 @@ public class AddTransferController
                 // Remove old style and add negative style
                 SetLabelStyle(senderWalletAfterBalanceValueLabel,
                               Constants.NEGATIVE_BALANCE_STYLE);
-
-                senderWalletAfterBalanceValueLabel.setText(
-                    String.format("- $ %.2f", -senderWalletAfterBalance));
             }
             else
             {
                 // Remove old style and add neutral style
                 SetLabelStyle(senderWalletAfterBalanceValueLabel,
                               Constants.NEUTRAL_BALANCE_STYLE);
-
-                senderWalletAfterBalanceValueLabel.setText(
-                    String.format("$ %.2f", senderWalletAfterBalance));
             }
+
+            senderWalletAfterBalanceValueLabel.setText(
+                UIUtils.FormatCurrency(senderWalletAfterBalance));
         }
         catch (NumberFormatException e)
         {
@@ -334,19 +332,16 @@ public class AddTransferController
                 // Remove old style and add negative style
                 SetLabelStyle(receiverWalletAfterBalanceValueLabel,
                               Constants.NEGATIVE_BALANCE_STYLE);
-
-                receiverWalletAfterBalanceValueLabel.setText(
-                    String.format("- $ %.2f", -receiverWalletAfterBalance));
             }
             else
             {
                 // Remove old style and add neutral style
                 SetLabelStyle(receiverWalletAfterBalanceValueLabel,
                               Constants.NEUTRAL_BALANCE_STYLE);
-
-                receiverWalletAfterBalanceValueLabel.setText(
-                    String.format("$ %.2f", receiverWalletAfterBalance));
             }
+
+            receiverWalletAfterBalanceValueLabel.setText(
+                UIUtils.FormatCurrency(receiverWalletAfterBalance));
         }
         catch (NumberFormatException e)
         {

@@ -6,13 +6,6 @@
 
 package org.mymoney.ui.dialog;
 
-import org.mymoney.entities.Category;
-import org.mymoney.entities.Wallet;
-import org.mymoney.services.CategoryService;
-import org.mymoney.services.WalletService;
-import org.mymoney.util.Constants;
-import org.mymoney.util.LoggerConfig;
-import org.mymoney.util.TransactionStatus;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -29,6 +22,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import org.mymoney.entities.Category;
+import org.mymoney.entities.Wallet;
+import org.mymoney.services.CategoryService;
+import org.mymoney.services.WalletService;
+import org.mymoney.util.Constants;
+import org.mymoney.util.LoggerConfig;
+import org.mymoney.util.TransactionStatus;
+import org.mymoney.util.UIUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -106,12 +107,12 @@ public class AddIncomeController
 
         walletComboBox.setOnAction(e -> {
             UpdateWalletBalance();
-            walletAfterBalance();
+            WalletAfterBalance();
         });
 
         // Update wallet after balance when the value field changes
         incomeValueField.textProperty().addListener(
-            (observable, oldValue, newValue) -> { walletAfterBalance(); });
+            (observable, oldValue, newValue) -> { WalletAfterBalance(); });
     }
 
     @FXML
@@ -173,10 +174,10 @@ public class AddIncomeController
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
 
-            alert.setGraphic(new ImageView(
-                new Image(this.getClass()
-                              .getResource(Constants.COMMON_ICONS_PATH + "success.png")
-                              .toString())));
+            alert.setGraphic(new ImageView(new Image(
+                this.getClass()
+                    .getResource(Constants.COMMON_ICONS_PATH + "success.png")
+                    .toString())));
 
             alert.setTitle("Success");
             alert.setHeaderText("Income created");
@@ -243,10 +244,10 @@ public class AddIncomeController
                             .get();
 
         walletCurrentBalanceValueLabel.setText(
-            String.format("$ %.2f", wallet.GetBalance()));
+            UIUtils.FormatCurrency(wallet.GetBalance()));
     }
 
-    private void walletAfterBalance()
+    private void WalletAfterBalance()
     {
         String incomeValueString = incomeValueField.getText();
         String walletName        = walletComboBox.getValue();
@@ -273,27 +274,24 @@ public class AddIncomeController
                                 .findFirst()
                                 .get();
 
-            Double walletAfterBalance = wallet.GetBalance() + incomeValue;
+            Double walletAfterBalanceValue = wallet.GetBalance() + incomeValue;
 
             // Episilon is used to avoid floating point arithmetic errors
-            if (walletAfterBalance < Constants.EPSILON)
+            if (walletAfterBalanceValue < Constants.EPSILON)
             {
                 // Remove old style and add negative style
                 SetLabelStyle(walletAfterBalanceValueLabel,
                               Constants.NEGATIVE_BALANCE_STYLE);
-
-                walletAfterBalanceValueLabel.setText(
-                    String.format("- $ %.2f", -walletAfterBalance));
             }
             else
             {
                 // Remove old style and add neutral style
                 SetLabelStyle(walletAfterBalanceValueLabel,
                               Constants.NEUTRAL_BALANCE_STYLE);
-
-                walletAfterBalanceValueLabel.setText(
-                    String.format("$ %.2f", walletAfterBalance));
             }
+
+            walletAfterBalanceValueLabel.setText(
+                UIUtils.FormatCurrency(walletAfterBalanceValue));
         }
         catch (NumberFormatException e)
         {

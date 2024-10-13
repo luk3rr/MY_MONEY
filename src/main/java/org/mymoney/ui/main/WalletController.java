@@ -7,16 +7,6 @@
 package org.mymoney.ui.main;
 
 import com.jfoenix.controls.JFXButton;
-import org.mymoney.charts.DoughnutChart;
-import org.mymoney.entities.Wallet;
-import org.mymoney.entities.WalletTransaction;
-import org.mymoney.entities.WalletType;
-import org.mymoney.services.WalletService;
-import org.mymoney.ui.common.WalletFullPaneController;
-import org.mymoney.util.Constants;
-import org.mymoney.util.LoggerConfig;
-import org.mymoney.util.TransactionStatus;
-import org.mymoney.util.TransactionType;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,14 +16,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import javafx.animation.AnimationTimer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
@@ -43,11 +30,23 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javafx.util.Duration;
+import org.mymoney.charts.DoughnutChart;
+import org.mymoney.entities.Wallet;
+import org.mymoney.entities.WalletTransaction;
+import org.mymoney.entities.WalletType;
+import org.mymoney.services.WalletService;
+import org.mymoney.ui.common.WalletFullPaneController;
+import org.mymoney.ui.dialog.AddTransferController;
+import org.mymoney.ui.dialog.AddWalletController;
+import org.mymoney.util.Animation;
+import org.mymoney.util.Constants;
+import org.mymoney.util.LoggerConfig;
+import org.mymoney.util.TransactionStatus;
+import org.mymoney.util.TransactionType;
+import org.mymoney.util.UIUtils;
+import org.mymoney.util.WindowUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -168,6 +167,24 @@ public class WalletController
         SetButtonsActions();
     }
 
+    @FXML
+    private void handleAddTransfer()
+    {
+        WindowUtils.OpenModalWindow(Constants.ADD_TRANSFER_FXML,
+                                    "Add Transfer",
+                                    springContext,
+                                    (AddTransferController controller) -> {});
+    }
+
+    @FXML
+    private void handleAddWallet()
+    {
+        WindowUtils.OpenModalWindow(Constants.ADD_WALLET_FXML,
+                                    "Add Wallet",
+                                    springContext,
+                                    (AddWalletController controller) -> {});
+    }
+
     /**
      * Set the actions for the buttons
      */
@@ -175,9 +192,6 @@ public class WalletController
     {
         totalBalancePaneWalletTypeComboBox.setOnAction(e -> UpdateTotalBalanceView());
         moneyFlowPaneWalletTypeComboBox.setOnAction(e -> { CreateNewBarChart(); });
-
-        totalBalancePaneTransferButton.setOnAction(e -> AddTransfer());
-        totalBalancePaneAddWalletButton.setOnAction(e -> AddWallet());
 
         walletPrevButton.setOnAction(event -> {
             if (walletPaneCurrentPage > 0)
@@ -334,33 +348,15 @@ public class WalletController
         Double foreseenBalance =
             walletsCurrentBalance - pendingExpenses + pendingIncomes;
 
-        String totalBalanceText;
+        Label totalBalanceValueLabel =
+            new Label(UIUtils.FormatCurrency(walletsCurrentBalance));
 
-        if (walletsCurrentBalance < 0)
-        {
-            totalBalanceText = String.format("- $ %.2f", -walletsCurrentBalance);
-        }
-        else
-        {
-            totalBalanceText = String.format("$ %.2f", walletsCurrentBalance);
-        }
-
-        String foreseenBalanceText = "Foreseen: ";
-
-        if (foreseenBalance < 0)
-        {
-            foreseenBalanceText += String.format("- $ %.2f", -foreseenBalance);
-        }
-        else
-        {
-            foreseenBalanceText += String.format("$ %.2f", foreseenBalance);
-        }
-
-        Label totalBalanceValueLabel = new Label(totalBalanceText);
         totalBalanceValueLabel.getStyleClass().add(
             Constants.WALLET_TOTAL_BALANCE_VALUE_LABEL_STYLE);
 
-        Label balanceForeseenLabel = new Label(foreseenBalanceText);
+        Label balanceForeseenLabel =
+            new Label("Foreseen: " + UIUtils.FormatCurrency(foreseenBalance));
+
         balanceForeseenLabel.getStyleClass().add(
             Constants.WALLET_TOTAL_BALANCE_FORESEEN_LABEL_STYLE);
 
@@ -562,11 +558,11 @@ public class WalletController
             moneyFlowPaneWalletTypeComboBox.getSelectionModel().getSelectedIndex();
 
         // Collect data for the last months
-        for (Integer i = 0; i < Constants.HOME_BAR_CHART_MONTHS; i++)
+        for (Integer i = 0; i < Constants.XYBAR_CHART_MONTHS; i++)
         {
             // Get the data from the oldest month to the most recent, to keep the order
             LocalDateTime date =
-                currentDate.minusMonths(Constants.HOME_BAR_CHART_MONTHS - i - 1);
+                currentDate.minusMonths(Constants.XYBAR_CHART_MONTHS - i - 1);
             Integer month = date.getMonthValue();
             Integer year  = date.getYear();
 
@@ -658,8 +654,8 @@ public class WalletController
             numberAxis.setUpperBound(maxValue);
 
             // Set the tick unit based on the maximum value
-            Integer tickUnit = (int)Math.round(
-                ((maxValue / Constants.HOME_BAR_CHART_TICKS) / 10) * 10);
+            Integer tickUnit =
+                (int)Math.round(((maxValue / Constants.XYBAR_CHART_TICKS) / 10) * 10);
             numberAxis.setTickUnit(tickUnit);
         }
 
@@ -668,7 +664,7 @@ public class WalletController
         moneyFlowBarChart.getData().add(expensesSeries);
         moneyFlowBarChart.getData().add(incomesSeries);
 
-        for (int i = 0; i < expensesSeries.getData().size(); i++)
+        for (Integer i = 0; i < expensesSeries.getData().size(); i++)
         {
             XYChart.Data<String, Number> expenseData = expensesSeries.getData().get(i);
             XYChart.Data<String, Number> incomeData  = incomesSeries.getData().get(i);
@@ -676,146 +672,18 @@ public class WalletController
             Double targetExpenseValue = monthlyExpenses.get(expenseData.getXValue());
 
             // Add tooltip to the bars
-            AddTooltipToNode(expenseData.getNode(),
-                             String.format("%.2f", targetExpenseValue));
+            UIUtils.AddTooltipToXYChartNode(expenseData.getNode(),
+                                            UIUtils.FormatCurrency(targetExpenseValue));
 
             Double targetIncomeValue =
                 monthlyIncomes.getOrDefault(expenseData.getXValue(), 0.0);
 
-            AddTooltipToNode(incomeData.getNode(),
-                             String.format("%.2f", targetIncomeValue));
+            UIUtils.AddTooltipToXYChartNode(incomeData.getNode(),
+                                            UIUtils.FormatCurrency(targetIncomeValue));
 
-            // Animation for Expenses
-            CreateAnimation(expenseData, targetExpenseValue);
-
-            // Animation for Incomes
-            CreateAnimation(incomeData, targetIncomeValue);
+            // Animation for the bars
+            Animation.XYChartAnimation(expenseData, targetExpenseValue);
+            Animation.XYChartAnimation(incomeData, targetIncomeValue);
         }
-    }
-
-    private void CreateAnimation(XYChart.Data<String, Number> data, Double targetValue)
-    {
-        data.setYValue(0.0); // Start at zero
-
-        AnimationTimer timer = new AnimationTimer() {
-            private Long         lastUpdate   = 0L;
-            private Double       currentValue = 0.0;
-            private final Double increment =
-                targetValue / Constants.HOME_BAR_CHART_ANIMATION_FRAMES;
-            Double elapsed = 0.0;
-
-            @Override
-            public void handle(long now)
-            {
-                if (lastUpdate == 0)
-                {
-                    lastUpdate = now;
-                }
-
-                elapsed += (now - lastUpdate) / Constants.ONE_SECOND_IN_NS;
-
-                if (elapsed >= Constants.HOME_BAR_CHART_ANIMATION_DURATION)
-                {
-                    currentValue = targetValue;
-                    data.setYValue(currentValue);
-                    stop();
-                }
-                else
-                {
-                    currentValue += increment;
-                    if (currentValue > targetValue)
-                    {
-                        currentValue = targetValue;
-                    }
-                    data.setYValue(currentValue);
-                }
-
-                lastUpdate = now;
-            }
-        };
-        timer.start();
-    }
-
-    /**
-     * Add a new wallet
-     */
-    private void AddWallet()
-    {
-        try
-        {
-            FXMLLoader loader =
-                new FXMLLoader(getClass().getResource(Constants.ADD_WALLET_FXML));
-            loader.setControllerFactory(springContext::getBean);
-            Parent root = loader.load();
-
-            Stage popupStage = new Stage();
-            popupStage.setTitle("Create new wallet");
-            popupStage.setScene(new Scene(root));
-
-            popupStage.setOnHidden(e -> {
-                UpdateTotalBalanceView();
-                UpdateDisplayWallets();
-            });
-
-            popupStage.showAndWait();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Add a new transfer
-     */
-    private void AddTransfer()
-    {
-        try
-        {
-            FXMLLoader loader =
-                new FXMLLoader(getClass().getResource(Constants.ADD_TRANSFER_FXML));
-            loader.setControllerFactory(springContext::getBean);
-            Parent root = loader.load();
-
-            Stage popupStage = new Stage();
-
-            Scene scene = new Scene(root);
-
-            scene.getStylesheets().add(
-                getClass().getResource(Constants.COMMON_STYLE_SHEET).toExternalForm());
-
-            popupStage.setTitle("Add new transfer");
-            popupStage.setScene(scene);
-
-            popupStage.setOnHidden(e -> {
-                UpdateTotalBalanceView();
-                UpdateDisplayWallets();
-            });
-
-            popupStage.showAndWait();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Add a tooltip to a node
-     * @param node The node to add the tooltip
-     * @param text The text of the tooltip
-     */
-    private void AddTooltipToNode(Node node, String text)
-    {
-        node.setOnMouseEntered(event -> { node.setStyle("-fx-opacity: 0.7;"); });
-        node.setOnMouseExited(event -> { node.setStyle("-fx-opacity: 1;"); });
-
-        Tooltip tooltip = new Tooltip(text);
-        tooltip.getStyleClass().add(Constants.HOME_TOOLTIP_STYLE);
-        tooltip.setShowDelay(Duration.seconds(Constants.HOME_TOOLTIP_ANIMATION_DELAY));
-        tooltip.setHideDelay(
-            Duration.seconds(Constants.HOME_TOOLTIP_ANIMATION_DURATION));
-
-        Tooltip.install(node, tooltip);
     }
 }

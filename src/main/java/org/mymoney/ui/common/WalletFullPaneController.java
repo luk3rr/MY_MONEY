@@ -6,6 +6,14 @@
 
 package org.mymoney.ui.common;
 
+import java.time.LocalDate;
+import java.util.List;
+// import java.util.logging.Logger;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import org.mymoney.entities.Transfer;
 import org.mymoney.entities.Wallet;
 import org.mymoney.entities.WalletTransaction;
@@ -19,22 +27,8 @@ import org.mymoney.util.Constants;
 // import org.mymoney.util.LoggerConfig;
 import org.mymoney.util.TransactionStatus;
 import org.mymoney.util.TransactionType;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.function.Consumer;
-// import java.util.logging.Logger;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import org.mymoney.util.UIUtils;
+import org.mymoney.util.WindowUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Scope;
@@ -53,9 +47,6 @@ public class WalletFullPaneController
     private VBox rootVBox;
 
     @FXML
-    private HBox header;
-
-    @FXML
     private ImageView walletIcon;
 
     @FXML
@@ -65,16 +56,10 @@ public class WalletFullPaneController
     private Label walletType;
 
     @FXML
-    private Label openingBalanceDescription;
-
-    @FXML
     private Label openingBalanceSign;
 
     @FXML
     private Label openingBalanceValue;
-
-    @FXML
-    private Label incomesDescription;
 
     @FXML
     private Label incomesValue;
@@ -83,16 +68,10 @@ public class WalletFullPaneController
     private Label incomesSign;
 
     @FXML
-    private Label expensesDescription;
-
-    @FXML
     private Label expensesSign;
 
     @FXML
     private Label expensesValue;
-
-    @FXML
-    private Label creditedTransfersDescription;
 
     @FXML
     private Label creditedTransfersSign;
@@ -101,16 +80,10 @@ public class WalletFullPaneController
     private Label creditedTransfersValue;
 
     @FXML
-    private Label debitedTransfersDescription;
-
-    @FXML
     private Label debitedTransfersSign;
 
     @FXML
     private Label debitedTransfersValue;
-
-    @FXML
-    private Label currentBalanceDescription;
 
     @FXML
     private Label currentBalanceSign;
@@ -119,22 +92,10 @@ public class WalletFullPaneController
     private Label currentBalanceValue;
 
     @FXML
-    private Label foreseenBalanceDescription;
-
-    @FXML
     private Label foreseenBalanceSign;
 
     @FXML
     private Label foreseenBalanceValue;
-
-    @FXML
-    private MenuItem addIncomeMenuItem;
-
-    @FXML
-    private MenuItem addExpenseMenuItem;
-
-    @FXML
-    private MenuItem addTransferMenuItem;
 
     @Autowired
     private ConfigurableApplicationContext springContext;
@@ -169,92 +130,57 @@ public class WalletFullPaneController
     @FXML
     private void handleAddIncome()
     {
-        OpenPopupWindow(Constants.ADD_INCOME_FXML,
-                        "Add new income",
-                        (AddIncomeController controller) -> {
-                            controller.SetWalletComboBox(wallet);
-                        });
+        WindowUtils.OpenModalWindow(Constants.ADD_INCOME_FXML,
+                                    "Add new income",
+                                    springContext,
+                                    (AddIncomeController controller)
+                                        -> { controller.SetWalletComboBox(wallet); },
+                                    List.of(() -> UpdateWalletPane(wallet)));
     }
 
     @FXML
     private void handleAddExpense()
     {
-        OpenPopupWindow(Constants.ADD_EXPENSE_FXML,
-                        "Add new expense",
-                        (AddExpenseController controller) -> {
-                            controller.SetWalletComboBox(wallet);
-                        });
+        WindowUtils.OpenModalWindow(Constants.ADD_EXPENSE_FXML,
+                                    "Add new expense",
+                                    springContext,
+                                    (AddExpenseController controller)
+                                        -> { controller.SetWalletComboBox(wallet); },
+                                    List.of(() -> UpdateWalletPane(wallet)));
     }
 
     @FXML
     private void handleAddTransfer()
     {
-        OpenPopupWindow(Constants.ADD_TRANSFER_FXML,
-                        "Add new transfer",
-                        (AddTransferController controller) -> {
-                            controller.SetSenderWalletComboBox(wallet);
-                        });
+        WindowUtils.OpenModalWindow(
+            Constants.ADD_TRANSFER_FXML,
+            "Add new transfer",
+            springContext,
+            (AddTransferController controller)
+                -> { controller.SetSenderWalletComboBox(wallet); },
+            List.of(() -> UpdateWalletPane(wallet)));
     }
 
     @FXML
     private void handleRenameWallet()
     {
-        OpenPopupWindow(Constants.RENAME_WALLET_FXML,
-                        "Rename wallet",
-                        (RenameWalletController controller) -> {
-                            controller.SetWalletComboBox(wallet);
-                        });
+        WindowUtils.OpenModalWindow(Constants.RENAME_WALLET_FXML,
+                                    "Rename wallet",
+                                    springContext,
+                                    (RenameWalletController controller)
+                                        -> { controller.SetWalletComboBox(wallet); },
+                                    List.of(() -> UpdateWalletPane(wallet)));
     }
 
     @FXML
     private void handleChangeWalletType()
     {
-        OpenPopupWindow(Constants.CHANGE_WALLET_TYPE_FXML,
-                        "Change wallet type",
-                        (ChangeWalletTypeController controller) -> {
-                            controller.SetWalletComboBox(wallet);
-                        });
-    }
-
-    /**
-     * Opens a popup window for adding expenses or transfers
-     * @param fxmlFileName The FXML file to load
-     * @param title The title of the popup window
-     * @param controllerSetup A consumer that accepts the controller for additional
-     *     setup
-     * @param <T> The type of the controller
-     */
-    private <T> void
-    OpenPopupWindow(String fxmlFileName, String title, Consumer<T> controllerSetup)
-    {
-        try
-        {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFileName));
-            loader.setControllerFactory(springContext::getBean);
-            Parent root = loader.load();
-
-            Stage popupStage = new Stage();
-            Scene scene      = new Scene(root);
-            scene.getStylesheets().add(
-                getClass().getResource(Constants.COMMON_STYLE_SHEET).toExternalForm());
-
-            T controller = loader.getController();
-            controllerSetup.accept(controller);
-
-            popupStage.setTitle(title);
-            popupStage.setScene(scene);
-
-            popupStage.setOnHidden(e -> {
-                LoadWalletInfo();
-                UpdateWalletPane(wallet);
-            });
-
-            popupStage.showAndWait();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        WindowUtils.OpenModalWindow(Constants.CHANGE_WALLET_TYPE_FXML,
+                                    "Change wallet type",
+                                    springContext,
+                                    (ChangeWalletTypeController controller)
+                                        -> { controller.SetWalletComboBox(wallet); },
+                                    List.of(() -> UpdateWalletPane(wallet)));
     }
 
     /**
@@ -393,14 +319,14 @@ public class WalletFullPaneController
         if (value + Constants.EPSILON < 0)
         {
             signLabel.setText("-");
-            valueLabel.setText(String.format("$ %.2f", -value));
+            valueLabel.setText(UIUtils.FormatCurrency(-value));
             SetLabelStyle(signLabel, Constants.NEGATIVE_BALANCE_STYLE);
             SetLabelStyle(valueLabel, Constants.NEGATIVE_BALANCE_STYLE);
         }
         else
         {
             signLabel.setText("");
-            valueLabel.setText(String.format("$ %.2f", value));
+            valueLabel.setText(UIUtils.FormatCurrency(value));
             SetLabelStyle(signLabel, Constants.NEUTRAL_BALANCE_STYLE);
             SetLabelStyle(valueLabel, Constants.NEUTRAL_BALANCE_STYLE);
         }
