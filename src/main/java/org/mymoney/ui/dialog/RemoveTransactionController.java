@@ -272,12 +272,12 @@ public class RemoveTransactionController
         descriptionColumn.setCellValueFactory(
             param -> new SimpleStringProperty(param.getValue().GetDescription()));
 
-        transactionsTableView.getColumns().addAll(idColumn,
-                                                  descriptionColumn,
-                                                  amountColumn,
-                                                  walletNameColumn,
-                                                  dateColumn,
-                                                  categoryColumn,
-                                                  statusColumn);
+        transactionsTableView.getColumns().add(idColumn);
+        transactionsTableView.getColumns().add(descriptionColumn);
+        transactionsTableView.getColumns().add(amountColumn);
+        transactionsTableView.getColumns().add(walletNameColumn);
+        transactionsTableView.getColumns().add(dateColumn);
+        transactionsTableView.getColumns().add(categoryColumn);
+        transactionsTableView.getColumns().add(statusColumn);
     }
 }

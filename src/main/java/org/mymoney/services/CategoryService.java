@@ -8,15 +8,12 @@ package org.mymoney.services;
 
 import java.util.List;
 import java.util.logging.Logger;
-
 import org.mymoney.entities.Category;
 import org.mymoney.repositories.CategoryRepository;
 import org.mymoney.util.LoggerConfig;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 /**
  * This class is responsible for managing the categories
@@ -39,13 +36,21 @@ public class CategoryService
     @Transactional
     public Long AddCategory(String name)
     {
-        if (categoryRepository.existsByName(name))
+        // Remove leading and trailing whitespaces
+        name = name.strip();
+
+        if (name.isBlank())
         {
-            throw new RuntimeException("Category with name " + name + " already exists");
+            throw new RuntimeException("Category name cannot be empty");
         }
 
-        Category category = new Category();
-        category.SetName(name);
+        if (categoryRepository.existsByName(name))
+        {
+            throw new RuntimeException("Category with name " + name +
+                                       " already exists");
+        }
+
+        Category category = new Category(name);
 
         categoryRepository.save(category);
 
@@ -55,14 +60,60 @@ public class CategoryService
     }
 
     /**
-     * TODO: Implement this method
      * Delete a category
      * @param id Category ID
      */
     @Transactional
     public void DeleteCategory(Long id)
     {
-        // Delete the category from the database
+        Category category = categoryRepository.findById(id).orElseThrow(
+            () -> new RuntimeException("Category with ID " + id + " not found"));
+
+        categoryRepository.delete(category);
+
+        m_logger.info("Category " + category.GetName() + " deleted successfully");
+    }
+
+    /**
+     * Rename a category
+     * @param id Category ID
+     * @param newName New category name
+     */
+    @Transactional
+    public void RenameCategory(Long id, String newName)
+    {
+        // Remove leading and trailing whitespaces
+        newName = newName.strip();
+
+        if (newName.isBlank())
+        {
+            throw new RuntimeException("Category name cannot be empty");
+        }
+
+        if (categoryRepository.existsByName(newName))
+        {
+            throw new RuntimeException("Category with name " + newName +
+                                       " already exists");
+        }
+
+        Category category = categoryRepository.findById(id).orElseThrow(
+            () -> new RuntimeException("Category with ID " + id + " not found"));
+
+        category.SetName(newName);
+
+        categoryRepository.save(category);
+
+        m_logger.info("Category " + newName + " renamed successfully");
+    }
+
+    /**
+     * Get a category by its name
+     * @param name Category name
+     * @return Category
+     */
+    public Category GetCategoryByName(String name)
+    {
+        return categoryRepository.findByName(name);
     }
 
     /**
@@ -72,5 +123,15 @@ public class CategoryService
     public List<Category> GetAllCategories()
     {
         return categoryRepository.findAll();
+    }
+
+    /**
+     * Get the number of transactions associated with a category
+     * @param categoryId Category ID
+     * @return Number of transactions
+     */
+    public Long CountTransactions(Long categoryId)
+    {
+        return categoryRepository.CountTransactions(categoryId);
     }
 }

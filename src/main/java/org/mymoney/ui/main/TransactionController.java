@@ -45,6 +45,7 @@ import org.mymoney.services.WalletService;
 import org.mymoney.ui.common.ResumePaneController;
 import org.mymoney.ui.dialog.AddExpenseController;
 import org.mymoney.ui.dialog.AddIncomeController;
+import org.mymoney.ui.dialog.ManageCategoryController;
 import org.mymoney.ui.dialog.RemoveTransactionController;
 import org.mymoney.util.Animation;
 import org.mymoney.util.Constants;
@@ -154,28 +155,15 @@ public class TransactionController
         transactionsListEndDatePicker.setValue(lastDayOfMonth.toLocalDate());
 
         // Update the resumes
-        UpdateMonthResume(currentDate.getMonthValue(), currentDate.getYear());
-        UpdateYearResume(currentDate.getYear());
+        UpdateMonthResume();
+        UpdateYearResume();
         UpdateMoneyFlow();
         UpdateTransactionTableView();
 
         // Add a listener to handle user selection
-        monthResumeComboBox.setOnAction(event -> {
-            YearMonth selectedYearMonth = monthResumeComboBox.getValue();
-            if (selectedYearMonth != null)
-            {
-                UpdateMonthResume(selectedYearMonth.getMonthValue(),
-                                  selectedYearMonth.getYear());
-            }
-        });
+        monthResumeComboBox.setOnAction(event -> { UpdateMonthResume(); });
 
-        yearResumeComboBox.setOnAction(event -> {
-            Year selectedYear = yearResumeComboBox.getValue();
-            if (selectedYear != null)
-            {
-                UpdateYearResume(selectedYear.getValue());
-            }
-        });
+        yearResumeComboBox.setOnAction(event -> { UpdateYearResume(); });
 
         moneyFlowComboBox.setOnAction(event -> { UpdateMoneyFlow(); });
 
@@ -199,7 +187,14 @@ public class TransactionController
         WindowUtils.OpenModalWindow(Constants.ADD_INCOME_FXML,
                                     "Add new income",
                                     springContext,
-                                    (AddIncomeController controller) -> {});
+                                    (AddIncomeController controller)
+                                        -> {},
+                                    List.of(() -> {
+                                        UpdateMonthResume();
+                                        UpdateYearResume();
+                                        UpdateTransactionTableView();
+                                        UpdateMoneyFlow();
+                                    }));
     }
 
     @FXML
@@ -208,7 +203,14 @@ public class TransactionController
         WindowUtils.OpenModalWindow(Constants.ADD_EXPENSE_FXML,
                                     "Add new expense",
                                     springContext,
-                                    (AddExpenseController controller) -> {});
+                                    (AddExpenseController controller)
+                                        -> {},
+                                    List.of(() -> {
+                                        UpdateMonthResume();
+                                        UpdateYearResume();
+                                        UpdateTransactionTableView();
+                                        UpdateMoneyFlow();
+                                    }));
     }
 
     @FXML
@@ -217,10 +219,17 @@ public class TransactionController
         WindowUtils.OpenModalWindow(Constants.REMOVE_TRANSACTION_FXML,
                                     "Remove income",
                                     springContext,
-                                    (RemoveTransactionController controller) -> {
+                                    (RemoveTransactionController controller)
+                                        -> {
                                         controller.InitializeWithTransactionType(
                                             TransactionType.INCOME);
-                                    });
+                                    },
+                                    List.of(() -> {
+                                        UpdateMonthResume();
+                                        UpdateYearResume();
+                                        UpdateTransactionTableView();
+                                        UpdateMoneyFlow();
+                                    }));
     }
 
     @FXML
@@ -229,10 +238,31 @@ public class TransactionController
         WindowUtils.OpenModalWindow(Constants.REMOVE_TRANSACTION_FXML,
                                     "Remove expense",
                                     springContext,
-                                    (RemoveTransactionController controller) -> {
+                                    (RemoveTransactionController controller)
+                                        -> {
                                         controller.InitializeWithTransactionType(
                                             TransactionType.EXPENSE);
-                                    });
+                                    },
+                                    List.of(() -> {
+                                        UpdateMonthResume();
+                                        UpdateYearResume();
+                                        UpdateTransactionTableView();
+                                        UpdateMoneyFlow();
+                                    }));
+    }
+
+    @FXML
+    private void handleManageCategories()
+    {
+        WindowUtils.OpenModalWindow(Constants.MANAGE_CATEGORY_FXML,
+                                    "Manage categories",
+                                    springContext,
+                                    (ManageCategoryController controller)
+                                        -> {},
+                                    List.of(() -> {
+                                        UpdateTransactionTableView();
+                                        UpdateMoneyFlow();
+                                    }));
     }
 
     /**
@@ -433,10 +463,11 @@ public class TransactionController
 
     /**
      * Update the year resume view
-     * @param year The year to update
      */
-    private void UpdateYearResume(Integer year)
+    private void UpdateYearResume()
     {
+        Year selectedYear = yearResumeComboBox.getValue();
+
         try
         {
             FXMLLoader loader =
@@ -448,7 +479,7 @@ public class TransactionController
                 getClass().getResource(Constants.COMMON_STYLE_SHEET).toExternalForm());
 
             ResumePaneController resumePaneController = loader.getController();
-            resumePaneController.UpdateResumePane(year);
+            resumePaneController.UpdateResumePane(selectedYear.getValue());
 
             AnchorPane.setTopAnchor(newContent, 0.0);
             AnchorPane.setBottomAnchor(newContent, 0.0);
@@ -466,11 +497,11 @@ public class TransactionController
 
     /**
      * Update the month resume view
-     * @param month The month to update
-     * @param year The year to update
      */
-    private void UpdateMonthResume(Integer month, Integer year)
+    private void UpdateMonthResume()
     {
+        YearMonth selectedYearMonth = monthResumeComboBox.getValue();
+
         try
         {
             FXMLLoader loader =
@@ -482,7 +513,8 @@ public class TransactionController
                 getClass().getResource(Constants.COMMON_STYLE_SHEET).toExternalForm());
 
             ResumePaneController resumePaneController = loader.getController();
-            resumePaneController.UpdateResumePane(month, year);
+            resumePaneController.UpdateResumePane(selectedYearMonth.getMonthValue(),
+                                                  selectedYearMonth.getYear());
 
             AnchorPane.setTopAnchor(newContent, 0.0);
             AnchorPane.setBottomAnchor(newContent, 0.0);
@@ -727,13 +759,13 @@ public class TransactionController
         walletNameColumn.setCellValueFactory(
             param -> new SimpleStringProperty(param.getValue().GetWallet().GetName()));
 
-        transactionsListTableView.getColumns().addAll(idColumn,
-                                                      descriptionColumn,
-                                                      amountColumn,
-                                                      walletNameColumn,
-                                                      dateColumn,
-                                                      typeColumn,
-                                                      categoryColumn,
-                                                      statusColumn);
+        transactionsListTableView.getColumns().add(idColumn);
+        transactionsListTableView.getColumns().add(descriptionColumn);
+        transactionsListTableView.getColumns().add(amountColumn);
+        transactionsListTableView.getColumns().add(walletNameColumn);
+        transactionsListTableView.getColumns().add(dateColumn);
+        transactionsListTableView.getColumns().add(typeColumn);
+        transactionsListTableView.getColumns().add(categoryColumn);
+        transactionsListTableView.getColumns().add(statusColumn);
     }
 }

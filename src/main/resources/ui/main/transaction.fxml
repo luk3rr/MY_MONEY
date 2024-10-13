@@ -42,7 +42,7 @@
                                                       </AnchorPane>
                                                    </children>
                                                 </HBox>
-                                                <AnchorPane fx:id="monthResumeView" minHeight="200.0" VBox.vgrow="ALWAYS" />
+                                                <AnchorPane fx:id="monthResumeView" VBox.vgrow="ALWAYS" />
                                              </children>
                                           </VBox>
                                        </children>
@@ -61,7 +61,7 @@
                                                       </AnchorPane>
                                                    </children>
                                                 </HBox>
-                                                <AnchorPane fx:id="yearResumeView" minHeight="200.0" VBox.vgrow="ALWAYS" />
+                                                <AnchorPane fx:id="yearResumeView" VBox.vgrow="ALWAYS" />
                                              </children>
                                           </VBox>
                                        </children>
@@ -72,7 +72,7 @@
                                  <children>
                                     <HBox alignment="CENTER" fillHeight="false" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                        <children>
-                                          <MenuButton fx:id="addTransactionMenuButton" mnemonicParsing="false" stylesheets="@../../css/component/buttons.css" text="New transaction">
+                                          <MenuButton fx:id="addTransactionMenuButton" mnemonicParsing="false" stylesheets="@../../css/component/buttons.css" text="New Transaction">
                                             <items>
                                               <MenuItem fx:id="addIncomeMenuItem" mnemonicParsing="false" onAction="#handleAddIncome" text="Add Income" />
                                               <MenuItem fx:id="addExpenseMenuItem" mnemonicParsing="false" onAction="#handleAddExpense" text="Add Expense" />
@@ -85,7 +85,7 @@
                                                 </ImageView>
                                              </graphic>
                                           </MenuButton>
-                                          <MenuButton fx:id="removeTransactionMenuButton" mnemonicParsing="false" stylesheets="@../../css/component/buttons.css" text="Remove transaction">
+                                          <MenuButton fx:id="removeTransactionMenuButton" mnemonicParsing="false" stylesheets="@../../css/component/buttons.css" text="Remove Transaction">
                                              <items>
                                                 <MenuItem fx:id="removeIncomeMenuButton" mnemonicParsing="false" onAction="#handleRemoveIncome" text="Remove Income" />
                                                 <MenuItem fx:id="removeExpenseMenuItem" mnemonicParsing="false" onAction="#handleRemoveExpense" text="Remove Expense" />
@@ -98,20 +98,11 @@
                                                 </ImageView>
                                              </graphic>
                                           </MenuButton>
-                                          <JFXButton fx:id="addCategoryButton" stylesheets="@../../css/component/buttons.css" text="New category">
+                                          <JFXButton onAction="#handleManageCategories" stylesheets="@../../css/component/buttons.css" text="Manage Categories">
                                              <graphic>
                                                 <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
                                                       <Image url="@../../icon/common/category.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </JFXButton>
-                                          <JFXButton fx:id="removeCategoryButton" stylesheets="@../../css/component/buttons.css" text="Remove category">
-                                             <graphic>
-                                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../icon/common/remove.png" />
                                                    </image>
                                                 </ImageView>
                                              </graphic>
@@ -136,7 +127,7 @@
                                           </AnchorPane>
                                        </children>
                                     </HBox>
-                                    <AnchorPane fx:id="moneyFlowView" minWidth="500.0" VBox.vgrow="ALWAYS" />
+                                    <AnchorPane fx:id="moneyFlowView" VBox.vgrow="ALWAYS" />
                                  </children>
                               </VBox>
                            </children>

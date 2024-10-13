@@ -29,11 +29,15 @@ public final class Constants
     public static final String ADD_TRANSFER_FXML = "/ui/dialog/add_transfer.fxml";
     public static final String ADD_EXPENSE_FXML  = "/ui/dialog/add_expense.fxml";
     public static final String ADD_INCOME_FXML   = "/ui/dialog/add_income.fxml";
+    public static final String ADD_CATEGORY_FXML = "/ui/dialog/add_category.fxml";
     public static final String REMOVE_TRANSACTION_FXML =
         "/ui/dialog/remove_transaction.fxml";
+    public static final String REMOVE_CATEGORY_FXML = "/ui/dialog/remove_category.fxml";
     public static final String CHANGE_WALLET_TYPE_FXML =
         "/ui/dialog/change_wallet_type.fxml";
-    public static final String RENAME_WALLET_FXML = "/ui/dialog/rename_wallet.fxml";
+    public static final String RENAME_WALLET_FXML   = "/ui/dialog/rename_wallet.fxml";
+    public static final String MANAGE_CATEGORY_FXML = "/ui/dialog/manage_category.fxml";
+    public static final String EDIT_CATEGORY_FXML   = "/ui/dialog/edit_category.fxml";
 
     // common fxml
     public static final String WALLET_FULL_PANE_FXML =
@@ -47,8 +51,9 @@ public final class Constants
     public static final String COMMON_ICONS_PATH       = "/icon/common/";
 
     // Icons
-    public static final String HOME_EXPENSE_ICON = "/icon/common/expense.png";
-    public static final String HOME_INCOME_ICON  = "/icon/common/income.png";
+    public static final String HOME_EXPENSE_ICON = COMMON_ICONS_PATH + "expense.png";
+    public static final String HOME_INCOME_ICON  = COMMON_ICONS_PATH + "income.png";
+    public static final String SUCCESS_ICON      = COMMON_ICONS_PATH + "success.png";
 
     // Scenes styles
     public static final String MAIN_STYLE_SHEET        = "/css/scene/main.css";

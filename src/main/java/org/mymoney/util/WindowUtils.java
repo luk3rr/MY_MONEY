@@ -15,6 +15,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.springframework.context.ApplicationContext;
@@ -24,6 +26,13 @@ import org.springframework.context.ApplicationContext;
  */
 public final class WindowUtils
 {
+    /**
+     * Sets the attributes of an alert dialog
+     * @param alert The alert dialog
+     * @param title The title of the dialog
+     * @param header The header of the dialog
+     * @param message The message to be displayed
+     */
     private static void
     SetAlertAttributes(Alert alert, String title, String header, String message)
     {
@@ -43,9 +52,13 @@ public final class WindowUtils
     ShowConfirmationDialog(String title, String header, String message)
     {
         Alert alert = new Alert(AlertType.CONFIRMATION);
+
+        // Set the confirmation button
+        alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
+
         SetAlertAttributes(alert, title, header, message);
 
-        ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
+        ButtonType result = alert.showAndWait().orElse(ButtonType.NO);
         return result == ButtonType.YES;
     }
 
@@ -72,6 +85,24 @@ public final class WindowUtils
     public static void ShowErrorDialog(String title, String header, String message)
     {
         Alert alert = new Alert(AlertType.ERROR);
+        SetAlertAttributes(alert, title, header, message);
+        alert.showAndWait();
+    }
+
+    /**
+     * Shows a success dialog with an OK button
+     * @param title The title of the dialog
+     * @param header The header of the dialog
+     * @param message The message to be displayed
+     */
+    public static void ShowSuccessDialog(String title, String header, String message)
+    {
+        Alert alert = new Alert(AlertType.INFORMATION);
+
+        // Set the success icon
+        alert.setGraphic(new ImageView(new Image(
+            WindowUtils.class.getResource(Constants.SUCCESS_ICON).toString())));
+
         SetAlertAttributes(alert, title, header, message);
         alert.showAndWait();
     }
