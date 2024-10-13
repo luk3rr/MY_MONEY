@@ -1,10 +1,14 @@
+/*
+ * Filename: WindowUtils.java
+ * Created on: October 12, 2024
+ * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
+ */
+
 package org.mymoney.util;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
-import javafx.animation.FadeTransition;
-import javafx.animation.TranslateTransition;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -13,7 +17,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import org.springframework.context.ApplicationContext;
 
 /**

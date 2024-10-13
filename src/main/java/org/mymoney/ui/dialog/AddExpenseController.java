@@ -21,7 +21,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 import org.mymoney.entities.Category;
 import org.mymoney.entities.Wallet;
 import org.mymoney.services.CategoryService;
@@ -91,10 +90,11 @@ public class AddExpenseController
     @FXML
     private void initialize()
     {
-        ConfigureDatePicker();
-
         LoadWallets();
         LoadCategories();
+
+        // Configure date picker
+        UIUtils.SetDatePickerFormat(expenseDatePicker);
 
         // For each element in enum TransactionStatus, add its name to the
         // statusComboBox
@@ -204,28 +204,6 @@ public class AddExpenseController
             alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
-    }
-
-    /**
-     * Configure date picker
-     */
-    private void ConfigureDatePicker()
-    {
-        // Set how the date is displayed in the date picker
-        expenseDatePicker.setConverter(new StringConverter<LocalDate>() {
-            @Override
-            public String toString(LocalDate date)
-            {
-                return date != null ? date.format(Constants.DATE_FORMATTER_NO_TIME)
-                                    : "";
-            }
-
-            @Override
-            public LocalDate fromString(String string)
-            {
-                return LocalDate.parse(string, Constants.DATE_FORMATTER_NO_TIME);
-            }
-        });
     }
 
     private void UpdateWalletBalance()

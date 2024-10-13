@@ -7,9 +7,12 @@
 package org.mymoney.util;
 
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import javafx.scene.Node;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Tooltip;
 import javafx.util.Duration;
+import javafx.util.StringConverter;
 
 /**
  * Utility class for UI-related functionalities
@@ -71,5 +74,28 @@ public final class UIUtils
     static public String FormatPercentage(Number value)
     {
         return percentageFormat.format(value) + " %";
+    }
+
+    /**
+     * Format the date picker to display the date in a specific format
+     * @param datePicker The date picker to format
+     */
+    static public void SetDatePickerFormat(DatePicker datePicker)
+    {
+        // Set how the date is displayed in the date picker
+        datePicker.setConverter(new StringConverter<LocalDate>() {
+            @Override
+            public String toString(LocalDate date)
+            {
+                return date != null ? date.format(Constants.DATE_FORMATTER_NO_TIME)
+                                    : "";
+            }
+
+            @Override
+            public LocalDate fromString(String string)
+            {
+                return LocalDate.parse(string, Constants.DATE_FORMATTER_NO_TIME);
+            }
+        });
     }
 }

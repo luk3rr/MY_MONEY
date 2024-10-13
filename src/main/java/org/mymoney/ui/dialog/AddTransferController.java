@@ -91,6 +91,9 @@ public class AddTransferController
     {
         LoadWallets();
 
+        // Configure the date picker
+        UIUtils.SetDatePickerFormat(transferDatePicker);
+
         // Reset all labels
         ResetLabel(senderWalletAfterBalanceValueLabel);
         ResetLabel(receiverWalletAfterBalanceValueLabel);

@@ -119,11 +119,14 @@ public class TransactionController
     private void initialize()
     {
         ConfigureTableView();
-        ConfigureDatePicker();
 
         PopulateMonthResumeComboBox();
         PopulateYearComboBox();
         PopulateTransactionTypeComboBox();
+
+        // Format the date pickers
+        UIUtils.SetDatePickerFormat(transactionsListStartDatePicker);
+        UIUtils.SetDatePickerFormat(transactionsListEndDatePicker);
 
         LocalDateTime currentDate = LocalDateTime.now();
 
@@ -629,43 +632,6 @@ public class TransactionController
             public YearMonth fromString(String string)
             {
                 return YearMonth.parse(string, formatter);
-            }
-        });
-    }
-
-    /**
-     * Configure date picker
-     */
-    private void ConfigureDatePicker()
-    {
-        // Set how the date is displayed in the date picker
-        transactionsListStartDatePicker.setConverter(new StringConverter<LocalDate>() {
-            @Override
-            public String toString(LocalDate date)
-            {
-                return date != null ? date.format(Constants.DATE_FORMATTER_NO_TIME)
-                                    : "";
-            }
-
-            @Override
-            public LocalDate fromString(String string)
-            {
-                return LocalDate.parse(string, Constants.DATE_FORMATTER_NO_TIME);
-            }
-        });
-
-        transactionsListEndDatePicker.setConverter(new StringConverter<LocalDate>() {
-            @Override
-            public String toString(LocalDate date)
-            {
-                return date != null ? date.format(Constants.DATE_FORMATTER_NO_TIME)
-                                    : "";
-            }
-
-            @Override
-            public LocalDate fromString(String string)
-            {
-                return LocalDate.parse(string, Constants.DATE_FORMATTER_NO_TIME);
             }
         });
     }
