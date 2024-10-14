@@ -15,6 +15,7 @@ import jakarta.persistence.Table;
 
 /**
  * Represents a category of expenses and incomes
+ * TODO: Add archiving functionality
  */
 @Entity
 @Table(name = "category")

@@ -6,6 +6,9 @@
 
 package org.mymoney.services;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.logging.Logger;
 import org.mymoney.entities.Category;
 import org.mymoney.entities.CreditCard;
 import org.mymoney.entities.CreditCardDebt;
@@ -16,9 +19,6 @@ import org.mymoney.repositories.CreditCardPaymentRepository;
 import org.mymoney.repositories.CreditCardRepository;
 import org.mymoney.util.Constants;
 import org.mymoney.util.LoggerConfig;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +59,14 @@ public class CreditCardService
     @Transactional
     public Long CreateCreditCard(String name, Integer dueDate, Double maxDebt)
     {
+        // Remove leading and trailing whitespaces
+        name = name.strip();
+
+        if (name.isBlank())
+        {
+            throw new RuntimeException("Credit card name cannot be empty");
+        }
+
         if (m_creditCardRepository.existsByName(name))
         {
             throw new RuntimeException("Credit card with name " + name +

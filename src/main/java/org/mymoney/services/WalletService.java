@@ -62,6 +62,11 @@ public class WalletService
         // Remove leading and trailing whitespaces
         name = name.strip();
 
+        if (name.isBlank())
+        {
+            throw new RuntimeException("Wallet name cannot be empty");
+        }
+
         if (m_walletRepository.existsByName(name))
         {
             throw new RuntimeException("Wallet with name " + name + " already exists");
@@ -89,6 +94,11 @@ public class WalletService
     {
         // Remove leading and trailing whitespaces
         name = name.strip();
+
+        if (name.isBlank())
+        {
+            throw new RuntimeException("Wallet name cannot be empty");
+        }
 
         if (m_walletRepository.existsByName(name))
         {
@@ -156,6 +166,11 @@ public class WalletService
     {
         // Remove leading and trailing whitespaces
         newName = newName.strip();
+
+        if (newName.isBlank())
+        {
+            throw new RuntimeException("Wallet name cannot be empty");
+        }
 
         Wallet wallet = m_walletRepository.findById(id).orElseThrow(
             () -> new RuntimeException("Wallet with id " + id + " not found"));

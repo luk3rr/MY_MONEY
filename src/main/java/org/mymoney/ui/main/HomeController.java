@@ -579,7 +579,7 @@ public class HomeController
         UIUtils.AddTooltipToNode(availableCredit, "Available credit");
 
         Label digitsLabel =
-            new Label("**** **** **** " + creditCard.GetLastFourDigits());
+            new Label(UIUtils.FormatCreditCardNumber(creditCard.GetLastFourDigits()));
         digitsLabel.getStyleClass().add(Constants.HOME_CREDIT_CARD_ITEM_DIGITS_STYLE);
         UIUtils.AddTooltipToNode(digitsLabel, "Credit card number");
 

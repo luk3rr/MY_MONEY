@@ -11,20 +11,17 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import org.mymoney.entities.WalletTransaction;
 import org.mymoney.services.WalletService;
 import org.mymoney.util.Constants;
 import org.mymoney.util.TransactionType;
 import org.mymoney.util.UIUtils;
+import org.mymoney.util.WindowUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
@@ -92,74 +89,45 @@ public class RemoveTransactionController
             return;
         }
 
-        // Confirm the deletion
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirm Deletion");
-
-        alert.setHeaderText("Are you sure you want to remove this " +
-                            transactionType.toString().toLowerCase() + "?");
-
-        Text descriptionBold = new Text("Description: ");
-        descriptionBold.setStyle("-fx-font-weight: bold;");
-        Text descriptionNormal = new Text(selectedIncome.GetDescription() + "\n");
-
-        Text amountBold = new Text("Amount: ");
-        amountBold.setStyle("-fx-font-weight: bold;");
-        Text amountNormal =
-            new Text(UIUtils.FormatCurrency(selectedIncome.GetAmount()) + "\n");
-
-        Text dateBold = new Text("Date: ");
-        dateBold.setStyle("-fx-font-weight: bold;");
-        Text dateNormal = new Text(
-            selectedIncome.GetDate().format(Constants.DATE_FORMATTER_WITH_TIME) +
-            "\n");
-
-        Text walletBold = new Text("Wallet: ");
-        walletBold.setStyle("-fx-font-weight: bold;");
-        Text walletNormal = new Text(selectedIncome.GetWallet().GetName() + "\n");
-
-        Text balanceBold = new Text("Wallet balance: ");
-        balanceBold.setStyle("-fx-font-weight: bold;");
-        Text balanceNormal = new Text(
-            UIUtils.FormatCurrency(selectedIncome.GetWallet().GetBalance()) + "\n");
-
-        Text afterDeletionBold = new Text("Wallet balance after deletion: ");
-        afterDeletionBold.setStyle("-fx-font-weight: bold;");
-
-        Text afterDeletionNormal;
+        // Create a message to show the user
+        StringBuilder message = new StringBuilder();
+        message.append("Description: ")
+            .append(selectedIncome.GetDescription())
+            .append("\n")
+            .append("Amount: ")
+            .append(UIUtils.FormatCurrency(selectedIncome.GetAmount()))
+            .append("\n")
+            .append("Date: ")
+            .append(selectedIncome.GetDate().format(Constants.DATE_FORMATTER_WITH_TIME))
+            .append("\n")
+            .append("Wallet: ")
+            .append(selectedIncome.GetWallet().GetName())
+            .append("\n")
+            .append("Wallet balance: ")
+            .append(UIUtils.FormatCurrency(selectedIncome.GetWallet().GetBalance()))
+            .append("\n");
 
         if (transactionType == TransactionType.EXPENSE)
         {
-            afterDeletionNormal = new Text(
-                UIUtils.FormatCurrency(selectedIncome.GetWallet().GetBalance() +
-                                       selectedIncome.GetAmount()) +
-                "\n");
+            message.append("Wallet balance after deletion: ")
+                .append(UIUtils.FormatCurrency(selectedIncome.GetWallet().GetBalance() +
+                                               selectedIncome.GetAmount()))
+                .append("\n");
         }
         else
         {
-            afterDeletionNormal = new Text(
-                UIUtils.FormatCurrency(selectedIncome.GetWallet().GetBalance() -
-                                       selectedIncome.GetAmount()) +
-                "\n");
+            message.append("Wallet balance after deletion: ")
+                .append(UIUtils.FormatCurrency(selectedIncome.GetWallet().GetBalance() -
+                                               selectedIncome.GetAmount()))
+                .append("\n");
         }
 
-        alert.getDialogPane().setContent(new TextFlow(descriptionBold,
-                                                      descriptionNormal,
-                                                      amountBold,
-                                                      amountNormal,
-                                                      dateBold,
-                                                      dateNormal,
-                                                      walletBold,
-                                                      walletNormal,
-                                                      balanceBold,
-                                                      balanceNormal,
-                                                      afterDeletionBold,
-                                                      afterDeletionNormal));
-
-        // Show the confirmation dialog and wait for the user's response
-        ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
-
-        if (result == ButtonType.OK)
+        // Confirm deletion
+        if (WindowUtils.ShowConfirmationDialog(
+                "Confirm Deletion",
+                "Are you sure you want to remove this " +
+                    transactionType.toString().toLowerCase() + "?",
+                message.toString()))
         {
             walletService.DeleteTransaction(selectedIncome.GetId());
             transactionsTableView.getItems().remove(selectedIncome);

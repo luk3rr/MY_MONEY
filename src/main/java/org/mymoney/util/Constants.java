@@ -178,6 +178,8 @@ public final class Constants
     // Percentage with two decimal places
     public static final String PERCENTAGE_FORMAT = "0.00";
 
+    public static final String CREDIT_CARD_NUMBER_FORMAT = "**** **** **** ####";
+
     // Prevent instantiation
     private Constants() { }
 }

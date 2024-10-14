@@ -11,24 +11,20 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import org.mymoney.entities.Category;
 import org.mymoney.entities.Wallet;
 import org.mymoney.services.CategoryService;
 import org.mymoney.services.WalletService;
 import org.mymoney.util.Constants;
-import org.mymoney.util.LoggerConfig;
 import org.mymoney.util.TransactionStatus;
 import org.mymoney.util.UIUtils;
+import org.mymoney.util.WindowUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -69,8 +65,6 @@ public class AddIncomeController
     private List<Wallet> wallets;
 
     private List<Category> categories;
-
-    private static final Logger m_logger = LoggerConfig.GetLogger();
 
     public AddIncomeController() { }
 
@@ -136,11 +130,9 @@ public class AddIncomeController
             incomeValueString == null || incomeValueString.trim().isEmpty() ||
             statusString == null || categoryString == null || incomeDate == null)
         {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setHeaderText("Empty fields");
-            alert.setContentText("Please fill all the fields.");
-            alert.showAndWait();
+            WindowUtils.ShowErrorDialog("Error",
+                                        "Empty fields",
+                                        "Please fill all the fields.");
             return;
         }
 
@@ -163,47 +155,31 @@ public class AddIncomeController
             LocalTime     currentTime             = LocalTime.now();
             LocalDateTime dateTimeWithCurrentHour = incomeDate.atTime(currentTime);
 
-            Long incomeId;
+            walletService.AddIncome(wallet.GetId(),
+                                    category,
+                                    dateTimeWithCurrentHour,
+                                    incomeValue,
+                                    description,
+                                    status);
 
-            incomeId = walletService.AddIncome(wallet.GetId(),
-                                               category,
-                                               dateTimeWithCurrentHour,
-                                               incomeValue,
-                                               description,
-                                               status);
-
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-
-            alert.setGraphic(new ImageView(new Image(
-                this.getClass()
-                    .getResource(Constants.COMMON_ICONS_PATH + "success.png")
-                    .toString())));
-
-            alert.setTitle("Success");
-            alert.setHeaderText("Income created");
-            alert.setContentText("The income was successfully created.");
-            alert.showAndWait();
-
-            m_logger.info("Income created: " + incomeId);
+            WindowUtils.ShowSuccessDialog("Success",
+                                          "Income created",
+                                          "The income was successfully created.");
 
             Stage stage = (Stage)descriptionField.getScene().getWindow();
             stage.close();
         }
         catch (NumberFormatException e)
         {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Invalid income value");
-            alert.setContentText("Income value must be a number.");
-            alert.showAndWait();
+            WindowUtils.ShowErrorDialog("Error",
+                                        "Invalid income value",
+                                        "Income value must be a number.");
         }
         catch (RuntimeException e)
         {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Error while creating income");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            WindowUtils.ShowErrorDialog("Error",
+                                        "Error while creating income",
+                                        e.getMessage());
         }
     }
 

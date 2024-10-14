@@ -6,15 +6,15 @@
 
 package org.mymoney.ui.dialog;
 
-import org.mymoney.entities.Wallet;
-import org.mymoney.entities.WalletType;
-import org.mymoney.services.WalletService;
 import java.util.List;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import org.mymoney.entities.Wallet;
+import org.mymoney.entities.WalletType;
+import org.mymoney.services.WalletService;
+import org.mymoney.util.WindowUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -84,11 +84,9 @@ public class ChangeWalletTypeController
 
         if (walletName == null || walletNewTypeStr == null)
         {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Invalid input");
-            alert.setContentText("Please fill all fields");
-            alert.showAndWait();
+            WindowUtils.ShowErrorDialog("Error",
+                                        "Empty fields",
+                                        "Please fill all the fields.");
             return;
         }
 
@@ -106,14 +104,14 @@ public class ChangeWalletTypeController
         try
         {
             walletService.ChangeWalletType(wallet.GetId(), walletNewType);
+
+            WindowUtils.ShowSuccessDialog("Success",
+                                          "Wallet type changed",
+                                          "The wallet type was successfully changed.");
         }
         catch (RuntimeException e)
         {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Invalid input");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            WindowUtils.ShowErrorDialog("Error", "Invalid input", e.getMessage());
             return;
         }
 

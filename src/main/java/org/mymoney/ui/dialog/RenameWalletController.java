@@ -6,14 +6,14 @@
 
 package org.mymoney.ui.dialog;
 
-import org.mymoney.entities.Wallet;
-import org.mymoney.services.WalletService;
 import java.util.List;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.mymoney.entities.Wallet;
+import org.mymoney.services.WalletService;
+import org.mymoney.util.WindowUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -63,11 +63,9 @@ public class RenameWalletController
 
         if (walletName == null || walletNewName.isBlank())
         {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Invalid input");
-            alert.setContentText("Please fill all fields");
-            alert.showAndWait();
+            WindowUtils.ShowErrorDialog("Error",
+                                        "Invalid input",
+                                        "Please fill all fields");
             return;
         }
 
@@ -82,11 +80,9 @@ public class RenameWalletController
         }
         catch (RuntimeException e)
         {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Invalid input");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            WindowUtils.ShowErrorDialog("Error",
+                                        "Error renaming wallet",
+                                        e.getMessage());
             return;
         }
 

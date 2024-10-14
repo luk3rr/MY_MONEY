@@ -10,23 +10,17 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.logging.Logger;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
-import org.mymoney.entities.Transfer;
 import org.mymoney.entities.Wallet;
-import org.mymoney.repositories.TransferRepository;
 import org.mymoney.services.WalletService;
 import org.mymoney.util.Constants;
-import org.mymoney.util.LoggerConfig;
 import org.mymoney.util.UIUtils;
+import org.mymoney.util.WindowUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -65,11 +59,7 @@ public class AddTransferController
 
     private WalletService walletService;
 
-    private TransferRepository transferRepository;
-
     private List<Wallet> wallets;
-
-    private static final Logger m_logger = LoggerConfig.GetLogger();
 
     public AddTransferController() { }
 
@@ -79,11 +69,9 @@ public class AddTransferController
      * @note This constructor is used for dependency injection
      */
     @Autowired
-    public AddTransferController(WalletService      walletService,
-                                 TransferRepository transferRepository)
+    public AddTransferController(WalletService walletService)
     {
-        this.walletService      = walletService;
-        this.transferRepository = transferRepository;
+        this.walletService = walletService;
     }
 
     @FXML
@@ -138,11 +126,9 @@ public class AddTransferController
             transferValueString == null || transferValueString.trim().isEmpty() ||
             description == null || description.trim().isEmpty() || transferDate == null)
         {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setHeaderText("Empty fields");
-            alert.setContentText("Please fill all the fields.");
-            alert.showAndWait();
+            WindowUtils.ShowErrorDialog("Error",
+                                        "Empty fields",
+                                        "Please fill all the fields.");
             return;
         }
 
@@ -164,48 +150,30 @@ public class AddTransferController
             LocalTime     currentTime             = LocalTime.now();
             LocalDateTime dateTimeWithCurrentHour = transferDate.atTime(currentTime);
 
-            Long transferId = walletService.TransferMoney(senderWallet.GetId(),
-                                                          receiverWallet.GetId(),
-                                                          dateTimeWithCurrentHour,
-                                                          transferValue,
-                                                          description);
+            walletService.TransferMoney(senderWallet.GetId(),
+                                        receiverWallet.GetId(),
+                                        dateTimeWithCurrentHour,
+                                        transferValue,
+                                        description);
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-
-            alert.setGraphic(new ImageView(new Image(
-                this.getClass()
-                    .getResource(Constants.COMMON_ICONS_PATH + "success.png")
-                    .toString())));
-
-            alert.setTitle("Success");
-            alert.setHeaderText("Transfer created");
-            alert.setContentText("The transfer was successfully created.");
-            alert.showAndWait();
-
-            m_logger.info("Transfer created: " + transferId);
-
-            Transfer tf = transferRepository.findById(transferId).get();
-
-            m_logger.info("Transfer date: " + tf.GetDate());
+            WindowUtils.ShowSuccessDialog("Success",
+                                          "Transfer created",
+                                          "The transfer was successfully created.");
 
             Stage stage = (Stage)descriptionField.getScene().getWindow();
             stage.close();
         }
         catch (NumberFormatException e)
         {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Invalid transfer value");
-            alert.setContentText("Transfer value must be a number.");
-            alert.showAndWait();
+            WindowUtils.ShowErrorDialog("Error",
+                                        "Invalid transfer value",
+                                        "Transfer value must be a number.");
         }
         catch (RuntimeException e)
         {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Error while creating transfer");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            WindowUtils.ShowErrorDialog("Error",
+                                        "Error while creating transfer",
+                                        e.getMessage());
             return;
         }
     }

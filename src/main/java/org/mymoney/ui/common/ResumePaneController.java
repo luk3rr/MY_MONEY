@@ -214,7 +214,7 @@ public class ResumePaneController
         else
         {
             balanceForeseenValue.setText(UIUtils.FormatCurrency(0.0));
-            balanceForeseenSign.setText("");
+            balanceForeseenSign.setText(" ");
         }
 
         // Mensal Economies

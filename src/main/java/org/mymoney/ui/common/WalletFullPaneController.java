@@ -325,7 +325,7 @@ public class WalletFullPaneController
         }
         else
         {
-            signLabel.setText("");
+            signLabel.setText(" ");
             valueLabel.setText(UIUtils.FormatCurrency(value));
             SetLabelStyle(signLabel, Constants.NEUTRAL_BALANCE_STYLE);
             SetLabelStyle(valueLabel, Constants.NEUTRAL_BALANCE_STYLE);

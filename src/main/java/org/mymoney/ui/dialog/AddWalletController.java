@@ -6,17 +6,14 @@
 
 package org.mymoney.ui.dialog;
 
-import org.mymoney.entities.WalletType;
-import org.mymoney.services.WalletService;
-import org.mymoney.util.Constants;
 import java.util.List;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+import org.mymoney.entities.WalletType;
+import org.mymoney.services.WalletService;
+import org.mymoney.util.WindowUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -79,11 +76,9 @@ public class AddWalletController
 
         if (walletName.isEmpty() || walletBalanceStr.isEmpty() || walletTypeStr == null)
         {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setHeaderText("Empty fields");
-            alert.setContentText("Please fill all the fields.");
-            alert.showAndWait();
+            WindowUtils.ShowErrorDialog("Error",
+                                        "Empty fields",
+                                        "Please fill all the fields.");
             return;
         }
 
@@ -98,36 +93,24 @@ public class AddWalletController
 
             walletService.CreateWallet(walletName, walletBalance, walletType);
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-
-            alert.setGraphic(new ImageView(
-                new Image(this.getClass()
-                              .getResource(Constants.COMMON_ICONS_PATH + "success.png")
-                              .toString())));
-
-            alert.setTitle("Success");
-            alert.setHeaderText("Wallet created");
-            alert.setContentText("The wallet was successfully created.");
-            alert.showAndWait();
+            WindowUtils.ShowSuccessDialog("Success",
+                                          "Wallet created",
+                                          "The wallet was successfully created");
 
             Stage stage = (Stage)walletNameField.getScene().getWindow();
             stage.close();
         }
         catch (NumberFormatException e)
         {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Invalid balance");
-            alert.setContentText("Please enter a valid balance.");
-            alert.showAndWait();
+            WindowUtils.ShowErrorDialog("Error",
+                                        "Invalid balance",
+                                        "Please enter a valid balance.");
         }
         catch (RuntimeException e)
         {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Error while creating wallet");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            WindowUtils.ShowErrorDialog("Error",
+                                        "Error creating wallet",
+                                        e.getMessage());
         }
     }
 

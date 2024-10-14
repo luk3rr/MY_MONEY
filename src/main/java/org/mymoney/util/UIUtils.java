@@ -98,4 +98,20 @@ public final class UIUtils
             }
         });
     }
+
+    /**
+     * Format the last four digits of a credit card number
+     * @param lastFourDigits The last four digits of the credit card number
+     * @return Formatted credit card number string
+     */
+    static public String FormatCreditCardNumber(String lastFourDigits)
+    {
+        if (lastFourDigits.length() != 4)
+        {
+            throw new IllegalArgumentException(
+                "The input must contain exactly 4 digits.");
+        }
+
+        return Constants.CREDIT_CARD_NUMBER_FORMAT.replace("####", lastFourDigits);
+    }
 }
