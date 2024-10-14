@@ -108,6 +108,16 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <version>${spring.boot.version}</version>
+        <configuration>
+          <mainClass>org.mymoney.app.MainApplication</mainClass>
+        </configuration>
+        <executions>
+            <execution>
+                <goals>
+                    <goal>repackage</goal>
+                </goals>
+            </execution>
+        </executions>
       </plugin>
       <!-- Clean Lifecycle Plugin -->
       <plugin>
@@ -128,6 +138,13 @@
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <version>3.0.2</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.mymoney.app.MainApplication</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
       </plugin>
       <!-- Install Plugin -->
       <plugin>
@@ -154,7 +171,7 @@
         <artifactId>javafx-maven-plugin</artifactId>
         <version>0.0.8</version>
         <configuration>
-          <mainClass>org.mymoney.app.JavaFXApp</mainClass>
+          <mainClass>org.mymoney.app.MainApplication</mainClass>
         </configuration>
       </plugin>
     </plugins>
