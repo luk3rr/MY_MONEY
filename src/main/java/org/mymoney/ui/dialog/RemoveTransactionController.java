@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import org.mymoney.entities.WalletTransaction;
 import org.mymoney.services.WalletService;
 import org.mymoney.util.Constants;
+import org.mymoney.util.TransactionStatus;
 import org.mymoney.util.TransactionType;
 import org.mymoney.util.UIUtils;
 import org.mymoney.util.WindowUtils;
@@ -100,25 +101,39 @@ public class RemoveTransactionController
             .append("Date: ")
             .append(selectedIncome.GetDate().format(Constants.DATE_FORMATTER_WITH_TIME))
             .append("\n")
+            .append("Status: ")
+            .append(selectedIncome.GetStatus().toString())
             .append("Wallet: ")
             .append(selectedIncome.GetWallet().GetName())
             .append("\n")
             .append("Wallet balance: ")
             .append(UIUtils.FormatCurrency(selectedIncome.GetWallet().GetBalance()))
-            .append("\n");
+            .append("\n")
+            .append("Wallet balance after deletion: ");
 
-        if (transactionType == TransactionType.EXPENSE)
+        if (selectedIncome.GetStatus().equals(TransactionStatus.CONFIRMED))
         {
-            message.append("Wallet balance after deletion: ")
-                .append(UIUtils.FormatCurrency(selectedIncome.GetWallet().GetBalance() +
+            if (transactionType == TransactionType.EXPENSE)
+            {
+                message
+                    .append(
+                        UIUtils.FormatCurrency(selectedIncome.GetWallet().GetBalance() +
                                                selectedIncome.GetAmount()))
-                .append("\n");
+                    .append("\n");
+            }
+            else
+            {
+                message
+                    .append(
+                        UIUtils.FormatCurrency(selectedIncome.GetWallet().GetBalance() -
+                                               selectedIncome.GetAmount()))
+                    .append("\n");
+            }
         }
         else
         {
-            message.append("Wallet balance after deletion: ")
-                .append(UIUtils.FormatCurrency(selectedIncome.GetWallet().GetBalance() -
-                                               selectedIncome.GetAmount()))
+            message
+                .append(UIUtils.FormatCurrency(selectedIncome.GetWallet().GetBalance()))
                 .append("\n");
         }
 
