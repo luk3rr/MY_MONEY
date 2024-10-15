@@ -24,10 +24,10 @@
           <TextField fx:id="categoryNewNameField" promptText="New name" HBox.hgrow="ALWAYS" />
       </children>
    </HBox>
-   <HBox alignment="CENTER" spacing="20.0">
+   <HBox alignment="CENTER" spacing="10.0">
       <children>
-         <JFXButton contentDisplay="CENTER" onAction="#handleSave" stylesheets="@../../css/component/buttons.css" text="Save" />
-         <JFXButton contentDisplay="CENTER" onAction="#handleCancel" stylesheets="@../../css/component/buttons.css" text="Cancel" />
+         <JFXButton contentDisplay="CENTER" minWidth="80.0" onAction="#handleCancel" stylesheets="@../../css/component/buttons.css" text="Cancel" />
+         <JFXButton contentDisplay="CENTER" minWidth="80.0" onAction="#handleSave" stylesheets="@../../css/component/buttons.css" text="Save" />
       </children>
       <VBox.margin>
          <Insets />

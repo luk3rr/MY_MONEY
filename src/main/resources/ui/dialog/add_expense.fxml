@@ -59,15 +59,15 @@
       </HBox>
       <HBox alignment="CENTER" prefHeight="44.0" prefWidth="274.0" spacing="10.0" VBox.vgrow="ALWAYS">
          <children>
-            <ComboBox fx:id="statusComboBox" promptText="Status" stylesheets="@../../css/component/combo-box.css" HBox.hgrow="ALWAYS" />
-            <ComboBox fx:id="categoryComboBox" promptText="Category" stylesheets="@../../css/component/combo-box.css" HBox.hgrow="ALWAYS" />
+            <ComboBox fx:id="statusComboBox" minWidth="130.0" promptText="Status" stylesheets="@../../css/component/combo-box.css" HBox.hgrow="ALWAYS" />
+            <ComboBox fx:id="categoryComboBox" minWidth="130.0" promptText="Category" stylesheets="@../../css/component/combo-box.css" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
       <DatePicker fx:id="expenseDatePicker" promptText="Select the date" showWeekNumbers="true" stylesheets="@../../css/component/data-picker.css" />
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
          <children>
-            <JFXButton onAction="#handleSave" stylesheets="@../../css/component/buttons.css" text="Save" />
-            <JFXButton onAction="#handleCancel" stylesheets="@../../css/component/buttons.css" text="Cancel" />
+            <JFXButton minWidth="80.0" onAction="#handleCancel" stylesheets="@../../css/component/buttons.css" text="Cancel" />
+            <JFXButton minWidth="80.0" onAction="#handleSave" stylesheets="@../../css/component/buttons.css" text="Save" />
          </children>
       </HBox>
    </children>

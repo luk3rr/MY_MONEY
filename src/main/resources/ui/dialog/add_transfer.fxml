@@ -86,10 +86,10 @@
          </children>
       </HBox>
       <DatePicker fx:id="transferDatePicker" promptText="Select the date" showWeekNumbers="true" stylesheets="@../../css/component/data-picker.css" />
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+      <HBox alignment="CENTER" spacing="10.0">
          <children>
-            <JFXButton onAction="#handleSave" stylesheets="@../../css/component/buttons.css" text="Save" />
-            <JFXButton onAction="#handleCancel" stylesheets="@../../css/component/buttons.css" text="Cancel" />
+            <JFXButton minWidth="80.0" onAction="#handleCancel" stylesheets="@../../css/component/buttons.css" text="Cancel" />
+            <JFXButton minWidth="80.0" onAction="#handleSave" stylesheets="@../../css/component/buttons.css" text="Save" />
          </children>
       </HBox>
    </children>
