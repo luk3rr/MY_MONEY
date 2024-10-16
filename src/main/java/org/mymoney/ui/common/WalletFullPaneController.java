@@ -23,6 +23,7 @@ import org.mymoney.ui.dialog.AddIncomeController;
 import org.mymoney.ui.dialog.AddTransferController;
 import org.mymoney.ui.dialog.ChangeWalletTypeController;
 import org.mymoney.ui.dialog.RenameWalletController;
+import org.mymoney.ui.main.WalletController;
 import org.mymoney.util.Constants;
 // import org.mymoney.util.LoggerConfig;
 import org.mymoney.util.TransactionStatus;
@@ -100,6 +101,9 @@ public class WalletFullPaneController
     @Autowired
     private ConfigurableApplicationContext springContext;
 
+    @Autowired
+    private WalletController walletController;
+
     private WalletService walletService;
 
     private Wallet wallet;
@@ -121,66 +125,6 @@ public class WalletFullPaneController
     public WalletFullPaneController(WalletService walletService)
     {
         this.walletService = walletService;
-    }
-
-    @FXML
-    private void initialize()
-    { }
-
-    @FXML
-    private void handleAddIncome()
-    {
-        WindowUtils.OpenModalWindow(Constants.ADD_INCOME_FXML,
-                                    "Add new income",
-                                    springContext,
-                                    (AddIncomeController controller)
-                                        -> { controller.SetWalletComboBox(wallet); },
-                                    List.of(() -> UpdateWalletPane(wallet)));
-    }
-
-    @FXML
-    private void handleAddExpense()
-    {
-        WindowUtils.OpenModalWindow(Constants.ADD_EXPENSE_FXML,
-                                    "Add new expense",
-                                    springContext,
-                                    (AddExpenseController controller)
-                                        -> { controller.SetWalletComboBox(wallet); },
-                                    List.of(() -> UpdateWalletPane(wallet)));
-    }
-
-    @FXML
-    private void handleAddTransfer()
-    {
-        WindowUtils.OpenModalWindow(
-            Constants.ADD_TRANSFER_FXML,
-            "Add new transfer",
-            springContext,
-            (AddTransferController controller)
-                -> { controller.SetSenderWalletComboBox(wallet); },
-            List.of(() -> UpdateWalletPane(wallet)));
-    }
-
-    @FXML
-    private void handleRenameWallet()
-    {
-        WindowUtils.OpenModalWindow(Constants.RENAME_WALLET_FXML,
-                                    "Rename wallet",
-                                    springContext,
-                                    (RenameWalletController controller)
-                                        -> { controller.SetWalletComboBox(wallet); },
-                                    List.of(() -> UpdateWalletPane(wallet)));
-    }
-
-    @FXML
-    private void handleChangeWalletType()
-    {
-        WindowUtils.OpenModalWindow(Constants.CHANGE_WALLET_TYPE_FXML,
-                                    "Change wallet type",
-                                    springContext,
-                                    (ChangeWalletTypeController controller)
-                                        -> { controller.SetWalletComboBox(wallet); },
-                                    List.of(() -> UpdateWalletPane(wallet)));
     }
 
     /**
@@ -291,6 +235,122 @@ public class WalletFullPaneController
         SetLabelValue(foreseenBalanceSign, foreseenBalanceValue, foreseenBalance);
 
         return rootVBox;
+    }
+
+    @FXML
+    private void initialize()
+    { }
+
+    @FXML
+    private void handleAddIncome()
+    {
+        WindowUtils.OpenModalWindow(Constants.ADD_INCOME_FXML,
+                                    "Add new income",
+                                    springContext,
+                                    (AddIncomeController controller)
+                                        -> { controller.SetWalletComboBox(wallet); },
+                                    List.of(() -> walletController.UpdateDisplay()));
+    }
+
+    @FXML
+    private void handleAddExpense()
+    {
+        WindowUtils.OpenModalWindow(Constants.ADD_EXPENSE_FXML,
+                                    "Add new expense",
+                                    springContext,
+                                    (AddExpenseController controller)
+                                        -> { controller.SetWalletComboBox(wallet); },
+                                    List.of(() -> walletController.UpdateDisplay()));
+    }
+
+    @FXML
+    private void handleAddTransfer()
+    {
+        WindowUtils.OpenModalWindow(
+            Constants.ADD_TRANSFER_FXML,
+            "Add new transfer",
+            springContext,
+            (AddTransferController controller)
+                -> { controller.SetSenderWalletComboBox(wallet); },
+            List.of(() -> walletController.UpdateDisplay()));
+    }
+
+    @FXML
+    private void handleRenameWallet()
+    {
+        WindowUtils.OpenModalWindow(Constants.RENAME_WALLET_FXML,
+                                    "Rename wallet",
+                                    springContext,
+                                    (RenameWalletController controller)
+                                        -> { controller.SetWalletComboBox(wallet); },
+                                    List.of(() -> walletController.UpdateDisplay()));
+    }
+
+    @FXML
+    private void handleChangeWalletType()
+    {
+        WindowUtils.OpenModalWindow(Constants.CHANGE_WALLET_TYPE_FXML,
+                                    "Change wallet type",
+                                    springContext,
+                                    (ChangeWalletTypeController controller)
+                                        -> { controller.SetWalletComboBox(wallet); },
+                                    List.of(() -> walletController.UpdateDisplay()));
+    }
+
+    @FXML
+    private void handleArchiveWallet()
+    {
+        if (WindowUtils.ShowConfirmationDialog(
+                "Confirmation",
+                "Archive wallet " + wallet.GetName(),
+                "Are you sure you want to archive this wallet?"))
+        {
+            walletService.ArchiveWallet(wallet.GetId());
+            UpdateWalletPane(wallet);
+
+            // Update wallet display in the main window
+            walletController.UpdateDisplay();
+        }
+    }
+
+    @FXML
+    private void handleDeleteWallet()
+    {
+        // Prevent the removal of a wallet with associated transactions
+        if (walletService.GetTransactionCountByWallet(wallet.GetId()) > 0)
+        {
+            WindowUtils.ShowErrorDialog(
+                "Error",
+                "Wallet has transactions",
+                "Cannot delete a wallet with associated transactions");
+            return;
+        }
+
+        if (WindowUtils.ShowConfirmationDialog(
+                "Confirmation",
+                "Delete wallet " + wallet.GetName(),
+                "Are you sure you want to remove this wallet?"))
+        {
+            try
+            {
+                walletService.DeleteWallet(wallet.GetId());
+
+                WindowUtils.ShowSuccessDialog("Success",
+                                              "Wallet deleted",
+                                              "Wallet " + wallet.GetName() +
+                                                  " has been deleted");
+
+                // Update wallet display in the main window
+                walletController.UpdateDisplay();
+            }
+            catch (RuntimeException e)
+            {
+                WindowUtils.ShowErrorDialog("Error",
+                                            "Error removing wallet",
+                                            e.getMessage());
+                return;
+            }
+        }
     }
 
     private void SetDefaultValues()

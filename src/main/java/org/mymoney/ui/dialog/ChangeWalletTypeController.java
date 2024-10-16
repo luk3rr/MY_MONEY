@@ -52,6 +52,18 @@ public class ChangeWalletTypeController
         this.walletService = walletService;
     }
 
+    public void SetWalletComboBox(Wallet wt)
+    {
+        if (wallets.stream().noneMatch(w -> w.GetId() == wt.GetId()))
+        {
+            return;
+        }
+
+        walletComboBox.setValue(wt.GetName());
+
+        UpdateCurrentTypeLabel(wt);
+    }
+
     @FXML
     private void initialize()
     {
@@ -145,17 +157,5 @@ public class ChangeWalletTypeController
         }
 
         currentTypeLabel.setText(wt.GetType().GetName());
-    }
-
-    public void SetWalletComboBox(Wallet wt)
-    {
-        if (wallets.stream().noneMatch(w -> w.GetId() == wt.GetId()))
-        {
-            return;
-        }
-
-        walletComboBox.setValue(wt.GetName());
-
-        UpdateCurrentTypeLabel(wt);
     }
 }

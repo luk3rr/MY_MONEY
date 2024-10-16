@@ -6,10 +6,9 @@
 
 package org.mymoney.repositories;
 
-import org.mymoney.entities.Wallet;
 import java.util.List;
 import java.util.Optional;
-
+import org.mymoney.entities.Wallet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -34,4 +33,16 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
      * @return A list with all wallets ordered by name
      */
     List<Wallet> findAllByOrderByNameAsc();
+
+    /**
+     * Get all wallets that are archived
+     * @return A list with all wallets that are archived
+     */
+    List<Wallet> findAllByArchivedTrue();
+
+    /**
+     * Get all wallets that are not archived
+     * @return A list with all wallets that are not archived
+     */
+    List<Wallet> findAllByArchivedFalse();
 }

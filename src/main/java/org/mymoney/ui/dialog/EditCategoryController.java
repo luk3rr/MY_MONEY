@@ -42,6 +42,12 @@ public class EditCategoryController
     public void initialize()
     { }
 
+    public void SetCategory(Category ct)
+    {
+        selectedCategoryLabel.setText(ct.GetName());
+        selectedCategory = ct;
+    }
+
     @FXML
     private void handleSave()
     {
@@ -80,11 +86,5 @@ public class EditCategoryController
     {
         Stage stage = (Stage)categoryNewNameField.getScene().getWindow();
         stage.close();
-    }
-
-    public void SetCategory(Category ct)
-    {
-        selectedCategoryLabel.setText(ct.GetName());
-        selectedCategory = ct;
     }
 }

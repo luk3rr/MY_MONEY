@@ -46,6 +46,16 @@ public class RenameWalletController
         this.walletService = walletService;
     }
 
+    public void SetWalletComboBox(Wallet wt)
+    {
+        if (wallets.stream().noneMatch(w -> w.GetId() == wt.GetId()))
+        {
+            return;
+        }
+
+        walletComboBox.setValue(wt.GetName());
+    }
+
     @FXML
     private void initialize()
     {
@@ -100,15 +110,5 @@ public class RenameWalletController
     private void LoadWallets()
     {
         wallets = walletService.GetAllWallets();
-    }
-
-    public void SetWalletComboBox(Wallet wt)
-    {
-        if (wallets.stream().noneMatch(w -> w.GetId() == wt.GetId()))
-        {
-            return;
-        }
-
-        walletComboBox.setValue(wt.GetName());
     }
 }

@@ -6,6 +6,9 @@
 
 package org.mymoney.services;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.logging.Logger;
 import org.mymoney.entities.Category;
 import org.mymoney.entities.Transfer;
 import org.mymoney.entities.Wallet;
@@ -19,9 +22,6 @@ import org.mymoney.util.Constants;
 import org.mymoney.util.LoggerConfig;
 import org.mymoney.util.TransactionStatus;
 import org.mymoney.util.TransactionType;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -127,6 +127,12 @@ public class WalletService
                 -> new RuntimeException("Wallet with id " + id +
                                         " not found and cannot be deleted"));
 
+        if (m_walletTransactionRepository.CountTransactionsByWallet(id) > 0)
+        {
+            throw new RuntimeException("Wallet with id " + id +
+                                       " has transactions and cannot be deleted");
+        }
+
         m_walletRepository.delete(wallet);
 
         m_logger.info("Wallet with id " + id + " was permanently deleted");
@@ -152,6 +158,27 @@ public class WalletService
         m_walletRepository.save(wallet);
 
         m_logger.info("Wallet with id " + id + " was archived");
+    }
+
+    /**
+     * Unarchive a wallet
+     * @param id The id of the wallet to be unarchived
+     * @throws RuntimeException If the wallet does not exist
+     * @note This method is used to unarchive a wallet, which means that the wallet
+     * will be used in the application again
+     */
+    @Transactional
+    public void UnarchiveWallet(Long id)
+    {
+        Wallet wallet = m_walletRepository.findById(id).orElseThrow(
+            ()
+                -> new RuntimeException("Wallet with id " + id +
+                                        " not found and cannot be deleted"));
+
+        wallet.SetArchived(false);
+        m_walletRepository.save(wallet);
+
+        m_logger.info("Wallet with id " + id + " was unarchived");
     }
 
     /**
@@ -715,5 +742,33 @@ public class WalletService
         }
 
         return LocalDateTime.parse(date, Constants.DB_DATE_FORMATTER);
+    }
+
+    /**
+     * Get count of transactions by wallet
+     * @param walletId The id of the wallet
+     * @return The count of transactions in the wallet
+     */
+    public Long GetTransactionCountByWallet(Long walletId)
+    {
+        return m_walletTransactionRepository.CountTransactionsByWallet(walletId);
+    }
+
+    /**
+     * Get all archived wallets
+     * @return A list with all archived wallets
+     */
+    public List<Wallet> GetAllArchivedWallets()
+    {
+        return m_walletRepository.findAllByArchivedTrue();
+    }
+
+    /**
+     * Get all wallets that are not archived
+     * @return A list with all wallets that are not archived
+     */
+    public List<Wallet> GetAllNonArchivedWallets()
+    {
+        return m_walletRepository.findAllByArchivedFalse();
     }
 }

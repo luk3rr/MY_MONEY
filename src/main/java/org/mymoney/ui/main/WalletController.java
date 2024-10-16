@@ -40,6 +40,7 @@ import org.mymoney.services.WalletService;
 import org.mymoney.ui.common.WalletFullPaneController;
 import org.mymoney.ui.dialog.AddTransferController;
 import org.mymoney.ui.dialog.AddWalletController;
+import org.mymoney.ui.dialog.ArchivedWalletsController;
 import org.mymoney.util.Animation;
 import org.mymoney.util.Constants;
 import org.mymoney.util.LoggerConfig;
@@ -59,6 +60,8 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class WalletController
 {
+    private static final Logger logger = LoggerConfig.GetLogger();
+
     @FXML
     private AnchorPane totalBalanceView;
 
@@ -90,6 +93,9 @@ public class WalletController
     private JFXButton totalBalancePaneAddWalletButton;
 
     @FXML
+    private JFXButton totalBalancePaneViewArchivedWalletsButton;
+
+    @FXML
     private JFXButton walletPrevButton;
 
     @FXML
@@ -108,6 +114,8 @@ public class WalletController
 
     private WalletService walletService;
 
+    private List<CheckBox> doughnutChartCheckBoxes;
+
     private List<WalletTransaction> transactions;
 
     private List<WalletType> walletTypes;
@@ -117,8 +125,6 @@ public class WalletController
     private Integer totalBalanceSelectedMonth;
 
     private Integer totalBalanceSelectedYear;
-
-    private static final Logger logger = LoggerConfig.GetLogger();
 
     private Integer walletPaneCurrentPage = 0;
 
@@ -143,9 +149,7 @@ public class WalletController
         totalBalanceSelectedMonth = LocalDate.now().getMonthValue();
         totalBalanceSelectedYear  = LocalDate.now().getYear();
 
-        LoadWalletTransactions();
-        LoadWalletTypes();
-        LoadWallets();
+        LoadAllDataFromDatabase();
 
         totalBalancePaneWalletTypeComboBox.getItems().addAll(
             walletTypes.stream().map(WalletType::GetName).toList());
@@ -160,10 +164,12 @@ public class WalletController
         moneyFlowPaneWalletTypeComboBox.getItems().add(0, "All Wallets");
         moneyFlowPaneWalletTypeComboBox.getSelectionModel().selectFirst();
 
+        CreateDoughnutChartCheckBoxes();
+
         UpdateTotalBalanceView();
         UpdateDisplayWallets();
-        CreateNewBarChart();
-        UpdateBalanceByWalletTypeChartWithFilter();
+        UpdateMoneyFlowBarChart();
+        UpdateDoughnutChart();
 
         SetButtonsActions();
     }
@@ -174,7 +180,15 @@ public class WalletController
         WindowUtils.OpenModalWindow(Constants.ADD_TRANSFER_FXML,
                                     "Add Transfer",
                                     springContext,
-                                    (AddTransferController controller) -> {});
+                                    (AddTransferController controller)
+                                        -> {},
+                                    List.of(() -> {
+                                        LoadWalletsFromDatabase();
+                                        LoadWalletTransactionsFromDatabase();
+                                        UpdateDisplayWallets();
+                                        UpdateTotalBalanceView();
+                                        UpdateDoughnutChart();
+                                    }));
     }
 
     @FXML
@@ -183,7 +197,47 @@ public class WalletController
         WindowUtils.OpenModalWindow(Constants.ADD_WALLET_FXML,
                                     "Add Wallet",
                                     springContext,
-                                    (AddWalletController controller) -> {});
+                                    (AddWalletController controller)
+                                        -> {},
+                                    List.of(() -> {
+                                        LoadWalletsFromDatabase();
+                                        LoadWalletTransactionsFromDatabase();
+                                        UpdateDisplayWallets();
+                                        UpdateTotalBalanceView();
+                                        UpdateDoughnutChart();
+                                    }));
+    }
+
+    @FXML
+    private void handleViewArchivedWallets()
+    {
+        WindowUtils.OpenModalWindow(Constants.ARCHIVED_WALLETS_FXML,
+                                    "Archived Wallets",
+                                    springContext,
+                                    (ArchivedWalletsController controller)
+                                        -> {},
+                                    List.of(() -> {
+                                        LoadAllDataFromDatabase();
+                                        UpdateDisplayWallets();
+                                        UpdateTotalBalanceView();
+                                        UpdateMoneyFlowBarChart();
+                                        UpdateDoughnutChart();
+                                    }));
+    }
+
+    /**
+     * Update the display
+     * @note: This method can be called by other controllers to update the screen when
+     * there is a change
+     */
+    public void UpdateDisplay()
+    {
+        LoadAllDataFromDatabase();
+
+        UpdateTotalBalanceView();
+        UpdateDisplayWallets();
+        UpdateMoneyFlowBarChart();
+        UpdateDoughnutChart();
     }
 
     /**
@@ -192,7 +246,8 @@ public class WalletController
     private void SetButtonsActions()
     {
         totalBalancePaneWalletTypeComboBox.setOnAction(e -> UpdateTotalBalanceView());
-        moneyFlowPaneWalletTypeComboBox.setOnAction(e -> { CreateNewBarChart(); });
+        moneyFlowPaneWalletTypeComboBox.setOnAction(
+            e -> { UpdateMoneyFlowBarChart(); });
 
         walletPrevButton.setOnAction(event -> {
             if (walletPaneCurrentPage > 0)
@@ -211,10 +266,17 @@ public class WalletController
         });
     }
 
+    private void LoadAllDataFromDatabase()
+    {
+        LoadWalletTransactionsFromDatabase();
+        LoadWalletTypesFromDatabase();
+        LoadWalletsFromDatabase();
+    }
+
     /**
      * Load the wallet transactions
      */
-    private void LoadWalletTransactions()
+    private void LoadWalletTransactionsFromDatabase()
     {
         transactions =
             walletService.GetAllTransactionsByMonth(totalBalanceSelectedMonth,
@@ -224,15 +286,15 @@ public class WalletController
     /**
      * Load the wallets
      */
-    private void LoadWallets()
+    private void LoadWalletsFromDatabase()
     {
-        wallets = walletService.GetAllWallets();
+        wallets = walletService.GetAllNonArchivedWallets();
     }
 
     /**
      * Load the wallet types
      */
-    private void LoadWalletTypes()
+    private void LoadWalletTypesFromDatabase()
     {
         walletTypes = walletService.GetAllWalletTypes();
 
@@ -259,10 +321,6 @@ public class WalletController
      */
     private void UpdateTotalBalanceView()
     {
-        LoadWallets();
-        LoadWalletTransactions();
-        LoadWalletTypes();
-
         Double pendingExpenses       = 0.0;
         Double pendingIncomes        = 0.0;
         Double walletsCurrentBalance = 0.0;
@@ -439,45 +497,14 @@ public class WalletController
     }
 
     /**
-     * Update the balance by wallet type chart with filter
-     */
-    private void UpdateBalanceByWalletTypeChartWithFilter()
-    {
-        LoadWallets();
-        LoadWalletTypes();
-
-        balanceByWalletTypePieChartAnchorPane.getChildren().clear();
-
-        List<CheckBox> checkBoxes = new ArrayList<>();
-
-        for (WalletType wt : walletTypes)
-        {
-            CheckBox checkBox = new CheckBox(wt.GetName());
-            checkBox.getStyleClass().add(Constants.WALLET_CHECK_BOX_STYLE);
-            checkBox.setSelected(true);
-            checkBoxes.add(checkBox);
-            totalBalanceByWalletTypeVBox.getChildren().add(checkBox);
-        }
-
-        UpdateChart(checkBoxes);
-
-        for (CheckBox checkBox : checkBoxes)
-        {
-            checkBox.selectedProperty().addListener(
-                (obs, wasSelected, isNowSelected) -> { UpdateChart(checkBoxes); });
-        }
-    }
-
-    /**
      * Update the chart with the selected wallet types
-     * @param checkBoxes The list of checkboxes
      */
-    private void UpdateChart(List<CheckBox> checkBoxes)
+    private void UpdateDoughnutChart()
     {
         ObservableList<PieChart.Data> pieChartData =
             FXCollections.observableArrayList();
 
-        for (CheckBox checkBox : checkBoxes)
+        for (CheckBox checkBox : doughnutChartCheckBoxes)
         {
             checkBox.getStyleClass().add(Constants.WALLET_CHECK_BOX_STYLE);
 
@@ -519,33 +546,14 @@ public class WalletController
     }
 
     /**
-     * Create a new bar chart
-     */
-    private void CreateNewBarChart()
-    {
-        CategoryAxis xAxis = new CategoryAxis();
-        NumberAxis   yAxis = new NumberAxis();
-
-        moneyFlowBarChart = new BarChart<>(xAxis, yAxis);
-
-        moneyFlowBarChartAnchorPane.getChildren().clear();
-
-        moneyFlowBarChartAnchorPane.getChildren().add(moneyFlowBarChart);
-
-        AnchorPane.setTopAnchor(moneyFlowBarChart, 0.0);
-        AnchorPane.setBottomAnchor(moneyFlowBarChart, 0.0);
-        AnchorPane.setLeftAnchor(moneyFlowBarChart, 0.0);
-        AnchorPane.setRightAnchor(moneyFlowBarChart, 0.0);
-
-        // Populate the chart with data
-        UpdateMoneyFlowBarChart();
-    }
-
-    /**
      * Update the chart with incomes and expenses for the last months
      */
     private void UpdateMoneyFlowBarChart()
     {
+        // Create a new bar chart
+        // This is necessary to clear the previous data
+        CreateMoneyFlowBarChart();
+
         // LinkedHashMap to keep the order of the months
         Map<String, Double> monthlyExpenses = new LinkedHashMap<>();
         Map<String, Double> monthlyIncomes  = new LinkedHashMap<>();
@@ -686,5 +694,50 @@ public class WalletController
             Animation.XYChartAnimation(expenseData, targetExpenseValue);
             Animation.XYChartAnimation(incomeData, targetIncomeValue);
         }
+    }
+
+    /**
+     * Update the doughnut chart
+     */
+    private void CreateDoughnutChartCheckBoxes()
+    {
+        balanceByWalletTypePieChartAnchorPane.getChildren().clear();
+        totalBalanceByWalletTypeVBox.getChildren().clear();
+
+        // Create a checkbox for each wallet type
+        doughnutChartCheckBoxes = new ArrayList<>();
+
+        for (WalletType wt : walletTypes)
+        {
+            CheckBox checkBox = new CheckBox(wt.GetName());
+            checkBox.getStyleClass().add(Constants.WALLET_CHECK_BOX_STYLE);
+            checkBox.setSelected(true);
+            doughnutChartCheckBoxes.add(checkBox);
+            totalBalanceByWalletTypeVBox.getChildren().add(checkBox);
+
+            // Add listener to the checkbox
+            checkBox.selectedProperty().addListener(
+                (obs, wasSelected, isNowSelected) -> { UpdateDoughnutChart(); });
+        }
+    }
+
+    /**
+     * Create a new bar chart
+     */
+    private void CreateMoneyFlowBarChart()
+    {
+        CategoryAxis xAxis = new CategoryAxis();
+        NumberAxis   yAxis = new NumberAxis();
+
+        moneyFlowBarChart = new BarChart<>(xAxis, yAxis);
+
+        moneyFlowBarChartAnchorPane.getChildren().clear();
+
+        moneyFlowBarChartAnchorPane.getChildren().add(moneyFlowBarChart);
+
+        AnchorPane.setTopAnchor(moneyFlowBarChart, 0.0);
+        AnchorPane.setBottomAnchor(moneyFlowBarChart, 0.0);
+        AnchorPane.setLeftAnchor(moneyFlowBarChart, 0.0);
+        AnchorPane.setRightAnchor(moneyFlowBarChart, 0.0);
     }
 }

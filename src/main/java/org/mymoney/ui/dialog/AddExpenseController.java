@@ -81,6 +81,18 @@ public class AddExpenseController
         this.categoryService = categoryService;
     }
 
+    public void SetWalletComboBox(Wallet wt)
+    {
+        if (wallets.stream().noneMatch(w -> w.GetId() == wt.GetId()))
+        {
+            return;
+        }
+
+        walletComboBox.setValue(wt.GetName());
+
+        UpdateWalletBalance();
+    }
+
     @FXML
     private void initialize()
     {
@@ -282,17 +294,5 @@ public class AddExpenseController
                                         Constants.NEUTRAL_BALANCE_STYLE);
 
         label.getStyleClass().add(style);
-    }
-
-    public void SetWalletComboBox(Wallet wt)
-    {
-        if (wallets.stream().noneMatch(w -> w.GetId() == wt.GetId()))
-        {
-            return;
-        }
-
-        walletComboBox.setValue(wt.GetName());
-
-        UpdateWalletBalance();
     }
 }

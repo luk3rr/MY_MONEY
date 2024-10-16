@@ -74,6 +74,18 @@ public class AddTransferController
         this.walletService = walletService;
     }
 
+    public void SetSenderWalletComboBox(Wallet wt)
+    {
+        if (wallets.stream().noneMatch(w -> w.GetId() == wt.GetId()))
+        {
+            return;
+        }
+
+        senderWalletComboBox.setValue(wt.GetName());
+
+        UpdateSenderWalletBalance();
+    }
+
     @FXML
     private void initialize()
     {
@@ -344,17 +356,5 @@ public class AddTransferController
                                         Constants.NEUTRAL_BALANCE_STYLE);
 
         label.getStyleClass().add(style);
-    }
-
-    public void SetSenderWalletComboBox(Wallet wt)
-    {
-        if (wallets.stream().noneMatch(w -> w.GetId() == wt.GetId()))
-        {
-            return;
-        }
-
-        senderWalletComboBox.setValue(wt.GetName());
-
-        UpdateSenderWalletBalance();
     }
 }

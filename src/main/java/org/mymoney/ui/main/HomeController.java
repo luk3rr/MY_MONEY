@@ -55,6 +55,8 @@ import org.springframework.util.StringUtils;
 @Controller
 public class HomeController
 {
+    private static final Logger logger = LoggerConfig.GetLogger();
+
     @FXML
     private JFXButton walletPrevButton;
 
@@ -107,8 +109,6 @@ public class HomeController
     private Integer walletPaneCurrentPage = 0;
 
     private Integer creditCardPaneCurrentPage = 0;
-
-    private static final Logger logger = LoggerConfig.GetLogger();
 
     public HomeController() { }
 

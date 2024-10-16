@@ -66,6 +66,8 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class TransactionController
 {
+    private static final Logger logger = LoggerConfig.GetLogger();
+
     @FXML
     private AnchorPane monthResumeView;
 
@@ -109,8 +111,6 @@ public class TransactionController
     private CreditCardService creditCardService;
 
     private CategoryService categoryService;
-
-    private static final Logger logger = LoggerConfig.GetLogger();
 
     @Autowired
     public TransactionController(WalletService     walletService,

@@ -15,7 +15,7 @@
 }
 
 .date-picker .text-field {
-  -fx-background-color: transparent; /* Fundo transparente para o campo de texto */
+  -fx-background-color: transparent;
   -fx-background-radius: 20;
 }
 
@@ -41,5 +41,5 @@
 }
 
 .date-picker .popup {
-  -fx-background-color: white; /* Cor de fundo do popup */
+  -fx-background-color: white;
 }

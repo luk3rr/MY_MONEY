@@ -34,10 +34,6 @@ public class AddCategoryController
     }
 
     @FXML
-    private void initialize()
-    { }
-
-    @FXML
     public void handleSave()
     {
         String name = categoryNameField.getText();
@@ -67,4 +63,8 @@ public class AddCategoryController
         Stage stage = (Stage)categoryNameField.getScene().getWindow();
         stage.close();
     }
+
+    @FXML
+    private void initialize()
+    { }
 }

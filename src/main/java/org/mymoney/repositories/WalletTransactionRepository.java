@@ -6,8 +6,8 @@
 
 package org.mymoney.repositories;
 
-import org.mymoney.entities.WalletTransaction;
 import java.util.List;
+import org.mymoney.entities.WalletTransaction;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -179,4 +179,15 @@ public interface WalletTransactionRepository
            + "FROM WalletTransaction wt")
     String
     GetOldestTransactionDate();
+
+    /**
+     * Get count of transactions by wallet
+     * @param walletId The id of the wallet
+     * @return The count of transactions in the wallet
+     */
+    @Query("SELECT COUNT(wt) "
+           + "FROM WalletTransaction wt "
+           + "WHERE wt.wallet.id = :walletId")
+    Long
+    CountTransactionsByWallet(@Param("walletId") Long walletId);
 }

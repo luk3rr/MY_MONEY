@@ -45,6 +45,9 @@ public final class Constants
     public static final String ADD_CATEGORY_FXML = UI_DIALOG_PATH + ("add_category."
                                                                      + "fxml");
 
+    public static final String ARCHIVED_WALLETS_FXML =
+        UI_DIALOG_PATH + "archived_wallets.fxml";
+
     public static final String REMOVE_TRANSACTION_FXML =
         UI_DIALOG_PATH + "remove_transaction.fxml";
     public static final String REMOVE_CATEGORY_FXML =

@@ -11,6 +11,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+/**
+ * Main application class
+ * TODO: Consider transaction only if wallet is not archived
+ */
 @EntityScan(basePackages = "org.mymoney.entities")
 @EnableJpaRepositories(basePackages = "org.mymoney.repositories")
 @SpringBootApplication(scanBasePackages = "org.mymoney")

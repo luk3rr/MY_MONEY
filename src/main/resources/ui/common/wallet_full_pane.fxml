@@ -8,6 +8,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -50,6 +51,8 @@
                           <items>
                             <MenuItem mnemonicParsing="false" onAction="#handleRenameWallet" text="Rename wallet" />
                             <MenuItem mnemonicParsing="false" onAction="#handleChangeWalletType" text="Change wallet type" />
+                              <MenuItem mnemonicParsing="false" onAction="#handleArchiveWallet" text="Archive wallet" />
+                              <MenuItem mnemonicParsing="false" onAction="#handleDeleteWallet" text="Delete wallet" />
                           </items>
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -70,7 +73,8 @@
                <children>
                   <HBox fx:id="openingBalance" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Label fx:id="openingBalanceDescription" minWidth="160.0" text="Opening balance" />
+                        <Label fx:id="openingBalanceDescription" text="Opening balance" />
+                        <Region HBox.hgrow="ALWAYS" />
                         <Label fx:id="openingBalanceSign" minWidth="10.0" text=" ">
                            <font>
                               <Font name="System Bold" size="13.0" />
@@ -83,7 +87,8 @@
                      </children></HBox>
                   <HBox fx:id="incomes" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Label fx:id="incomesDescription" minWidth="160.0" text="Incomes" />
+                        <Label fx:id="incomesDescription" text="Incomes" />
+                        <Region HBox.hgrow="ALWAYS" />
                         <Label fx:id="incomesSign" minWidth="10.0" text=" ">
                            <font>
                               <Font name="System Bold" size="13.0" />
@@ -96,7 +101,8 @@
                      </children></HBox>
                   <HBox fx:id="expenses" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Label fx:id="expensesDescription" minWidth="160.0" text="Expenses" />
+                        <Label fx:id="expensesDescription" text="Expenses" />
+                        <Region HBox.hgrow="ALWAYS" />
                         <Label fx:id="expensesSign" minWidth="10.0" text=" ">
                            <font>
                               <Font name="System Bold" size="13.0" />
@@ -109,7 +115,8 @@
                      </children></HBox>
                   <HBox fx:id="creditedTransfers" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Label fx:id="creditedTransfersDescription" minWidth="160.0" text="Credited transfers" />
+                        <Label fx:id="creditedTransfersDescription" text="Credited transfers" />
+                        <Region HBox.hgrow="ALWAYS" />
                         <Label fx:id="creditedTransfersSign" minWidth="10.0" text=" ">
                            <font>
                               <Font name="System Bold" size="13.0" />
@@ -122,7 +129,8 @@
                      </children></HBox>
                   <HBox fx:id="debitedTransfers" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Label fx:id="debitedTransfersDescription" minWidth="160.0" text="Debited transfers" />
+                        <Label fx:id="debitedTransfersDescription" text="Debited transfers" />
+                        <Region HBox.hgrow="ALWAYS" />
                         <Label fx:id="debitedTransfersSign" minWidth="10.0" text=" ">
                            <font>
                               <Font name="System Bold" size="13.0" />
@@ -135,7 +143,8 @@
                      </children></HBox>
                   <HBox fx:id="currentBalance" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Label fx:id="currentBalanceDescription" minWidth="160.0" text="Current balance" />
+                        <Label fx:id="currentBalanceDescription" text="Current balance" HBox.hgrow="ALWAYS" />
+                        <Region HBox.hgrow="ALWAYS" />
                         <Label fx:id="currentBalanceSign" minWidth="10.0" text=" ">
                            <font>
                               <Font name="System Bold" size="13.0" />
@@ -148,7 +157,8 @@
                      </children></HBox>
                   <HBox fx:id="foreseenBalance" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                      <children>
-                        <Label fx:id="foreseenBalanceDescription" minWidth="160.0" text="Foreseen balance" />
+                        <Label fx:id="foreseenBalanceDescription" text="Foreseen balance" />
+                        <Region HBox.hgrow="ALWAYS" />
                         <Label fx:id="foreseenBalanceSign" minWidth="10.0" text=" ">
                            <font>
                               <Font name="System Bold" size="13.0" />

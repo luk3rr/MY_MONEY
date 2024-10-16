@@ -25,6 +25,7 @@ import org.springframework.stereotype.Controller;
  * Controller for the resume pane
  *
  * @note prototype is necessary so that each scene has its own controller
+ * TODO: Fix calculation of the foreseen when the summary is not for the current year
  */
 @Controller
 @Scope("prototype") // Each instance of this controller is unique
@@ -110,6 +111,40 @@ public class ResumePaneController
     {
         LocalDateTime now = LocalDateTime.now();
         UpdateResumePane(now.getMonthValue(), now.getYear());
+    }
+
+    /**
+     * Update the display of the resume
+     */
+    public void UpdateResumePane(Integer year)
+    {
+        List<WalletTransaction> allYearTransactions =
+            walletService.GetAllTransactionsByYear(year);
+
+        Double crcTotalDebtAmount = creditCardService.GetTotalDebtAmount(year);
+
+        Double crcTotalPendingPayments =
+            creditCardService.GetTotalPendingPayments(year);
+
+        UpdateResumePane(allYearTransactions,
+                         crcTotalDebtAmount,
+                         crcTotalPendingPayments);
+    }
+
+    /**
+     * Update the display of the month resume
+     */
+    public void UpdateResumePane(Integer month, Integer year)
+    {
+        List<WalletTransaction> transactions =
+            walletService.GetAllTransactionsByMonth(month, year);
+
+        Double crcTotalDebtAmount = creditCardService.GetTotalDebtAmount(month, year);
+
+        Double crcTotalPendingPayments =
+            creditCardService.GetTotalPendingPayments(month, year);
+
+        UpdateResumePane(transactions, crcTotalDebtAmount, crcTotalPendingPayments);
     }
 
     private void UpdateResumePane(List<WalletTransaction> transactions,
@@ -301,39 +336,5 @@ public class ResumePaneController
         creditCardsForeseenValue.setText(
             String.format(UIUtils.FormatCurrency(crcTotalPendingPayments)));
         creditCardsForeseenSign.setText(" "); // default
-    }
-
-    /**
-     * Update the display of the resume
-     */
-    public void UpdateResumePane(Integer year)
-    {
-        List<WalletTransaction> allYearTransactions =
-            walletService.GetAllTransactionsByYear(year);
-
-        Double crcTotalDebtAmount = creditCardService.GetTotalDebtAmount(year);
-
-        Double crcTotalPendingPayments =
-            creditCardService.GetTotalPendingPayments(year);
-
-        UpdateResumePane(allYearTransactions,
-                         crcTotalDebtAmount,
-                         crcTotalPendingPayments);
-    }
-
-    /**
-     * Update the display of the month resume
-     */
-    public void UpdateResumePane(Integer month, Integer year)
-    {
-        List<WalletTransaction> transactions =
-            walletService.GetAllTransactionsByMonth(month, year);
-
-        Double crcTotalDebtAmount = creditCardService.GetTotalDebtAmount(month, year);
-
-        Double crcTotalPendingPayments =
-            creditCardService.GetTotalPendingPayments(month, year);
-
-        UpdateResumePane(transactions, crcTotalDebtAmount, crcTotalPendingPayments);
     }
 }
