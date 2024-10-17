@@ -15,7 +15,6 @@ import jakarta.persistence.Table;
 
 /**
  * Represents a category of expenses and incomes
- * TODO: Add archiving functionality
  */
 @Entity
 @Table(name = "category")
@@ -28,6 +27,9 @@ public class Category
 
     @Column(name = "name", nullable = false, length = 50)
     private String name;
+
+    @Column(name = "archived", nullable = false)
+    private Boolean archived = false; // Default value is false
 
     /**
      * Default constructor for JPA
@@ -62,11 +64,29 @@ public class Category
     }
 
     /**
+     * Get the archived status of the category
+     * @return True if the category is archived, false otherwise
+     */
+    public Boolean IsArchived()
+    {
+        return archived;
+    }
+
+    /**
      * Set the category name
      * @param name The category name
      */
     public void SetName(String name)
     {
         this.name = name;
+    }
+
+    /**
+     * Set the archived status of the category
+     * @param archived The new archived status of the category
+     */
+    public void SetArchived(Boolean archived)
+    {
+        this.archived = archived;
     }
 }

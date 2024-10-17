@@ -6,22 +6,22 @@
  * Description: This file contains the initial data to be inserted in the database
  */
 
-INSERT OR IGNORE INTO category (id, name) VALUES
-(0, 'Outros'),
-(1, 'Alimentação'),
-(2, 'Transporte'),
-(3, 'Lazer'),
-(4, 'Saúde'),
-(5, 'Educação'),
-(6, 'Moradia'),
-(7, 'Serviços'),
-(8, 'Pets'),
-(9, 'Investimentos'),
-(10, 'Rendimentos'),
-(11, 'Salário'),
-(12, 'Vestuário'),
-(13, 'Carro'),
-(14, 'Documentos');
+INSERT OR IGNORE INTO category (id, name, archived) VALUES
+(0, 'Outros', false),
+(1, 'Alimentação', false),
+(2, 'Transporte', false),
+(3, 'Lazer', false),
+(4, 'Saúde', false),
+(5, 'Educação', false),
+(6, 'Moradia', false),
+(7, 'Serviços', false),
+(8, 'Pets', false),
+(9, 'Investimentos', false),
+(10, 'Rendimentos', false),
+(11, 'Salário', false),
+(12, 'Vestuário', false),
+(13, 'Carro', false),
+(14, 'Documentos', false);
 
 INSERT OR IGNORE INTO wallet_type (id, name, icon) VALUES
 (0, 'Others', 'others.png'),

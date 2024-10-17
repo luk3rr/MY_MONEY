@@ -7,6 +7,7 @@
 package org.mymoney.ui.dialog;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -24,6 +25,9 @@ public class EditCategoryController
 {
     @FXML
     private Label selectedCategoryLabel;
+
+    @FXML
+    private CheckBox archivedCheckBox;
 
     @FXML
     private TextField categoryNewNameField;
@@ -46,6 +50,8 @@ public class EditCategoryController
     {
         selectedCategoryLabel.setText(ct.GetName());
         selectedCategory = ct;
+
+        archivedCheckBox.setSelected(ct.IsArchived());
     }
 
     @FXML
@@ -53,28 +59,70 @@ public class EditCategoryController
     {
         String newName = categoryNewNameField.getText();
 
-        if (newName == null || newName.isBlank())
+        Boolean archived = archivedCheckBox.isSelected();
+
+        Boolean nameChanged     = false;
+        Boolean archivedChanged = false;
+
+        if (newName == null ||
+            !newName.isBlank() && !newName.equals(selectedCategory.GetName()))
         {
-            WindowUtils.ShowErrorDialog("Error",
-                                        "Invalid input",
-                                        "Please fill all fields");
-            return;
+            try
+            {
+                categoryService.RenameCategory(selectedCategory.GetId(), newName);
+
+                nameChanged = true;
+            }
+            catch (RuntimeException e)
+            {
+                WindowUtils.ShowErrorDialog("Error",
+                                            "Error updating category name",
+                                            e.getMessage());
+                return;
+            }
         }
 
-        try
+        if (archived && !selectedCategory.IsArchived())
         {
-            categoryService.RenameCategory(selectedCategory.GetId(), newName);
+            try
+            {
+                categoryService.ArchiveCategory(selectedCategory.GetId());
 
-            WindowUtils.ShowSuccessDialog("Success",
-                                          "Category updated",
-                                          "Category updated successfully");
+                archivedChanged = true;
+            }
+            catch (RuntimeException e)
+            {
+                WindowUtils.ShowErrorDialog("Error",
+                                            "Error updating category",
+                                            e.getMessage());
+                return;
+            }
         }
-        catch (RuntimeException e)
+        else if (!archived && selectedCategory.IsArchived())
         {
-            WindowUtils.ShowErrorDialog("Error",
-                                        "Error updating category",
-                                        e.getMessage());
-            return;
+            try
+            {
+                categoryService.UnarchiveCategory(selectedCategory.GetId());
+
+                archivedChanged = true;
+            }
+            catch (RuntimeException e)
+            {
+                WindowUtils.ShowErrorDialog("Error",
+                                            "Error updating category",
+                                            e.getMessage());
+                return;
+            }
+        }
+
+        if (nameChanged || archivedChanged)
+        {
+            String msg = nameChanged && archivedChanged
+                             ? "Category name and archived status updated"
+                         : archivedChanged ? "Category archived status updated"
+                                           : "Category name updated";
+
+            WindowUtils.ShowSuccessDialog("Success", "Category updated", msg);
         }
 
         Stage stage = (Stage)categoryNewNameField.getScene().getWindow();

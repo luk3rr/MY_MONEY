@@ -32,7 +32,7 @@
       <HBox alignment="CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
          <children>
             <JFXButton minWidth="90.0" onAction="#handleCancel" stylesheets="@../../css/component/buttons.css" text="Cancel" />
-            <JFXButton minWidth="90.0" onAction="#handleRemove" stylesheets="@../../css/component/buttons.css" text="Remove" />
+            <JFXButton minWidth="90.0" onAction="#handleDelete" stylesheets="@../../css/component/buttons.css" text="Delete" />
          </children>
       </HBox>
    </children>

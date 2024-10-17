@@ -107,6 +107,44 @@ public class CategoryService
     }
 
     /**
+     * Archive a category
+     * @param id Category ID to be archived
+     */
+    @Transactional
+    public void ArchiveCategory(Long id)
+    {
+        Category category = categoryRepository.findById(id).orElseThrow(
+            ()
+                -> new RuntimeException("Category with ID " + id +
+                                        " not found and cannot be archived"));
+
+        category.SetArchived(true);
+
+        categoryRepository.save(category);
+
+        m_logger.info("Category with id " + id + " was archived");
+    }
+
+    /**
+     * Unarchive a category
+     * @param id Category ID to be unarchived
+     */
+    @Transactional
+    public void UnarchiveCategory(Long id)
+    {
+        Category category = categoryRepository.findById(id).orElseThrow(
+            ()
+                -> new RuntimeException("Category with ID " + id +
+                                        " not found and cannot be unarchived"));
+
+        category.SetArchived(false);
+
+        categoryRepository.save(category);
+
+        m_logger.info("Category with id " + id + " was unarchived");
+    }
+
+    /**
      * Get a category by its name
      * @param name Category name
      * @return Category

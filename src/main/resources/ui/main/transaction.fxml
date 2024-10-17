@@ -80,12 +80,12 @@
                                              <graphic>
                                                 <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
-                                                      <Image url="@../../icon/common/transaction.png" />
+                                                      <Image url="@../../icon/common/add.png" />
                                                    </image>
                                                 </ImageView>
                                              </graphic>
                                           </MenuButton>
-                                          <MenuButton fx:id="removeTransactionMenuButton" mnemonicParsing="false" stylesheets="@../../css/component/buttons.css" text="Remove Transaction">
+                                          <MenuButton fx:id="removeTransactionMenuButton" mnemonicParsing="false" stylesheets="@../../css/component/buttons.css" text="Delete Transaction">
                                              <items>
                                                 <MenuItem fx:id="removeIncomeMenuButton" mnemonicParsing="false" onAction="#handleRemoveIncome" text="Remove Income" />
                                                 <MenuItem fx:id="removeExpenseMenuItem" mnemonicParsing="false" onAction="#handleRemoveExpense" text="Remove Expense" />

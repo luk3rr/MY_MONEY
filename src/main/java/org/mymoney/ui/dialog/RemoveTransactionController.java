@@ -79,7 +79,7 @@ public class RemoveTransactionController
     }
 
     @FXML
-    public void handleRemove()
+    public void handleDelete()
     {
         WalletTransaction selectedIncome =
             transactionsTableView.getSelectionModel().getSelectedItem();
@@ -103,6 +103,7 @@ public class RemoveTransactionController
             .append("\n")
             .append("Status: ")
             .append(selectedIncome.GetStatus().toString())
+            .append("\n")
             .append("Wallet: ")
             .append(selectedIncome.GetWallet().GetName())
             .append("\n")

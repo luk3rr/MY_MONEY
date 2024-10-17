@@ -102,7 +102,7 @@ public class ManageCategoryController
     }
 
     @FXML
-    private void handleRemove()
+    private void handleDelete()
     {
         Category selectedCategory =
             categoryTableView.getSelectionModel().getSelectedItem();
@@ -235,8 +235,15 @@ public class ManageCategoryController
                 }
             });
 
+        TableColumn<Category, String> archivedColumn = new TableColumn<>("Archived");
+        archivedColumn.setCellValueFactory(
+            param
+            -> new SimpleStringProperty(
+                param.getValue().IsArchived() ? "Yes" : "No"));
+
         categoryTableView.getColumns().add(idColumn);
         categoryTableView.getColumns().add(categoryColumn);
+        categoryTableView.getColumns().add(archivedColumn);
         categoryTableView.getColumns().add(numOfTransactionsColumn);
     }
 }

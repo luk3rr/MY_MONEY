@@ -152,7 +152,7 @@ public class WalletService
         Wallet wallet = m_walletRepository.findById(id).orElseThrow(
             ()
                 -> new RuntimeException("Wallet with id " + id +
-                                        " not found and cannot be deleted"));
+                                        " not found and cannot be archived"));
 
         wallet.SetArchived(true);
         m_walletRepository.save(wallet);
@@ -173,7 +173,7 @@ public class WalletService
         Wallet wallet = m_walletRepository.findById(id).orElseThrow(
             ()
                 -> new RuntimeException("Wallet with id " + id +
-                                        " not found and cannot be deleted"));
+                                        " not found and cannot be unarchived"));
 
         wallet.SetArchived(false);
         m_walletRepository.save(wallet);
