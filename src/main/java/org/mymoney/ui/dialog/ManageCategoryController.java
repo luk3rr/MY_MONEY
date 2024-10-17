@@ -238,8 +238,25 @@ public class ManageCategoryController
         TableColumn<Category, String> archivedColumn = new TableColumn<>("Archived");
         archivedColumn.setCellValueFactory(
             param
-            -> new SimpleStringProperty(
-                param.getValue().IsArchived() ? "Yes" : "No"));
+            -> new SimpleStringProperty(param.getValue().IsArchived() ? "Yes" : "No"));
+
+        archivedColumn.setCellFactory(column -> new TableCell<Category, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty)
+            {
+                super.updateItem(item, empty);
+                if (item == null || empty)
+                {
+                    setText(null);
+                }
+                else
+                {
+                    setText(item);
+                    setAlignment(Pos.CENTER);
+                    setStyle("-fx-padding: 0;");
+                }
+            }
+        });
 
         categoryTableView.getColumns().add(idColumn);
         categoryTableView.getColumns().add(categoryColumn);

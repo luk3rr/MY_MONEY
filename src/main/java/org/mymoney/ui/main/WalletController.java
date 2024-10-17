@@ -37,6 +37,7 @@ import org.mymoney.entities.Wallet;
 import org.mymoney.entities.WalletTransaction;
 import org.mymoney.entities.WalletType;
 import org.mymoney.services.WalletService;
+import org.mymoney.services.WalletTransactionService;
 import org.mymoney.ui.common.WalletFullPaneController;
 import org.mymoney.ui.dialog.AddTransferController;
 import org.mymoney.ui.dialog.AddWalletController;
@@ -114,6 +115,8 @@ public class WalletController
 
     private WalletService walletService;
 
+    private WalletTransactionService walletTransactionService;
+
     private List<CheckBox> doughnutChartCheckBoxes;
 
     private List<WalletTransaction> transactions;
@@ -135,12 +138,15 @@ public class WalletController
     /**
      * Constructor
      * @param walletService WalletService
+     * @param walletTransactionService WalletTransactionService
      * @note This constructor is used for dependency injection
      */
     @Autowired
-    public WalletController(WalletService walletService)
+    public WalletController(WalletService            walletService,
+                            WalletTransactionService walletTransactionService)
     {
-        this.walletService = walletService;
+        this.walletService            = walletService;
+        this.walletTransactionService = walletTransactionService;
     }
 
     @FXML
@@ -278,9 +284,9 @@ public class WalletController
      */
     private void LoadWalletTransactionsFromDatabase()
     {
-        transactions =
-            walletService.GetAllTransactionsByMonth(totalBalanceSelectedMonth,
-                                                    totalBalanceSelectedYear);
+        transactions = walletTransactionService.GetAllTransactionsByMonth(
+            totalBalanceSelectedMonth,
+            totalBalanceSelectedYear);
     }
 
     /**
@@ -577,7 +583,8 @@ public class WalletController
 
             // Get transactions
             List<WalletTransaction> transactions =
-                walletService.GetAllTransactionsByMonth(month, year);
+                walletTransactionService
+                    .GetAllTransactionsByMonthAndCategoryNotArchived(month, year);
             logger.info("Found " + transactions.size() + " transactions for " + month +
                         "/" + year);
 

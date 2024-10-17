@@ -12,7 +12,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import org.mymoney.entities.WalletTransaction;
 import org.mymoney.services.CreditCardService;
-import org.mymoney.services.WalletService;
+import org.mymoney.services.WalletTransactionService;
 import org.mymoney.util.Constants;
 import org.mymoney.util.TransactionStatus;
 import org.mymoney.util.TransactionType;
@@ -94,16 +94,22 @@ public class ResumePaneController
     @FXML
     private Label creditCardsForeseenValue;
 
-    private WalletService walletService;
+    private WalletTransactionService walletTransactionService;
 
     CreditCardService creditCardService;
 
+    /**
+     * Constructor
+     * @param walletTransactionService WalletTransactionService
+     * @param creditCardService CreditCardService
+     * @note This constructor is used for dependency injection
+     */
     @Autowired
-    public ResumePaneController(WalletService     walletService,
-                                CreditCardService creditCardService)
+    public ResumePaneController(WalletTransactionService walletTransactionService,
+                                CreditCardService        creditCardService)
     {
-        this.walletService     = walletService;
-        this.creditCardService = creditCardService;
+        this.walletTransactionService = walletTransactionService;
+        this.creditCardService        = creditCardService;
     }
 
     @FXML
@@ -119,7 +125,8 @@ public class ResumePaneController
     public void UpdateResumePane(Integer year)
     {
         List<WalletTransaction> allYearTransactions =
-            walletService.GetAllTransactionsByYear(year);
+            walletTransactionService.GetAllTransactionsByYearAndCategoryNotArchived(
+                year);
 
         Double crcTotalDebtAmount = creditCardService.GetTotalDebtAmount(year);
 
@@ -137,7 +144,9 @@ public class ResumePaneController
     public void UpdateResumePane(Integer month, Integer year)
     {
         List<WalletTransaction> transactions =
-            walletService.GetAllTransactionsByMonth(month, year);
+            walletTransactionService.GetAllTransactionsByMonthAndCategoryNotArchived(
+                month,
+                year);
 
         Double crcTotalDebtAmount = creditCardService.GetTotalDebtAmount(month, year);
 

@@ -38,6 +38,7 @@ import org.mymoney.entities.Wallet;
 import org.mymoney.entities.WalletTransaction;
 import org.mymoney.services.CreditCardService;
 import org.mymoney.services.WalletService;
+import org.mymoney.services.WalletTransactionService;
 import org.mymoney.ui.common.ResumePaneController;
 import org.mymoney.util.Animation;
 import org.mymoney.util.Constants;
@@ -104,6 +105,8 @@ public class HomeController
 
     private WalletService walletService;
 
+    private WalletTransactionService walletTransactionService;
+
     private CreditCardService creditCardService;
 
     private Integer walletPaneCurrentPage = 0;
@@ -115,15 +118,18 @@ public class HomeController
     /**
      * Constructor for injecting the wallet and credit card services
      * @param walletService The wallet service
+     * @param walletTransactionService The wallet transaction service
      * @param creditCardService The credit card service
      * @note This constructor is used for dependency injection
      */
     @Autowired
-    public HomeController(WalletService     walletService,
-                          CreditCardService creditCardService)
+    public HomeController(WalletService            walletService,
+                          WalletTransactionService walletTransactionService,
+                          CreditCardService        creditCardService)
     {
-        this.walletService     = walletService;
-        this.creditCardService = creditCardService;
+        this.walletService            = walletService;
+        this.walletTransactionService = walletTransactionService;
+        this.creditCardService        = creditCardService;
     }
 
     @FXML
@@ -209,7 +215,8 @@ public class HomeController
      */
     private void LoadLastTransactionsFromDatabase(Integer n)
     {
-        transactions = walletService.GetLastTransactions(n);
+        transactions =
+            walletTransactionService.GetLastTransactionsAndCategoryNotArchived(n);
     }
 
     /**
@@ -416,7 +423,8 @@ public class HomeController
 
             // Get transactions
             List<WalletTransaction> transactions =
-                walletService.GetAllTransactionsByMonth(month, year);
+                walletTransactionService
+                    .GetAllTransactionsByMonthAndCategoryNotArchived(month, year);
             logger.info("Found " + transactions.size() + " transactions for " + month +
                         "/" + year);
 

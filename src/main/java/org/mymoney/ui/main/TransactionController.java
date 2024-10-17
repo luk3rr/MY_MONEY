@@ -41,7 +41,7 @@ import org.mymoney.entities.Category;
 import org.mymoney.entities.WalletTransaction;
 import org.mymoney.services.CategoryService;
 import org.mymoney.services.CreditCardService;
-import org.mymoney.services.WalletService;
+import org.mymoney.services.WalletTransactionService;
 import org.mymoney.ui.common.ResumePaneController;
 import org.mymoney.ui.dialog.AddExpenseController;
 import org.mymoney.ui.dialog.AddIncomeController;
@@ -106,20 +106,27 @@ public class TransactionController
 
     private StackedBarChart<String, Number> moneyFlowStackedBarChart;
 
-    private WalletService walletService;
+    private WalletTransactionService walletTransactionService;
 
     private CreditCardService creditCardService;
 
     private CategoryService categoryService;
 
+    /**
+     * Constructor
+     * @param walletTransactionService WalletTransactionService
+     * @param creditCardService CreditCardService
+     * @param categoryService CategoryService
+     * @note This constructor is used for dependency injection
+     */
     @Autowired
-    public TransactionController(WalletService     walletService,
-                                 CreditCardService creditCardService,
-                                 CategoryService   categoryService)
+    public TransactionController(WalletTransactionService walletTransactionService,
+                                 CreditCardService        creditCardService,
+                                 CategoryService          categoryService)
     {
-        this.walletService     = walletService;
-        this.creditCardService = creditCardService;
-        this.categoryService   = categoryService;
+        this.walletTransactionService = walletTransactionService;
+        this.creditCardService        = creditCardService;
+        this.categoryService          = categoryService;
     }
 
     @FXML
@@ -291,7 +298,8 @@ public class TransactionController
         // type. If transaction type is null, all transactions are fetched
         if (similarTextOrId.isEmpty())
         {
-            walletService.GetTransactionsBetweenDates(startDate, endDate)
+            walletTransactionService
+                .GetTransactionsBetweenDatesAndCategoryNotArchived(startDate, endDate)
                 .stream()
                 .filter(t
                         -> selectedTransactionType == null ||
@@ -300,7 +308,8 @@ public class TransactionController
         }
         else
         {
-            walletService.GetTransactionsBetweenDates(startDate, endDate)
+            walletTransactionService
+                .GetTransactionsBetweenDatesAndCategoryNotArchived(startDate, endDate)
                 .stream()
                 .filter(t
                         -> selectedTransactionType == null ||
@@ -353,8 +362,10 @@ public class TransactionController
 
             // Get confirmed transactions for the month
             List<WalletTransaction> transactions =
-                walletService.GetConfirmedTransactionsByMonth(date.getMonthValue(),
-                                                              date.getYear());
+                walletTransactionService
+                    .GetConfirmedTransactionsByMonthAndCategoryNotArchived(
+                        date.getMonthValue(),
+                        date.getYear());
 
             // Calculate total for each category
             for (Category category : categories)
@@ -539,7 +550,7 @@ public class TransactionController
     private void PopulateYearComboBox()
     {
         LocalDateTime oldestWalletTransaction =
-            walletService.GetOldestTransactionDate();
+            walletTransactionService.GetOldestTransactionDate();
         LocalDateTime oldestCreditCard = creditCardService.GetOldestDebtDate();
 
         LocalDateTime oldest = oldestCreditCard.isBefore(oldestWalletTransaction)
@@ -647,7 +658,7 @@ public class TransactionController
     private void PopulateMonthResumeComboBox()
     {
         LocalDateTime oldestWalletTransaction =
-            walletService.GetOldestTransactionDate();
+            walletTransactionService.GetOldestTransactionDate();
         LocalDateTime oldestCreditCard = creditCardService.GetOldestDebtDate();
 
         LocalDateTime oldest = oldestCreditCard.isBefore(oldestWalletTransaction)

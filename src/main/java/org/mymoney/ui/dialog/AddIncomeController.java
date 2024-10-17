@@ -21,6 +21,7 @@ import org.mymoney.entities.Category;
 import org.mymoney.entities.Wallet;
 import org.mymoney.services.CategoryService;
 import org.mymoney.services.WalletService;
+import org.mymoney.services.WalletTransactionService;
 import org.mymoney.util.Constants;
 import org.mymoney.util.TransactionStatus;
 import org.mymoney.util.UIUtils;
@@ -60,6 +61,8 @@ public class AddIncomeController
 
     private WalletService walletService;
 
+    private WalletTransactionService walletTransactionService;
+
     private CategoryService categoryService;
 
     private List<Wallet> wallets;
@@ -74,11 +77,13 @@ public class AddIncomeController
      * @note This constructor is used for dependency injection
      */
     @Autowired
-    public AddIncomeController(WalletService   walletService,
-                               CategoryService categoryService)
+    public AddIncomeController(WalletService            walletService,
+                               WalletTransactionService walletTransactionService,
+                               CategoryService          categoryService)
     {
-        this.walletService   = walletService;
-        this.categoryService = categoryService;
+        this.walletService            = walletService;
+        this.walletTransactionService = walletTransactionService;
+        this.categoryService          = categoryService;
     }
 
     public void SetWalletComboBox(Wallet wt)
@@ -167,12 +172,12 @@ public class AddIncomeController
             LocalTime     currentTime             = LocalTime.now();
             LocalDateTime dateTimeWithCurrentHour = incomeDate.atTime(currentTime);
 
-            walletService.AddIncome(wallet.GetId(),
-                                    category,
-                                    dateTimeWithCurrentHour,
-                                    incomeValue,
-                                    description,
-                                    status);
+            walletTransactionService.AddIncome(wallet.GetId(),
+                                               category,
+                                               dateTimeWithCurrentHour,
+                                               incomeValue,
+                                               description,
+                                               status);
 
             WindowUtils.ShowSuccessDialog("Success",
                                           "Income created",

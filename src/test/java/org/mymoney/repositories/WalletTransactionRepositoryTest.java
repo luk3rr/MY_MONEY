@@ -8,19 +8,18 @@ package org.mymoney.repositories;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mymoney.app.MainApplication;
 import org.mymoney.entities.Category;
 import org.mymoney.entities.Wallet;
 import org.mymoney.entities.WalletTransaction;
 import org.mymoney.util.TransactionStatus;
 import org.mymoney.util.TransactionType;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.PageRequest;
@@ -92,54 +91,6 @@ public class WalletTransactionRepositoryTest
     }
 
     @Test
-    @DisplayName(
-        "Test if the last transactions in a wallet by date are returned correctly")
-    public void
-    TestGetLastTransactionsByDate()
-    {
-        LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
-
-        // Create the wallet transactions
-        WalletTransaction walletTransaction1 =
-            CreateWalletTransaction(m_wallet1, 100.0, now);
-        WalletTransaction walletTransaction2 =
-            CreateWalletTransaction(m_wallet1, 200.0, now.minusDays(1));
-
-        CreateWalletTransaction(m_wallet1, 300.0, now.minusDays(2));
-
-        // Create another wallet transaction in another wallet
-        CreateWalletTransaction(m_wallet2, 300.0, now.minusDays(1));
-
-        // Get the last transactions in the wallet by date
-        var lastTransactions = m_walletTransactionRepository.GetTransactionsByDate(
-            m_wallet1.GetId(),
-            now.minusDays(1).toString());
-
-        // Check if the last transactions are correct
-        assertEquals(2, lastTransactions.size());
-
-        // Check if the last transactions are in the correct order
-        assertEquals(walletTransaction1, lastTransactions.get(0));
-        assertEquals(walletTransaction2, lastTransactions.get(1));
-    }
-
-    @Test
-    @DisplayName(
-        "Test if the last transactions in a wallet by date are returned correctly "
-        + "when there are no transactions")
-    public void
-    TestGetLastTransactionsByDateNoTransactions()
-    {
-        // Get the last transactions in the wallet by date
-        var lastTransactions = m_walletTransactionRepository.GetTransactionsByDate(
-            m_wallet1.GetId(),
-            LocalDateTime.now().minusDays(1).toString());
-
-        // Check if the last transactions are correct
-        assertEquals(0, lastTransactions.size());
-    }
-
-    @Test
     @DisplayName("Test if the last n transactions in a wallet are returned correctly")
     public void TestGetLastTransactions()
     {
@@ -159,8 +110,8 @@ public class WalletTransactionRepositoryTest
 
         // Get the last transactions in the wallet by date
         List<WalletTransaction> lastTransactions =
-            m_walletTransactionRepository.GetLastTransactions(m_wallet1.GetId(),
-                                                              request);
+            m_walletTransactionRepository.GetLastTransactionsByWallet(m_wallet1.GetId(),
+                                                                      request);
 
         // Check if the last transactions are correct
         assertEquals(3, lastTransactions.size());
@@ -182,8 +133,8 @@ public class WalletTransactionRepositoryTest
 
         // Get the last transactions in the wallet by date
         List<WalletTransaction> lastTransactions =
-            m_walletTransactionRepository.GetLastTransactions(m_wallet1.GetId(),
-                                                              request);
+            m_walletTransactionRepository.GetLastTransactionsByWallet(m_wallet1.GetId(),
+                                                                      request);
 
         // Check if the last transactions are correct
         assertEquals(0, lastTransactions.size());

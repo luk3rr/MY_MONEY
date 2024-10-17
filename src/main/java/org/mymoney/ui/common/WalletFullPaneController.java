@@ -18,6 +18,7 @@ import org.mymoney.entities.Transfer;
 import org.mymoney.entities.Wallet;
 import org.mymoney.entities.WalletTransaction;
 import org.mymoney.services.WalletService;
+import org.mymoney.services.WalletTransactionService;
 import org.mymoney.ui.dialog.AddExpenseController;
 import org.mymoney.ui.dialog.AddIncomeController;
 import org.mymoney.ui.dialog.AddTransferController;
@@ -106,6 +107,8 @@ public class WalletFullPaneController
 
     private WalletService walletService;
 
+    private WalletTransactionService walletTransactionService;
+
     private Wallet wallet;
 
     private List<WalletTransaction> transactions;
@@ -119,12 +122,15 @@ public class WalletFullPaneController
     /**
      * Constructor
      * @param walletService WalletService
+     * @param walletTransactionService WalletTransactionService
      * @note This constructor is used for dependency injection
      */
     @Autowired
-    public WalletFullPaneController(WalletService walletService)
+    public WalletFullPaneController(WalletService            walletService,
+                                    WalletTransactionService walletTransactionService)
     {
-        this.walletService = walletService;
+        this.walletService            = walletService;
+        this.walletTransactionService = walletTransactionService;
     }
 
     /**
@@ -145,14 +151,16 @@ public class WalletFullPaneController
 
         LocalDate now = LocalDate.now();
 
-        transactions =
-            walletService.GetTransactionsByWalletAndMonth(wallet.GetId(),
-                                                          now.getMonthValue(),
-                                                          now.getYear());
+        transactions = walletTransactionService
+                           .GetTransactionsByWalletAndMonthAndCategoryNotArchived(
+                               wallet.GetId(),
+                               now.getMonthValue(),
+                               now.getYear());
 
-        transfers = walletService.GetTransfersByWalletAndMonth(wallet.GetId(),
-                                                               now.getMonthValue(),
-                                                               now.getYear());
+        transfers =
+            walletTransactionService.GetTransfersByWalletAndMonth(wallet.GetId(),
+                                                                  now.getMonthValue(),
+                                                                  now.getYear());
     }
 
     /**
@@ -317,7 +325,7 @@ public class WalletFullPaneController
     private void handleDeleteWallet()
     {
         // Prevent the removal of a wallet with associated transactions
-        if (walletService.GetTransactionCountByWallet(wallet.GetId()) > 0)
+        if (walletTransactionService.GetTransactionCountByWallet(wallet.GetId()) > 0)
         {
             WindowUtils.ShowErrorDialog(
                 "Error",

@@ -18,6 +18,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.mymoney.entities.Wallet;
 import org.mymoney.services.WalletService;
+import org.mymoney.services.WalletTransactionService;
 import org.mymoney.util.WindowUtils;
 import org.springframework.stereotype.Controller;
 
@@ -37,9 +38,18 @@ public class ArchivedWalletsController
 
     private WalletService walletService;
 
-    public ArchivedWalletsController(WalletService walletService)
+    private WalletTransactionService walletTransactionService;
+
+    /**
+     * Constructor
+     * @param walletService WalletService
+     * @note This constructor is used for dependency injection
+     */
+    public ArchivedWalletsController(WalletService            walletService,
+                                     WalletTransactionService walletTransactionService)
     {
-        this.walletService = walletService;
+        this.walletService            = walletService;
+        this.walletTransactionService = walletTransactionService;
     }
 
     @FXML
@@ -111,7 +121,8 @@ public class ArchivedWalletsController
         }
 
         // Prevent the removal of a wallet with associated transactions
-        if (walletService.GetTransactionCountByWallet(selectedWallet.GetId()) > 0)
+        if (walletTransactionService.GetTransactionCountByWallet(
+                selectedWallet.GetId()) > 0)
         {
             WindowUtils.ShowErrorDialog(
                 "Error",
@@ -229,7 +240,8 @@ public class ArchivedWalletsController
         numOfTransactionsColumn.setCellValueFactory(
             param
             -> new SimpleObjectProperty<>(
-                walletService.GetTransactionCountByWallet(param.getValue().GetId())));
+                walletTransactionService.GetTransactionCountByWallet(
+                    param.getValue().GetId())));
 
         numOfTransactionsColumn.setCellFactory(column -> new TableCell<Wallet, Long>() {
             @Override

@@ -17,12 +17,13 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.mymoney.entities.WalletTransaction;
-import org.mymoney.services.WalletService;
+import org.mymoney.services.WalletTransactionService;
 import org.mymoney.util.Constants;
 import org.mymoney.util.TransactionStatus;
 import org.mymoney.util.TransactionType;
 import org.mymoney.util.UIUtils;
 import org.mymoney.util.WindowUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
@@ -42,13 +43,20 @@ public class RemoveTransactionController
 
     private List<WalletTransaction> incomes;
 
-    private WalletService walletService;
+    private WalletTransactionService walletTransactionService;
 
     private TransactionType transactionType;
 
-    public RemoveTransactionController(WalletService walletService)
+    /**
+     * Constructor
+     * @param walletTransactionService WalletTransactionService
+     * @note This constructor is used for dependency injection
+     */
+    @Autowired
+    public RemoveTransactionController(
+        WalletTransactionService walletTransactionService)
     {
-        this.walletService = walletService;
+        this.walletTransactionService = walletTransactionService;
     }
 
     @FXML
@@ -145,7 +153,7 @@ public class RemoveTransactionController
                     transactionType.toString().toLowerCase() + "?",
                 message.toString()))
         {
-            walletService.DeleteTransaction(selectedIncome.GetId());
+            walletTransactionService.DeleteTransaction(selectedIncome.GetId());
             transactionsTableView.getItems().remove(selectedIncome);
         }
     }
@@ -161,11 +169,11 @@ public class RemoveTransactionController
     {
         if (transactionType == TransactionType.EXPENSE)
         {
-            incomes = walletService.GetAllExpenses();
+            incomes = walletTransactionService.GetAllExpensesAndCategoryNotArchived();
         }
         else
         {
-            incomes = walletService.GetAllIncomes();
+            incomes = walletTransactionService.GetAllIncomesAndCategoryNotArchived();
         }
     }
 

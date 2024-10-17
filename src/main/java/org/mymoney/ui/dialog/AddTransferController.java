@@ -18,6 +18,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.mymoney.entities.Wallet;
 import org.mymoney.services.WalletService;
+import org.mymoney.services.WalletTransactionService;
 import org.mymoney.util.Constants;
 import org.mymoney.util.UIUtils;
 import org.mymoney.util.WindowUtils;
@@ -59,6 +60,8 @@ public class AddTransferController
 
     private WalletService walletService;
 
+    private WalletTransactionService walletTransactionService;
+
     private List<Wallet> wallets;
 
     public AddTransferController() { }
@@ -66,12 +69,15 @@ public class AddTransferController
     /**
      * Constructor
      * @param walletService WalletService
+     * @param walletTransactionService WalletTransactionService
      * @note This constructor is used for dependency injection
      */
     @Autowired
-    public AddTransferController(WalletService walletService)
+    public AddTransferController(WalletService            walletService,
+                                 WalletTransactionService walletTransactionService)
     {
-        this.walletService = walletService;
+        this.walletService            = walletService;
+        this.walletTransactionService = walletTransactionService;
     }
 
     public void SetSenderWalletComboBox(Wallet wt)
@@ -162,11 +168,11 @@ public class AddTransferController
             LocalTime     currentTime             = LocalTime.now();
             LocalDateTime dateTimeWithCurrentHour = transferDate.atTime(currentTime);
 
-            walletService.TransferMoney(senderWallet.GetId(),
-                                        receiverWallet.GetId(),
-                                        dateTimeWithCurrentHour,
-                                        transferValue,
-                                        description);
+            walletTransactionService.TransferMoney(senderWallet.GetId(),
+                                                   receiverWallet.GetId(),
+                                                   dateTimeWithCurrentHour,
+                                                   transferValue,
+                                                   description);
 
             WindowUtils.ShowSuccessDialog("Success",
                                           "Transfer created",
