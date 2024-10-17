@@ -110,7 +110,7 @@ public class WalletTransactionRepositoryTest
 
         // Get the last transactions in the wallet by date
         List<WalletTransaction> lastTransactions =
-            m_walletTransactionRepository.GetLastTransactionsByWallet(m_wallet1.GetId(),
+            m_walletTransactionRepository.FindLastTransactionsByWallet(m_wallet1.GetId(),
                                                                       request);
 
         // Check if the last transactions are correct
@@ -133,7 +133,7 @@ public class WalletTransactionRepositoryTest
 
         // Get the last transactions in the wallet by date
         List<WalletTransaction> lastTransactions =
-            m_walletTransactionRepository.GetLastTransactionsByWallet(m_wallet1.GetId(),
+            m_walletTransactionRepository.FindLastTransactionsByWallet(m_wallet1.GetId(),
                                                                       request);
 
         // Check if the last transactions are correct
@@ -162,7 +162,7 @@ public class WalletTransactionRepositoryTest
 
         // Get the last transactions in the wallet by date
         List<WalletTransaction> lastTransactions =
-            m_walletTransactionRepository.GetLastTransactions(request);
+            m_walletTransactionRepository.FindLastTransactions(request);
 
         // Check if the last transactions are correct
         assertEquals(3, lastTransactions.size());

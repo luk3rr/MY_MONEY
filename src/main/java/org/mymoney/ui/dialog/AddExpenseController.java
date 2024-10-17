@@ -282,10 +282,19 @@ public class AddExpenseController
 
     private void LoadCategories()
     {
-        categories = categoryService.GetAllCategories();
+        categories = categoryService.GetNonArchivedCategories();
 
         categoryComboBox.getItems().addAll(
             categories.stream().map(Category::GetName).toList());
+
+        // If there are no categories, add a tooltip to the categoryComboBox
+        // to inform the user that a category is needed
+        if (categories.size() == 0)
+        {
+            UIUtils.AddTooltipToNode(
+                categoryComboBox,
+                "You need to add a category before adding an expense");
+        }
     }
 
     private void ResetLabel(Label label)

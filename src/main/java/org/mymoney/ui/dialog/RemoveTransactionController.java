@@ -169,11 +169,11 @@ public class RemoveTransactionController
     {
         if (transactionType == TransactionType.EXPENSE)
         {
-            incomes = walletTransactionService.GetAllExpensesAndCategoryNotArchived();
+            incomes = walletTransactionService.GetNonArchivedExpenses();
         }
         else
         {
-            incomes = walletTransactionService.GetAllIncomesAndCategoryNotArchived();
+            incomes = walletTransactionService.GetNonArchivedIncomes();
         }
     }
 

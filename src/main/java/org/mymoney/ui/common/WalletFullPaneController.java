@@ -151,11 +151,11 @@ public class WalletFullPaneController
 
         LocalDate now = LocalDate.now();
 
-        transactions = walletTransactionService
-                           .GetTransactionsByWalletAndMonthAndCategoryNotArchived(
-                               wallet.GetId(),
-                               now.getMonthValue(),
-                               now.getYear());
+        transactions =
+            walletTransactionService.GetNonArchivedTransactionsByWalletAndMonth(
+                wallet.GetId(),
+                now.getMonthValue(),
+                now.getYear());
 
         transfers =
             walletTransactionService.GetTransfersByWalletAndMonth(wallet.GetId(),

@@ -125,8 +125,7 @@ public class ResumePaneController
     public void UpdateResumePane(Integer year)
     {
         List<WalletTransaction> allYearTransactions =
-            walletTransactionService.GetAllTransactionsByYearAndCategoryNotArchived(
-                year);
+            walletTransactionService.GetNonArchivedTransactionsByYear(year);
 
         Double crcTotalDebtAmount = creditCardService.GetTotalDebtAmount(year);
 
@@ -144,9 +143,7 @@ public class ResumePaneController
     public void UpdateResumePane(Integer month, Integer year)
     {
         List<WalletTransaction> transactions =
-            walletTransactionService.GetAllTransactionsByMonthAndCategoryNotArchived(
-                month,
-                year);
+            walletTransactionService.GetNonArchivedTransactionsByMonth(month, year);
 
         Double crcTotalDebtAmount = creditCardService.GetTotalDebtAmount(month, year);
 

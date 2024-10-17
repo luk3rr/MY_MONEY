@@ -202,7 +202,7 @@ public class HomeController
      */
     private void LoadWalletsFromDatabase()
     {
-        wallets = walletService.GetAllWalletsOrderedByName();
+        wallets = walletService.GetAllNonArchivedWalletsOrderedByName();
     }
 
     /**
@@ -219,8 +219,10 @@ public class HomeController
      */
     private void LoadLastTransactionsFromDatabase(Integer n)
     {
-        transactions =
-            walletTransactionService.GetLastTransactionsAndCategoryNotArchived(n);
+        transactions = walletTransactionService.GetNonArchivedLastTransactions(n);
+
+        // Filter transactions where the wallet is archived
+        transactions.removeIf(t -> t.GetWallet().IsArchived());
     }
 
     /**
@@ -429,8 +431,7 @@ public class HomeController
 
             // Get transactions
             List<WalletTransaction> transactions =
-                walletTransactionService
-                    .GetAllTransactionsByMonthAndCategoryNotArchived(month, year);
+                walletTransactionService.GetNonArchivedTransactionsByMonth(month, year);
             logger.info("Found " + transactions.size() + " transactions for " + month +
                         "/" + year);
 

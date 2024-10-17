@@ -312,11 +312,11 @@ public class WalletService
     }
 
     /**
-     * Get all wallets that are not archived
+     * Get all wallets that are not archived ordered by name
      * @return A list with all wallets that are not archived
      */
-    public List<Wallet> GetAllNonArchivedWallets()
+    public List<Wallet> GetAllNonArchivedWalletsOrderedByName()
     {
-        return m_walletRepository.findAllByArchivedFalse();
+        return m_walletRepository.findAllByArchivedFalseOrderByNameAsc();
     }
 }

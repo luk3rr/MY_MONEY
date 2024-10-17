@@ -56,7 +56,6 @@ import org.springframework.stereotype.Controller;
 /**
  * Controller for the wallet view
  * TODO: Fix the DoughnutChart when balance is negative
- * TODO: Add delete or archive wallet option
  */
 @Controller
 public class WalletController
@@ -284,9 +283,9 @@ public class WalletController
      */
     private void LoadWalletTransactionsFromDatabase()
     {
-        transactions = walletTransactionService.GetAllTransactionsByMonth(
-            totalBalanceSelectedMonth,
-            totalBalanceSelectedYear);
+        transactions =
+            walletTransactionService.GetTransactionsByMonth(totalBalanceSelectedMonth,
+                                                            totalBalanceSelectedYear);
     }
 
     /**
@@ -294,7 +293,7 @@ public class WalletController
      */
     private void LoadWalletsFromDatabase()
     {
-        wallets = walletService.GetAllNonArchivedWallets();
+        wallets = walletService.GetAllNonArchivedWalletsOrderedByName();
     }
 
     /**
@@ -583,8 +582,7 @@ public class WalletController
 
             // Get transactions
             List<WalletTransaction> transactions =
-                walletTransactionService
-                    .GetAllTransactionsByMonthAndCategoryNotArchived(month, year);
+                walletTransactionService.GetNonArchivedTransactionsByMonth(month, year);
             logger.info("Found " + transactions.size() + " transactions for " + month +
                         "/" + year);
 

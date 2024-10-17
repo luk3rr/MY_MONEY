@@ -6,6 +6,8 @@
 
 package org.mymoney.repositories;
 
+import java.util.List;
+
 import org.mymoney.entities.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +16,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
+
+    /**
+     * Get all non archived categories
+     * @return List of categories
+     */
+     List<Category> findAllByArchivedFalse();
+
     /**
      * Check if a category with a given name exists
      * @param name Category name

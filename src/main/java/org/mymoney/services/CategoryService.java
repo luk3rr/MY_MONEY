@@ -158,9 +158,18 @@ public class CategoryService
      * Get all categories
      * @return List of categories
      */
-    public List<Category> GetAllCategories()
+    public List<Category> GetCategories()
     {
         return categoryRepository.findAll();
+    }
+
+    /**
+     * Get all non-archived categories
+     * @return List of categories
+     */
+    public List<Category> GetNonArchivedCategories()
+    {
+        return categoryRepository.findAllByArchivedFalse();
     }
 
     /**

@@ -325,50 +325,48 @@ public class WalletTransactionService
     }
 
     /**
-     * Get all transactions and category is not archived
+     * Get all transactions where both wallet and category are not archived
      * @return A list with all transactions
      */
-    public List<WalletTransaction> GetAllTransactionsAndCategoryNotArchived()
+    public List<WalletTransaction> GetNonArchivedTransactions()
     {
-        return m_walletTransactionRepository.GetAllTransactionsAndCategoryNotArchived();
+        return m_walletTransactionRepository.FindNonArchivedTransactions();
     }
 
     /**
      * Get all income transactions
      * @return A list with all income transactions
      */
-    public List<WalletTransaction> GetAllIncomes()
+    public List<WalletTransaction> GetIncomes()
     {
-        return m_walletTransactionRepository.GetAllIncomeTransactions();
+        return m_walletTransactionRepository.FindIncomeTransactions();
     }
 
     /**
-     * Get all income transactions and category is not archived
+     * Get all income transactions where both wallet and category are not archived
      * @return A list with all income transactions
      */
-    public List<WalletTransaction> GetAllIncomesAndCategoryNotArchived()
+    public List<WalletTransaction> GetNonArchivedIncomes()
     {
-        return m_walletTransactionRepository
-            .GetAllIncomeTransactionsAndCategoryNotArchived();
+        return m_walletTransactionRepository.FindNonArchivedIncomeTransactions();
     }
 
     /**
      * Get all expense transactions
      * @return A list with all expense transactions
      */
-    public List<WalletTransaction> GetAllExpenses()
+    public List<WalletTransaction> GetExpenses()
     {
-        return m_walletTransactionRepository.GetAllExpenseTransactions();
+        return m_walletTransactionRepository.FindExpenseTransactions();
     }
 
     /**
-     * Get all expense transactions and category is not archived
+     * Get all expense transactions where both wallet and category are not archived
      * @return A list with all expense transactions
      */
-    public List<WalletTransaction> GetAllExpensesAndCategoryNotArchived()
+    public List<WalletTransaction> GetNonArchivedExpenses()
     {
-        return m_walletTransactionRepository
-            .GetAllExpenseTransactionsAndCategoryNotArchived();
+        return m_walletTransactionRepository.FindNonArchivedExpenseTransactions();
     }
 
     /**
@@ -376,22 +374,21 @@ public class WalletTransactionService
      * @param month The month of the transactions
      * @param year The year of the transactions
      */
-    public List<WalletTransaction> GetAllTransactionsByMonth(Integer month,
-                                                             Integer year)
+    public List<WalletTransaction> GetTransactionsByMonth(Integer month, Integer year)
     {
-        return m_walletTransactionRepository.GetAllTransactionsByMonth(month, year);
+        return m_walletTransactionRepository.FindTransactionsByMonth(month, year);
     }
 
     /**
-     * Get all transactions by month and category is not archived
+     * Get all transactions by month where both wallet and category are not archived
      * @param month The month of the transactions
      * @param year The year of the transactions
      */
-    public List<WalletTransaction>
-    GetAllTransactionsByMonthAndCategoryNotArchived(Integer month, Integer year)
+    public List<WalletTransaction> GetNonArchivedTransactionsByMonth(Integer month,
+                                                                     Integer year)
     {
-        return m_walletTransactionRepository
-            .GetAllTransactionsByMonthAndCategoryNotArchived(month, year);
+        return m_walletTransactionRepository.FindNonArchivedTransactionsByMonth(month,
+                                                                                year);
     }
 
     /**
@@ -399,21 +396,19 @@ public class WalletTransactionService
      * @param year The year of the transactions
      * @return A list with all transactions of the year
      */
-    public List<WalletTransaction> GetAllTransactionsByYear(Integer year)
+    public List<WalletTransaction> GetTransactionsByYear(Integer year)
     {
-        return m_walletTransactionRepository.GetAllTransactionsByYear(year);
+        return m_walletTransactionRepository.FindTransactionsByYear(year);
     }
 
     /**
-     * Get all transactions by year and category is not archived
+     * Get all transactions by year where both wallet and category are not archived
      * @param year The year of the transactions
      * @return A list with all transactions of the year
      */
-    public List<WalletTransaction>
-    GetAllTransactionsByYearAndCategoryNotArchived(Integer year)
+    public List<WalletTransaction> GetNonArchivedTransactionsByYear(Integer year)
     {
-        return m_walletTransactionRepository
-            .GetAllTransactionsByYearAndCategoryNotArchived(year);
+        return m_walletTransactionRepository.FindNonArchivedTransactionsByYear(year);
     }
 
     /**
@@ -425,26 +420,24 @@ public class WalletTransactionService
     public List<WalletTransaction>
     GetTransactionsByWalletAndMonth(Long walletId, Integer month, Integer year)
     {
-        return m_walletTransactionRepository.GetTransactionsByWalletAndMonth(walletId,
-                                                                             month,
-                                                                             year);
+        return m_walletTransactionRepository.FindTransactionsByWalletAndMonth(walletId,
+                                                                              month,
+                                                                              year);
     }
 
     /**
-     * Get all transactions by wallet and month and category is not archived
+     * Get all transactions by wallet where both wallet and category are not archived
      * @param walletId The id of the wallet
      * @param month The month of the transactions
      * @param year The year of the transactions
      */
     public List<WalletTransaction>
-    GetTransactionsByWalletAndMonthAndCategoryNotArchived(Long    walletId,
-                                                          Integer month,
-                                                          Integer year)
+    GetNonArchivedTransactionsByWalletAndMonth(Long    walletId,
+                                               Integer month,
+                                               Integer year)
     {
         return m_walletTransactionRepository
-            .GetTransactionsByWalletAndMonthAndCategoryNotArchived(walletId,
-                                                                   month,
-                                                                   year);
+            .FindNonArchivedTransactionsByWalletAndMonth(walletId, month, year);
     }
 
     /**
@@ -459,26 +452,27 @@ public class WalletTransactionService
         String startDateStr = startDate.format(Constants.DB_DATE_FORMATTER);
         String endDateStr   = endDate.format(Constants.DB_DATE_FORMATTER);
 
-        return m_walletTransactionRepository.GetTransactionsBetweenDates(startDateStr,
-                                                                         endDateStr);
+        return m_walletTransactionRepository.FindTransactionsBetweenDates(startDateStr,
+                                                                          endDateStr);
     }
 
     /**
-     * Get all transactions between two dates and category is not archived
+     * Get all transactions between two dates where both wallet and category are not
+     * archived
      * @param startDate The start date
      * @param endDate The end date
      * @return A list with all transactions between the two dates
      */
     public List<WalletTransaction>
-    GetTransactionsBetweenDatesAndCategoryNotArchived(LocalDateTime startDate,
-                                                      LocalDateTime endDate)
+    GetNonArchivedTransactionsBetweenDates(LocalDateTime startDate,
+                                           LocalDateTime endDate)
     {
         String startDateStr = startDate.format(Constants.DB_DATE_FORMATTER);
         String endDateStr   = endDate.format(Constants.DB_DATE_FORMATTER);
 
-        return m_walletTransactionRepository
-            .GetTransactionsBetweenDatesAndCategoryNotArchived(startDateStr,
-                                                               endDateStr);
+        return m_walletTransactionRepository.FindNonArchivedTransactionsBetweenDates(
+            startDateStr,
+            endDateStr);
     }
 
     /**
@@ -489,20 +483,21 @@ public class WalletTransactionService
     public List<WalletTransaction> GetConfirmedTransactionsByMonth(Integer month,
                                                                    Integer year)
     {
-        return m_walletTransactionRepository.GetConfirmedTransactionsByMonth(month,
-                                                                             year);
+        return m_walletTransactionRepository.FindConfirmedTransactionsByMonth(month,
+                                                                              year);
     }
 
     /**
-     * Get all confirmed transactions by month and category is not archived
+     * Get all confirmed transactions by month where both wallet and category are not
+     * archived
      * @param month The month of the transactions
      * @param year The year of the transactions
      */
     public List<WalletTransaction>
-    GetConfirmedTransactionsByMonthAndCategoryNotArchived(Integer month, Integer year)
+    GetNonArchivedConfirmedTransactionsByMonth(Integer month, Integer year)
     {
         return m_walletTransactionRepository
-            .GetConfirmedTransactionsByMonthAndCategoryNotArchived(month, year);
+            .FindNonArchivedConfirmedTransactionsByMonth(month, year);
     }
 
     /**
@@ -513,19 +508,22 @@ public class WalletTransactionService
     public List<WalletTransaction> GetPendingTransactionsByMonth(Integer month,
                                                                  Integer year)
     {
-        return m_walletTransactionRepository.GetPendingTransactionsByMonth(month, year);
+        return m_walletTransactionRepository.FindPendingTransactionsByMonth(month,
+                                                                            year);
     }
 
     /**
-     * Get all pending transactions by month and category is not archived
+     * Get all pending transactions by month where both wallet and category are not
+     * archived
      * @param month The month of the transactions
      * @param year The year of the transactions
      */
     public List<WalletTransaction>
-    GetPendingTransactionsByMonthAndCategoryNotArchived(Integer month, Integer year)
+    GetNonArchivedPendingTransactionsByMonth(Integer month, Integer year)
     {
-        return m_walletTransactionRepository
-            .GetPendingTransactionsByMonthAndCategoryNotArchived(month, year);
+        return m_walletTransactionRepository.FindNonArchivedPendingTransactionsByMonth(
+            month,
+            year);
     }
 
     /**
@@ -535,17 +533,19 @@ public class WalletTransactionService
      */
     public List<WalletTransaction> GetLastTransactions(Integer n)
     {
-        return m_walletTransactionRepository.GetLastTransactions(PageRequest.ofSize(n));
+        return m_walletTransactionRepository.FindLastTransactions(
+            PageRequest.ofSize(n));
     }
 
     /**
-     * Get the last n transactions of all wallets and category is not archived
+     * Get the last n transactions of all wallets both wallet and category are not
+     * archived
      * @param n The number of transactions to get
      * @return A list with the last n transactions of all wallets
      */
-    public List<WalletTransaction> GetLastTransactionsAndCategoryNotArchived(Integer n)
+    public List<WalletTransaction> GetNonArchivedLastTransactions(Integer n)
     {
-        return m_walletTransactionRepository.GetLastTransactionsAndCategoryNotArchived(
+        return m_walletTransactionRepository.FindNonArchivedLastTransactions(
             PageRequest.ofSize(n));
     }
 
@@ -557,23 +557,24 @@ public class WalletTransactionService
      */
     public List<WalletTransaction> GetLastTransactionsByWallet(Long walletId, Integer n)
     {
-        return m_walletTransactionRepository.GetLastTransactionsByWallet(
+        return m_walletTransactionRepository.FindLastTransactionsByWallet(
             walletId,
             PageRequest.ofSize(n));
     }
 
     /**
-     * Get the last n transactions of a wallet and category is not archived
+     * Get the last n transactions of a wallet where both wallet and category are not
+     * archived
      * @param walletId The id of the wallet
      * @param n The number of transactions to get
      * @return A list with the last n transactions of the wallet
      */
-    public List<WalletTransaction>
-    GetLastTransactionsByWalletAndCategoryNotArchived(Long walletId, Integer n)
+    public List<WalletTransaction> GetNonArchivedLastTransactionsByWallet(Long walletId,
+                                                                          Integer n)
     {
-        return m_walletTransactionRepository
-            .GetLastTransactionsByWalletAndCategoryNotArchived(walletId,
-                                                               PageRequest.ofSize(n));
+        return m_walletTransactionRepository.FindNonArchivedLastTransactionsByWallet(
+            walletId,
+            PageRequest.ofSize(n));
     }
 
     /**
@@ -583,7 +584,7 @@ public class WalletTransactionService
      */
     public LocalDateTime GetOldestTransactionDate()
     {
-        String date = m_walletTransactionRepository.GetOldestTransactionDate();
+        String date = m_walletTransactionRepository.FindOldestTransactionDate();
 
         if (date == null)
         {
@@ -594,14 +595,15 @@ public class WalletTransactionService
     }
 
     /**
-     * Get the date of the oldest transaction and category is not archived
+     * Get the date of the oldest transaction where both wallet and category are not
+     * archived
      * @return The date of the oldest transaction or the current date if there are no
      *    transactions
      */
-    public LocalDateTime GetOldestTransactionDateAndCategoryNotArchived()
+    public LocalDateTime GetNonArchivedOldestTransactionDate()
     {
-        String date = m_walletTransactionRepository
-                          .GetOldestTransactionDateAndCategoryNotArchived();
+        String date =
+            m_walletTransactionRepository.FindNonArchivedOldestTransactionDate();
 
         if (date == null)
         {
@@ -618,7 +620,7 @@ public class WalletTransactionService
      */
     public LocalDateTime GetNewestTransactionDate()
     {
-        String date = m_walletTransactionRepository.GetNewestTransactionDate();
+        String date = m_walletTransactionRepository.FindNewestTransactionDate();
 
         if (date == null)
         {
@@ -629,14 +631,15 @@ public class WalletTransactionService
     }
 
     /**
-     * Get the date of the newest transaction and category is not archived
+     * Get the date of the newest transaction where both wallet and category are not
+     * archived
      * @return The date of the newest transaction or the current date if there are no
      *     transactions
      */
-    public LocalDateTime GetNewestTransactionDateAndCategoryNotArchived()
+    public LocalDateTime GetNonArchivedNewestTransactionDate()
     {
-        String date = m_walletTransactionRepository
-                          .GetNewestTransactionDateAndCategoryNotArchived();
+        String date =
+            m_walletTransactionRepository.FindNonArchivedNewestTransactionDate();
 
         if (date == null)
         {
@@ -657,14 +660,15 @@ public class WalletTransactionService
     }
 
     /**
-     * Get count of transactions by wallet and category is not archived
+     * Get count of transactions by wallet where both wallet and category are not
+     * archived
      * @param walletId The id of the wallet
      * @return The count of transactions in the wallet
      */
-    public Long GetTransactionCountByWalletAndCategoryNotArchived(Long walletId)
+    public Long GetNonArchivedTransactionCountByWallet(Long walletId)
     {
-        return m_walletTransactionRepository
-            .CountTransactionsByWalletAndCategoryNotArchived(walletId);
+        return m_walletTransactionRepository.CountNonArchivedTransactionsByWallet(
+            walletId);
     }
 
     /**
@@ -674,7 +678,7 @@ public class WalletTransactionService
      */
     public List<Transfer> GetTransfersByWallet(Long walletId)
     {
-        return m_transferRepository.GetTransfersByWallet(walletId);
+        return m_transferRepository.FindTransfersByWallet(walletId);
     }
 
     /**
@@ -685,7 +689,7 @@ public class WalletTransactionService
      */
     public List<Transfer> GetTransfersByMonthAndYear(Integer month, Integer year)
     {
-        return m_transferRepository.GetTransferByMonthAndYear(month, year);
+        return m_transferRepository.FindTransferByMonthAndYear(month, year);
     }
 
     /**
@@ -698,6 +702,8 @@ public class WalletTransactionService
     public List<Transfer>
     GetTransfersByWalletAndMonth(Long walletId, Integer month, Integer year)
     {
-        return m_transferRepository.GetTransfersByWalletAndMonth(walletId, month, year);
+        return m_transferRepository.FindTransfersByWalletAndMonth(walletId,
+                                                                  month,
+                                                                  year);
     }
 }

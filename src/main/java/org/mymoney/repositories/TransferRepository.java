@@ -6,8 +6,8 @@
 
 package org.mymoney.repositories;
 
-import org.mymoney.entities.Transfer;
 import java.util.List;
+import org.mymoney.entities.Transfer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,7 +27,7 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
            + "OR t.receiverWallet.id = :walletId "
            + "ORDER BY t.date DESC")
     List<Transfer>
-    GetTransfersByWallet(@Param("walletId") Long walletId);
+    FindTransfersByWallet(@Param("walletId") Long walletId);
 
     /**
      * TODO: Implement tests
@@ -42,8 +42,8 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
            + "AND strftime('%Y', t.date) = printf('%04d', :year) "
            + "ORDER BY t.date DESC")
     List<Transfer>
-    GetTransferByMonthAndYear(@Param("month") Integer month,
-                              @Param("year") Integer  year);
+    FindTransferByMonthAndYear(@Param("month") Integer month,
+                               @Param("year") Integer  year);
 
     /**
      * TODO: Implement tests
@@ -61,7 +61,7 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
            + "AND strftime('%Y', t.date) = printf('%04d', :year) "
            + "ORDER BY t.date DESC")
     List<Transfer>
-    GetTransfersByWalletAndMonth(@Param("walletId") Long walletId,
-                                 @Param("month") Integer month,
-                                 @Param("year") Integer  year);
+    FindTransfersByWalletAndMonth(@Param("walletId") Long walletId,
+                                  @Param("month") Integer month,
+                                  @Param("year") Integer  year);
 }

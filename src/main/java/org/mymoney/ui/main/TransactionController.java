@@ -299,7 +299,7 @@ public class TransactionController
         if (similarTextOrId.isEmpty())
         {
             walletTransactionService
-                .GetTransactionsBetweenDatesAndCategoryNotArchived(startDate, endDate)
+                .GetNonArchivedTransactionsBetweenDates(startDate, endDate)
                 .stream()
                 .filter(t
                         -> selectedTransactionType == null ||
@@ -309,7 +309,7 @@ public class TransactionController
         else
         {
             walletTransactionService
-                .GetTransactionsBetweenDatesAndCategoryNotArchived(startDate, endDate)
+                .GetNonArchivedTransactionsBetweenDates(startDate, endDate)
                 .stream()
                 .filter(t
                         -> selectedTransactionType == null ||
@@ -349,7 +349,7 @@ public class TransactionController
         LocalDateTime     currentDate = LocalDateTime.now();
         DateTimeFormatter formatter   = DateTimeFormatter.ofPattern("MMM/yy");
 
-        List<Category> categories = categoryService.GetAllCategories();
+        List<Category> categories = categoryService.GetNonArchivedCategories();
         Map<YearMonth, Map<Category, Double>> monthlyTotals = new LinkedHashMap<>();
 
         // Loop through the last few months
@@ -362,10 +362,9 @@ public class TransactionController
 
             // Get confirmed transactions for the month
             List<WalletTransaction> transactions =
-                walletTransactionService
-                    .GetConfirmedTransactionsByMonthAndCategoryNotArchived(
-                        date.getMonthValue(),
-                        date.getYear());
+                walletTransactionService.GetNonArchivedConfirmedTransactionsByMonth(
+                    date.getMonthValue(),
+                    date.getYear());
 
             // Calculate total for each category
             for (Category category : categories)

@@ -149,7 +149,7 @@ public class ManageCategoryController
      */
     private void LoadCategoryFromDatabase()
     {
-        categories = categoryService.GetAllCategories();
+        categories = categoryService.GetCategories();
     }
 
     /**
