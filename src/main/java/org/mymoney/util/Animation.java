@@ -8,7 +8,9 @@ package org.mymoney.util;
 
 import java.util.List;
 import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.DoubleProperty;
@@ -30,40 +32,23 @@ public final class Animation
     static public void XYChartAnimation(XYChart.Data<String, Number> data,
                                         Double                       targetValue)
     {
-        data.setYValue(0.0); // Start at zero
-
         // Property to store the current value being animated
         DoubleProperty currentValue = new SimpleDoubleProperty(0.0);
 
-        // Calculate the increment per frame based on the duration
-        double increment = targetValue / Constants.XYBAR_CHART_ANIMATION_FRAMES;
+        // Create a timeline to animate the value from 0 to targetValue over the
+        // specified duration
+        Timeline timeline = new Timeline();
 
-        // Create a timeline to animate the value from 0 to targetValue
-        Timeline timeline = new Timeline(
-            new KeyFrame(Duration.seconds(Constants.XYBAR_CHART_ANIMATION_DURATION),
-                         event -> { data.setYValue(currentValue.get()); }));
-
-        // Set the timeline to update the currentValue incrementally
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.setRate(increment);
-
-        // Update the currentValue and stop the timeline when the targetValue is reached
+        // Define the key frame with a proportional interpolation
         KeyFrame keyFrame =
             new KeyFrame(Duration.seconds(Constants.XYBAR_CHART_ANIMATION_DURATION),
-                         event -> {
-                             if (currentValue.get() < targetValue)
-                             {
-                                 currentValue.set(currentValue.get() + increment);
-                                 if (currentValue.get() > targetValue)
-                                 {
-                                     currentValue.set(targetValue);
-                                 }
-                             }
-                             else
-                             {
-                                 timeline.stop();
-                             }
-                         });
+                         new KeyValue(currentValue,
+                                      targetValue,
+                                      Interpolator.EASE_BOTH)
+            );
+
+        // Listener to update the Y value of the bar in each frame
+        currentValue.addListener((obs, oldVal, newVal) -> data.setYValue(newVal));
 
         timeline.getKeyFrames().add(keyFrame);
         timeline.play();

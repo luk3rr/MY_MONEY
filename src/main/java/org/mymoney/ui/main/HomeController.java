@@ -21,6 +21,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
@@ -80,13 +81,16 @@ public class HomeController
     private AnchorPane monthResumeView;
 
     @FXML
+    private AnchorPane moneyFlowBarChartAnchorPane;
+
+    @FXML
     private JFXButton creditCardPrevButton;
 
     @FXML
     private JFXButton creditCardNextButton;
 
     @FXML
-    private BarChart<String, Number> transactionsLast12Months;
+    private BarChart<String, Number> moneyFlowBarChart;
 
     @FXML
     private Label monthResumePaneTitle;
@@ -147,8 +151,8 @@ public class HomeController
         UpdateDisplayWallets();
         UpdateDisplayCreditCards();
         UpdateDisplayLastTransactions();
-        UpdateChartIncomesAndExpensesLastMonths();
         UpdateMonthResume();
+        UpdateMoneyFlowBarChart();
 
         SetButtonsActions();
     }
@@ -403,8 +407,10 @@ public class HomeController
     /**
      * Update the chart with incomes and expenses for the last months
      */
-    private void UpdateChartIncomesAndExpensesLastMonths()
+    private void UpdateMoneyFlowBarChart()
     {
+        CreateMoneyFlowBarChart();
+
         // LinkedHashMap to keep the order of the months
         Map<String, Double> monthlyExpenses = new LinkedHashMap<>();
         Map<String, Double> monthlyIncomes  = new LinkedHashMap<>();
@@ -462,14 +468,16 @@ public class HomeController
             Double expenseValue = entry.getValue();
             Double incomeValue  = monthlyIncomes.getOrDefault(month, 0.0);
 
-            expensesSeries.getData().add(new XYChart.Data<>(month, expenseValue));
-            incomesSeries.getData().add(new XYChart.Data<>(month, incomeValue));
+            expensesSeries.getData().add(
+                new XYChart.Data<>(month, 0.0)); // start at 0 for animation
+            incomesSeries.getData().add(
+                new XYChart.Data<>(month, 0.0)); // start at 0 for animation
 
             maxValue = Math.max(maxValue, Math.max(expenseValue, incomeValue));
         }
 
         // Set Y-axis limits based on the maximum value found
-        Axis<?> yAxis = transactionsLast12Months.getYAxis();
+        Axis<?> yAxis = moneyFlowBarChart.getYAxis();
         if (yAxis instanceof NumberAxis)
         {
             NumberAxis numberAxis = (NumberAxis)yAxis;
@@ -484,12 +492,11 @@ public class HomeController
             numberAxis.setTickUnit(tickUnit);
         }
 
-        transactionsLast12Months.setVerticalGridLinesVisible(false);
+        moneyFlowBarChart.setVerticalGridLinesVisible(false);
 
         // Clear previous data and add the new series (expenses and incomes)
-        transactionsLast12Months.getData().clear();
-        transactionsLast12Months.getData().add(expensesSeries);
-        transactionsLast12Months.getData().add(incomesSeries);
+        moneyFlowBarChart.getData().add(expensesSeries);
+        moneyFlowBarChart.getData().add(incomesSeries);
 
         // Add tooltips and animations to the bars
         // expensesSeries and incomesSeries have the same size
@@ -499,12 +506,13 @@ public class HomeController
             XYChart.Data<String, Number> incomeData  = incomesSeries.getData().get(i);
 
             Double targetExpenseValue = monthlyExpenses.get(expenseData.getXValue());
-            Double targetIncomeValue =
-                monthlyIncomes.getOrDefault(expenseData.getXValue(), 0.0);
 
             // Add tooltip to the bars
             UIUtils.AddTooltipToXYChartNode(expenseData.getNode(),
                                             UIUtils.FormatCurrency(targetExpenseValue));
+
+            Double targetIncomeValue =
+                monthlyIncomes.getOrDefault(expenseData.getXValue(), 0.0);
 
             UIUtils.AddTooltipToXYChartNode(incomeData.getNode(),
                                             UIUtils.FormatCurrency(targetIncomeValue));
@@ -658,5 +666,25 @@ public class HomeController
         rootHbox.getChildren().addAll(infoVbox, spacer, iconVBox);
 
         return rootHbox;
+    }
+
+    /**
+     * Create a new bar chart
+     */
+    private void CreateMoneyFlowBarChart()
+    {
+        CategoryAxis xAxis = new CategoryAxis();
+        NumberAxis   yAxis = new NumberAxis();
+
+        moneyFlowBarChart = new BarChart<>(xAxis, yAxis);
+
+        moneyFlowBarChartAnchorPane.getChildren().clear();
+
+        moneyFlowBarChartAnchorPane.getChildren().add(moneyFlowBarChart);
+
+        AnchorPane.setTopAnchor(moneyFlowBarChart, 0.0);
+        AnchorPane.setBottomAnchor(moneyFlowBarChart, 0.0);
+        AnchorPane.setLeftAnchor(moneyFlowBarChart, 0.0);
+        AnchorPane.setRightAnchor(moneyFlowBarChart, 0.0);
     }
 }

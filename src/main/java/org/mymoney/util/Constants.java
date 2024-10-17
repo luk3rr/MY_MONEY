@@ -157,7 +157,7 @@ public final class Constants
 
     public static final Double  MENU_ANIMATION_DURATION        = 200.0; // ms
     public static final Integer XYBAR_CHART_ANIMATION_FRAMES   = 30;
-    public static final Double  XYBAR_CHART_ANIMATION_DURATION = 0.7; // s
+    public static final Double  XYBAR_CHART_ANIMATION_DURATION = 0.3; // s
     public static final Double  TOOLTIP_ANIMATION_DURATION     = 0.5; // s
     public static final Double  TOOLTIP_ANIMATION_DELAY        = 0.5; // s
 
