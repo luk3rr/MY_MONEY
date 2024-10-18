@@ -22,7 +22,7 @@
                      <image>
                         <Image url="@../../icon/common/default.png" />
                      </image></ImageView>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="150.0" HBox.hgrow="ALWAYS">
+                  <VBox alignment="CENTER" prefWidth="200.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label fx:id="walletName" text="Name" />
                         <Label fx:id="walletType" text="Type" textFill="#433d3d">
@@ -31,9 +31,9 @@
                            </font></Label>
                      </children>
                   </VBox>
-                  <HBox alignment="CENTER" HBox.hgrow="ALWAYS">
+                  <HBox alignment="CENTER_RIGHT" HBox.hgrow="NEVER">
                      <children>
-                        <MenuButton fx:id="addButton" minWidth="50.0" mnemonicParsing="false" stylesheets="@../../css/component/menu-button.css">
+                        <MenuButton fx:id="addButton" minWidth="40.0" mnemonicParsing="false" stylesheets="@../../css/component/menu-button.css">
                           <items>
                             <MenuItem fx:id="addIncomeMenuItem" mnemonicParsing="false" onAction="#handleAddIncome" text="Add Income" />
                             <MenuItem fx:id="addExpenseMenuItem" mnemonicParsing="false" onAction="#handleAddExpense" text="Add Expense" />
@@ -47,7 +47,7 @@
                               </ImageView>
                            </graphic>
                         </MenuButton>
-                        <MenuButton fx:id="menuButton" minWidth="50.0" mnemonicParsing="false" stylesheets="@../../css/component/menu-button.css">
+                        <MenuButton fx:id="menuButton" minWidth="30.0" mnemonicParsing="false" stylesheets="@../../css/component/menu-button.css">
                           <items>
                             <MenuItem mnemonicParsing="false" onAction="#handleRenameWallet" text="Rename wallet" />
                             <MenuItem mnemonicParsing="false" onAction="#handleChangeWalletType" text="Change wallet type" />

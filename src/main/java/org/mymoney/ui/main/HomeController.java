@@ -220,9 +220,6 @@ public class HomeController
     private void LoadLastTransactionsFromDatabase(Integer n)
     {
         transactions = walletTransactionService.GetNonArchivedLastTransactions(n);
-
-        // Filter transactions where the wallet is archived
-        transactions.removeIf(t -> t.GetWallet().IsArchived());
     }
 
     /**
