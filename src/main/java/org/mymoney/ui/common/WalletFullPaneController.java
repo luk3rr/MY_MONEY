@@ -8,7 +8,6 @@ package org.mymoney.ui.common;
 
 import java.time.LocalDate;
 import java.util.List;
-// import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -26,7 +25,6 @@ import org.mymoney.ui.dialog.ChangeWalletTypeController;
 import org.mymoney.ui.dialog.RenameWalletController;
 import org.mymoney.ui.main.WalletController;
 import org.mymoney.util.Constants;
-// import org.mymoney.util.LoggerConfig;
 import org.mymoney.util.TransactionStatus;
 import org.mymoney.util.TransactionType;
 import org.mymoney.util.UIUtils;
@@ -114,8 +112,6 @@ public class WalletFullPaneController
     private List<WalletTransaction> transactions;
 
     private List<Transfer> transfers;
-
-    // private static final Logger logger = LoggerConfig.GetLogger();
 
     public WalletFullPaneController() { }
 
@@ -388,29 +384,15 @@ public class WalletFullPaneController
         {
             signLabel.setText("-");
             valueLabel.setText(UIUtils.FormatCurrency(-value));
-            SetLabelStyle(signLabel, Constants.NEGATIVE_BALANCE_STYLE);
-            SetLabelStyle(valueLabel, Constants.NEGATIVE_BALANCE_STYLE);
+            UIUtils.SetLabelStyle(signLabel, Constants.NEGATIVE_BALANCE_STYLE);
+            UIUtils.SetLabelStyle(valueLabel, Constants.NEGATIVE_BALANCE_STYLE);
         }
         else
         {
             signLabel.setText(" ");
             valueLabel.setText(UIUtils.FormatCurrency(value));
-            SetLabelStyle(signLabel, Constants.NEUTRAL_BALANCE_STYLE);
-            SetLabelStyle(valueLabel, Constants.NEUTRAL_BALANCE_STYLE);
+            UIUtils.SetLabelStyle(signLabel, Constants.NEUTRAL_BALANCE_STYLE);
+            UIUtils.SetLabelStyle(valueLabel, Constants.NEUTRAL_BALANCE_STYLE);
         }
-    }
-
-    /**
-     * Set the style of a label
-     * @param label Label to set the style
-     * @param style Style to set
-     */
-    private void SetLabelStyle(Label label, String style)
-    {
-        label.getStyleClass().removeAll(Constants.NEGATIVE_BALANCE_STYLE,
-                                        Constants.POSITIVE_BALANCE_STYLE,
-                                        Constants.NEUTRAL_BALANCE_STYLE);
-
-        label.getStyleClass().add(style);
     }
 }

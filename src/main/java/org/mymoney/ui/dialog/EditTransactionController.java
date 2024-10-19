@@ -129,8 +129,8 @@ public class EditTransactionController
             Arrays.stream(TransactionType.values()).map(Enum::name).toList());
 
         // Reset all labels
-        ResetLabel(walletAfterBalanceValueLabel);
-        ResetLabel(walletCurrentBalanceValueLabel);
+        UIUtils.ResetLabel(walletAfterBalanceValueLabel);
+        UIUtils.ResetLabel(walletCurrentBalanceValueLabel);
 
         walletComboBox.setOnAction(e -> {
             UpdateWalletBalance();
@@ -270,7 +270,7 @@ public class EditTransactionController
         if (transactionValueString == null || transactionValueString.trim().isEmpty() ||
             walletName == null || transactionTypeString == null)
         {
-            ResetLabel(walletAfterBalanceValueLabel);
+            UIUtils.ResetLabel(walletAfterBalanceValueLabel);
             return;
         }
 
@@ -280,7 +280,7 @@ public class EditTransactionController
 
             if (transactionValue < 0)
             {
-                ResetLabel(walletAfterBalanceValueLabel);
+                UIUtils.ResetLabel(walletAfterBalanceValueLabel);
                 return;
             }
 
@@ -308,7 +308,7 @@ public class EditTransactionController
                 }
                 else
                 {
-                    ResetLabel(walletAfterBalanceValueLabel);
+                    UIUtils.ResetLabel(walletAfterBalanceValueLabel);
                     return;
                 }
             }
@@ -327,7 +327,7 @@ public class EditTransactionController
                 }
                 else
                 {
-                    ResetLabel(walletAfterBalanceValueLabel);
+                    UIUtils.ResetLabel(walletAfterBalanceValueLabel);
                     return;
                 }
             }
@@ -336,14 +336,14 @@ public class EditTransactionController
             if (walletAfterBalanceValue < Constants.EPSILON)
             {
                 // Remove old style and add negative style
-                SetLabelStyle(walletAfterBalanceValueLabel,
-                              Constants.NEGATIVE_BALANCE_STYLE);
+                UIUtils.SetLabelStyle(walletAfterBalanceValueLabel,
+                                      Constants.NEGATIVE_BALANCE_STYLE);
             }
             else
             {
                 // Remove old style and add neutral style
-                SetLabelStyle(walletAfterBalanceValueLabel,
-                              Constants.NEUTRAL_BALANCE_STYLE);
+                UIUtils.SetLabelStyle(walletAfterBalanceValueLabel,
+                                      Constants.NEUTRAL_BALANCE_STYLE);
             }
 
             walletAfterBalanceValueLabel.setText(
@@ -351,7 +351,7 @@ public class EditTransactionController
         }
         catch (NumberFormatException e)
         {
-            ResetLabel(walletAfterBalanceValueLabel);
+            UIUtils.ResetLabel(walletAfterBalanceValueLabel);
         }
     }
 
@@ -369,20 +369,5 @@ public class EditTransactionController
 
         categoryComboBox.getItems().addAll(
             categories.stream().map(Category::GetName).toList());
-    }
-
-    private void ResetLabel(Label label)
-    {
-        label.setText("-");
-        SetLabelStyle(label, Constants.NEUTRAL_BALANCE_STYLE);
-    }
-
-    private void SetLabelStyle(Label label, String style)
-    {
-        label.getStyleClass().removeAll(Constants.NEGATIVE_BALANCE_STYLE,
-                                        Constants.POSITIVE_BALANCE_STYLE,
-                                        Constants.NEUTRAL_BALANCE_STYLE);
-
-        label.getStyleClass().add(style);
     }
 }

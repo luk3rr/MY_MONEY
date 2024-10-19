@@ -101,10 +101,10 @@ public class AddTransferController
         UIUtils.SetDatePickerFormat(transferDatePicker);
 
         // Reset all labels
-        ResetLabel(senderWalletAfterBalanceValueLabel);
-        ResetLabel(receiverWalletAfterBalanceValueLabel);
-        ResetLabel(senderWalletCurrentBalanceValueLabel);
-        ResetLabel(receiverWalletCurrentBalanceValueLabel);
+        UIUtils.ResetLabel(senderWalletAfterBalanceValueLabel);
+        UIUtils.ResetLabel(receiverWalletAfterBalanceValueLabel);
+        UIUtils.ResetLabel(senderWalletCurrentBalanceValueLabel);
+        UIUtils.ResetLabel(receiverWalletCurrentBalanceValueLabel);
 
         senderWalletComboBox.setOnAction(e -> {
             UpdateSenderWalletBalance();
@@ -210,6 +210,17 @@ public class AddTransferController
                                   .findFirst()
                                   .get();
 
+        if (senderWallet.GetBalance() < 0)
+        {
+            UIUtils.SetLabelStyle(senderWalletCurrentBalanceValueLabel,
+                          Constants.NEGATIVE_BALANCE_STYLE);
+        }
+        else
+        {
+            UIUtils.SetLabelStyle(senderWalletCurrentBalanceValueLabel,
+                          Constants.NEUTRAL_BALANCE_STYLE);
+        }
+
         senderWalletCurrentBalanceValueLabel.setText(
             UIUtils.FormatCurrency(senderWallet.GetBalance()));
     }
@@ -228,6 +239,17 @@ public class AddTransferController
                                     .findFirst()
                                     .get();
 
+        if (receiverWallet.GetBalance() < 0)
+        {
+            UIUtils.SetLabelStyle(receiverWalletCurrentBalanceValueLabel,
+                          Constants.NEGATIVE_BALANCE_STYLE);
+        }
+        else
+        {
+            UIUtils.SetLabelStyle(receiverWalletCurrentBalanceValueLabel,
+                          Constants.NEUTRAL_BALANCE_STYLE);
+        }
+
         receiverWalletCurrentBalanceValueLabel.setText(
             UIUtils.FormatCurrency(receiverWallet.GetBalance()));
     }
@@ -240,7 +262,7 @@ public class AddTransferController
         if (transferValueString == null || transferValueString.trim().isEmpty() ||
             senderWalletName == null)
         {
-            ResetLabel(senderWalletAfterBalanceValueLabel);
+            UIUtils.ResetLabel(senderWalletAfterBalanceValueLabel);
             return;
         }
 
@@ -250,7 +272,7 @@ public class AddTransferController
 
             if (transferValue < 0)
             {
-                ResetLabel(senderWalletAfterBalanceValueLabel);
+                UIUtils.ResetLabel(senderWalletAfterBalanceValueLabel);
                 return;
             }
 
@@ -265,13 +287,13 @@ public class AddTransferController
             if (senderWalletAfterBalance < Constants.EPSILON)
             {
                 // Remove old style and add negative style
-                SetLabelStyle(senderWalletAfterBalanceValueLabel,
+                UIUtils.SetLabelStyle(senderWalletAfterBalanceValueLabel,
                               Constants.NEGATIVE_BALANCE_STYLE);
             }
             else
             {
                 // Remove old style and add neutral style
-                SetLabelStyle(senderWalletAfterBalanceValueLabel,
+                UIUtils.SetLabelStyle(senderWalletAfterBalanceValueLabel,
                               Constants.NEUTRAL_BALANCE_STYLE);
             }
 
@@ -280,7 +302,7 @@ public class AddTransferController
         }
         catch (NumberFormatException e)
         {
-            ResetLabel(senderWalletAfterBalanceValueLabel);
+            UIUtils.ResetLabel(senderWalletAfterBalanceValueLabel);
         }
     }
 
@@ -292,7 +314,7 @@ public class AddTransferController
         if (transferValueString == null || transferValueString.trim().isEmpty() ||
             receiverWalletName == null)
         {
-            ResetLabel(receiverWalletAfterBalanceValueLabel);
+            UIUtils.ResetLabel(receiverWalletAfterBalanceValueLabel);
             return;
         }
 
@@ -302,7 +324,7 @@ public class AddTransferController
 
             if (transferValue < 0)
             {
-                ResetLabel(receiverWalletAfterBalanceValueLabel);
+                UIUtils.ResetLabel(receiverWalletAfterBalanceValueLabel);
                 return;
             }
 
@@ -319,13 +341,13 @@ public class AddTransferController
             if (receiverWalletAfterBalance < Constants.EPSILON)
             {
                 // Remove old style and add negative style
-                SetLabelStyle(receiverWalletAfterBalanceValueLabel,
+                UIUtils.SetLabelStyle(receiverWalletAfterBalanceValueLabel,
                               Constants.NEGATIVE_BALANCE_STYLE);
             }
             else
             {
                 // Remove old style and add neutral style
-                SetLabelStyle(receiverWalletAfterBalanceValueLabel,
+                UIUtils.SetLabelStyle(receiverWalletAfterBalanceValueLabel,
                               Constants.NEUTRAL_BALANCE_STYLE);
             }
 
@@ -334,7 +356,7 @@ public class AddTransferController
         }
         catch (NumberFormatException e)
         {
-            ResetLabel(receiverWalletAfterBalanceValueLabel);
+            UIUtils.ResetLabel(receiverWalletAfterBalanceValueLabel);
         }
     }
 
@@ -347,20 +369,5 @@ public class AddTransferController
 
         receiverWalletComboBox.getItems().addAll(
             wallets.stream().map(Wallet::GetName).toList());
-    }
-
-    private void ResetLabel(Label label)
-    {
-        label.setText("-");
-        SetLabelStyle(label, Constants.NEUTRAL_BALANCE_STYLE);
-    }
-
-    private void SetLabelStyle(Label label, String style)
-    {
-        label.getStyleClass().removeAll(Constants.NEGATIVE_BALANCE_STYLE,
-                                        Constants.POSITIVE_BALANCE_STYLE,
-                                        Constants.NEUTRAL_BALANCE_STYLE);
-
-        label.getStyleClass().add(style);
     }
 }

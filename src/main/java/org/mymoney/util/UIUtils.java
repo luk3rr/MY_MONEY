@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import javafx.scene.Node;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
@@ -113,5 +114,29 @@ public final class UIUtils
         }
 
         return Constants.CREDIT_CARD_NUMBER_FORMAT.replace("####", lastFourDigits);
+    }
+
+    /**
+     * Reset the text of a label to "-"
+     * @param label The label to reset
+     */
+    static public void ResetLabel(Label label)
+    {
+        label.setText("-");
+        SetLabelStyle(label, Constants.NEUTRAL_BALANCE_STYLE);
+    }
+
+    /**
+     * Set the style of a label
+     * @param label The label to set the style
+     * @param style The style to set
+     */
+    static public void SetLabelStyle(Label label, String style)
+    {
+        label.getStyleClass().removeAll(Constants.NEGATIVE_BALANCE_STYLE,
+                                        Constants.POSITIVE_BALANCE_STYLE,
+                                        Constants.NEUTRAL_BALANCE_STYLE);
+
+        label.getStyleClass().add(style);
     }
 }

@@ -113,8 +113,8 @@ public class AddIncomeController
             Arrays.stream(TransactionStatus.values()).map(Enum::name).toList());
 
         // Reset all labels
-        ResetLabel(walletAfterBalanceValueLabel);
-        ResetLabel(walletCurrentBalanceValueLabel);
+        UIUtils.ResetLabel(walletAfterBalanceValueLabel);
+        UIUtils.ResetLabel(walletCurrentBalanceValueLabel);
 
         walletComboBox.setOnAction(e -> {
             UpdateWalletBalance();
@@ -214,6 +214,17 @@ public class AddIncomeController
                             .findFirst()
                             .get();
 
+        if (wallet.GetBalance() < 0)
+        {
+            UIUtils.SetLabelStyle(walletCurrentBalanceValueLabel,
+                                  Constants.NEGATIVE_BALANCE_STYLE);
+        }
+        else
+        {
+            UIUtils.SetLabelStyle(walletCurrentBalanceValueLabel,
+                                  Constants.NEUTRAL_BALANCE_STYLE);
+        }
+
         walletCurrentBalanceValueLabel.setText(
             UIUtils.FormatCurrency(wallet.GetBalance()));
     }
@@ -226,7 +237,7 @@ public class AddIncomeController
         if (incomeValueString == null || incomeValueString.trim().isEmpty() ||
             walletName == null)
         {
-            ResetLabel(walletAfterBalanceValueLabel);
+            UIUtils.ResetLabel(walletAfterBalanceValueLabel);
             return;
         }
 
@@ -236,7 +247,7 @@ public class AddIncomeController
 
             if (incomeValue < 0)
             {
-                ResetLabel(walletAfterBalanceValueLabel);
+                UIUtils.ResetLabel(walletAfterBalanceValueLabel);
                 return;
             }
 
@@ -248,17 +259,17 @@ public class AddIncomeController
             Double walletAfterBalanceValue = wallet.GetBalance() + incomeValue;
 
             // Episilon is used to avoid floating point arithmetic errors
-            if (walletAfterBalanceValue < Constants.EPSILON)
+            if (walletAfterBalanceValue < 0)
             {
                 // Remove old style and add negative style
-                SetLabelStyle(walletAfterBalanceValueLabel,
-                              Constants.NEGATIVE_BALANCE_STYLE);
+                UIUtils.SetLabelStyle(walletAfterBalanceValueLabel,
+                                      Constants.NEGATIVE_BALANCE_STYLE);
             }
             else
             {
                 // Remove old style and add neutral style
-                SetLabelStyle(walletAfterBalanceValueLabel,
-                              Constants.NEUTRAL_BALANCE_STYLE);
+                UIUtils.SetLabelStyle(walletAfterBalanceValueLabel,
+                                      Constants.NEUTRAL_BALANCE_STYLE);
             }
 
             walletAfterBalanceValueLabel.setText(
@@ -266,7 +277,7 @@ public class AddIncomeController
         }
         catch (NumberFormatException e)
         {
-            ResetLabel(walletAfterBalanceValueLabel);
+            UIUtils.ResetLabel(walletAfterBalanceValueLabel);
         }
     }
 
@@ -293,20 +304,5 @@ public class AddIncomeController
                 categoryComboBox,
                 "You need to add a category before adding an income");
         }
-    }
-
-    private void ResetLabel(Label label)
-    {
-        label.setText("-");
-        SetLabelStyle(label, Constants.NEUTRAL_BALANCE_STYLE);
-    }
-
-    private void SetLabelStyle(Label label, String style)
-    {
-        label.getStyleClass().removeAll(Constants.NEGATIVE_BALANCE_STYLE,
-                                        Constants.POSITIVE_BALANCE_STYLE,
-                                        Constants.NEUTRAL_BALANCE_STYLE);
-
-        label.getStyleClass().add(style);
     }
 }
