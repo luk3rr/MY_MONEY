@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.mymoney.ui.main.TransactionController">
+<AnchorPane minWidth="1200.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.mymoney.ui.main.TransactionController">
    <children>
       <VBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -85,19 +85,6 @@
                                                 </ImageView>
                                              </graphic>
                                           </MenuButton>
-                                          <MenuButton fx:id="removeTransactionMenuButton" mnemonicParsing="false" stylesheets="@../../css/component/buttons.css" text="Delete Transaction">
-                                             <items>
-                                                <MenuItem fx:id="removeIncomeMenuButton" mnemonicParsing="false" onAction="#handleRemoveIncome" text="Remove Income" />
-                                                <MenuItem fx:id="removeExpenseMenuItem" mnemonicParsing="false" onAction="#handleRemoveExpense" text="Remove Expense" />
-                                             </items>
-                                             <graphic>
-                                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-                                                   <image>
-                                                      <Image url="@../../icon/common/remove.png" />
-                                                   </image>
-                                                </ImageView>
-                                             </graphic>
-                                          </MenuButton>
                                           <JFXButton onAction="#handleManageCategories" stylesheets="@../../css/component/buttons.css" text="Manage Categories">
                                              <graphic>
                                                 <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
@@ -146,7 +133,37 @@
                                  <children>
                                     <HBox spacing="10.0">
                                        <children>
-                                          <Label fx:id="transactionsListTitle" styleClass="title" text="Transactions" />
+                                          <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                             <children>
+                                                <Label fx:id="transactionsListTitle" styleClass="title" text="Transactions" />
+                                                <AnchorPane VBox.vgrow="ALWAYS">
+                                                   <children>
+                                                      <HBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                                         <children>
+                                                            <JFXButton onAction="#handleEditTransaction" stylesheets="@../../css/component/buttons.css" text="Edit">
+                                                               <graphic>
+                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                     <image>
+                                                                        <Image url="@../../icon/common/edit.png" />
+                                                                     </image>
+                                                                  </ImageView>
+                                                               </graphic>
+                                                            </JFXButton>
+                                                            <JFXButton onAction="#handleDeleteTransaction" stylesheets="@../../css/component/buttons.css" text="Delete">
+                                                               <graphic>
+                                                                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                                     <image>
+                                                                        <Image url="@../../icon/common/remove.png" />
+                                                                     </image>
+                                                                  </ImageView>
+                                                               </graphic>
+                                                            </JFXButton>
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                </AnchorPane>
+                                             </children>
+                                          </VBox>
                                           <AnchorPane HBox.hgrow="ALWAYS">
                                              <children>
                                                 <VBox alignment="CENTER_LEFT" spacing="10.0" AnchorPane.rightAnchor="0.0">

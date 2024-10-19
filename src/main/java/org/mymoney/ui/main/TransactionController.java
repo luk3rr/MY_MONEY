@@ -93,7 +93,7 @@ public class TransactionController
     private DatePicker transactionsListStartDatePicker;
 
     @FXML
-    private TableView<WalletTransaction> transactionsListTableView;
+    private TableView<WalletTransaction> transactionsTableView;
 
     @FXML
     private AnchorPane moneyFlowView;
@@ -223,8 +223,19 @@ public class TransactionController
     }
 
     @FXML
-    private void handleRemoveIncome()
+    private void handleEditTransaction()
     {
+        //
+    }
+
+    @FXML
+    private void handleRemoveTransaction()
+    {
+        WalletTransaction selectedIncome =
+            transactionsTableView.getSelectionModel().getSelectedItem();
+
+       // se null então aviso
+
         WindowUtils.OpenModalWindow(Constants.REMOVE_TRANSACTION_FXML,
                                     "Remove income",
                                     springContext,
@@ -232,25 +243,6 @@ public class TransactionController
                                         -> {
                                         controller.InitializeWithTransactionType(
                                             TransactionType.INCOME);
-                                    },
-                                    List.of(() -> {
-                                        UpdateMonthResume();
-                                        UpdateYearResume();
-                                        UpdateTransactionTableView();
-                                        UpdateMoneyFlow();
-                                    }));
-    }
-
-    @FXML
-    private void handleRemoveExpense()
-    {
-        WindowUtils.OpenModalWindow(Constants.REMOVE_TRANSACTION_FXML,
-                                    "Remove expense",
-                                    springContext,
-                                    (RemoveTransactionController controller)
-                                        -> {
-                                        controller.InitializeWithTransactionType(
-                                            TransactionType.EXPENSE);
                                     },
                                     List.of(() -> {
                                         UpdateMonthResume();
@@ -292,7 +284,7 @@ public class TransactionController
             transactionsListEndDatePicker.getValue().atTime(23, 59, 59);
 
         // Clear the transaction list view
-        transactionsListTableView.getItems().clear();
+        transactionsTableView.getItems().clear();
 
         // Fetch all transactions within the selected range and filter by transaction
         // type. If transaction type is null, all transactions are fetched
@@ -304,7 +296,7 @@ public class TransactionController
                 .filter(t
                         -> selectedTransactionType == null ||
                                t.GetType().equals(selectedTransactionType))
-                .forEach(transactionsListTableView.getItems()::add);
+                .forEach(transactionsTableView.getItems()::add);
         }
         else
         {
@@ -317,10 +309,10 @@ public class TransactionController
                 .filter(t
                         -> t.GetDescription().toLowerCase().contains(similarTextOrId) ||
                                String.valueOf(t.GetId()).contains(similarTextOrId))
-                .forEach(transactionsListTableView.getItems()::add);
+                .forEach(transactionsTableView.getItems()::add);
         }
 
-        transactionsListTableView.refresh();
+        transactionsTableView.refresh();
     }
 
     /**
@@ -771,13 +763,13 @@ public class TransactionController
         walletNameColumn.setCellValueFactory(
             param -> new SimpleStringProperty(param.getValue().GetWallet().GetName()));
 
-        transactionsListTableView.getColumns().add(idColumn);
-        transactionsListTableView.getColumns().add(descriptionColumn);
-        transactionsListTableView.getColumns().add(amountColumn);
-        transactionsListTableView.getColumns().add(walletNameColumn);
-        transactionsListTableView.getColumns().add(dateColumn);
-        transactionsListTableView.getColumns().add(typeColumn);
-        transactionsListTableView.getColumns().add(categoryColumn);
-        transactionsListTableView.getColumns().add(statusColumn);
+        transactionsTableView.getColumns().add(idColumn);
+        transactionsTableView.getColumns().add(descriptionColumn);
+        transactionsTableView.getColumns().add(amountColumn);
+        transactionsTableView.getColumns().add(walletNameColumn);
+        transactionsTableView.getColumns().add(dateColumn);
+        transactionsTableView.getColumns().add(typeColumn);
+        transactionsTableView.getColumns().add(categoryColumn);
+        transactionsTableView.getColumns().add(statusColumn);
     }
 }
