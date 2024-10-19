@@ -25,7 +25,6 @@ import org.springframework.stereotype.Controller;
  * Controller for the resume pane
  *
  * @note prototype is necessary so that each scene has its own controller
- * TODO: Fix calculation of the foreseen when the summary is not for the current year
  */
 @Controller
 @Scope("prototype") // Each instance of this controller is unique
@@ -129,8 +128,13 @@ public class ResumePaneController
 
         Double crcTotalDebtAmount = creditCardService.GetTotalDebtAmount(year);
 
+        // Get pending payments only if the year is the current year
+        // Otherwise, set it to 0.0
+        // The value of pending payments does not make sense for previous years
         Double crcTotalPendingPayments =
-            creditCardService.GetTotalPendingPayments(year);
+            year.equals(LocalDateTime.now().getYear())
+                ? creditCardService.GetTotalPendingPayments(year)
+                : 0.0;
 
         UpdateResumePane(allYearTransactions,
                          crcTotalDebtAmount,
@@ -147,8 +151,14 @@ public class ResumePaneController
 
         Double crcTotalDebtAmount = creditCardService.GetTotalDebtAmount(month, year);
 
+        // Get pending payments only if the month is the current month
+        // Otherwise, set it to 0.0
+        // The value of pending payments does not make sense for previous months
         Double crcTotalPendingPayments =
-            creditCardService.GetTotalPendingPayments(month, year);
+            month.equals(LocalDateTime.now().getMonthValue()) &&
+                    year.equals(LocalDateTime.now().getYear())
+                ? creditCardService.GetTotalPendingPayments(month, year)
+                : 0.0;
 
         UpdateResumePane(transactions, crcTotalDebtAmount, crcTotalPendingPayments);
     }
