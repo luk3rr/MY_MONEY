@@ -39,6 +39,14 @@ public class DoughnutChart extends PieChart
         innerCircle.setFill(Color.WHITE);
         innerCircle.setStroke(Color.WHITE);
 
+        // Define negative values as zero
+        pieData.forEach(data -> {
+            if (data.getPieValue() < 0)
+            {
+                data.setPieValue(0);
+            }
+        });
+
         // Calculate the total value of the chart
         seriesTotal = pieData.stream().mapToDouble(PieChart.Data::getPieValue).sum();
 

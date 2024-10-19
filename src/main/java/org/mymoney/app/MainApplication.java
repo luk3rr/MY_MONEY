@@ -13,7 +13,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
  * Main application class
- * TODO: Consider transaction only if wallet is not archived
+ * TODO: Add a way to write a math expression and calculate the result in the value
+ * fields
  */
 @EntityScan(basePackages = "org.mymoney.entities")
 @EnableJpaRepositories(basePackages = "org.mymoney.repositories")

@@ -175,7 +175,7 @@ public class EditTransactionController
 
         try
         {
-            Double trasactionValue = Double.parseDouble(transactionValueString);
+            Double transactionValue = Double.parseDouble(transactionValueString);
 
             Wallet wallet = wallets.stream()
                                 .filter(w -> w.GetName().equals(walletName))
@@ -197,7 +197,7 @@ public class EditTransactionController
             if (wallet.GetName().equals(transactionToUpdate.GetWallet().GetName()) &&
                 category.GetName().equals(
                     transactionToUpdate.GetCategory().GetName()) &&
-                Math.abs(trasactionValue - transactionToUpdate.GetAmount()) <
+                Math.abs(transactionValue - transactionToUpdate.GetAmount()) <
                     Constants.EPSILON &&
                 description.equals(transactionToUpdate.GetDescription()) &&
                 status == transactionToUpdate.GetStatus() &&
@@ -214,7 +214,7 @@ public class EditTransactionController
                 transactionToUpdate.SetWallet(wallet);
                 transactionToUpdate.SetCategory(category);
                 transactionToUpdate.SetDate(dateTimeWithCurrentHour);
-                transactionToUpdate.SetAmount(trasactionValue);
+                transactionToUpdate.SetAmount(transactionValue);
                 transactionToUpdate.SetDescription(description);
                 transactionToUpdate.SetStatus(status);
                 transactionToUpdate.SetType(type);
@@ -276,9 +276,9 @@ public class EditTransactionController
 
         try
         {
-            Double trasactionValue = Double.parseDouble(transactionValueString);
+            Double transactionValue = Double.parseDouble(transactionValueString);
 
-            if (trasactionValue < 0)
+            if (transactionValue < 0)
             {
                 ResetLabel(walletAfterBalanceValueLabel);
                 return;
@@ -289,20 +289,47 @@ public class EditTransactionController
                                 .findFirst()
                                 .get();
 
-            Double walletAfterBalanceValue;
+            Double walletAfterBalanceValue = 0.0;
 
-            if (transactionTypeString.equals(TransactionType.EXPENSE.toString()))
+            if (transactionToUpdate.GetStatus().equals(TransactionStatus.CONFIRMED))
             {
-                walletAfterBalanceValue = wallet.GetBalance() - trasactionValue;
-            }
-            else if (transactionTypeString.equals(TransactionType.INCOME.toString()))
-            {
-                walletAfterBalanceValue = wallet.GetBalance() + trasactionValue;
+                // If the transaction is confirmed, the balance will be updated
+                // based on the difference between the new and the old value
+                Double diff = transactionValue - transactionToUpdate.GetAmount();
+
+                if (transactionTypeString.equals(TransactionType.EXPENSE.toString()))
+                {
+                    walletAfterBalanceValue = wallet.GetBalance() - diff;
+                }
+                else if (transactionTypeString.equals(
+                             TransactionType.INCOME.toString()))
+                {
+                    walletAfterBalanceValue = wallet.GetBalance() + diff;
+                }
+                else
+                {
+                    ResetLabel(walletAfterBalanceValueLabel);
+                    return;
+                }
             }
             else
             {
-                ResetLabel(walletAfterBalanceValueLabel);
-                return;
+                // If the transaction is not confirmed, the balance will be
+                // updated based on the new value
+                if (transactionTypeString.equals(TransactionType.EXPENSE.toString()))
+                {
+                    walletAfterBalanceValue = wallet.GetBalance() - transactionValue;
+                }
+                else if (transactionTypeString.equals(
+                             TransactionType.INCOME.toString()))
+                {
+                    walletAfterBalanceValue = wallet.GetBalance() + transactionValue;
+                }
+                else
+                {
+                    ResetLabel(walletAfterBalanceValueLabel);
+                    return;
+                }
             }
 
             // Episilon is used to avoid floating point arithmetic errors

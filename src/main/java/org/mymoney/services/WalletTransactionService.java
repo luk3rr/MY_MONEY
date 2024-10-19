@@ -122,7 +122,7 @@ public class WalletTransactionService
      * @param status The status of the transaction
      * @return The id of the created transaction
      * @throws RuntimeException If the wallet does not exist
-     * @throws RuntimeException If the amount to transfer is less than or equal to zero
+     * @throws RuntimeException If the amount is less than or equal to zero
      */
     @Transactional
     public Long AddIncome(Long              walletId,
@@ -137,7 +137,7 @@ public class WalletTransactionService
 
         if (amount <= 0)
         {
-            throw new RuntimeException("Amount to transfer must be greater than zero");
+            throw new RuntimeException("Amount must be greater than zero");
         }
 
         WalletTransaction wt = new WalletTransaction(wallet,
@@ -172,8 +172,7 @@ public class WalletTransactionService
      * @param status The status of the transaction
      * @return The id of the created transaction
      * @throws RuntimeException If the wallet does not exist
-     * @throws RuntimeException If the amount to transfer is less than or equal to zero
-     * @throws RuntimeException If the wallet does not have enough balance to confirm
+     * @throws RuntimeException If the amount is less than or equal to zero
      */
     @Transactional
     public Long AddExpense(Long              walletId,
@@ -188,14 +187,7 @@ public class WalletTransactionService
 
         if (amount <= 0)
         {
-            throw new RuntimeException("Amount to transfer must be greater than zero");
-        }
-
-        if (wallet.GetBalance() < amount)
-        {
-            throw new RuntimeException(
-                "Wallet " + wallet.GetName() +
-                " does not have enough balance to confirm expense");
+            throw new RuntimeException("Amount must be greater than zero");
         }
 
         WalletTransaction wt = new WalletTransaction(wallet,
@@ -554,7 +546,6 @@ public class WalletTransactionService
      * @param transactionId The id of the transaction to be confirmed
      * @throws RuntimeException If the transaction does not exist
      * @throws RuntimeException If the transaction is already confirmed
-     * @throws RuntimeException If wallet does not have enough balance to confirm
      */
     @Transactional
     public void ConfirmTransaction(Long transactionId)
@@ -575,13 +566,6 @@ public class WalletTransactionService
 
         if (transaction.GetType() == TransactionType.EXPENSE)
         {
-            if (wallet.GetBalance() < transaction.GetAmount())
-            {
-                throw new RuntimeException(
-                    "Wallet " + wallet.GetName() +
-                    " does not have enough balance to confirm transaction");
-            }
-
             wallet.SetBalance(wallet.GetBalance() - transaction.GetAmount());
         }
         else
