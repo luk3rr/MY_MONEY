@@ -221,6 +221,297 @@ public class WalletTransactionService
     }
 
     /**
+     * Update a transaction
+     * @param transaction The transaction to be updated
+     * @throws RuntimeException If the transaction does not exist
+     */
+    @Transactional
+    public void UpdateTransaction(WalletTransaction transaction)
+    {
+        // Check if the transaction exists
+        WalletTransaction oldTransaction =
+            m_walletTransactionRepository.findById(transaction.GetId())
+                .orElseThrow(()
+                                 -> new RuntimeException("Transaction with id " +
+                                                         transaction.GetId() +
+                                                         " not found"));
+
+        // Check if the wallet exists
+        m_walletTransactionRepository.FindWalletByTransactionId(transaction.GetId())
+            .orElseThrow(()
+                             -> new RuntimeException("Wallet with name " +
+                                                     transaction.GetWallet().GetName() +
+                                                     " not found"));
+
+        // Check if the amount is greater than zero
+        if (transaction.GetAmount() <= 0)
+        {
+            throw new RuntimeException("Amount must be greater than or equal to zero");
+        }
+
+        // Complex update of the transaction
+        ChangeTransactionWallet(oldTransaction, transaction.GetWallet());
+        ChangeTransactionType(oldTransaction, transaction.GetType());
+        ChangeTransactionAmount(oldTransaction, transaction.GetAmount());
+        ChangeTransactionStatus(oldTransaction, transaction.GetStatus());
+
+        // Trivial update of the transaction
+        oldTransaction.SetDate(transaction.GetDate());
+        oldTransaction.SetDescription(transaction.GetDescription());
+        oldTransaction.SetCategory(transaction.GetCategory());
+
+        m_walletTransactionRepository.save(oldTransaction);
+
+        m_logger.info("Transaction " + transaction.GetId() + " updated successfully");
+    }
+
+    /**
+     * Change the type of a transaction
+     * @param transaction The transaction to be updated
+     * @param newType The new type of the transaction
+     * @throws RuntimeException If the transaction type does not exist
+     *
+     * @note This method persists the changes in the wallet balances
+     * and the transaction in the database
+     */
+    private void ChangeTransactionType(WalletTransaction oldTransaction,
+                                       TransactionType   newType)
+    {
+        if (oldTransaction.GetType().equals(newType))
+        {
+            return;
+        }
+
+        Wallet wallet = oldTransaction.GetWallet();
+
+        TransactionType oldType = oldTransaction.GetType();
+
+        if (oldTransaction.GetStatus().equals(TransactionStatus.CONFIRMED))
+        {
+            // Revert the old transaction
+            if (oldType.equals(TransactionType.EXPENSE))
+            {
+                wallet.SetBalance(wallet.GetBalance() + oldTransaction.GetAmount());
+            }
+            else if (oldType.equals(TransactionType.INCOME))
+            {
+                wallet.SetBalance(wallet.GetBalance() - oldTransaction.GetAmount());
+            }
+            else
+            {
+                // WARNING for the case of new types being added to the enum
+                // and not being handled here
+                throw new RuntimeException("Transaction type not recognized");
+            }
+
+            // Apply the new transaction
+            if (newType.equals(TransactionType.EXPENSE))
+            {
+                wallet.SetBalance(wallet.GetBalance() - oldTransaction.GetAmount());
+            }
+            else if (newType.equals(TransactionType.INCOME))
+            {
+                wallet.SetBalance(wallet.GetBalance() + oldTransaction.GetAmount());
+            }
+            else
+            {
+                // WARNING for the case of new types being added to the enum
+                // and not being handled here
+                throw new RuntimeException("Transaction type not recognized");
+            }
+
+            m_walletRepository.save(wallet);
+        }
+
+        oldTransaction.SetType(newType);
+        m_walletTransactionRepository.save(oldTransaction);
+    }
+
+    /**
+     * Change the wallet of a transaction
+     * @param transaction The transaction to be updated
+     * @param newWallet The new wallet of the transaction
+     * @throws RuntimeException If the transaction type does not exist
+     *
+     * @note This method persists the changes in the wallet balances
+     * and the transaction in the database
+     */
+    private void ChangeTransactionWallet(WalletTransaction oldTransaction,
+                                         Wallet            newWallet)
+    {
+        if (oldTransaction.GetWallet().GetId() == newWallet.GetId())
+        {
+            return;
+        }
+
+        Wallet oldWallet = oldTransaction.GetWallet();
+
+        if (oldTransaction.GetStatus().equals(TransactionStatus.CONFIRMED))
+        {
+            if (oldTransaction.GetType().equals(TransactionType.EXPENSE))
+            {
+                // Revert expense from old wallet
+                oldWallet.SetBalance(oldWallet.GetBalance() +
+                                     oldTransaction.GetAmount());
+
+                // Apply expense to new wallet
+                newWallet.SetBalance(newWallet.GetBalance() -
+                                     oldTransaction.GetAmount());
+            }
+            else if (oldTransaction.GetType().equals(TransactionType.INCOME))
+            {
+                // Revert income from old wallet
+                oldWallet.SetBalance(oldWallet.GetBalance() -
+                                     oldTransaction.GetAmount());
+
+                // Apply income to new wallet
+                newWallet.SetBalance(newWallet.GetBalance() +
+                                     oldTransaction.GetAmount());
+            }
+            else
+            {
+                // WARNING for the case of new types being added to the enum
+                // and not being handled here
+                throw new RuntimeException("Transaction type not recognized");
+            }
+
+            m_walletRepository.save(oldWallet);
+            m_walletRepository.save(newWallet);
+        }
+
+        oldTransaction.SetWallet(newWallet);
+        m_walletTransactionRepository.save(oldTransaction);
+    }
+
+    /**
+     * Change the amount of a transaction
+     * @param transaction The transaction to be updated
+     * @param newAmount The new amount of the transaction
+     * @throws RuntimeException If the transaction type does not exist
+     *
+     * @note This method persists the changes in the wallet balances
+     * and the transaction in the database
+     */
+    private void ChangeTransactionAmount(WalletTransaction oldTransaction,
+                                         Double            newAmount)
+    {
+        // Check if the new amount is the same as the old amount
+        if (Math.abs(newAmount - oldTransaction.GetAmount()) < Constants.EPSILON)
+        {
+            return;
+        }
+
+        // Calculate the difference between the new and old amount
+        Double diff = newAmount - oldTransaction.GetAmount();
+
+        Wallet wallet = oldTransaction.GetWallet();
+
+        // Apply the difference to the wallet balance
+        if (oldTransaction.GetStatus().equals(TransactionStatus.CONFIRMED))
+        {
+            if (oldTransaction.GetType().equals(TransactionType.EXPENSE))
+            {
+                wallet.SetBalance(wallet.GetBalance() - diff);
+            }
+            else if (oldTransaction.GetType().equals(TransactionType.INCOME))
+            {
+                wallet.SetBalance(wallet.GetBalance() + diff);
+            }
+            else
+            {
+                // WARNING for the case of new types being added to the enum
+                // and not being handled here
+                throw new RuntimeException("Transaction type not recognized");
+            }
+
+            m_walletRepository.save(wallet);
+        }
+
+        oldTransaction.SetAmount(newAmount);
+        m_walletTransactionRepository.save(oldTransaction);
+    }
+
+    /**
+     * Change the status of a transaction
+     * @param transaction The transaction to be updated
+     * @param newStatus The new status of the transaction
+     * @throws RuntimeException If the transaction type does not exist
+     *
+     * @note This method persists the changes in the wallet balances
+     * and the transaction in the database
+     */
+    private void ChangeTransactionStatus(WalletTransaction transaction,
+                                         TransactionStatus newStatus)
+    {
+        if (transaction.GetStatus().equals(newStatus))
+        {
+            return;
+        }
+
+        Wallet            wallet    = transaction.GetWallet();
+        TransactionStatus oldStatus = transaction.GetStatus();
+
+        if (transaction.GetType().equals(TransactionType.EXPENSE))
+        {
+            if (oldStatus.equals(TransactionStatus.CONFIRMED))
+            {
+                if (newStatus.equals(TransactionStatus.PENDING))
+                {
+                    // Revert the expense
+                    wallet.SetBalance(wallet.GetBalance() + transaction.GetAmount());
+                }
+            }
+            else if (oldStatus.equals(TransactionStatus.PENDING))
+            {
+                if (newStatus.equals(TransactionStatus.CONFIRMED))
+                {
+                    // Apply the expense
+                    wallet.SetBalance(wallet.GetBalance() - transaction.GetAmount());
+                }
+            }
+            else
+            {
+                // WARNING for the case of new status being added to the enum
+                // and not being handled here
+                throw new RuntimeException("Transaction status not recognized");
+            }
+        }
+        else if (transaction.GetType().equals(TransactionType.INCOME))
+        {
+            if (oldStatus.equals(TransactionStatus.CONFIRMED))
+            {
+                if (newStatus.equals(TransactionStatus.PENDING))
+                {
+                    wallet.SetBalance(wallet.GetBalance() - transaction.GetAmount());
+                }
+            }
+            else if (oldStatus.equals(TransactionStatus.PENDING))
+            {
+                if (newStatus.equals(TransactionStatus.CONFIRMED))
+                {
+                    wallet.SetBalance(wallet.GetBalance() + transaction.GetAmount());
+                }
+            }
+            else
+            {
+                // WARNING for the case of new status being added to the enum
+                // and not being handled here
+                throw new RuntimeException("Transaction status not recognized");
+            }
+        }
+        else
+        {
+            // WARNING for the case of new types being added to the enum
+            // and not being handled here
+            throw new RuntimeException("Transaction type not recognized");
+        }
+
+        transaction.SetStatus(newStatus);
+        m_walletRepository.save(wallet);
+        m_walletTransactionRepository.save(transaction);
+    }
+
+    /**
      * Delete a transaction from a wallet
      * @param transactionId The id of the transaction to be removed
      * @throws RuntimeException If the transaction does not exist

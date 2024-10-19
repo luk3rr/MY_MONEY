@@ -478,6 +478,155 @@ public class WalletTransactionServiceTest
     }
 
     @Test
+    @DisplayName("Test if transaction type is changed from EXPENSE to INCOME and " +
+                 "wallet balance is updated correctly")
+    public void
+    TestChangeTransactionTypeFromExpenseToIncome()
+    {
+        // Setup previous state
+        Double oldBalance      = m_wallet1.GetBalance();
+        Double expenseAmount   = m_wallet1ExpenseTransaction.GetAmount();
+        Double newIncomeAmount = 300.0;
+
+        WalletTransaction updatedTransaction =
+            CreateWalletTransaction(m_wallet1,
+                                    m_category,
+                                    TransactionType.INCOME,
+                                    TransactionStatus.CONFIRMED,
+                                    m_date,
+                                    newIncomeAmount,
+                                    m_description);
+
+        when(
+            m_walletTransactionRepository.findById(m_wallet1ExpenseTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1ExpenseTransaction));
+        when(m_walletRepository.save(m_wallet1)).thenReturn(m_wallet1);
+        when(m_walletTransactionRepository.save(any(WalletTransaction.class)))
+            .thenReturn(updatedTransaction);
+
+        m_walletTransactionService.UpdateTransaction(updatedTransaction);
+
+        // Verify that the old expense was reverted and new income was applied
+        assertEquals(oldBalance + expenseAmount + newIncomeAmount,
+                     m_wallet1.GetBalance(),
+                     Constants.EPSILON);
+
+        // Verify repository interactions
+        verify(m_walletTransactionRepository)
+            .findById(m_wallet1ExpenseTransaction.GetId());
+        verify(m_walletRepository).save(m_wallet1);
+        verify(m_walletTransactionRepository).save(updatedTransaction);
+    }
+
+    @Test
+    @DisplayName("Test if transaction status is changed from CONFIRMED to PENDING " +
+                 "and balance is reverted")
+    public void
+    TestChangeTransactionStatusFromConfirmedToPending()
+    {
+        Double            oldBalance = m_wallet1.GetBalance();
+        WalletTransaction updatedTransaction =
+            CreateWalletTransaction(m_wallet1,
+                                    m_category,
+                                    TransactionType.EXPENSE,
+                                    TransactionStatus.PENDING,
+                                    m_date,
+                                    m_expenseAmount,
+                                    m_description);
+
+        when(
+            m_walletTransactionRepository.findById(m_wallet1ExpenseTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1ExpenseTransaction));
+        when(m_walletRepository.save(m_wallet1)).thenReturn(m_wallet1);
+        when(m_walletTransactionRepository.save(any(WalletTransaction.class)))
+            .thenReturn(updatedTransaction);
+
+        m_walletTransactionService.UpdateTransaction(updatedTransaction);
+
+        // Verify that the balance was reverted for the expense
+        assertEquals(oldBalance + m_expenseAmount,
+                     m_wallet1.GetBalance(),
+                     Constants.EPSILON);
+
+        // Verify repository interactions
+        verify(m_walletTransactionRepository)
+            .findById(m_wallet1ExpenseTransaction.GetId());
+        verify(m_walletRepository).save(m_wallet1);
+        verify(m_walletTransactionRepository).save(updatedTransaction);
+    }
+
+    @Test
+    @DisplayName(
+        "Test if the wallet is changed and transaction is applied to the new wallet")
+    public void
+    TestChangeTransactionWallet()
+    {
+        Double oldWallet1Balance = m_wallet1.GetBalance();
+        Double oldWallet2Balance = m_wallet2.GetBalance();
+        Double amount            = m_wallet1IncomeTransaction.GetAmount();
+
+        WalletTransaction updatedTransaction =
+            CreateWalletTransaction(m_wallet2,
+                                    m_category,
+                                    TransactionType.INCOME,
+                                    TransactionStatus.CONFIRMED,
+                                    m_date,
+                                    amount,
+                                    m_description);
+
+        when(m_walletTransactionRepository.findById(m_wallet1IncomeTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1IncomeTransaction));
+        when(m_walletRepository.save(m_wallet1)).thenReturn(m_wallet1);
+        when(m_walletRepository.save(m_wallet2)).thenReturn(m_wallet2);
+        when(m_walletTransactionRepository.save(any(WalletTransaction.class)))
+            .thenReturn(updatedTransaction);
+
+        m_walletTransactionService.UpdateTransaction(updatedTransaction);
+
+        // Verify that the amount was reverted from the old wallet and added to the new
+        // wallet
+        assertEquals(oldWallet1Balance - amount,
+                     m_wallet1.GetBalance(),
+                     Constants.EPSILON);
+        assertEquals(oldWallet2Balance + amount,
+                     m_wallet2.GetBalance(),
+                     Constants.EPSILON);
+
+        // Verify repository interactions
+        verify(m_walletTransactionRepository)
+            .findById(m_wallet1IncomeTransaction.GetId());
+        verify(m_walletRepository).save(m_wallet1);
+        verify(m_walletRepository).save(m_wallet2);
+        verify(m_walletTransactionRepository).save(updatedTransaction);
+    }
+
+    @Test
+    @DisplayName("Test if an exception is thrown when transaction does not exist")
+    public void TestUpdateNonExistentTransaction()
+    {
+        WalletTransaction nonExistentTransaction =
+            CreateWalletTransaction(m_wallet1,
+                                    m_category,
+                                    TransactionType.INCOME,
+                                    TransactionStatus.CONFIRMED,
+                                    m_date,
+                                    m_incomeAmount,
+                                    m_description);
+
+        when(m_walletTransactionRepository.findById(nonExistentTransaction.GetId()))
+            .thenReturn(Optional.empty());
+
+        assertThrows(
+            RuntimeException.class,
+            ()
+                -> m_walletTransactionService.UpdateTransaction(nonExistentTransaction),
+            "Transaction with id " + nonExistentTransaction.GetId() + " not found");
+
+        verify(m_walletTransactionRepository, never())
+            .save(any(WalletTransaction.class));
+    }
+
+    @Test
     @DisplayName("Test if the confirmed expense is deleted successfully")
     public void TestDeleteConfirmedExpense()
     {

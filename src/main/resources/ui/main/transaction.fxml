@@ -42,7 +42,7 @@
                                                       </AnchorPane>
                                                    </children>
                                                 </HBox>
-                                                <AnchorPane fx:id="monthResumeView" VBox.vgrow="ALWAYS" />
+                                                <AnchorPane fx:id="monthResumeView" minWidth="250.0" VBox.vgrow="ALWAYS" />
                                              </children>
                                           </VBox>
                                        </children>
@@ -61,7 +61,7 @@
                                                       </AnchorPane>
                                                    </children>
                                                 </HBox>
-                                                <AnchorPane fx:id="yearResumeView" VBox.vgrow="ALWAYS" />
+                                                <AnchorPane fx:id="yearResumeView" minWidth="250.0" VBox.vgrow="ALWAYS" />
                                              </children>
                                           </VBox>
                                        </children>
@@ -127,7 +127,7 @@
                <children>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <AnchorPane fx:id="transactionsListPane" styleClass="anchor-pane" stylesheets="@../../css/component/anchor-pane.css" HBox.hgrow="ALWAYS">
+                        <AnchorPane fx:id="transactionsPane" styleClass="anchor-pane" stylesheets="@../../css/component/anchor-pane.css" HBox.hgrow="ALWAYS">
                            <children>
                               <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <children>
@@ -135,7 +135,7 @@
                                        <children>
                                           <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                                              <children>
-                                                <Label fx:id="transactionsListTitle" styleClass="title" text="Transactions" />
+                                                <Label fx:id="transactionsPaneTitle" styleClass="title" text="Transactions" />
                                                 <AnchorPane VBox.vgrow="ALWAYS">
                                                    <children>
                                                       <HBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
@@ -177,7 +177,7 @@
                                                                         <Font size="10.0" />
                                                                      </font>
                                                                   </Label>
-                                                                  <ComboBox fx:id="transactionsListTransactionTypeComboBox" minWidth="150.0" stylesheets="@../../css/component/combo-box.css" />
+                                                                  <ComboBox fx:id="transactionsTypeComboBox" minWidth="150.0" stylesheets="@../../css/component/combo-box.css" />
                                                                </children>
                                                             </VBox>
                                                             <VBox alignment="CENTER">
@@ -187,7 +187,7 @@
                                                                         <Font size="10.0" />
                                                                      </font>
                                                                   </Label>
-                                                                  <DatePicker fx:id="transactionsListStartDatePicker" maxWidth="150.0" stylesheets="@../../css/component/data-picker.css" />
+                                                                  <DatePicker fx:id="transactionsStartDatePicker" maxWidth="150.0" stylesheets="@../../css/component/data-picker.css" />
                                                                </children>
                                                             </VBox>
                                                             <VBox alignment="CENTER">
@@ -197,7 +197,7 @@
                                                                         <Font size="10.0" />
                                                                      </font>
                                                                   </Label>
-                                                                  <DatePicker fx:id="transactionsListEndDatePicker" maxWidth="150.0" stylesheets="@../../css/component/data-picker.css" />
+                                                                  <DatePicker fx:id="transactionsEndDatePicker" maxWidth="150.0" stylesheets="@../../css/component/data-picker.css" />
                                                                </children>
                                                             </VBox>
                                                          </children>
@@ -218,7 +218,7 @@
                                           </AnchorPane>
                                        </children>
                                     </HBox>
-                                    <TableView fx:id="transactionsListTableView" stylesheets="@../../css/component/table-view.css" VBox.vgrow="ALWAYS">
+                                    <TableView fx:id="transactionsTableView" stylesheets="@../../css/component/table-view.css" VBox.vgrow="ALWAYS">
                                        <columnResizePolicy>
                                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                        </columnResizePolicy>

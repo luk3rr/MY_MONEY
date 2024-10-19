@@ -45,11 +45,12 @@ import org.mymoney.services.WalletTransactionService;
 import org.mymoney.ui.common.ResumePaneController;
 import org.mymoney.ui.dialog.AddExpenseController;
 import org.mymoney.ui.dialog.AddIncomeController;
+import org.mymoney.ui.dialog.EditTransactionController;
 import org.mymoney.ui.dialog.ManageCategoryController;
-import org.mymoney.ui.dialog.RemoveTransactionController;
 import org.mymoney.util.Animation;
 import org.mymoney.util.Constants;
 import org.mymoney.util.LoggerConfig;
+import org.mymoney.util.TransactionStatus;
 import org.mymoney.util.TransactionType;
 import org.mymoney.util.UIUtils;
 import org.mymoney.util.WindowUtils;
@@ -84,13 +85,13 @@ public class TransactionController
     private ComboBox<TransactionType> moneyFlowComboBox;
 
     @FXML
-    private ComboBox<TransactionType> transactionsListTransactionTypeComboBox;
+    private ComboBox<TransactionType> transactionsTypeComboBox;
 
     @FXML
-    private DatePicker transactionsListEndDatePicker;
+    private DatePicker transactionsEndDatePicker;
 
     @FXML
-    private DatePicker transactionsListStartDatePicker;
+    private DatePicker transactionsStartDatePicker;
 
     @FXML
     private TableView<WalletTransaction> transactionsTableView;
@@ -139,8 +140,8 @@ public class TransactionController
         PopulateTransactionTypeComboBox();
 
         // Format the date pickers
-        UIUtils.SetDatePickerFormat(transactionsListStartDatePicker);
-        UIUtils.SetDatePickerFormat(transactionsListEndDatePicker);
+        UIUtils.SetDatePickerFormat(transactionsStartDatePicker);
+        UIUtils.SetDatePickerFormat(transactionsEndDatePicker);
 
         LocalDateTime currentDate = LocalDateTime.now();
 
@@ -152,7 +153,7 @@ public class TransactionController
 
         moneyFlowComboBox.setValue(TransactionType.EXPENSE);
 
-        transactionsListTransactionTypeComboBox.setValue(null); // All transactions
+        transactionsTypeComboBox.setValue(null); // All transactions
 
         // Set the start and end date pickers to the first and last day of the current
         // month
@@ -160,8 +161,8 @@ public class TransactionController
         LocalDateTime lastDayOfMonth  = currentDate.withDayOfMonth(
             currentDate.getMonth().length(currentDate.toLocalDate().isLeapYear()));
 
-        transactionsListStartDatePicker.setValue(firstDayOfMonth.toLocalDate());
-        transactionsListEndDatePicker.setValue(lastDayOfMonth.toLocalDate());
+        transactionsStartDatePicker.setValue(firstDayOfMonth.toLocalDate());
+        transactionsEndDatePicker.setValue(lastDayOfMonth.toLocalDate());
 
         // Update the resumes
         UpdateMonthResume();
@@ -176,13 +177,13 @@ public class TransactionController
 
         moneyFlowComboBox.setOnAction(event -> { UpdateMoneyFlow(); });
 
-        transactionsListTransactionTypeComboBox.setOnAction(
+        transactionsTypeComboBox.setOnAction(
             event -> { UpdateTransactionTableView(); });
 
-        transactionsListStartDatePicker.setOnAction(
+        transactionsStartDatePicker.setOnAction(
             event -> { UpdateTransactionTableView(); });
 
-        transactionsListEndDatePicker.setOnAction(
+        transactionsEndDatePicker.setOnAction(
             event -> { UpdateTransactionTableView(); });
 
         // Add listener to the search field
@@ -225,31 +226,113 @@ public class TransactionController
     @FXML
     private void handleEditTransaction()
     {
-        //
+        WalletTransaction selectedTransaction =
+            transactionsTableView.getSelectionModel().getSelectedItem();
+
+        if (selectedTransaction == null)
+        {
+            WindowUtils.ShowInformationDialog("Info",
+                                              "No transaction selected",
+                                              "Please select a transaction to edit.");
+
+            return;
+        }
+
+        WindowUtils.OpenModalWindow(
+            Constants.EDIT_TRANSACTION_FXML,
+            "Edit transaction",
+            springContext,
+            (EditTransactionController controller)
+                -> controller.SetTransaction(selectedTransaction),
+            List.of(() -> {
+                UpdateMonthResume();
+                UpdateYearResume();
+                UpdateTransactionTableView();
+                UpdateMoneyFlow();
+            }));
     }
 
     @FXML
-    private void handleRemoveTransaction()
+    private void handleDeleteTransaction()
     {
-        WalletTransaction selectedIncome =
+        WalletTransaction selectedTransaction =
             transactionsTableView.getSelectionModel().getSelectedItem();
 
-       // se null então aviso
+        if (selectedTransaction == null)
+        {
+            WindowUtils.ShowInformationDialog("Info",
+                                              "No transaction selected",
+                                              "Please select a transaction to remove.");
 
-        WindowUtils.OpenModalWindow(Constants.REMOVE_TRANSACTION_FXML,
-                                    "Remove income",
-                                    springContext,
-                                    (RemoveTransactionController controller)
-                                        -> {
-                                        controller.InitializeWithTransactionType(
-                                            TransactionType.INCOME);
-                                    },
-                                    List.of(() -> {
-                                        UpdateMonthResume();
-                                        UpdateYearResume();
-                                        UpdateTransactionTableView();
-                                        UpdateMoneyFlow();
-                                    }));
+            return;
+        }
+
+        // Create a message to show the user
+        StringBuilder message = new StringBuilder();
+        message.append("Description: ")
+            .append(selectedTransaction.GetDescription())
+            .append("\n")
+            .append("Amount: ")
+            .append(UIUtils.FormatCurrency(selectedTransaction.GetAmount()))
+            .append("\n")
+            .append("Date: ")
+            .append(selectedTransaction.GetDate().format(
+                Constants.DATE_FORMATTER_WITH_TIME))
+            .append("\n")
+            .append("Status: ")
+            .append(selectedTransaction.GetStatus().toString())
+            .append("\n")
+            .append("Wallet: ")
+            .append(selectedTransaction.GetWallet().GetName())
+            .append("\n")
+            .append("Wallet balance: ")
+            .append(
+                UIUtils.FormatCurrency(selectedTransaction.GetWallet().GetBalance()))
+            .append("\n")
+            .append("Wallet balance after deletion: ");
+
+        if (selectedTransaction.GetStatus().equals(TransactionStatus.CONFIRMED))
+        {
+            if (selectedTransaction.GetType().equals(TransactionType.EXPENSE))
+            {
+                message
+                    .append(UIUtils.FormatCurrency(
+                        selectedTransaction.GetWallet().GetBalance() +
+                        selectedTransaction.GetAmount()))
+                    .append("\n");
+            }
+            else
+            {
+                message
+                    .append(UIUtils.FormatCurrency(
+                        selectedTransaction.GetWallet().GetBalance() -
+                        selectedTransaction.GetAmount()))
+                    .append("\n");
+            }
+        }
+        else
+        {
+            message
+                .append(UIUtils.FormatCurrency(
+                    selectedTransaction.GetWallet().GetBalance()))
+                .append("\n");
+        }
+
+        // Confirm deletion
+        if (WindowUtils.ShowConfirmationDialog(
+                "Confirm Deletion",
+                "Are you sure you want to remove this " +
+                    selectedTransaction.GetType().toString().toLowerCase() + "?",
+                message.toString()))
+        {
+            walletTransactionService.DeleteTransaction(selectedTransaction.GetId());
+            transactionsTableView.getItems().remove(selectedTransaction);
+
+            UpdateMonthResume();
+            UpdateYearResume();
+            UpdateTransactionTableView();
+            UpdateMoneyFlow();
+        }
     }
 
     @FXML
@@ -275,13 +358,10 @@ public class TransactionController
         String similarTextOrId = transactionsSearchField.getText().toLowerCase();
 
         // Get selected values from the comboboxes
-        TransactionType selectedTransactionType =
-            transactionsListTransactionTypeComboBox.getValue();
+        TransactionType selectedTransactionType = transactionsTypeComboBox.getValue();
 
-        LocalDateTime startDate =
-            transactionsListStartDatePicker.getValue().atStartOfDay();
-        LocalDateTime endDate =
-            transactionsListEndDatePicker.getValue().atTime(23, 59, 59);
+        LocalDateTime startDate = transactionsStartDatePicker.getValue().atStartOfDay();
+        LocalDateTime endDate = transactionsEndDatePicker.getValue().atTime(23, 59, 59);
 
         // Clear the transaction list view
         transactionsTableView.getItems().clear();
@@ -603,7 +683,7 @@ public class TransactionController
             FXCollections.observableArrayList(TransactionType.values());
         transactionTypesWithNull.add(0, null);
 
-        transactionsListTransactionTypeComboBox.setItems(transactionTypesWithNull);
+        transactionsTypeComboBox.setItems(transactionTypesWithNull);
 
         // Custom string converter to format the TransactionType as
         // "TransactionType"
@@ -621,25 +701,23 @@ public class TransactionController
             }
         });
 
-        transactionsListTransactionTypeComboBox.setConverter(
-            new StringConverter<TransactionType>() {
-                @Override
-                public String toString(TransactionType transactionType)
-                {
-                    return transactionType != null
-                        ? transactionType.toString()
-                        : "ALL"; // Show "All" instead of null
-                }
+        transactionsTypeComboBox.setConverter(new StringConverter<TransactionType>() {
+            @Override
+            public String toString(TransactionType transactionType)
+            {
+                return transactionType != null ? transactionType.toString()
+                                               : "ALL"; // Show "All" instead of null
+            }
 
-                @Override
-                public TransactionType fromString(String string)
-                {
-                    return string.equals("ALL")
-                        ? null
-                        : TransactionType.valueOf(
-                              string); // Return null if "All" is selected
-                }
-            });
+            @Override
+            public TransactionType fromString(String string)
+            {
+                return string.equals("ALL")
+                    ? null
+                    : TransactionType.valueOf(
+                          string); // Return null if "All" is selected
+            }
+        });
     }
 
     /**

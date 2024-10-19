@@ -7,6 +7,8 @@
 package org.mymoney.repositories;
 
 import java.util.List;
+import java.util.Optional;
+import org.mymoney.entities.Wallet;
 import org.mymoney.entities.WalletTransaction;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -407,4 +409,14 @@ public interface WalletTransactionRepository
            + "AND wt.wallet.archived = false")
     Long
     CountNonArchivedTransactionsByWallet(@Param("walletId") Long walletId);
+
+    /**
+     * Get the wallet by transaction id
+     * @param transactionId The id of the transaction
+     */
+    @Query("SELECT wt.wallet "
+           + "FROM WalletTransaction wt "
+           + "WHERE wt.id = :transactionId")
+    Optional<Wallet>
+    FindWalletByTransactionId(@Param("transactionId") Long transactionId);
 }

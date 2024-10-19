@@ -61,6 +61,8 @@ public final class Constants
         UI_DIALOG_PATH + "manage_category.fxml";
     public static final String EDIT_CATEGORY_FXML =
         UI_DIALOG_PATH + "edit_category.fxml";
+    public static final String EDIT_TRANSACTION_FXML =
+        UI_DIALOG_PATH + "edit_transaction.fxml";
 
     public static final String WALLET_FULL_PANE_FXML =
         UI_COMMON_PATH + "wallet_full_pane.fxml";
