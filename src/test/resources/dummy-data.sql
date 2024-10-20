@@ -99,17 +99,17 @@ INSERT INTO wallet_transaction (id, wallet_id, category_id, type, status, date, 
 (41, 4, 10, 'INCOME', 'CONFIRMED', '2024-09-15T00:00:00', 180.00, 'Rendimento de aplicação'),
 (56, 4, 9, 'INCOME', 'CONFIRMED', '2024-06-15T00:00:00', 400.00, 'Depósito de economias pessoais');
 
-INSERT INTO credit_card (id, operator_id, name, billing_due_day, max_debt, last_four_digits) VALUES
-(1, 1, 'Visa Gold', 10, 5000.00, '1234'),
-(2, 2, 'MC Platinum', 15, 7500.00, '5678'),
-(3, 3, 'Amex Green', 20, 3000.00, '9101'),
-(4, 4, 'Discover Cashback', 25, 2000.00, '1121'),
-(5, 5, 'Diners Club Rewards', 30, 4000.00, '3141'),
-(6, 6, 'JCB', 10, 1000.00, '3830'),
-(7, 7, 'Elo', 11, 2300.00, '4301'),
-(8, 8, 'Hipercard', 5, 500.00, '9031'),
-(9, 0, 'Cartaozin', 5, 1.00, '1683'),
-(10, 0, 'Cartaozin2', 5, 2.00, '3031');
+INSERT INTO credit_card (id, operator_id, name, billing_due_day, closing_day, max_debt, last_four_digits) VALUES
+(1, 1, 'Visa Gold', 10, 3, 5000.00, '1234'),
+(2, 2, 'MC Platinum', 15, 7, 7500.00, '5678'),
+(3, 3, 'Amex Green', 20, 10, 3000.00, '9101'),
+(4, 4, 'Discover Cashback', 25, 20, 2000.00, '1121'),
+(5, 5, 'Diners Club Rewards', 25, 19, 4000.00, '3141'),
+(6, 6, 'JCB', 10, 2, 1000.00, '3830'),
+(7, 7, 'Elo', 11, 3,  2300.00, '4301'),
+(8, 8, 'Hipercard', 5, 1, 500.00, '9031'),
+(9, 0, 'Cartaozin', 5, 1, 1.00, '1683'),
+(10, 0, 'Cartaozin2', 5, 1, 2.00, '3031');
 
 -- Dívidas passadas (já pagas)
 INSERT INTO credit_card_debt (id, crc_id, category_id, date, total_amount, description)

@@ -592,6 +592,7 @@ public class WalletTransactionService
      * Get transaction by id
      * @param id The id of the transaction
      * @return The transaction with the provided id
+     * @throws RuntimeException If the transaction does not exist
      */
     public WalletTransaction GetTransactionById(Long id)
     {

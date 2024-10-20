@@ -4,7 +4,7 @@
  * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
  */
 
-#walletPane {
+#root {
   -fx-background-color: #f2f3f4;
   -fx-background-radius: 10px;
   -fx-padding: 10px;

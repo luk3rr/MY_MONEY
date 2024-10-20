@@ -41,6 +41,9 @@ public class CreditCard
     @Column(name = "billing_due_day", nullable = false)
     private Integer billingDueDay;
 
+    @Column(name = "closing_day", nullable = false)
+    private Integer closingDay;
+
     @Column(name = "max_debt", nullable = false)
     private Double maxDebt;
 
@@ -56,9 +59,10 @@ public class CreditCard
      * Constructor for CreditCard
      * @param name The name of the credit card
      * @param billingDueDay The day of the month the bill is due
+     * @param closingDay The day of the month the bill is closed
      * @param maxDebt The maximum debt allowed for the credit card
      */
-    public CreditCard(String name, Integer billingDueDay, Double maxDebt)
+    public CreditCard(String name, Integer billingDueDay, Integer closingDay, Double maxDebt)
     {
         this.name          = name;
         this.billingDueDay = billingDueDay;
@@ -99,6 +103,15 @@ public class CreditCard
     public Integer GetBillingDueDay()
     {
         return billingDueDay;
+    }
+
+    /**
+     * Get the day of the month the bill is closed
+     * @return The day of the month the bill is closed
+     */
+    public Integer GetClosingDay()
+    {
+        return closingDay;
     }
 
     /**
@@ -144,6 +157,15 @@ public class CreditCard
     public void SetBillingDueDay(Integer billingDueDay)
     {
         this.billingDueDay = billingDueDay;
+    }
+
+    /**
+     * Set the day of the month the bill is closed
+     * @param closingDay The new day of the month the bill is closed
+     */
+    public void SetClosingDay(Integer closingDay)
+    {
+        this.closingDay = closingDay;
     }
 
     /**

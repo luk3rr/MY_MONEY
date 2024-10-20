@@ -84,4 +84,56 @@ public interface CreditCardPaymentRepository
            + "AND ccp.wallet IS NULL")
     Double
     GetTotalPendingPayments(@Param("year") Integer year);
+
+    /**
+     * Get the total of all pending payments of a credit card from a specified month and
+     * year onward, including future months and the current month
+     * @param creditCardId The credit card id
+     * @param month The starting month (inclusive)
+     * @param year The starting year (inclusive)
+     * @return The total of all pending payments of all credit cards from the current
+     *     year onward
+     */
+    @Query("SELECT COALESCE(SUM(ccp.amount), 0) "
+           + "FROM CreditCardPayment ccp "
+           + "JOIN ccp.creditCardDebt ccd "
+           + "WHERE ccd.creditCard.id = :creditCardId "
+           + "AND strftime('%m', ccp.date) >= printf('%02d', :month) "
+           + "AND strftime('%Y', ccp.date) >= printf('%04d', :year) "
+           + "AND ccp.wallet IS NULL")
+    Double
+    GetPendingPayments(@Param("creditCardId") Long creditCardId,
+                       @Param("month") Integer     month,
+                       @Param("year") Integer      year);
+
+    /**
+     * Get the invoice amount of a credit card in a specified month and year
+     * @param creditCardId The credit card id
+     * @param month The month
+     * @param year The year
+     * @return The invoice amount of the credit card in the specified month and year
+     */
+    @Query("SELECT COALESCE(SUM(ccp.amount), 0) "
+           + "FROM CreditCardPayment ccp "
+           + "JOIN ccp.creditCardDebt ccd "
+           + "WHERE ccd.creditCard.id = :creditCardId "
+           + "AND strftime('%m', ccp.date) = printf('%02d', :month) "
+           + "AND strftime('%Y', ccp.date) = printf('%04d', :year)")
+    Double
+    GetInvoiceAmount(@Param("creditCardId") Long creditCardId,
+                     @Param("month") Integer     month,
+                     @Param("year") Integer      year);
+
+    /**
+     * Get next invoice date of a credit card
+     * @param creditCardId The credit card id
+     * @return The next invoice date of the credit card
+     */
+    @Query("SELECT MIN(ccp.date) "
+           + "FROM CreditCardPayment ccp "
+           + "JOIN ccp.creditCardDebt ccd "
+           + "WHERE ccd.creditCard.id = :creditCardId "
+           + "AND ccp.wallet IS NULL")
+    String
+    GetNextInvoiceDate(@Param("creditCardId") Long creditCardId);
 }

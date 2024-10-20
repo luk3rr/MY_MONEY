@@ -70,7 +70,7 @@ public class CreditCardServiceTest
     @BeforeEach
     public void BeforeEach()
     {
-        m_creditCard  = new CreditCard("Credit Card", 10, 1000.0);
+        m_creditCard  = new CreditCard("Credit Card", 10, 4, 1000.0);
         m_category    = new Category("Category");
         m_date        = LocalDateTime.now();
         m_description = "";
@@ -88,6 +88,7 @@ public class CreditCardServiceTest
 
         m_creditCardService.CreateCreditCard(m_creditCard.GetName(),
                                              m_creditCard.GetBillingDueDay(),
+                                             m_creditCard.GetClosingDay(),
                                              m_creditCard.GetMaxDebt());
 
         // Capture the credit card that was saved and check if it is correct
@@ -117,6 +118,7 @@ public class CreditCardServiceTest
             ()
                 -> m_creditCardService.CreateCreditCard(m_creditCard.GetName(),
                                                         m_creditCard.GetBillingDueDay(),
+                                                        m_creditCard.GetClosingDay(),
                                                         m_creditCard.GetMaxDebt()));
 
         // Verify that the credit card was not saved
@@ -140,6 +142,7 @@ public class CreditCardServiceTest
             ()
                 -> m_creditCardService.CreateCreditCard(m_creditCard.GetName(),
                                                         m_creditCard.GetBillingDueDay(),
+                                                        m_creditCard.GetClosingDay(),
                                                         m_creditCard.GetMaxDebt()));
 
         // Case when the billing due day is greater than Constants.MAX_BILLING_DUE_DAY
@@ -150,6 +153,7 @@ public class CreditCardServiceTest
             ()
                 -> m_creditCardService.CreateCreditCard(m_creditCard.GetName(),
                                                         m_creditCard.GetBillingDueDay(),
+                                                        m_creditCard.GetClosingDay(),
                                                         m_creditCard.GetMaxDebt()));
 
         // Verify that the credit card was not saved
@@ -171,6 +175,7 @@ public class CreditCardServiceTest
             ()
                 -> m_creditCardService.CreateCreditCard(m_creditCard.GetName(),
                                                         m_creditCard.GetBillingDueDay(),
+                                                        m_creditCard.GetClosingDay(),
                                                         m_creditCard.GetMaxDebt()));
 
         // Verify that the credit card was not saved

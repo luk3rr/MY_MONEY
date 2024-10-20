@@ -18,6 +18,7 @@ import org.mymoney.repositories.CreditCardDebtRepository;
 import org.mymoney.repositories.CreditCardPaymentRepository;
 import org.mymoney.repositories.CreditCardRepository;
 import org.mymoney.util.Constants;
+import org.mymoney.util.CreditCardInvoiceStatus;
 import org.mymoney.util.LoggerConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,7 @@ public class CreditCardService
      * Creates a new credit card
      * @param name The name of the credit card
      * @param billingDueDay The day of the month the credit card bill is due
+     * @param closingDay The day of the month the credit card bill is closed
      * @param maxDebt The maximum debt of the credit card
      * @throws RuntimeException If the credit card name is already in use
      * @throws RuntimeException If the billingDueDay is not in the range [1,
@@ -57,7 +59,8 @@ public class CreditCardService
      * @return The id of the created credit card
      */
     @Transactional
-    public Long CreateCreditCard(String name, Integer dueDate, Double maxDebt)
+    public Long
+    CreateCreditCard(String name, Integer dueDate, Integer closingDay, Double maxDebt)
     {
         // Remove leading and trailing whitespaces
         name = name.strip();
@@ -79,13 +82,19 @@ public class CreditCardService
                                        Constants.MAX_BILLING_DUE_DAY + "]");
         }
 
+        if (closingDay < 1 || closingDay > Constants.MAX_BILLING_DUE_DAY)
+        {
+            throw new RuntimeException("Closing day must be in the range [1, " +
+                                       Constants.MAX_BILLING_DUE_DAY + "]");
+        }
+
         if (maxDebt < 0)
         {
             throw new RuntimeException("Max debt must be non-negative");
         }
 
-        CreditCard newCreditCard =
-            m_creditCardRepository.save(new CreditCard(name, dueDate, maxDebt));
+        CreditCard newCreditCard = m_creditCardRepository.save(
+            new CreditCard(name, dueDate, closingDay, maxDebt));
 
         m_logger.info("Credit card " + name + " created with due date " + dueDate +
                       " and max debt " + maxDebt);
@@ -273,6 +282,89 @@ public class CreditCardService
     public Double GetTotalPendingPayments(Integer year)
     {
         return m_creditCardPaymentRepository.GetTotalPendingPayments(year);
+    }
+
+    /**
+     * Get the total of all pending payments of a credit card from the current month and
+     * year onward, including future months and the current month
+     * @return The total of all pending payments of all credit cards from the current
+     *     month and year onward
+     */
+    public Double GetPendingPayments(Long crcId, Integer month, Integer year)
+    {
+        return m_creditCardPaymentRepository.GetPendingPayments(crcId, month, year);
+    }
+
+    /**
+     * Get the invoice amount of a credit card in a specified month and year
+     * @param creditCardId The credit card id
+     * @param month The month
+     * @param year The year
+     * @return The invoice amount of the credit card in the specified month and year
+     */
+    public Double GetInvoiceAmount(Long crcId, Integer month, Integer year)
+    {
+        return m_creditCardPaymentRepository.GetInvoiceAmount(crcId, month, year);
+    }
+
+    /**
+     * Get the invoice status of a credit card in a specified month and year
+     * The invoice status can be either 'Open' or 'Closed'
+     * @param creditCardId The credit card id
+     * @param month The month
+     * @param year The year
+     * @return The invoice status of the credit card in the specified month and year
+     * @throws RuntimeException If the credit card does not exist
+     */
+    public CreditCardInvoiceStatus GetInvoiceStatus(Long crcId, Integer month, Integer year)
+    {
+        LocalDateTime nextInvoiceDate = GetNextInvoiceDate(crcId);
+
+        if (nextInvoiceDate.getMonthValue() <= month &&
+            nextInvoiceDate.getYear() <= year)
+        {
+            return CreditCardInvoiceStatus.OPEN;
+        }
+
+        return CreditCardInvoiceStatus.CLOSED;
+    }
+
+    /**
+     * Get next invoice date of a credit card
+     * @param crcId The id of the credit card
+     * @return The next invoice date of the credit card
+     * @throws RuntimeException If the credit card does not exist
+     */
+    public LocalDateTime GetNextInvoiceDate(Long crcId)
+    {
+        String nextInvoiceDate =
+            m_creditCardPaymentRepository.GetNextInvoiceDate(crcId);
+
+        // If there is no next invoice date, calculate it
+        // If the current day is greater than the closing day, the next invoice date is
+        // billingDueDay of the next month
+        // Otherwise, the next invoice date is billingDueDay of the current month
+        if (nextInvoiceDate == null)
+        {
+            LocalDateTime now = LocalDateTime.now();
+
+            CreditCard creditCard = m_creditCardRepository.findById(crcId).orElseThrow(
+                ()
+                    -> new RuntimeException("Credit card with id " + crcId +
+                                            " does not exist"));
+
+            Integer currentDay = now.getDayOfMonth();
+            Integer closingDay = creditCard.GetClosingDay();
+
+            if (currentDay > closingDay)
+            {
+                return now.plusMonths(1).withDayOfMonth(creditCard.GetBillingDueDay());
+            }
+
+            return now.withDayOfMonth(creditCard.GetBillingDueDay());
+        }
+
+        return LocalDateTime.parse(nextInvoiceDate, Constants.DB_DATE_FORMATTER);
     }
 
     /**
