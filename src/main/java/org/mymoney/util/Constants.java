@@ -67,11 +67,14 @@ public final class Constants
     public static final String WALLET_FULL_PANE_FXML =
         UI_COMMON_PATH + "wallet_full_pane.fxml";
     public static final String RESUME_PANE_FXML = UI_COMMON_PATH + "resume_pane.fxml";
+    public static final String CRC_PANE_FXML =
+        UI_COMMON_PATH + "credit_card_pane.fxml";
 
     // Icons
     public static final String HOME_EXPENSE_ICON = COMMON_ICONS_PATH + "expense.png";
     public static final String HOME_INCOME_ICON  = COMMON_ICONS_PATH + "income.png";
     public static final String SUCCESS_ICON      = COMMON_ICONS_PATH + "success.png";
+    public static final String DEFAULT_ICON      = COMMON_ICONS_PATH + "default.png";
 
     // CSS
     public static final String MAIN_STYLE_SHEET   = CSS_SCENE_PATH + "main.css";
@@ -115,11 +118,12 @@ public final class Constants
 
     public static final String TOOLTIP_STYLE = "tooltip";
 
-    // Wallet pane styles
-    public static final String WALLET_TOTAL_BALANCE_VALUE_LABEL_STYLE =
+    public static final String TOTAL_BALANCE_VALUE_LABEL_STYLE =
         "total-balance-value-label";
-    public static final String WALLET_TOTAL_BALANCE_FORESEEN_LABEL_STYLE =
+    public static final String TOTAL_BALANCE_FORESEEN_LABEL_STYLE =
         "total-balance-foreseen-label";
+
+    // Wallet pane styles
     public static final String WALLET_TOTAL_BALANCE_WALLETS_LABEL_STYLE =
         "total-balance-wallets-label";
     public static final String WALLET_CHECK_BOX_STYLE = "check-box";

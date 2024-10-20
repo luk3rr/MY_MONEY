@@ -6,7 +6,6 @@
 
 package org.mymoney.ui.main;
 
-import org.mymoney.util.Constants;
 import java.io.IOException;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -19,6 +18,7 @@ import javafx.scene.control.ContentDisplay;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import org.mymoney.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -119,6 +119,9 @@ public class MainController
 
             newContent.getStylesheets().add(
                 getClass().getResource(styleSheet).toExternalForm());
+
+            newContent.getStylesheets().add(
+                getClass().getResource(Constants.COMMON_STYLE_SHEET).toExternalForm());
 
             AnchorPane.setTopAnchor(newContent, 0.0);
             AnchorPane.setRightAnchor(newContent, 0.0);

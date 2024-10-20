@@ -416,13 +416,13 @@ public class WalletController
             new Label(UIUtils.FormatCurrency(walletsCurrentBalance));
 
         totalBalanceValueLabel.getStyleClass().add(
-            Constants.WALLET_TOTAL_BALANCE_VALUE_LABEL_STYLE);
+            Constants.TOTAL_BALANCE_VALUE_LABEL_STYLE);
 
         Label balanceForeseenLabel =
             new Label("Foreseen: " + UIUtils.FormatCurrency(foreseenBalance));
 
         balanceForeseenLabel.getStyleClass().add(
-            Constants.WALLET_TOTAL_BALANCE_FORESEEN_LABEL_STYLE);
+            Constants.TOTAL_BALANCE_FORESEEN_LABEL_STYLE);
 
         Label totalWalletsLabel =
             new Label("Balance corresponds to " + totalWallets + " wallets");
