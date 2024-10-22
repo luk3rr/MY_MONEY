@@ -6,6 +6,7 @@
 
 package org.mymoney.repositories;
 
+import java.util.List;
 import org.mymoney.entities.CreditCardPayment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +16,19 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CreditCardPaymentRepository
     extends JpaRepository<CreditCardPayment, Long> {
+
+    /**
+     * Get credit card payments in a month and year
+     * @param month The month
+     * @param year The year
+     * @return A list with all credit card payments in a month and year
+     */
+    @Query("SELECT ccp "
+           + "FROM CreditCardPayment ccp "
+           + "WHERE strftime('%m', ccp.date) = printf('%02d', :month) "
+           + "AND strftime('%Y', ccp.date) = printf('%04d', :year)")
+    List<CreditCardPayment>
+    GetCreditCardPayments(@Param("month") Integer month, @Param("year") Integer year);
 
     /**
      * Get the total paid amount of a credit card

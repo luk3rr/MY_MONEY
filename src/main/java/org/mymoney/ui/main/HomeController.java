@@ -14,10 +14,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.BarChart;
@@ -34,6 +39,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import org.mymoney.entities.CreditCard;
 import org.mymoney.entities.Wallet;
 import org.mymoney.entities.WalletTransaction;
@@ -479,15 +485,7 @@ public class HomeController
         if (yAxis instanceof NumberAxis)
         {
             NumberAxis numberAxis = (NumberAxis)yAxis;
-            numberAxis.setAutoRanging(false);
-            numberAxis.setLowerBound(0);
-            numberAxis.setUpperBound(maxValue);
-
-            // Set the tick unit based on the maximum value
-            // The tick unit must be a multiple of 10
-            Integer tickUnit =
-                (int)Math.round(((maxValue / Constants.XYBAR_CHART_TICKS) / 10) * 10);
-            numberAxis.setTickUnit(tickUnit);
+            Animation.SetDynamicYAxisBounds(numberAxis, maxValue);
         }
 
         moneyFlowBarChart.setVerticalGridLinesVisible(false);

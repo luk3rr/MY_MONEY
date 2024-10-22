@@ -14,3 +14,19 @@
   -fx-font-size: 10px;
   -fx-text-fill: #333;
 }
+
+.chart-plot-background {
+  -fx-background-color: transparent;
+}
+
+.axis {
+  -fx-border-color: transparent;
+  -fx-tick-mark-visible: false;
+  -fx-minor-tick-visible: false;
+}
+
+.chart-legend {
+  -fx-background-color: transparent;
+  -fx-font-size: 12px;
+  -fx-text-fill: #555;
+}

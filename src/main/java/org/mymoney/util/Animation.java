@@ -15,6 +15,7 @@ import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -40,12 +41,9 @@ public final class Animation
         Timeline timeline = new Timeline();
 
         // Define the key frame with a proportional interpolation
-        KeyFrame keyFrame =
-            new KeyFrame(Duration.seconds(Constants.XYBAR_CHART_ANIMATION_DURATION),
-                         new KeyValue(currentValue,
-                                      targetValue,
-                                      Interpolator.EASE_BOTH)
-            );
+        KeyFrame keyFrame = new KeyFrame(
+            Duration.seconds(Constants.XYBAR_CHART_ANIMATION_DURATION),
+            new KeyValue(currentValue, targetValue, Interpolator.EASE_BOTH));
 
         // Listener to update the Y value of the bar in each frame
         currentValue.addListener((obs, oldVal, newVal) -> data.setYValue(newVal));
@@ -74,7 +72,7 @@ public final class Animation
         }
 
         // Increments for each part of the stacked bar
-        double[] increments = new double[data.size()];
+        Double[] increments = new Double[data.size()];
 
         for (Integer i = 0; i < data.size(); i++)
         {
@@ -92,7 +90,7 @@ public final class Animation
                 Duration.seconds(Constants.XYBAR_CHART_ANIMATION_DURATION /
                                  Constants.XYBAR_CHART_ANIMATION_FRAMES * (frame + 1)),
                 event -> {
-                    double accumulatedValue = 0.0;
+                    Double accumulatedValue = 0.0;
 
                     // Update the value of each part of the stacked bar
                     for (Integer i = 0; i < data.size(); i++)
@@ -102,7 +100,7 @@ public final class Animation
                         // Accumulate the value of the previous parts
                         accumulatedValue += increments[i];
 
-                        double newYValue = accumulatedValue;
+                        Double newYValue = accumulatedValue;
 
                         // Limit the value to the target value
                         if (newYValue > targetValues.get(i))
@@ -127,6 +125,24 @@ public final class Animation
         });
 
         timeline.play();
+    }
+
+    /**
+     * Sets the bounds of the Y axis of a bar chart dynamically
+     * @param numberAxis The Y axis to be updated
+     * @param maxValue The maximum value of the data
+     */
+    static public void SetDynamicYAxisBounds(NumberAxis numberAxis, Double maxValue)
+    {
+        numberAxis.setAutoRanging(false);
+        // Define the lower bound as 0
+        numberAxis.setLowerBound(0);
+
+        Double upperBound = Math.ceil(maxValue / 10) * 10;
+        numberAxis.setUpperBound(upperBound);
+
+        Double tickUnit = Math.ceil(upperBound / Constants.XYBAR_CHART_TICKS / 10) * 10;
+        numberAxis.setTickUnit(tickUnit);
     }
 
     /**

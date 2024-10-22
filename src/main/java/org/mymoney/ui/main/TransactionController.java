@@ -441,7 +441,7 @@ public class TransactionController
             // Calculate total for each category
             for (Category category : categories)
             {
-                double total =
+                Double total =
                     transactions.stream()
                         .filter(t -> t.GetType().equals(selectedTransactionType))
                         .filter(t -> t.GetCategory().GetId() == category.GetId())
@@ -493,7 +493,7 @@ public class TransactionController
         }
 
         // Calculate the maximum total for each month
-        double maxTotal = monthlyTotals.values()
+        Double maxTotal = monthlyTotals.values()
                               .stream()
                               .map(monthData
                                    -> monthData.values()
@@ -504,16 +504,7 @@ public class TransactionController
                               .orElse(0.0);
 
         // Set the Y-axis properties only if maxTotal is greater than 0
-        if (maxTotal > 0)
-        {
-            numberAxis.setAutoRanging(false);
-            numberAxis.setLowerBound(0);
-            numberAxis.setUpperBound(maxTotal);
-
-            // Calculate the tick unit based on the maximum total
-            int tickUnit = (int)Math.ceil(maxTotal / Constants.XYBAR_CHART_TICKS);
-            numberAxis.setTickUnit(tickUnit);
-        }
+        Animation.SetDynamicYAxisBounds(numberAxis, maxTotal);
 
         for (XYChart.Series<String, Number> series : moneyFlowStackedBarChart.getData())
         {
@@ -521,7 +512,7 @@ public class TransactionController
             {
                 // Calculate total for the month to find the percentage
                 YearMonth yearMonth = YearMonth.parse(data.getXValue(), formatter);
-                double    monthTotal =
+                Double    monthTotal =
                     monthlyTotals.getOrDefault(yearMonth, new LinkedHashMap<>())
                         .values()
                         .stream()
@@ -529,14 +520,15 @@ public class TransactionController
                         .sum();
 
                 // Calculate the percentage
-                double value      = (Double)data.getYValue();
-                double percentage = (monthTotal > 0) ? (value / monthTotal) * 100 : 0;
+                Double value      = (Double)data.getYValue();
+                Double percentage = (monthTotal > 0) ? (value / monthTotal) * 100 : 0;
 
                 // Add tooltip with value and percentage
                 UIUtils.AddTooltipToXYChartNode(
                     data.getNode(),
                     series.getName() + ": " + UIUtils.FormatCurrency(value) + " (" +
-                        UIUtils.FormatPercentage(percentage) + ")");
+                        UIUtils.FormatPercentage(percentage) +
+                        ")\nTotal: " + UIUtils.FormatCurrency(monthTotal));
 
                 // Animate the data after setting up the tooltip
                 Animation.StackedXYChartAnimation(Collections.singletonList(data),

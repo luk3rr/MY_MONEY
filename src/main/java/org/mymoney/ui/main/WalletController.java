@@ -663,14 +663,7 @@ public class WalletController
         if (yAxis instanceof NumberAxis)
         {
             NumberAxis numberAxis = (NumberAxis)yAxis;
-            numberAxis.setAutoRanging(false);
-            numberAxis.setLowerBound(0);
-            numberAxis.setUpperBound(maxValue);
-
-            // Set the tick unit based on the maximum value
-            Integer tickUnit =
-                (int)Math.round(((maxValue / Constants.XYBAR_CHART_TICKS) / 10) * 10);
-            numberAxis.setTickUnit(tickUnit);
+            Animation.SetDynamicYAxisBounds(numberAxis, maxValue);
         }
 
         moneyFlowBarChart.setVerticalGridLinesVisible(false);

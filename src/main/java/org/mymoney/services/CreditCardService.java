@@ -7,6 +7,7 @@
 package org.mymoney.services;
 
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.logging.Logger;
 import org.mymoney.entities.Category;
@@ -239,6 +240,17 @@ public class CreditCardService
     }
 
     /**
+     * Get credit card payments in a month and year
+     * @param month The month
+     * @param year The year
+     * @return A list with all credit card payments in a month and year
+     */
+    public List<CreditCardPayment> GetCreditCardPayments(Integer month, Integer year)
+    {
+        return m_creditCardPaymentRepository.GetCreditCardPayments(month, year);
+    }
+
+    /**
      * Get the total debt amount of all credit cards in a month and year
      * @param month The month
      * @param year The year
@@ -316,12 +328,17 @@ public class CreditCardService
      * @return The invoice status of the credit card in the specified month and year
      * @throws RuntimeException If the credit card does not exist
      */
-    public CreditCardInvoiceStatus GetInvoiceStatus(Long crcId, Integer month, Integer year)
+    public CreditCardInvoiceStatus
+    GetInvoiceStatus(Long crcId, Integer month, Integer year)
     {
         LocalDateTime nextInvoiceDate = GetNextInvoiceDate(crcId);
+        nextInvoiceDate               = nextInvoiceDate.withHour(0).withMinute(0);
 
-        if (nextInvoiceDate.getMonthValue() <= month &&
-            nextInvoiceDate.getYear() <= year)
+        LocalDateTime dateToCompare =
+            LocalDateTime.of(year, month, nextInvoiceDate.getDayOfMonth(), 23, 59);
+
+        if (dateToCompare.isAfter(nextInvoiceDate) ||
+            dateToCompare.isEqual(nextInvoiceDate))
         {
             return CreditCardInvoiceStatus.OPEN;
         }
