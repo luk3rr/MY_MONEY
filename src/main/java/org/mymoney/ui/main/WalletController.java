@@ -55,7 +55,6 @@ import org.springframework.stereotype.Controller;
 
 /**
  * Controller for the wallet view
- * TODO: Fix the DoughnutChart when balance is negative
  */
 @Controller
 public class WalletController

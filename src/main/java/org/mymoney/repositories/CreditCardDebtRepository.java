@@ -32,4 +32,11 @@ public interface CreditCardDebtRepository extends JpaRepository<CreditCardDebt, 
      */
     @Query("SELECT MIN(ccd.date) FROM CreditCardDebt ccd")
     String GetOldestDebtDate();
+
+    /**
+     * Get the date of the newest debt
+     * @return The date of the newest debt
+     */
+    @Query("SELECT MAX(ccd.date) FROM CreditCardDebt ccd")
+    String GetNewestDebtDate();
 }

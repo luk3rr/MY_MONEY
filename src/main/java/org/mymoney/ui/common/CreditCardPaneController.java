@@ -10,7 +10,6 @@ import com.jfoenix.controls.JFXButton;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -18,25 +17,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import org.mymoney.entities.CreditCard;
-import org.mymoney.entities.Transfer;
-import org.mymoney.entities.Wallet;
-import org.mymoney.entities.WalletTransaction;
 import org.mymoney.services.CreditCardService;
-import org.mymoney.services.WalletService;
-import org.mymoney.services.WalletTransactionService;
-import org.mymoney.ui.dialog.AddExpenseController;
-import org.mymoney.ui.dialog.AddIncomeController;
-import org.mymoney.ui.dialog.AddTransferController;
-import org.mymoney.ui.dialog.ChangeWalletTypeController;
-import org.mymoney.ui.dialog.RenameWalletController;
-import org.mymoney.ui.main.WalletController;
 import org.mymoney.util.Constants;
-import org.mymoney.util.TransactionStatus;
-import org.mymoney.util.TransactionType;
 import org.mymoney.util.UIUtils;
-import org.mymoney.util.WindowUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
@@ -87,9 +71,6 @@ public class CreditCardPaneController
     private Label invoiceTotal;
 
     @FXML
-    private Label debitedTransfersSign;
-
-    @FXML
     private Label invoiceMonth;
 
     @FXML
@@ -102,9 +83,6 @@ public class CreditCardPaneController
     private ProgressBar limitProgressBar;
 
     private YearMonth currentDisplayedMonth;
-
-    @Autowired
-    private ConfigurableApplicationContext springContext;
 
     private CreditCardService creditCardService;
 
@@ -183,8 +161,6 @@ public class CreditCardPaneController
 
         this.creditCard = crc;
 
-        LoadCreditCardInfo();
-
         crcName.setText(creditCard.GetName());
         crcOperator.setText(creditCard.GetOperator().GetName());
         crcOperatorIcon.setImage(new Image(Constants.CRC_OPERATOR_ICONS_PATH +
@@ -247,47 +223,19 @@ public class CreditCardPaneController
                 .toString());
     }
 
-    /**
-     * Load Credit Card information
-     */
-    public void LoadCreditCardInfo()
-    {
-        if (creditCard == null)
-        {
-            return;
-        }
-    }
-
     private void SetDefaultValues()
     {
         crcName.setText("");
         crcOperator.setText("");
+        limitLabel.setText("");
+        pendingPaymentsLabel.setText("");
+        limitAvailableLabel.setText("");
+        closureDayLabel.setText("");
+        nextInvoiceLabel.setText("");
+        dueDateLabel.setText("");
+        invoiceStatus.setText("");
+        invoiceTotal.setText("");
+        invoiceMonth.setText("");
         crcOperatorIcon.setImage(new Image(Constants.DEFAULT_ICON));
-
-        // SetLabelValue(openingBalanceSign, openingBalanceValue, 0.0);
-    }
-
-    /**
-     * Set the value of a label
-     * @param signLabel Label to set the sign
-     * @param valueLabel Label to set the value
-     * @param value Value to set
-     */
-    private void SetLabelValue(Label signLabel, Label valueLabel, Double value)
-    {
-        if (value + Constants.EPSILON < 0)
-        {
-            signLabel.setText("-");
-            valueLabel.setText(UIUtils.FormatCurrency(-value));
-            UIUtils.SetLabelStyle(signLabel, Constants.NEGATIVE_BALANCE_STYLE);
-            UIUtils.SetLabelStyle(valueLabel, Constants.NEGATIVE_BALANCE_STYLE);
-        }
-        else
-        {
-            signLabel.setText(" ");
-            valueLabel.setText(UIUtils.FormatCurrency(value));
-            UIUtils.SetLabelStyle(signLabel, Constants.NEUTRAL_BALANCE_STYLE);
-            UIUtils.SetLabelStyle(valueLabel, Constants.NEUTRAL_BALANCE_STYLE);
-        }
     }
 }

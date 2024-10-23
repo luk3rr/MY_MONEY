@@ -19,16 +19,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Bounds;
-import javafx.scene.Group;
-import javafx.scene.Node;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -36,16 +33,16 @@ import javafx.scene.chart.StackedBarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import org.mymoney.entities.Category;
 import org.mymoney.entities.CreditCard;
-import org.mymoney.entities.CreditCardDebt;
 import org.mymoney.entities.CreditCardPayment;
-import org.mymoney.entities.WalletTransaction;
 import org.mymoney.services.CategoryService;
 import org.mymoney.services.CreditCardService;
 import org.mymoney.ui.common.CreditCardPaneController;
@@ -69,10 +66,16 @@ public class CreditCardController
     private ComboBox<Year> totalDebtsYearFilterComboBox;
 
     @FXML
-    private AnchorPane crcPane1;
+    private ComboBox<YearMonth> debtsListMonthFilterComboBox;
 
     @FXML
-    private AnchorPane crcPane2;
+    private TableView<CreditCardPayment> debtsTableView;
+
+    @FXML
+    private TextField debtSearchField;
+
+    @FXML
+    private AnchorPane crcPane1;
 
     @FXML
     private AnchorPane debtsFlowPane;
@@ -94,11 +97,7 @@ public class CreditCardController
 
     private List<CreditCard> creditCards;
 
-    private List<CreditCardDebt> creditCardDebts;
-
     private Integer crcPaneCurrentPage = 0;
-
-    private Integer itemsPerPage = 2;
 
     /**
      * Constructor
@@ -116,22 +115,39 @@ public class CreditCardController
     {
         LoadCreditCards();
 
+        PopulateDebtsListMonthFilterComboBox();
         PopulateYearFilterComboBox();
+        ConfigureTableView();
 
         // Select the default values
         LocalDateTime now = LocalDateTime.now();
 
         totalDebtsYearFilterComboBox.setValue(Year.from(now));
 
+        LocalDateTime currentDate = LocalDateTime.now();
+
+        // Select the default values
+        debtsListMonthFilterComboBox.setValue(
+            YearMonth.of(currentDate.getYear(), currentDate.getMonthValue()));
+
+        debtsListMonthFilterComboBox.setOnAction(event -> { UpdateDebtsTableView(); });
+
         UpdateTotalDebtsInfo();
         UpdateDisplayCards();
         UpdateMoneyFlow();
+        UpdateDebtsTableView();
 
         SetButtonsActions();
 
-        // Add a listener to the year filter combo box
+        // Add listeners
         totalDebtsYearFilterComboBox.valueProperty().addListener(
             (observable, oldValue, newValue) -> { UpdateTotalDebtsInfo(); });
+
+        debtsListMonthFilterComboBox.valueProperty().addListener(
+            (observable, oldValue, newValue) -> { UpdateDebtsTableView(); });
+
+        debtSearchField.textProperty().addListener(
+            (observable, oldValue, newValue) -> { UpdateDebtsTableView(); });
     }
 
     @FXML
@@ -158,10 +174,43 @@ public class CreditCardController
         creditCards = creditCardService.GetAllCreditCardsOrderedByName();
     }
 
-    /**
-     * Load credit card debts from database
-     */
-    private void LoadCreditCardDebts() { }
+    private void UpdateDebtsTableView()
+    {
+        YearMonth selectedMonth = debtsListMonthFilterComboBox.getValue();
+
+        // Get the search text
+        String similarTextOrId = debtSearchField.getText().toLowerCase();
+
+        // Clear the transaction list view
+        debtsTableView.getItems().clear();
+
+        // Fetch all transactions within the selected range and filter by transaction
+        // type. If transaction type is null, all transactions are fetched
+        if (similarTextOrId.isEmpty())
+        {
+            creditCardService
+                .GetCreditCardPayments(selectedMonth.getMonthValue(),
+                                       selectedMonth.getYear())
+                .stream()
+                .forEach(debtsTableView.getItems()::add);
+        }
+        else
+        {
+            creditCardService
+                .GetCreditCardPayments(selectedMonth.getMonthValue(),
+                                       selectedMonth.getYear())
+                .stream()
+                .filter(
+                    p
+                    -> p.GetCreditCardDebt().GetDescription().toLowerCase().contains(
+                           similarTextOrId) ||
+                           String.valueOf(p.GetCreditCardDebt().GetId())
+                               .contains(similarTextOrId))
+                .forEach(debtsTableView.getItems()::add);
+        }
+
+        debtsTableView.refresh();
+    }
 
     /**
      * Update the display of the total debts information
@@ -199,58 +248,39 @@ public class CreditCardController
     private void UpdateDisplayCards()
     {
         crcPane1.getChildren().clear();
-        crcPane2.getChildren().clear();
 
-        Integer start = crcPaneCurrentPage * itemsPerPage;
-        Integer end   = Math.min(start + itemsPerPage, creditCards.size());
+        CreditCard crc = creditCards.get(crcPaneCurrentPage);
 
-        for (Integer i = start; i < end; i++)
+        try
         {
-            CreditCard crc = creditCards.get(i);
+            FXMLLoader loader =
+                new FXMLLoader(getClass().getResource(Constants.CRC_PANE_FXML));
+            loader.setControllerFactory(springContext::getBean);
+            Parent newContent = loader.load();
 
-            try
-            {
-                FXMLLoader loader =
-                    new FXMLLoader(getClass().getResource(Constants.CRC_PANE_FXML));
-                loader.setControllerFactory(springContext::getBean);
-                Parent newContent = loader.load();
+            // Add style class to the wallet pane
+            newContent.getStylesheets().add(
+                getClass().getResource(Constants.COMMON_STYLE_SHEET).toExternalForm());
 
-                // Add style class to the wallet pane
-                newContent.getStylesheets().add(
-                    getClass()
-                        .getResource(Constants.COMMON_STYLE_SHEET)
-                        .toExternalForm());
+            CreditCardPaneController crcPaneController = loader.getController();
 
-                CreditCardPaneController crcPaneController = loader.getController();
+            crcPaneController.UpdateCreditCardPane(crc);
 
-                crcPaneController.UpdateCreditCardPane(crc);
+            AnchorPane.setTopAnchor(newContent, 0.0);
+            AnchorPane.setBottomAnchor(newContent, 0.0);
+            AnchorPane.setLeftAnchor(newContent, 0.0);
+            AnchorPane.setRightAnchor(newContent, 0.0);
 
-                AnchorPane.setTopAnchor(newContent, 0.0);
-                AnchorPane.setBottomAnchor(newContent, 0.0);
-                AnchorPane.setLeftAnchor(newContent, 0.0);
-                AnchorPane.setRightAnchor(newContent, 0.0);
-
-                switch (i % itemsPerPage)
-                {
-                    case 0:
-                        crcPane1.getChildren().add(newContent);
-                        break;
-
-                    case 1:
-                        crcPane2.getChildren().add(newContent);
-                        break;
-                }
-            }
-            catch (IOException e)
-            {
-                logger.severe("Error while loading credit card pane");
-                e.printStackTrace();
-                continue;
-            }
+            crcPane1.getChildren().add(newContent);
+        }
+        catch (IOException e)
+        {
+            logger.severe("Error while loading credit card pane");
+            e.printStackTrace();
         }
 
         crcPrevButton.setDisable(crcPaneCurrentPage == 0);
-        crcNextButton.setDisable(end >= creditCards.size());
+        crcNextButton.setDisable(crcPaneCurrentPage == creditCards.size() - 1);
     }
 
     /**
@@ -381,6 +411,54 @@ public class CreditCardController
         }
     }
 
+    private void PopulateDebtsListMonthFilterComboBox()
+    {
+        debtsListMonthFilterComboBox.getItems().clear();
+
+        // Get the oldest and newest debt date
+        LocalDateTime oldestDebtDate = creditCardService.GetOldestDebtDate();
+
+        LocalDateTime newestDebtDate = creditCardService.GetNewestDebtDate();
+
+        // Generate a list of YearMonth objects from the oldest transaction date to the
+        // newest transaction date
+        YearMonth startYearMonth = YearMonth.from(oldestDebtDate);
+        YearMonth endYearMonth   = YearMonth.from(newestDebtDate);
+
+        // Generate the list of years between the oldest and the current date
+        List<YearMonth> yearMonths = new ArrayList<>();
+
+        while (endYearMonth.isAfter(startYearMonth) ||
+               endYearMonth.equals(startYearMonth))
+        {
+            yearMonths.add(endYearMonth);
+            endYearMonth = endYearMonth.minusMonths(1);
+        }
+
+        ObservableList<YearMonth> yearMonthList =
+            FXCollections.observableArrayList(yearMonths);
+
+        debtsListMonthFilterComboBox.setItems(yearMonthList);
+
+        // Custom string converter to format the YearMonth as "MMM/yy"
+        debtsListMonthFilterComboBox.setConverter(new StringConverter<YearMonth>() {
+            private final DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern("MMM/yy");
+
+            @Override
+            public String toString(YearMonth yearMonth)
+            {
+                return yearMonth != null ? yearMonth.format(formatter) : "";
+            }
+
+            @Override
+            public YearMonth fromString(String string)
+            {
+                return YearMonth.parse(string, formatter);
+            }
+        });
+    }
+
     private void PopulateYearFilterComboBox()
     {
         LocalDateTime oldestDebtDate = creditCardService.GetOldestDebtDate();
@@ -437,11 +515,125 @@ public class CreditCardController
         });
 
         crcNextButton.setOnAction(event -> {
-            if (crcPaneCurrentPage < creditCards.size() / itemsPerPage)
+            if (crcPaneCurrentPage < creditCards.size() - 1)
             {
                 crcPaneCurrentPage++;
                 UpdateDisplayCards();
             }
         });
+    }
+
+    /**
+     * Configure the table view columns
+     */
+    private void ConfigureTableView()
+    {
+        TableColumn<CreditCardPayment, Long> idColumn = new TableColumn<>("Debt ID");
+        idColumn.setCellValueFactory(param
+                                     -> new SimpleObjectProperty<>(
+                                         param.getValue().GetCreditCardDebt().GetId()));
+
+        // Align the ID column to the center
+        idColumn.setCellFactory(column -> {
+            return new TableCell<CreditCardPayment, Long>() {
+                @Override
+                protected void updateItem(Long item, boolean empty)
+                {
+                    super.updateItem(item, empty);
+                    if (item == null || empty)
+                    {
+                        setText(null);
+                    }
+                    else
+                    {
+                        setText(item.toString());
+                        setAlignment(Pos.CENTER);
+                        setStyle("-fx-padding: 0;"); // set padding to zero to
+                                                     // ensure the text is centered
+                    }
+                }
+            };
+        });
+
+        TableColumn<CreditCardPayment, String> descriptionColumn =
+            new TableColumn<>("Description");
+        descriptionColumn.setCellValueFactory(
+            param
+            -> new SimpleStringProperty(
+                param.getValue().GetCreditCardDebt().GetDescription()));
+
+        TableColumn<CreditCardPayment, String> amountColumn =
+            new TableColumn<>("Amount");
+        amountColumn.setCellValueFactory(
+            param
+            -> new SimpleObjectProperty<>(
+                UIUtils.FormatCurrency(param.getValue().GetAmount())));
+
+        TableColumn<CreditCardPayment, String> installmentColumn =
+            new TableColumn<>("Installment");
+        installmentColumn.setCellValueFactory(
+            param
+            -> new SimpleObjectProperty<>(param.getValue().GetInstallment().toString() +
+                                          "/" +
+                                          param.getValue().GetTotalInstallments()));
+
+        // Align the installment column to the center
+        installmentColumn.setCellFactory(column -> {
+            return new TableCell<CreditCardPayment, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty)
+                {
+                    super.updateItem(item, empty);
+                    if (item == null || empty)
+                    {
+                        setText(null);
+                    }
+                    else
+                    {
+                        setText(item);
+                        setAlignment(Pos.CENTER);
+                        setStyle("-fx-padding: 0;"); // set padding to zero to
+                                                     // ensure the text is centered
+                    }
+                }
+            };
+        });
+
+        TableColumn<CreditCardPayment, String> crcColumn =
+            new TableColumn<>("Credit Card");
+        crcColumn.setCellValueFactory(
+            param
+            -> new SimpleStringProperty(
+                param.getValue().GetCreditCardDebt().GetCreditCard().GetName()));
+
+        TableColumn<CreditCardPayment, String> categoryColumn =
+            new TableColumn<>("Category");
+        categoryColumn.setCellValueFactory(
+            param
+            -> new SimpleStringProperty(
+                param.getValue().GetCreditCardDebt().GetCategory().GetName()));
+
+        TableColumn<CreditCardPayment, String> dateColumn =
+            new TableColumn<>("Invoice date");
+        dateColumn.setCellValueFactory(
+            param
+            -> new SimpleStringProperty(
+                param.getValue().GetDate().format(Constants.DATE_FORMATTER_NO_TIME)));
+
+        TableColumn<CreditCardPayment, String> statusColumn =
+            new TableColumn<>("Status");
+        statusColumn.setCellValueFactory(
+            param
+            -> new SimpleStringProperty(param.getValue().GetWallet() == null ? "Pending"
+                                                                             : "Paid"));
+
+        debtsTableView.getColumns().add(idColumn);
+        debtsTableView.getColumns().add(descriptionColumn);
+        debtsTableView.getColumns().add(amountColumn);
+        debtsTableView.getColumns().add(installmentColumn);
+        debtsTableView.getColumns().add(crcColumn);
+        debtsTableView.getColumns().add(categoryColumn);
+        debtsTableView.getColumns().add(dateColumn);
+        debtsTableView.getColumns().add(statusColumn);
     }
 }

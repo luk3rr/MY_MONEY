@@ -6,7 +6,6 @@
 
 package org.mymoney.entities;
 
-import org.mymoney.util.Constants;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import org.mymoney.util.Constants;
 
 /**
  * Represents a credit card payment
@@ -143,6 +143,15 @@ public class CreditCardPayment
     public Integer GetInstallment()
     {
         return installment;
+    }
+
+    /**
+     * Get total installments of the credit card debt
+     * @return The total installments of the credit card debt
+     */
+    public Integer GetTotalInstallments()
+    {
+        return (int)Math.ceil(creditCardDebt.GetTotalAmount() / this.amount);
     }
 
     /**

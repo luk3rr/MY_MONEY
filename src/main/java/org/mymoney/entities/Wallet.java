@@ -18,7 +18,6 @@ import jakarta.persistence.Table;
 /**
  * Represents a wallet
  * A wallet is a container for money
- * TODO: If wallet is deleted, all transactions should be deleted ?
  */
 @Entity
 @Table(name = "wallet")

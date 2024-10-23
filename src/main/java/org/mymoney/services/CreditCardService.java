@@ -7,7 +7,6 @@
 package org.mymoney.services;
 
 import java.time.LocalDateTime;
-import java.time.YearMonth;
 import java.util.List;
 import java.util.logging.Logger;
 import org.mymoney.entities.Category;
@@ -391,6 +390,22 @@ public class CreditCardService
     public LocalDateTime GetOldestDebtDate()
     {
         String date = m_creditCardDebtRepository.GetOldestDebtDate();
+
+        if (date == null)
+        {
+            return LocalDateTime.now();
+        }
+
+        return LocalDateTime.parse(date, Constants.DB_DATE_FORMATTER);
+    }
+
+    /**
+     * Get the date of the newest debt
+     * @return The date of the newest debt or the current date if there are no debts
+     */
+    public LocalDateTime GetNewestDebtDate()
+    {
+        String date = m_creditCardDebtRepository.GetNewestDebtDate();
 
         if (date == null)
         {
