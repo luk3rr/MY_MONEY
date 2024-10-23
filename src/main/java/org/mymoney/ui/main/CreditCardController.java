@@ -223,8 +223,7 @@ public class CreditCardController
         Double totalDebts =
             creditCardService.GetTotalDebtAmount(selectedYear.getValue());
 
-        Double totalPendingPayments =
-            creditCardService.GetTotalPendingPayments(LocalDate.now().getYear());
+        Double totalPendingPayments = creditCardService.GetTotalPendingPayments();
 
         Label totalTotalDebtsLabel = new Label(UIUtils.FormatCurrency(totalDebts));
 

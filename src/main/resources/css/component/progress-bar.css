@@ -1,0 +1,35 @@
+/*
+ * Filename: progress-bar.css
+ * Created on: October 23, 2024
+ * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
+ */
+
+.progress-bar {
+  -fx-indeterminate-bar-length: 60;
+  -fx-indeterminate-bar-escape: true;
+  -fx-indeterminate-bar-flip: true;
+  -fx-indeterminate-bar-animation-time: 2;
+}
+
+.progress-bar > .bar {
+  -fx-background-color: linear-gradient(
+    to bottom,
+    derive(orange, -7%),
+    derive(orange, 0%),
+    derive(orange, -3%),
+    derive(orange, -9%)
+  );
+  -fx-background-insets: 0 0 0 0;
+  -fx-background-radius: 0;
+  -fx-padding: 0em;
+}
+
+.progress-bar:indeterminate > .bar {
+  -fx-background-color: linear-gradient(to left, transparent, orange);
+}
+
+.progress-bar > .track {
+  -fx-background-color: lightgray;
+  -fx-background-insets: 0;
+  -fx-background-radius: 0;
+}

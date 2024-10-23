@@ -296,14 +296,21 @@ public class CreditCardService
     }
 
     /**
-     * Get the total of all pending payments of a credit card from the current month and
-     * year onward, including future months and the current month
-     * @return The total of all pending payments of all credit cards from the current
-     *     month and year onward
+     * Get the total of all pending payments of a credit card
+     * @return The total of all pending payments of all credit cards
      */
-    public Double GetPendingPayments(Long crcId, Integer month, Integer year)
+    public Double GetTotalPendingPayments(Long crcId)
     {
-        return m_creditCardPaymentRepository.GetPendingPayments(crcId, month, year);
+        return m_creditCardPaymentRepository.GetTotalPendingPayments(crcId);
+    }
+
+    /**
+     * Get the total of all pending payments of all credit cards
+     * @return The total of all pending payments of all credit cards
+     */
+    public Double GetTotalPendingPayments()
+    {
+        return m_creditCardPaymentRepository.GetTotalPendingPayments();
     }
 
     /**

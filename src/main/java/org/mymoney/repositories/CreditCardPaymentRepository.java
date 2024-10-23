@@ -100,25 +100,27 @@ public interface CreditCardPaymentRepository
     GetTotalPendingPayments(@Param("year") Integer year);
 
     /**
-     * Get the total of all pending payments of a credit card from a specified month and
-     * year onward, including future months and the current month
+     * Get the total of all pending payments of a credit card
      * @param creditCardId The credit card id
-     * @param month The starting month (inclusive)
-     * @param year The starting year (inclusive)
-     * @return The total of all pending payments of all credit cards from the current
-     *     year onward
+     * @return The total of all pending payments of a credit card
      */
     @Query("SELECT COALESCE(SUM(ccp.amount), 0) "
            + "FROM CreditCardPayment ccp "
            + "JOIN ccp.creditCardDebt ccd "
            + "WHERE ccd.creditCard.id = :creditCardId "
-           + "AND strftime('%m', ccp.date) >= printf('%02d', :month) "
-           + "AND strftime('%Y', ccp.date) >= printf('%04d', :year) "
            + "AND ccp.wallet IS NULL")
     Double
-    GetPendingPayments(@Param("creditCardId") Long creditCardId,
-                       @Param("month") Integer     month,
-                       @Param("year") Integer      year);
+    GetTotalPendingPayments(@Param("creditCardId") Long creditCardId);
+
+    /**
+     * Get the total of all pending payments of all credit cards
+     * @return The total of all pending payments of all credit cards
+     */
+    @Query("SELECT COALESCE(SUM(ccp.amount), 0) "
+           + "FROM CreditCardPayment ccp "
+           + "WHERE ccp.wallet IS NULL")
+    Double
+    GetTotalPendingPayments();
 
     /**
      * Get the invoice amount of a credit card in a specified month and year

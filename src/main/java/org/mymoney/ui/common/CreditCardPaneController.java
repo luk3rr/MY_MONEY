@@ -7,7 +7,6 @@
 package org.mymoney.ui.common;
 
 import com.jfoenix.controls.JFXButton;
-import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import javafx.fxml.FXML;
@@ -72,6 +71,9 @@ public class CreditCardPaneController
 
     @FXML
     private Label invoiceMonth;
+
+    @FXML
+    private Label limitProgressLabel;
 
     @FXML
     private JFXButton prevButton;
@@ -168,9 +170,7 @@ public class CreditCardPaneController
 
         Double limit = creditCard.GetMaxDebt();
         Double pendingPayments =
-            creditCardService.GetPendingPayments(creditCard.GetId(),
-                                                 LocalDate.now().getMonthValue(),
-                                                 LocalDate.now().getYear());
+            creditCardService.GetTotalPendingPayments(creditCard.GetId());
 
         Double limitAvailable =
             creditCardService.GetAvailableCredit(creditCard.GetId());
@@ -182,7 +182,9 @@ public class CreditCardPaneController
         limitAvailableLabel.setText(UIUtils.FormatCurrency(limitAvailable));
 
         // Set percentage of the usage of the limit
-        limitProgressBar.setProgress(limit == 0 ? 0 : pendingPayments / limit);
+        Double limitProgress = limit == 0 ? 0 : pendingPayments / limit;
+        limitProgressBar.setProgress(limitProgress);
+        limitProgressLabel.setText(UIUtils.FormatPercentage(limitProgress * 100));
 
         dueDateLabel.setText(creditCard.GetBillingDueDay().toString());
 
