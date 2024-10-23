@@ -157,7 +157,7 @@ public class ResumePaneController
         Double crcTotalPendingPayments =
             month.equals(LocalDateTime.now().getMonthValue()) &&
                     year.equals(LocalDateTime.now().getYear())
-                ? creditCardService.GetTotalPendingPayments(month, year)
+                ? creditCardService.GetTotalPendingPayments()
                 : 0.0;
 
         UpdateResumePane(transactions, crcTotalDebtAmount, crcTotalPendingPayments);
