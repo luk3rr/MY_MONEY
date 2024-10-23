@@ -410,19 +410,25 @@ public class CreditCardController
         }
     }
 
+    /**
+     * Populate the debts list month filter combo box
+     */
     private void PopulateDebtsListMonthFilterComboBox()
     {
         debtsListMonthFilterComboBox.getItems().clear();
 
         // Get the oldest and newest debt date
-        LocalDateTime oldestDebtDate = creditCardService.GetOldestDebtDate();
+        LocalDateTime oldestDebtDate = creditCardService.GetEarliestPaymentDate();
 
-        LocalDateTime newestDebtDate = creditCardService.GetNewestDebtDate();
+        LocalDateTime newestDebtDate = creditCardService.GetLatestPaymentDate();
 
         // Generate a list of YearMonth objects from the oldest transaction date to the
         // newest transaction date
         YearMonth startYearMonth = YearMonth.from(oldestDebtDate);
         YearMonth endYearMonth   = YearMonth.from(newestDebtDate);
+
+        logger.info("Start year month: " + startYearMonth);
+        logger.info("End year month: " + endYearMonth);
 
         // Generate the list of years between the oldest and the current date
         List<YearMonth> yearMonths = new ArrayList<>();
@@ -460,7 +466,7 @@ public class CreditCardController
 
     private void PopulateYearFilterComboBox()
     {
-        LocalDateTime oldestDebtDate = creditCardService.GetOldestDebtDate();
+        LocalDateTime oldestDebtDate = creditCardService.GetEarliestPaymentDate();
 
         LocalDate now = LocalDate.now();
 

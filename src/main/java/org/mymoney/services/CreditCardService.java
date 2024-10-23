@@ -391,12 +391,12 @@ public class CreditCardService
     }
 
     /**
-     * Get the date of the oldest debt
-     * @return The date of the oldest debt or the current date if there are no debts
+     * Get the date of the latest payment
+     * @return The date of the latest payment or the current date if there are no debts
      */
-    public LocalDateTime GetOldestDebtDate()
+    public LocalDateTime GetEarliestPaymentDate()
     {
-        String date = m_creditCardDebtRepository.GetOldestDebtDate();
+        String date = m_creditCardDebtRepository.FindEarliestPaymentDate();
 
         if (date == null)
         {
@@ -407,12 +407,12 @@ public class CreditCardService
     }
 
     /**
-     * Get the date of the newest debt
-     * @return The date of the newest debt or the current date if there are no debts
+     * Get the date of the latest payment
+     * @return The date of the latest payment or the current date if there are no debts
      */
-    public LocalDateTime GetNewestDebtDate()
+    public LocalDateTime GetLatestPaymentDate()
     {
-        String date = m_creditCardDebtRepository.GetNewestDebtDate();
+        String date = m_creditCardDebtRepository.FindLatestPaymentDate();
 
         if (date == null)
         {

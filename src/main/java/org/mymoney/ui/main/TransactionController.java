@@ -613,7 +613,7 @@ public class TransactionController
     {
         LocalDateTime oldestWalletTransaction =
             walletTransactionService.GetOldestTransactionDate();
-        LocalDateTime oldestCreditCard = creditCardService.GetOldestDebtDate();
+        LocalDateTime oldestCreditCard = creditCardService.GetEarliestPaymentDate();
 
         LocalDateTime oldest = oldestCreditCard.isBefore(oldestWalletTransaction)
                                    ? oldestCreditCard
@@ -719,7 +719,8 @@ public class TransactionController
     {
         LocalDateTime oldestWalletTransaction =
             walletTransactionService.GetOldestTransactionDate();
-        LocalDateTime oldestCreditCard = creditCardService.GetOldestDebtDate();
+
+        LocalDateTime oldestCreditCard = creditCardService.GetEarliestPaymentDate();
 
         LocalDateTime oldest = oldestCreditCard.isBefore(oldestWalletTransaction)
                                    ? oldestCreditCard
