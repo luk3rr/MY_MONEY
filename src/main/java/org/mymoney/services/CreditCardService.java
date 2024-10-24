@@ -102,6 +102,27 @@ public class CreditCardService
         return newCreditCard.GetId();
     }
 
+    @Transactional
+    public Long CreateCreditCard(String  name,
+                                 Integer dueDate,
+                                 Integer closingDay,
+                                 Double  maxDebt,
+                                 String  lastFourDigits)
+    {
+        Long id = CreateCreditCard(name, dueDate, closingDay, maxDebt);
+
+        CreditCard creditCard = m_creditCardRepository.findById(id).orElseThrow(
+            ()
+                -> new RuntimeException("Credit card with id " + id +
+                                        " does not exist"));
+
+        creditCard.SetLastFourDigits(lastFourDigits);
+
+        m_creditCardRepository.save(creditCard);
+
+        return id;
+    }
+
     /**
      * Delete a credit card
      * @param id The id of the credit card

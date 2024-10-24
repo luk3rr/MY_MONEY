@@ -36,6 +36,8 @@ public final class Constants
     public static final String CREDIT_CARD_FXML = UI_MAIN_PATH + "credit_card.fxml";
     public static final String TRANSACTION_FXML = UI_MAIN_PATH + "transaction.fxml";
     public static final String SAVINGS_FXML     = UI_MAIN_PATH + "savings.fxml";
+    public static final String CSV_IMPORT_FXML  = UI_MAIN_PATH + "csv_import.fxml";
+    public static final String SETTINGS_FXML    = UI_MAIN_PATH + "settings.fxml";
 
     public static final String ADD_WALLET_FXML   = UI_DIALOG_PATH + "add_wallet.fxml";
     public static final String ADD_INCOME_FXML   = UI_DIALOG_PATH + "add_income.fxml";
@@ -67,8 +69,8 @@ public final class Constants
     public static final String WALLET_FULL_PANE_FXML =
         UI_COMMON_PATH + "wallet_full_pane.fxml";
     public static final String RESUME_PANE_FXML = UI_COMMON_PATH + "resume_pane.fxml";
-    public static final String CRC_PANE_FXML =
-        UI_COMMON_PATH + "credit_card_pane.fxml";
+    public static final String CRC_PANE_FXML    = UI_COMMON_PATH + ("credit_card_pane."
+                                                                 + "fxml");
 
     // Icons
     public static final String HOME_EXPENSE_ICON = COMMON_ICONS_PATH + "expense.png";
@@ -85,6 +87,9 @@ public final class Constants
     public static final String TRANSACTION_STYLE_SHEET =
         CSS_SCENE_PATH + "transaction.css";
     public static final String SAVINGS_STYLE_SHEET = CSS_SCENE_PATH + "savings.css";
+    public static final String CSV_IMPORT_STYLE_SHEET =
+        CSS_SCENE_PATH + "csv_import.css";
+    public static final String SETTINGS_STYLE_SHEET = CSS_SCENE_PATH + "settings.css";
 
     public static final String COMMON_STYLE_SHEET =
         CSS_COMMON_PATH + "common-styles.css";
@@ -154,9 +159,9 @@ public final class Constants
     public static final Double MENU_COLLAPSED_WIDTH = 80.0;
     public static final Double MENU_EXPANDED_WIDTH  = 220.0;
 
-    public static final Integer XYBAR_CHART_MONTHS = 12;
+    public static final Integer XYBAR_CHART_MONTHS         = 12;
     public static final Integer CRC_XYBAR_CHART_MAX_MONTHS = 25;
-    public static final Integer XYBAR_CHART_TICKS  = 6;
+    public static final Integer XYBAR_CHART_TICKS          = 6;
 
     public static final Double FADE_IN_ANIMATION_DURATION  = 1.0; // s
     public static final Double FADE_OUT_ANIMATION_DURATION = 1.0; // s

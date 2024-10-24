@@ -69,6 +69,14 @@ public class CreditCard
         this.maxDebt       = maxDebt;
     }
 
+    public CreditCard(String name, Integer billingDueDay, Integer closingDay, Double maxDebt, String lastFourDigits)
+    {
+        this.name          = name;
+        this.billingDueDay = billingDueDay;
+        this.maxDebt       = maxDebt;
+        this.lastFourDigits = lastFourDigits;
+    }
+
     /**
      * Get the id of the credit card
      * @return The id of the credit card

@@ -54,6 +54,12 @@ public class MainController
     private Button savingsButton;
 
     @FXML
+    private Button importButton;
+
+    @FXML
+    private Button settingsButton;
+
+    @FXML
     private AnchorPane contentArea;
 
     @Autowired
@@ -65,9 +71,13 @@ public class MainController
     @FXML
     public void initialize()
     {
+        // Create an array with all the buttons in the sidebar
+        // This is used to update the style of the selected button
+        // when the user clicks on it or when the sidebar is toggled
         sidebarButtons =
             new Button[] { menuButton,       homeButton,        walletButton,
-                           creditCardButton, transactionButton, savingsButton };
+                           creditCardButton, transactionButton, savingsButton,
+                           importButton,     settingsButton };
 
         rootPane.getStylesheets().add(
             getClass().getResource(Constants.MAIN_STYLE_SHEET).toExternalForm());
@@ -97,6 +107,16 @@ public class MainController
         savingsButton.setOnAction(event -> {
             LoadContent(Constants.SAVINGS_FXML, Constants.SAVINGS_STYLE_SHEET);
             UpdateSelectedButton(savingsButton);
+        });
+
+        importButton.setOnAction(event -> {
+            LoadContent(Constants.CSV_IMPORT_FXML, Constants.CSV_IMPORT_STYLE_SHEET);
+            UpdateSelectedButton(importButton);
+        });
+
+        settingsButton.setOnAction(event -> {
+            LoadContent(Constants.SETTINGS_FXML, Constants.SETTINGS_STYLE_SHEET);
+            UpdateSelectedButton(settingsButton);
         });
 
         // Load start page
