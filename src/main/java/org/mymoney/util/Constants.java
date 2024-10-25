@@ -46,6 +46,8 @@ public final class Constants
     public static final String ADD_EXPENSE_FXML  = UI_DIALOG_PATH + "add_expense.fxml";
     public static final String ADD_CATEGORY_FXML = UI_DIALOG_PATH + ("add_category."
                                                                      + "fxml");
+    public static final String ADD_CREDIT_CARD_FXML =
+        UI_DIALOG_PATH + "add_credit_card.fxml";
 
     public static final String ARCHIVED_WALLETS_FXML =
         UI_DIALOG_PATH + "archived_wallets.fxml";

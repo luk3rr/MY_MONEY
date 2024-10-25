@@ -12,9 +12,11 @@ import java.util.logging.Logger;
 import org.mymoney.entities.Category;
 import org.mymoney.entities.CreditCard;
 import org.mymoney.entities.CreditCardDebt;
+import org.mymoney.entities.CreditCardOperator;
 import org.mymoney.entities.CreditCardPayment;
 import org.mymoney.repositories.CategoryRepository;
 import org.mymoney.repositories.CreditCardDebtRepository;
+import org.mymoney.repositories.CreditCardOperatorRepository;
 import org.mymoney.repositories.CreditCardPaymentRepository;
 import org.mymoney.repositories.CreditCardRepository;
 import org.mymoney.util.Constants;
@@ -40,6 +42,9 @@ public class CreditCardService
     private CreditCardRepository m_creditCardRepository;
 
     @Autowired
+    private CreditCardOperatorRepository m_creditCardOperatorRepository;
+
+    @Autowired
     private CategoryRepository m_categoryRepository;
 
     private static final Logger m_logger = LoggerConfig.GetLogger();
@@ -59,8 +64,12 @@ public class CreditCardService
      * @return The id of the created credit card
      */
     @Transactional
-    public Long
-    CreateCreditCard(String name, Integer dueDate, Integer closingDay, Double maxDebt)
+    public Long CreateCreditCard(String  name,
+                                 Integer dueDate,
+                                 Integer closingDay,
+                                 Double  maxDebt,
+                                 String  lastFourDigits,
+                                 Long    operatorId)
     {
         // Remove leading and trailing whitespaces
         name = name.strip();
@@ -88,39 +97,34 @@ public class CreditCardService
                                        Constants.MAX_BILLING_DUE_DAY + "]");
         }
 
-        if (maxDebt < 0)
+        if (maxDebt <= 0)
         {
-            throw new RuntimeException("Max debt must be non-negative");
+            throw new RuntimeException("Max debt must be positive");
         }
 
-        CreditCard newCreditCard = m_creditCardRepository.save(
-            new CreditCard(name, dueDate, closingDay, maxDebt));
+        if (lastFourDigits.isBlank() || lastFourDigits.length() != 4)
+        {
+            throw new RuntimeException("Last four digits must have length 4");
+        }
 
-        m_logger.info("Credit card " + name + " created with due date " + dueDate +
-                      " and max debt " + maxDebt);
+        CreditCardOperator operator =
+            m_creditCardOperatorRepository.findById(operatorId)
+                .orElseThrow(
+                    ()
+                        -> new RuntimeException("Credit card operator with id " +
+                                                operatorId + " does not exist"));
+
+        CreditCard newCreditCard =
+            m_creditCardRepository.save(new CreditCard(name,
+                                                       dueDate,
+                                                       closingDay,
+                                                       maxDebt,
+                                                       lastFourDigits,
+                                                       operator));
+
+        m_logger.info("Credit card " + name + " has created successfully");
 
         return newCreditCard.GetId();
-    }
-
-    @Transactional
-    public Long CreateCreditCard(String  name,
-                                 Integer dueDate,
-                                 Integer closingDay,
-                                 Double  maxDebt,
-                                 String  lastFourDigits)
-    {
-        Long id = CreateCreditCard(name, dueDate, closingDay, maxDebt);
-
-        CreditCard creditCard = m_creditCardRepository.findById(id).orElseThrow(
-            ()
-                -> new RuntimeException("Credit card with id " + id +
-                                        " does not exist"));
-
-        creditCard.SetLastFourDigits(lastFourDigits);
-
-        m_creditCardRepository.save(creditCard);
-
-        return id;
     }
 
     /**
@@ -257,6 +261,15 @@ public class CreditCardService
     public List<CreditCard> GetAllCreditCardsOrderedByName()
     {
         return m_creditCardRepository.findAllByOrderByNameAsc();
+    }
+
+    /**
+     * Get all credit card operators ordered by name
+     * @return A list with all credit card operators ordered by name
+     */
+    public List<CreditCardOperator> GetAllCreditCardOperatorsOrderedByName()
+    {
+        return m_creditCardOperatorRepository.findAllByOrderByNameAsc();
     }
 
     /**

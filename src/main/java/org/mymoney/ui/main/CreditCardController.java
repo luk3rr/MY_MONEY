@@ -46,10 +46,12 @@ import org.mymoney.entities.CreditCardPayment;
 import org.mymoney.services.CategoryService;
 import org.mymoney.services.CreditCardService;
 import org.mymoney.ui.common.CreditCardPaneController;
+import org.mymoney.ui.dialog.AddCreditCardController;
 import org.mymoney.util.Animation;
 import org.mymoney.util.Constants;
 import org.mymoney.util.LoggerConfig;
 import org.mymoney.util.UIUtils;
+import org.mymoney.util.WindowUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -156,7 +158,12 @@ public class CreditCardController
 
     @FXML
     private void handleAddCreditCard()
-    { }
+    {
+        WindowUtils.OpenModalWindow(Constants.ADD_CREDIT_CARD_FXML,
+                                    "Add Credit Card",
+                                    springContext,
+                                    (AddCreditCardController controller) -> {});
+    }
 
     @FXML
     private void handleEditDebt()

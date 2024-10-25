@@ -510,7 +510,8 @@ public class CSVImportController
                                                crc.GetBillingDueDay(),
                                                crc.GetClosingDay(),
                                                crc.GetMaxDebt(),
-                                               crc.GetLastFourDigits());
+                                               crc.GetLastFourDigits(),
+                                               0L); // default operator id
         }
     }
 

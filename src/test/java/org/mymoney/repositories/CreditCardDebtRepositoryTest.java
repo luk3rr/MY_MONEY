@@ -55,6 +55,7 @@ public class CreditCardDebtRepositoryTest
         creditCard.SetName(name);
         creditCard.SetMaxDebt(maxDebt);
         creditCard.SetBillingDueDay(10);
+        creditCard.SetClosingDay(5);
         creditCard.SetOperator(operator);
         m_creditCardRepository.save(creditCard);
         return creditCard;

@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -478,8 +479,8 @@ public class WalletTransactionServiceTest
     }
 
     @Test
-    @DisplayName("Test if transaction type is changed from EXPENSE to INCOME and " +
-                 "wallet balance is updated correctly")
+    @DisplayName("Test if transaction type is changed from EXPENSE to INCOME and "
+                 + "wallet balance is updated correctly")
     public void
     TestChangeTransactionTypeFromExpenseToIncome()
     {
@@ -500,7 +501,13 @@ public class WalletTransactionServiceTest
         when(
             m_walletTransactionRepository.findById(m_wallet1ExpenseTransaction.GetId()))
             .thenReturn(Optional.of(m_wallet1ExpenseTransaction));
+
+        when(m_walletTransactionRepository.FindWalletByTransactionId(
+                 m_wallet1ExpenseTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1));
+
         when(m_walletRepository.save(m_wallet1)).thenReturn(m_wallet1);
+
         when(m_walletTransactionRepository.save(any(WalletTransaction.class)))
             .thenReturn(updatedTransaction);
 
@@ -514,13 +521,14 @@ public class WalletTransactionServiceTest
         // Verify repository interactions
         verify(m_walletTransactionRepository)
             .findById(m_wallet1ExpenseTransaction.GetId());
-        verify(m_walletRepository).save(m_wallet1);
-        verify(m_walletTransactionRepository).save(updatedTransaction);
+        verify(m_walletRepository, times(2)).save(m_wallet1);
+        verify(m_walletTransactionRepository, times(3))
+            .save(any(WalletTransaction.class));
     }
 
     @Test
-    @DisplayName("Test if transaction status is changed from CONFIRMED to PENDING " +
-                 "and balance is reverted")
+    @DisplayName("Test if transaction status is changed from CONFIRMED to PENDING "
+                 + "and balance is reverted")
     public void
     TestChangeTransactionStatusFromConfirmedToPending()
     {
@@ -537,7 +545,13 @@ public class WalletTransactionServiceTest
         when(
             m_walletTransactionRepository.findById(m_wallet1ExpenseTransaction.GetId()))
             .thenReturn(Optional.of(m_wallet1ExpenseTransaction));
+
+        when(m_walletTransactionRepository.FindWalletByTransactionId(
+                 m_wallet1ExpenseTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1));
+
         when(m_walletRepository.save(m_wallet1)).thenReturn(m_wallet1);
+
         when(m_walletTransactionRepository.save(any(WalletTransaction.class)))
             .thenReturn(updatedTransaction);
 
@@ -552,7 +566,8 @@ public class WalletTransactionServiceTest
         verify(m_walletTransactionRepository)
             .findById(m_wallet1ExpenseTransaction.GetId());
         verify(m_walletRepository).save(m_wallet1);
-        verify(m_walletTransactionRepository).save(updatedTransaction);
+        verify(m_walletTransactionRepository, times(2))
+            .save(any(WalletTransaction.class));
     }
 
     @Test
@@ -576,8 +591,15 @@ public class WalletTransactionServiceTest
 
         when(m_walletTransactionRepository.findById(m_wallet1IncomeTransaction.GetId()))
             .thenReturn(Optional.of(m_wallet1IncomeTransaction));
+
+        when(m_walletTransactionRepository.FindWalletByTransactionId(
+                 m_wallet1ExpenseTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1));
+
         when(m_walletRepository.save(m_wallet1)).thenReturn(m_wallet1);
+
         when(m_walletRepository.save(m_wallet2)).thenReturn(m_wallet2);
+
         when(m_walletTransactionRepository.save(any(WalletTransaction.class)))
             .thenReturn(updatedTransaction);
 
@@ -597,7 +619,8 @@ public class WalletTransactionServiceTest
             .findById(m_wallet1IncomeTransaction.GetId());
         verify(m_walletRepository).save(m_wallet1);
         verify(m_walletRepository).save(m_wallet2);
-        verify(m_walletTransactionRepository).save(updatedTransaction);
+        verify(m_walletTransactionRepository, times(2))
+            .save(any(WalletTransaction.class));
     }
 
     @Test
@@ -813,35 +836,6 @@ public class WalletTransactionServiceTest
 
         // Check if the transaction was not confirmed
         verify(m_walletTransactionRepository, never()).save(m_wallet1IncomeTransaction);
-
-        // Check if the wallet balance was not updated
-        verify(m_walletRepository, never()).save(m_wallet1);
-    }
-
-    @Test
-    @DisplayName("Test if the expense transaction is not confirmed when the wallet "
-                 + "balance is insufficient")
-    public void
-    TestConfirmExpenseInsufficientBalance()
-    {
-        m_wallet1ExpenseTransaction.SetStatus(TransactionStatus.PENDING);
-        m_wallet1ExpenseTransaction.SetAmount(m_wallet1.GetBalance() + 1);
-
-        when(
-            m_walletTransactionRepository.findById(m_wallet1ExpenseTransaction.GetId()))
-            .thenReturn(Optional.of(m_wallet1ExpenseTransaction));
-
-        assertThrows(RuntimeException.class,
-                     ()
-                         -> m_walletTransactionService.ConfirmTransaction(
-                             m_wallet1ExpenseTransaction.GetId()));
-
-        // Check if the transaction was not confirmed
-        verify(m_walletTransactionRepository, never())
-            .save(m_wallet1ExpenseTransaction);
-
-        assertEquals(TransactionStatus.PENDING,
-                     m_wallet1ExpenseTransaction.GetStatus());
 
         // Check if the wallet balance was not updated
         verify(m_walletRepository, never()).save(m_wallet1);

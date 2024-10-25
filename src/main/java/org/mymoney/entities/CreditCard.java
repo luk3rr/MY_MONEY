@@ -6,9 +6,6 @@
 
 package org.mymoney.entities;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +14,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * Represents a credit card
@@ -61,20 +60,21 @@ public class CreditCard
      * @param billingDueDay The day of the month the bill is due
      * @param closingDay The day of the month the bill is closed
      * @param maxDebt The maximum debt allowed for the credit card
+     * @param lastFourDigits The last four digits of the credit card
      */
-    public CreditCard(String name, Integer billingDueDay, Integer closingDay, Double maxDebt)
+    public CreditCard(String             name,
+                      Integer            billingDueDay,
+                      Integer            closingDay,
+                      Double             maxDebt,
+                      String             lastFourDigits,
+                      CreditCardOperator operator)
     {
-        this.name          = name;
-        this.billingDueDay = billingDueDay;
-        this.maxDebt       = maxDebt;
-    }
-
-    public CreditCard(String name, Integer billingDueDay, Integer closingDay, Double maxDebt, String lastFourDigits)
-    {
-        this.name          = name;
-        this.billingDueDay = billingDueDay;
-        this.maxDebt       = maxDebt;
+        this.name           = name;
+        this.billingDueDay  = billingDueDay;
+        this.closingDay     = closingDay;
+        this.maxDebt        = maxDebt;
         this.lastFourDigits = lastFourDigits;
+        this.operator       = operator;
     }
 
     /**

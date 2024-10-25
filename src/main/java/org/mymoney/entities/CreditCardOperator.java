@@ -38,6 +38,17 @@ public class CreditCardOperator
     public CreditCardOperator() { }
 
     /**
+     * Constructor for testing purposes
+     * @param id The id of the credit card operator
+     * @param name The name of the credit card operator
+     */
+    public CreditCardOperator(Long id, String name)
+    {
+        this.id   = id;
+        this.name = name;
+    }
+
+    /**
      * Constructor for CreditCardOperator
      * @param name The name of the credit card operator
      */

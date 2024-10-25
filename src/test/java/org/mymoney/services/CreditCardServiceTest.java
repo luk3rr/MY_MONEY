@@ -14,15 +14,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.mymoney.entities.Category;
-import org.mymoney.entities.CreditCard;
-import org.mymoney.entities.CreditCardDebt;
-import org.mymoney.entities.CreditCardPayment;
-import org.mymoney.repositories.CategoryRepository;
-import org.mymoney.repositories.CreditCardDebtRepository;
-import org.mymoney.repositories.CreditCardPaymentRepository;
-import org.mymoney.repositories.CreditCardRepository;
-import org.mymoney.util.Constants;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -37,6 +28,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mymoney.entities.Category;
+import org.mymoney.entities.CreditCard;
+import org.mymoney.entities.CreditCardDebt;
+import org.mymoney.entities.CreditCardOperator;
+import org.mymoney.entities.CreditCardPayment;
+import org.mymoney.repositories.CategoryRepository;
+import org.mymoney.repositories.CreditCardDebtRepository;
+import org.mymoney.repositories.CreditCardOperatorRepository;
+import org.mymoney.repositories.CreditCardPaymentRepository;
+import org.mymoney.repositories.CreditCardRepository;
+import org.mymoney.util.Constants;
 
 @ExtendWith(MockitoExtension.class)
 public class CreditCardServiceTest
@@ -51,15 +53,20 @@ public class CreditCardServiceTest
     private CreditCardRepository m_creditCardRepository;
 
     @Mock
+    private CreditCardOperatorRepository m_creditCardOperatorRepository;
+
+    @Mock
     private CategoryRepository m_categoryRepository;
 
     @InjectMocks
     private CreditCardService m_creditCardService;
 
-    private CreditCard    m_creditCard;
-    private Category      m_category;
-    private LocalDateTime m_date;
-    private String        m_description;
+    private CreditCard         m_creditCard;
+    private CreditCardOperator m_operator;
+    private Category           m_category;
+    private LocalDateTime      m_date;
+    private String             m_description;
+    private String             m_crcLastFourDigits;
 
     @BeforeAll
     public static void SetUp()
@@ -70,7 +77,15 @@ public class CreditCardServiceTest
     @BeforeEach
     public void BeforeEach()
     {
-        m_creditCard  = new CreditCard("Credit Card", 10, 4, 1000.0);
+        m_crcLastFourDigits = "1234";
+        m_operator          = new CreditCardOperator(1L, "Operator");
+        m_creditCard        = new CreditCard("Credit Card",
+                                      10,
+                                      4,
+                                      1000.0,
+                                      m_crcLastFourDigits,
+                                      m_operator);
+
         m_category    = new Category("Category");
         m_date        = LocalDateTime.now();
         m_description = "";
@@ -86,10 +101,15 @@ public class CreditCardServiceTest
         when(m_creditCardRepository.existsByName(m_creditCard.GetName()))
             .thenReturn(false);
 
+        when(m_creditCardOperatorRepository.findById(m_operator.GetId()))
+            .thenReturn(Optional.of(m_operator));
+
         m_creditCardService.CreateCreditCard(m_creditCard.GetName(),
                                              m_creditCard.GetBillingDueDay(),
                                              m_creditCard.GetClosingDay(),
-                                             m_creditCard.GetMaxDebt());
+                                             m_creditCard.GetMaxDebt(),
+                                             m_creditCard.GetLastFourDigits(),
+                                             m_creditCard.GetOperator().GetId());
 
         // Capture the credit card that was saved and check if it is correct
         ArgumentCaptor<CreditCard> creditCardCaptor =
@@ -113,13 +133,15 @@ public class CreditCardServiceTest
         when(m_creditCardRepository.existsByName(m_creditCard.GetName()))
             .thenReturn(true);
 
-        assertThrows(
-            RuntimeException.class,
-            ()
-                -> m_creditCardService.CreateCreditCard(m_creditCard.GetName(),
-                                                        m_creditCard.GetBillingDueDay(),
-                                                        m_creditCard.GetClosingDay(),
-                                                        m_creditCard.GetMaxDebt()));
+        assertThrows(RuntimeException.class,
+                     ()
+                         -> m_creditCardService.CreateCreditCard(
+                             m_creditCard.GetName(),
+                             m_creditCard.GetBillingDueDay(),
+                             m_creditCard.GetClosingDay(),
+                             m_creditCard.GetMaxDebt(),
+                             m_creditCard.GetLastFourDigits(),
+                             m_creditCard.GetOperator().GetId()));
 
         // Verify that the credit card was not saved
         verify(m_creditCardRepository, never()).save(any());
@@ -137,24 +159,28 @@ public class CreditCardServiceTest
         // Case when the billing due day is less than 1
         m_creditCard.SetBillingDueDay(0);
 
-        assertThrows(
-            RuntimeException.class,
-            ()
-                -> m_creditCardService.CreateCreditCard(m_creditCard.GetName(),
-                                                        m_creditCard.GetBillingDueDay(),
-                                                        m_creditCard.GetClosingDay(),
-                                                        m_creditCard.GetMaxDebt()));
+        assertThrows(RuntimeException.class,
+                     ()
+                         -> m_creditCardService.CreateCreditCard(
+                             m_creditCard.GetName(),
+                             m_creditCard.GetBillingDueDay(),
+                             m_creditCard.GetClosingDay(),
+                             m_creditCard.GetMaxDebt(),
+                             m_creditCard.GetLastFourDigits(),
+                             m_creditCard.GetOperator().GetId()));
 
         // Case when the billing due day is greater than Constants.MAX_BILLING_DUE_DAY
         m_creditCard.SetBillingDueDay(Constants.MAX_BILLING_DUE_DAY + 1);
 
-        assertThrows(
-            RuntimeException.class,
-            ()
-                -> m_creditCardService.CreateCreditCard(m_creditCard.GetName(),
-                                                        m_creditCard.GetBillingDueDay(),
-                                                        m_creditCard.GetClosingDay(),
-                                                        m_creditCard.GetMaxDebt()));
+        assertThrows(RuntimeException.class,
+                     ()
+                         -> m_creditCardService.CreateCreditCard(
+                             m_creditCard.GetName(),
+                             m_creditCard.GetBillingDueDay(),
+                             m_creditCard.GetClosingDay(),
+                             m_creditCard.GetMaxDebt(),
+                             m_creditCard.GetLastFourDigits(),
+                             m_creditCard.GetOperator().GetId()));
 
         // Verify that the credit card was not saved
         verify(m_creditCardRepository, never()).save(any());
@@ -170,13 +196,94 @@ public class CreditCardServiceTest
         // Case when the max debt is negative
         m_creditCard.SetMaxDebt(-1.0);
 
-        assertThrows(
-            RuntimeException.class,
-            ()
-                -> m_creditCardService.CreateCreditCard(m_creditCard.GetName(),
-                                                        m_creditCard.GetBillingDueDay(),
-                                                        m_creditCard.GetClosingDay(),
-                                                        m_creditCard.GetMaxDebt()));
+        assertThrows(RuntimeException.class,
+                     ()
+                         -> m_creditCardService.CreateCreditCard(
+                             m_creditCard.GetName(),
+                             m_creditCard.GetBillingDueDay(),
+                             m_creditCard.GetClosingDay(),
+                             m_creditCard.GetMaxDebt(),
+                             m_creditCard.GetLastFourDigits(),
+                             m_creditCard.GetOperator().GetId()));
+
+        // Verify that the credit card was not saved
+        verify(m_creditCardRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName(
+        "Test if the credit card is not when last four digits is blank or not has 4 "
+        + "digits")
+    public void
+    TestCreateCreditCardInvalidLastFourDigits()
+    {
+        when(m_creditCardRepository.existsByName(m_creditCard.GetName()))
+            .thenReturn(false);
+
+        // Case when the last four digits is blank
+        m_creditCard.SetLastFourDigits("");
+
+        assertThrows(RuntimeException.class,
+                     ()
+                         -> m_creditCardService.CreateCreditCard(
+                             m_creditCard.GetName(),
+                             m_creditCard.GetBillingDueDay(),
+                             m_creditCard.GetClosingDay(),
+                             m_creditCard.GetMaxDebt(),
+                             m_creditCard.GetLastFourDigits(),
+                             m_creditCard.GetOperator().GetId()));
+
+        // Case when the last four digits has less than 4 digits
+        m_creditCard.SetLastFourDigits("123");
+
+        assertThrows(RuntimeException.class,
+                     ()
+                         -> m_creditCardService.CreateCreditCard(
+                             m_creditCard.GetName(),
+                             m_creditCard.GetBillingDueDay(),
+                             m_creditCard.GetClosingDay(),
+                             m_creditCard.GetMaxDebt(),
+                             m_creditCard.GetLastFourDigits(),
+                             m_creditCard.GetOperator().GetId()));
+
+        // Case when the last four digits has more than 4 digits
+        m_creditCard.SetLastFourDigits("12345");
+
+        assertThrows(RuntimeException.class,
+                     ()
+                         -> m_creditCardService.CreateCreditCard(
+                             m_creditCard.GetName(),
+                             m_creditCard.GetBillingDueDay(),
+                             m_creditCard.GetClosingDay(),
+                             m_creditCard.GetMaxDebt(),
+                             m_creditCard.GetLastFourDigits(),
+                             m_creditCard.GetOperator().GetId()));
+
+        // Verify that the credit card was not saved
+        verify(m_creditCardRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName(
+        "Test if the credit card is not created when the operator does not exist")
+    public void
+    TestCreateCreditCardOperatorDoesNotExist()
+    {
+        when(m_creditCardRepository.existsByName(m_creditCard.GetName()))
+            .thenReturn(false);
+
+        when(m_creditCardOperatorRepository.findById(m_operator.GetId()))
+            .thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class,
+                     ()
+                         -> m_creditCardService.CreateCreditCard(
+                             m_creditCard.GetName(),
+                             m_creditCard.GetBillingDueDay(),
+                             m_creditCard.GetClosingDay(),
+                             m_creditCard.GetMaxDebt(),
+                             m_creditCard.GetLastFourDigits(),
+                             m_creditCard.GetOperator().GetId()));
 
         // Verify that the credit card was not saved
         verify(m_creditCardRepository, never()).save(any());
