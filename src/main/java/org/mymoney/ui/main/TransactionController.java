@@ -61,7 +61,6 @@ import org.springframework.stereotype.Controller;
 /**
  * Controller class for the transaction view
  * TODO: Load information from the database only when necessary
- * TODO: Recurring transactions by number of days (or monthly)
  */
 @Controller
 public class TransactionController

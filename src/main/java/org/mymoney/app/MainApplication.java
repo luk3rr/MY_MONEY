@@ -13,9 +13,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 /**
  * Main application class
- * TODO: Add a way to write a math expression and calculate the result in the value
- * fields
- * TODO: Add a listener to the value fields to make it possible to insert only digits
  */
 @EntityScan(basePackages = "org.mymoney.entities")
 @EnableJpaRepositories(basePackages = "org.mymoney.repositories")

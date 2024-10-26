@@ -6,16 +6,12 @@
 
 package org.mymoney.ui.dialog;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DateCell;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -282,8 +278,6 @@ public class AddCreditCardDebtController
                                    ? 1
                                    : Integer.parseInt(installmentsField.getText());
 
-        // TODO: Ensure that the field accepts only numbers until 3 digits
-        // and that the value is greater than 0
         if (installments < 1)
         {
             msgLabel.setText("Invalid number of installments");
