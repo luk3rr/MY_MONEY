@@ -13,72 +13,126 @@
 
 <VBox alignment="CENTER" prefWidth="310.0" spacing="10.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.mymoney.ui.dialog.AddCreditCardController">
    <children>
-      <VBox alignment="CENTER">
+      <HBox alignment="CENTER" spacing="5.0">
          <children>
-            <Label text="Credit Card Name" VBox.vgrow="ALWAYS">
-               <font>
-                  <Font size="10.0" />
-               </font>
-            </Label>
-            <HBox alignment="CENTER_LEFT" spacing="5.0">
+            <VBox alignment="CENTER">
                <children>
+                  <Label>
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Label>
                   <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../icon/common/pencil.png" />
                      </image>
                   </ImageView>
-                  <TextField fx:id="nameField" promptText="Name" HBox.hgrow="ALWAYS" />
                </children>
-            </HBox>
-         </children>
-      </VBox>
-      <HBox alignment="CENTER" spacing="10.0">
-         <children>
-            <VBox alignment="CENTER">
+            </VBox>
+            <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
                <children>
-                  <Label text="Limit">
+                  <Label text="Credit Card Name" VBox.vgrow="ALWAYS">
                      <font>
                         <Font size="10.0" />
                      </font>
                   </Label>
-                  <HBox alignment="CENTER_LEFT" spacing="5.0">
+                  <TextField fx:id="nameField" promptText="Name" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" spacing="10.0">
+         <children>
+            <HBox alignment="CENTER" spacing="5.0">
+               <children>
+                  <VBox alignment="CENTER">
                      <children>
+                        <Label>
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Label>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../icon/common/coin.png" />
                            </image>
                         </ImageView>
-                        <TextField fx:id="limitField" promptText="\$ 0.00" HBox.hgrow="ALWAYS" />
                      </children>
-                  </HBox>
-               </children>
-            </VBox>
-            <VBox alignment="CENTER">
-               <children>
-                  <Label text="Last four digits">
-                     <font>
-                        <Font size="10.0" />
-                     </font>
-                  </Label>
-                  <HBox alignment="CENTER_LEFT" spacing="5.0">
+                  </VBox>
+                  <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
                      <children>
+                        <Label text="Limit">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="limitField" promptText="\$ 0.00" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox spacing="5.0">
+               <children>
+                  <VBox alignment="CENTER">
+                     <children>
+                        <Label>
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Label>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../icon/common/digits.png" />
                            </image>
                         </ImageView>
-                        <TextField fx:id="lastFourDigitsField" promptText="0000" HBox.hgrow="ALWAYS" />
                      </children>
-                  </HBox>
+                  </VBox>
+                  <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label text="Last four digits">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="lastFourDigitsField" prefWidth="80.0" promptText="0000" />
+                     </children>
+                  </VBox>
                </children>
-            </VBox>
+            </HBox>
          </children>
       </HBox>
-      <ComboBox fx:id="operatorComboBox" minWidth="140.0" promptText="Choose Operator" stylesheets="@../../css/component/combo-box.css" />
+      <VBox alignment="CENTER" VBox.vgrow="ALWAYS">
+         <children>
+            <Label text="Operator">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="operatorComboBox" minWidth="140.0" stylesheets="@../../css/component/combo-box.css" />
+         </children>
+      </VBox>
       <HBox alignment="CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
          <children>
-            <ComboBox fx:id="closingDayComboBox" minWidth="140.0" promptText="Closing day" stylesheets="@../../css/component/combo-box.css" HBox.hgrow="ALWAYS" />
-            <ComboBox fx:id="dueDayComboBox" minWidth="140.0" promptText="Due day" stylesheets="@../../css/component/combo-box.css" HBox.hgrow="ALWAYS" />
+            <VBox alignment="CENTER">
+               <children>
+                  <Label text="Closing day">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="closingDayComboBox" minWidth="140.0" stylesheets="@../../css/component/combo-box.css" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER">
+               <children>
+                  <Label text="Due day">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="dueDayComboBox" minWidth="140.0" stylesheets="@../../css/component/combo-box.css" />
+               </children>
+            </VBox>
          </children>
       </HBox>
       <HBox alignment="CENTER" spacing="10.0">
