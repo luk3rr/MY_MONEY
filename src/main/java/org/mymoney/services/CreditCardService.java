@@ -7,6 +7,7 @@
 package org.mymoney.services;
 
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.logging.Logger;
 import org.mymoney.entities.Category;
@@ -168,7 +169,8 @@ public class CreditCardService
      * Register a debt on the credit card and its respective future payment
      * @param creditCardName The name of the credit card
      * @param category The category of the debt
-     * @param date The date of the debt
+     * @param registerDate The date the debt was registered
+     * @param invoiceMonth The month of the invoice
      * @param value The value of the debt
      * @param installment The number of installments of the debt
      * @param description The description of the debt
@@ -182,7 +184,8 @@ public class CreditCardService
     @Transactional
     public void RegisterDebt(Long          crcId,
                              Category      category,
-                             LocalDateTime date,
+                             LocalDateTime registerDate,
+                             YearMonth     invoiceMonth,
                              Double        value,
                              Integer       installment,
                              String        description)
@@ -209,6 +212,16 @@ public class CreditCardService
                                        Constants.MAX_INSTALLMENTS + "]");
         }
 
+        if (registerDate == null)
+        {
+            throw new RuntimeException("Register date cannot be null");
+        }
+
+        if (invoiceMonth == null)
+        {
+            throw new RuntimeException("Invoice month cannot be null");
+        }
+
         Double availableCredit = GetAvailableCredit(crcId);
 
         if (value > availableCredit)
@@ -219,7 +232,7 @@ public class CreditCardService
         }
 
         CreditCardDebt debt =
-            new CreditCardDebt(creditCard, cat, date, value, description);
+            new CreditCardDebt(creditCard, cat, registerDate, value, description);
 
         m_creditCardDebtRepository.save(debt);
 
@@ -228,13 +241,15 @@ public class CreditCardService
 
         Double installmentValue = value / installment;
 
-        for (Integer i = 1; i <= installment; i++)
+        for (Integer i = 0; i < installment; i++)
         {
-            LocalDateTime paymentDate =
-                date.plusMonths(i).withDayOfMonth(creditCard.GetBillingDueDay());
+            // Calculate the payment date
+            LocalDateTime paymentDate = invoiceMonth.plusMonths(i)
+                                            .atDay(creditCard.GetBillingDueDay())
+                                            .atTime(23, 59);
 
             CreditCardPayment payment =
-                new CreditCardPayment(debt, paymentDate, installmentValue, i);
+                new CreditCardPayment(debt, paymentDate, installmentValue, i + 1);
 
             m_creditCardPaymentRepository.save(payment);
 

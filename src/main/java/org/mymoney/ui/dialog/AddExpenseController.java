@@ -145,9 +145,10 @@ public class AddExpenseController
         String    categoryString     = categoryComboBox.getValue();
         LocalDate expenseDate        = expenseDatePicker.getValue();
 
-        if (walletName == null || description == null || description.trim().isEmpty() ||
-            expenseValueString == null || expenseValueString.trim().isEmpty() ||
-            statusString == null || categoryString == null || expenseDate == null)
+        if (walletName == null || description == null ||
+            description.strip().isEmpty() || expenseValueString == null ||
+            expenseValueString.strip().isEmpty() || statusString == null ||
+            categoryString == null || expenseDate == null)
         {
             WindowUtils.ShowErrorDialog("Error",
                                         "Empty fields",
@@ -192,7 +193,7 @@ public class AddExpenseController
         {
             WindowUtils.ShowErrorDialog("Error",
                                         "Invalid expense value",
-                                        "Expense value must be a number.");
+                                        "Expense value must be a number");
         }
         catch (RuntimeException e)
         {
@@ -236,7 +237,7 @@ public class AddExpenseController
         String expenseValueString = expenseValueField.getText();
         String walletName         = walletComboBox.getValue();
 
-        if (expenseValueString == null || expenseValueString.trim().isEmpty() ||
+        if (expenseValueString == null || expenseValueString.strip().isEmpty() ||
             walletName == null)
         {
             UIUtils.ResetLabel(walletAfterBalanceValueLabel);
@@ -260,7 +261,7 @@ public class AddExpenseController
 
             Double walletAfterBalanceValue = wallet.GetBalance() - expenseValue;
 
-            // Episilon is used to avoid floating point arithmetic errors
+            // Set the style according to the balance value after the expense
             if (walletAfterBalanceValue < 0)
             {
                 // Remove old style and add negative style

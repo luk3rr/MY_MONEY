@@ -47,6 +47,7 @@ import org.mymoney.services.CategoryService;
 import org.mymoney.services.CreditCardService;
 import org.mymoney.ui.common.CreditCardPaneController;
 import org.mymoney.ui.dialog.AddCreditCardController;
+import org.mymoney.ui.dialog.AddCreditCardDebtController;
 import org.mymoney.util.Animation;
 import org.mymoney.util.Constants;
 import org.mymoney.util.LoggerConfig;
@@ -154,7 +155,12 @@ public class CreditCardController
 
     @FXML
     private void handleAddDebt()
-    { }
+    {
+        WindowUtils.OpenModalWindow(Constants.ADD_CREDIT_CARD_DEBT_FXML,
+                                    "Add Credit Card Debt",
+                                    springContext,
+                                    (AddCreditCardDebtController controller) -> {});
+    }
 
     @FXML
     private void handleAddCreditCard()

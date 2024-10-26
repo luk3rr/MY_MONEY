@@ -15,6 +15,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
@@ -64,7 +65,8 @@ public class CreditCardServiceTest
     private CreditCard         m_creditCard;
     private CreditCardOperator m_operator;
     private Category           m_category;
-    private LocalDateTime      m_date;
+    private LocalDateTime      m_registerDate;
+    private YearMonth          m_invoiceMonth;
     private String             m_description;
     private String             m_crcLastFourDigits;
 
@@ -86,9 +88,10 @@ public class CreditCardServiceTest
                                       m_crcLastFourDigits,
                                       m_operator);
 
-        m_category    = new Category("Category");
-        m_date        = LocalDateTime.now();
-        m_description = "";
+        m_category     = new Category("Category");
+        m_registerDate = LocalDateTime.now();
+        m_invoiceMonth = YearMonth.now();
+        m_description  = "";
     }
 
     @Test
@@ -403,7 +406,8 @@ public class CreditCardServiceTest
 
         m_creditCardService.RegisterDebt(m_creditCard.GetId(),
                                          m_category,
-                                         m_date,
+                                         m_registerDate,
+                                         m_invoiceMonth,
                                          100.0,
                                          1,
                                          m_description);
@@ -426,7 +430,8 @@ public class CreditCardServiceTest
                      ()
                          -> m_creditCardService.RegisterDebt(m_creditCard.GetId(),
                                                              m_category,
-                                                             m_date,
+                                                             m_registerDate,
+                                                             m_invoiceMonth,
                                                              100.0,
                                                              1,
                                                              m_description));
@@ -449,7 +454,8 @@ public class CreditCardServiceTest
                      ()
                          -> m_creditCardService.RegisterDebt(m_creditCard.GetId(),
                                                              m_category,
-                                                             m_date,
+                                                             m_registerDate,
+                                                             m_invoiceMonth,
                                                              100.0,
                                                              1,
                                                              m_description));
@@ -476,7 +482,8 @@ public class CreditCardServiceTest
                      ()
                          -> m_creditCardService.RegisterDebt(m_creditCard.GetId(),
                                                              m_category,
-                                                             m_date,
+                                                             m_registerDate,
+                                                             m_invoiceMonth,
                                                              -1.0,
                                                              1,
                                                              m_description));
@@ -503,7 +510,8 @@ public class CreditCardServiceTest
                      ()
                          -> m_creditCardService.RegisterDebt(m_creditCard.GetId(),
                                                              m_category,
-                                                             m_date,
+                                                             m_registerDate,
+                                                             m_invoiceMonth,
                                                              100.0,
                                                              0,
                                                              m_description));
@@ -533,7 +541,8 @@ public class CreditCardServiceTest
             ()
                 -> m_creditCardService.RegisterDebt(m_creditCard.GetId(),
                                                     m_category,
-                                                    m_date,
+                                                    m_registerDate,
+                                                    m_invoiceMonth,
                                                     100.0,
                                                     Constants.MAX_INSTALLMENTS + 1,
                                                     m_description));
@@ -565,7 +574,8 @@ public class CreditCardServiceTest
                      ()
                          -> m_creditCardService.RegisterDebt(m_creditCard.GetId(),
                                                              m_category,
-                                                             m_date,
+                                                             m_registerDate,
+                                                             m_invoiceMonth,
                                                              200.0,
                                                              1,
                                                              m_description));
@@ -595,7 +605,8 @@ public class CreditCardServiceTest
 
         m_creditCardService.RegisterDebt(m_creditCard.GetId(),
                                          m_category,
-                                         m_date,
+                                         m_registerDate,
+                                         m_invoiceMonth,
                                          100.0,
                                          5,
                                          m_description);
@@ -630,9 +641,7 @@ public class CreditCardServiceTest
 
             // Check if the payment date is correct
             LocalDateTime expectedPaymentDate =
-                m_date.plusMonths(installmentNumber)
-                    .withDayOfMonth(m_creditCard.GetBillingDueDay())
-                    .truncatedTo(ChronoUnit.SECONDS);
+                m_invoiceMonth.atDay(m_creditCard.GetBillingDueDay()).atTime(23, 59);
 
             assertEquals(expectedPaymentDate,
                          payment.GetDate(),

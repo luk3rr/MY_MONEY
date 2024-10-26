@@ -3,7 +3,6 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
@@ -12,15 +11,24 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="410.0" prefWidth="260.0" spacing="10.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.mymoney.ui.dialog.AddExpenseController">
+<VBox alignment="CENTER" prefHeight="387.0" prefWidth="370.0" spacing="10.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.mymoney.ui.dialog.AddCreditCardDebtController">
    <children>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
          <children>
-            <ComboBox fx:id="walletComboBox" promptText="Select the credit card" stylesheets="@../../css/component/combo-box.css" VBox.vgrow="ALWAYS" />
+            <VBox alignment="CENTER">
+               <children>
+                  <Label text="Credit Card">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="crcComboBox" minWidth="130.0" stylesheets="@../../css/component/combo-box.css" VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                <children>
                   <Label text="Limit:" />
-                  <Label fx:id="walletCurrentBalanceValueLabel" text="-">
+                  <Label fx:id="crcLimitLabel" text="-">
                      <font>
                         <Font name="System Bold" size="13.0" />
                      </font></Label>
@@ -29,7 +37,7 @@
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                <children>
                   <Label text="Limit available" />
-                  <Label fx:id="walletCurrentBalanceValueLabel1" text="-">
+                  <Label fx:id="crcAvailableLimitLabel" text="-">
                      <font>
                         <Font name="System Bold" size="13.0" />
                      </font>
@@ -39,7 +47,7 @@
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                <children>
                   <Label text="Limit available after debt:" />
-                  <Label fx:id="walletAfterBalanceValueLabel" text="-">
+                  <Label fx:id="crcLimitAvailableAfterDebtLabel" text="-">
                      <font>
                         <Font name="System Bold" size="13.0" />
                      </font></Label>
@@ -73,12 +81,12 @@
                               <Image url="@../../icon/common/coin.png" />
                            </image>
                         </ImageView>
-                        <TextField fx:id="expenseValueField1" promptText="\$ 0.00" HBox.hgrow="ALWAYS" />
+                        <TextField fx:id="valueField" promptText="\$ 0.00" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
                </children>
             </VBox>
-            <VBox alignment="CENTER_RIGHT">
+            <VBox alignment="CENTER">
                <children>
                   <Label text="Installments">
                      <font>
@@ -92,24 +100,45 @@
                               <Image url="@../../icon/common/reload.png" />
                            </image>
                         </ImageView>
-                        <TextField fx:id="expenseValueField" alignment="CENTER" prefWidth="114.0" promptText="1" />
+                        <TextField fx:id="installmentsField" alignment="CENTER" prefWidth="80.0" promptText="1" />
                      </children>
                   </HBox>
                </children>
             </VBox>
          </children>
       </HBox>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+      <HBox alignment="CENTER" spacing="20.0">
          <children>
-            <Label text="Repeat for X months of $ 0.00" />
+            <Label fx:id="msgLabel" text="-">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font></Label>
          </children>
       </HBox>
-      <HBox alignment="CENTER" prefHeight="44.0" prefWidth="274.0" spacing="10.0" VBox.vgrow="ALWAYS">
+      <HBox alignment="CENTER" spacing="10.0" VBox.vgrow="ALWAYS">
          <children>
-            <ComboBox fx:id="categoryComboBox" minWidth="130.0" promptText="Category" stylesheets="@../../css/component/combo-box.css" HBox.hgrow="ALWAYS" />
+            <VBox alignment="CENTER">
+               <children>
+                  <Label text="Category">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="categoryComboBox" minWidth="130.0" stylesheets="@../../css/component/combo-box.css" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER">
+               <children>
+                  <Label text="Invoice">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="invoiceComboBox" minWidth="130.0" stylesheets="@../../css/component/combo-box.css" />
+               </children>
+            </VBox>
          </children>
       </HBox>
-      <DatePicker fx:id="expenseDatePicker" promptText="Select the invoice date" showWeekNumbers="true" stylesheets="@../../css/component/data-picker.css" />
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
          <children>
             <JFXButton minWidth="80.0" onAction="#handleCancel" stylesheets="@../../css/component/buttons.css" text="Cancel" />

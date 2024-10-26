@@ -25,6 +25,7 @@ import org.springframework.stereotype.Controller;
 
 /**
  * Controller for the main view
+ * TODO: Align information labels about the textfield
  */
 @Controller
 public class MainController

@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="rootAnchorPane" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.mymoney.ui.main.HomeController">
+<AnchorPane fx:id="rootAnchorPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.mymoney.ui.main.HomeController">
    <children>
       <VBox fx:id="rootVBox" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -98,7 +98,7 @@
                         </AnchorPane>
                         <AnchorPane fx:id="lastTransactionsPane" maxWidth="500.0" minWidth="420.0" styleClass="anchor-pane" stylesheets="@../../css/component/anchor-pane.css" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label fx:id="lastTransactionsPaneTitle" layoutX="10.0" layoutY="17.0" styleClass="title" text="Last Transactions" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                              <Label fx:id="lastTransactionsPaneTitle" layoutX="10.0" layoutY="17.0" styleClass="title" text="Latest Transactions" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                               <TableView fx:id="transactionsTableView" stylesheets="@../../css/component/table-view.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
                                  <columnResizePolicy>
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

@@ -143,9 +143,10 @@ public class AddIncomeController
         String    categoryString    = categoryComboBox.getValue();
         LocalDate incomeDate        = incomeDatePicker.getValue();
 
-        if (walletName == null || description == null || description.trim().isEmpty() ||
-            incomeValueString == null || incomeValueString.trim().isEmpty() ||
-            statusString == null || categoryString == null || incomeDate == null)
+        if (walletName == null || description == null ||
+            description.strip().isEmpty() || incomeValueString == null ||
+            incomeValueString.strip().isEmpty() || statusString == null ||
+            categoryString == null || incomeDate == null)
         {
             WindowUtils.ShowErrorDialog("Error",
                                         "Empty fields",
@@ -234,7 +235,7 @@ public class AddIncomeController
         String incomeValueString = incomeValueField.getText();
         String walletName        = walletComboBox.getValue();
 
-        if (incomeValueString == null || incomeValueString.trim().isEmpty() ||
+        if (incomeValueString == null || incomeValueString.strip().isEmpty() ||
             walletName == null)
         {
             UIUtils.ResetLabel(walletAfterBalanceValueLabel);

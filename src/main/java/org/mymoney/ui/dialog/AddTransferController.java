@@ -141,8 +141,9 @@ public class AddTransferController
         LocalDate transferDate        = transferDatePicker.getValue();
 
         if (senderWalletName == null || receiverWalletName == null ||
-            transferValueString == null || transferValueString.trim().isEmpty() ||
-            description == null || description.trim().isEmpty() || transferDate == null)
+            transferValueString == null || transferValueString.strip().isEmpty() ||
+            description == null || description.strip().isEmpty() ||
+            transferDate == null)
         {
             WindowUtils.ShowErrorDialog("Error",
                                         "Empty fields",
@@ -213,12 +214,12 @@ public class AddTransferController
         if (senderWallet.GetBalance() < 0)
         {
             UIUtils.SetLabelStyle(senderWalletCurrentBalanceValueLabel,
-                          Constants.NEGATIVE_BALANCE_STYLE);
+                                  Constants.NEGATIVE_BALANCE_STYLE);
         }
         else
         {
             UIUtils.SetLabelStyle(senderWalletCurrentBalanceValueLabel,
-                          Constants.NEUTRAL_BALANCE_STYLE);
+                                  Constants.NEUTRAL_BALANCE_STYLE);
         }
 
         senderWalletCurrentBalanceValueLabel.setText(
@@ -242,12 +243,12 @@ public class AddTransferController
         if (receiverWallet.GetBalance() < 0)
         {
             UIUtils.SetLabelStyle(receiverWalletCurrentBalanceValueLabel,
-                          Constants.NEGATIVE_BALANCE_STYLE);
+                                  Constants.NEGATIVE_BALANCE_STYLE);
         }
         else
         {
             UIUtils.SetLabelStyle(receiverWalletCurrentBalanceValueLabel,
-                          Constants.NEUTRAL_BALANCE_STYLE);
+                                  Constants.NEUTRAL_BALANCE_STYLE);
         }
 
         receiverWalletCurrentBalanceValueLabel.setText(
@@ -259,7 +260,7 @@ public class AddTransferController
         String transferValueString = transferValueField.getText();
         String senderWalletName    = senderWalletComboBox.getValue();
 
-        if (transferValueString == null || transferValueString.trim().isEmpty() ||
+        if (transferValueString == null || transferValueString.strip().isEmpty() ||
             senderWalletName == null)
         {
             UIUtils.ResetLabel(senderWalletAfterBalanceValueLabel);
@@ -288,13 +289,13 @@ public class AddTransferController
             {
                 // Remove old style and add negative style
                 UIUtils.SetLabelStyle(senderWalletAfterBalanceValueLabel,
-                              Constants.NEGATIVE_BALANCE_STYLE);
+                                      Constants.NEGATIVE_BALANCE_STYLE);
             }
             else
             {
                 // Remove old style and add neutral style
                 UIUtils.SetLabelStyle(senderWalletAfterBalanceValueLabel,
-                              Constants.NEUTRAL_BALANCE_STYLE);
+                                      Constants.NEUTRAL_BALANCE_STYLE);
             }
 
             senderWalletAfterBalanceValueLabel.setText(
@@ -311,7 +312,7 @@ public class AddTransferController
         String transferValueString = transferValueField.getText();
         String receiverWalletName  = receiverWalletComboBox.getValue();
 
-        if (transferValueString == null || transferValueString.trim().isEmpty() ||
+        if (transferValueString == null || transferValueString.strip().isEmpty() ||
             receiverWalletName == null)
         {
             UIUtils.ResetLabel(receiverWalletAfterBalanceValueLabel);
@@ -342,13 +343,13 @@ public class AddTransferController
             {
                 // Remove old style and add negative style
                 UIUtils.SetLabelStyle(receiverWalletAfterBalanceValueLabel,
-                              Constants.NEGATIVE_BALANCE_STYLE);
+                                      Constants.NEGATIVE_BALANCE_STYLE);
             }
             else
             {
                 // Remove old style and add neutral style
                 UIUtils.SetLabelStyle(receiverWalletAfterBalanceValueLabel,
-                              Constants.NEUTRAL_BALANCE_STYLE);
+                                      Constants.NEUTRAL_BALANCE_STYLE);
             }
 
             receiverWalletAfterBalanceValueLabel.setText(
