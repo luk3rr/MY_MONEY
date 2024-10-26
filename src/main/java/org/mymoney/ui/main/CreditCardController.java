@@ -261,38 +261,44 @@ public class CreditCardController
     {
         crcPane1.getChildren().clear();
 
-        CreditCard crc = creditCards.get(crcPaneCurrentPage);
-
-        try
+        if (!creditCards.isEmpty())
         {
-            FXMLLoader loader =
-                new FXMLLoader(getClass().getResource(Constants.CRC_PANE_FXML));
-            loader.setControllerFactory(springContext::getBean);
-            Parent newContent = loader.load();
+            CreditCard crc = creditCards.get(crcPaneCurrentPage);
 
-            // Add style class to the wallet pane
-            newContent.getStylesheets().add(
-                getClass().getResource(Constants.COMMON_STYLE_SHEET).toExternalForm());
+            try
+            {
+                FXMLLoader loader =
+                    new FXMLLoader(getClass().getResource(Constants.CRC_PANE_FXML));
+                loader.setControllerFactory(springContext::getBean);
+                Parent newContent = loader.load();
 
-            CreditCardPaneController crcPaneController = loader.getController();
+                // Add style class to the wallet pane
+                newContent.getStylesheets().add(
+                    getClass()
+                        .getResource(Constants.COMMON_STYLE_SHEET)
+                        .toExternalForm());
 
-            crcPaneController.UpdateCreditCardPane(crc);
+                CreditCardPaneController crcPaneController = loader.getController();
 
-            AnchorPane.setTopAnchor(newContent, 0.0);
-            AnchorPane.setBottomAnchor(newContent, 0.0);
-            AnchorPane.setLeftAnchor(newContent, 0.0);
-            AnchorPane.setRightAnchor(newContent, 0.0);
+                crcPaneController.UpdateCreditCardPane(crc);
 
-            crcPane1.getChildren().add(newContent);
-        }
-        catch (IOException e)
-        {
-            logger.severe("Error while loading credit card pane");
-            e.printStackTrace();
+                AnchorPane.setTopAnchor(newContent, 0.0);
+                AnchorPane.setBottomAnchor(newContent, 0.0);
+                AnchorPane.setLeftAnchor(newContent, 0.0);
+                AnchorPane.setRightAnchor(newContent, 0.0);
+
+                crcPane1.getChildren().add(newContent);
+            }
+            catch (IOException e)
+            {
+                logger.severe("Error while loading credit card pane");
+                e.printStackTrace();
+            }
         }
 
         crcPrevButton.setDisable(crcPaneCurrentPage == 0);
-        crcNextButton.setDisable(crcPaneCurrentPage == creditCards.size() - 1);
+        crcNextButton.setDisable(crcPaneCurrentPage == creditCards.size() - 1 ||
+                                 creditCards.isEmpty());
     }
 
     /**
