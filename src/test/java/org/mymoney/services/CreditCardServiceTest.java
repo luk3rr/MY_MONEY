@@ -621,10 +621,10 @@ public class CreditCardServiceTest
 
         Double expectedInstallmentValue = 100.0 / 5;
 
-        for (Integer i = 0; i < capturedPayments.size(); i++)
+        for (Integer installmentNumber = 0; installmentNumber < capturedPayments.size();
+             installmentNumber++)
         {
-            CreditCardPayment payment           = capturedPayments.get(i);
-            Integer           installmentNumber = i + 1;
+            CreditCardPayment payment = capturedPayments.get(installmentNumber);
 
             // Check if the payment amount is correct
             assertEquals(expectedInstallmentValue,
@@ -634,14 +634,16 @@ public class CreditCardServiceTest
                              " is incorrect");
 
             // Check if the installment number is correct
-            assertEquals(installmentNumber,
+            assertEquals(installmentNumber + 1,
                          payment.GetInstallment(),
                          "The installment number of installment " + installmentNumber +
                              " is incorrect");
 
             // Check if the payment date is correct
             LocalDateTime expectedPaymentDate =
-                m_invoiceMonth.atDay(m_creditCard.GetBillingDueDay()).atTime(23, 59);
+                m_invoiceMonth.plusMonths(installmentNumber)
+                    .atDay(m_creditCard.GetBillingDueDay())
+                    .atTime(23, 59);
 
             assertEquals(expectedPaymentDate,
                          payment.GetDate(),
