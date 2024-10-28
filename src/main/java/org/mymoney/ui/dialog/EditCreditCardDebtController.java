@@ -180,13 +180,23 @@ public class EditCreditCardDebtController
                                     .findFirst()
                                     .get();
 
+            // Get the date of the first payment to check if the invoice month is the
+            // same
+            CreditCardPayment firstPayment =
+                creditCardService.GetCreditCardPayments(debtToUpdate.GetId())
+                    .getFirst();
+
+            YearMonth invoice = YearMonth.of(firstPayment.GetDate().getYear(),
+                                             firstPayment.GetDate().getMonth());
+
             // Check if has any modification
             if (debtToUpdate.GetCreditCard().GetId() == crc.GetId() &&
                 debtToUpdate.GetCategory().GetId() == category.GetId() &&
                 Math.abs(debtValue - debtToUpdate.GetTotalAmount()) <
                     Constants.EPSILON &&
                 debtToUpdate.GetInstallments() == installments &&
-                debtToUpdate.GetDescription().equals(description))
+                debtToUpdate.GetDescription().equals(description) &&
+                invoice.equals(invoiceMonth))
             {
                 WindowUtils.ShowInformationDialog("Info",
                                                   "No changes",
