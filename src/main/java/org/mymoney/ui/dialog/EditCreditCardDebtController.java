@@ -6,7 +6,6 @@
 
 package org.mymoney.ui.dialog;
 
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -105,7 +104,7 @@ public class EditCreditCardDebtController
         categoryComboBox.setValue(crcDebt.GetCategory().GetName());
 
         CreditCardPayment firstPayment =
-            creditCardService.GetCreditCardPayments(crcDebt.GetId()).getFirst();
+            creditCardService.GetPaymentsByDebtId(crcDebt.GetId()).getFirst();
 
         invoiceComboBox.setValue(YearMonth.of(firstPayment.GetDate().getYear(),
                                               firstPayment.GetDate().getMonth()));
@@ -183,8 +182,7 @@ public class EditCreditCardDebtController
             // Get the date of the first payment to check if the invoice month is the
             // same
             CreditCardPayment firstPayment =
-                creditCardService.GetCreditCardPayments(debtToUpdate.GetId())
-                    .getFirst();
+                creditCardService.GetPaymentsByDebtId(debtToUpdate.GetId()).getFirst();
 
             YearMonth invoice = YearMonth.of(firstPayment.GetDate().getYear(),
                                              firstPayment.GetDate().getMonth());

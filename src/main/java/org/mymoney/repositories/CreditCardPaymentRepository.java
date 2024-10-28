@@ -31,7 +31,7 @@ public interface CreditCardPaymentRepository
     GetCreditCardPayments(@Param("month") Integer month, @Param("year") Integer year);
 
     /**
-     * Get credit card payments by debt id
+     * Get payments by debt id
      * @param debtId The debt id
      * @return A list with all credit card payments by debt id
      */
@@ -39,7 +39,7 @@ public interface CreditCardPaymentRepository
            + "FROM CreditCardPayment ccp "
            + "WHERE ccp.creditCardDebt.id = :debtId")
     List<CreditCardPayment>
-    GetCreditCardPayments(@Param("debtId") Long debtId);
+    GetPaymentsByDebtId(@Param("debtId") Long debtId);
 
     /**
      * Get the total paid amount of a credit card

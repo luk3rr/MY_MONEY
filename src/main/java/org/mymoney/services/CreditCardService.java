@@ -268,6 +268,25 @@ public class CreditCardService
         }
     }
 
+    @Transactional
+    public void DeleteDebt(Long debtId)
+    {
+        CreditCardDebt debt = m_creditCardDebtRepository.findById(debtId).orElseThrow(
+            () -> new RuntimeException("Debt with id " + debtId + " not found"));
+
+        // Delete all payments associated with the debt
+        List<CreditCardPayment> payments = GetPaymentsByDebtId(debtId);
+
+        for (CreditCardPayment payment : payments)
+        {
+            DeletePayment(payment.GetId());
+        }
+
+        m_creditCardDebtRepository.delete(debt);
+
+        m_logger.info("Debt with id " + debtId + " deleted");
+    }
+
     /**
      * Update the debt of a credit card
      * @param debt The debt to be updated
@@ -314,218 +333,6 @@ public class CreditCardService
     }
 
     /**
-     * Update invoice month of a debt
-     * @param debt The debt to be updated
-     * @param invoiceMonth The new invoice month
-     */
-    private void ChangeInvoiceMonth(CreditCardDebt oldDebt, YearMonth invoice)
-    {
-        List<CreditCardPayment> payments = GetCreditCardPayments(oldDebt.GetId());
-
-        CreditCardPayment firstPayment = payments.getFirst();
-
-        // If the first payment is in the same month and year of the invoice, do not
-        // update
-        if (firstPayment == null ||
-            (firstPayment.GetDate().getMonth() == invoice.getMonth() &&
-             firstPayment.GetDate().getYear() == invoice.getYear()))
-        {
-            return;
-        }
-
-        for (Integer i = 0; i < oldDebt.GetInstallments(); i++)
-        {
-            CreditCardPayment payment = payments.get(i);
-
-            // Calculate the payment date
-            LocalDateTime paymentDate =
-                invoice.plusMonths(i)
-                    .atDay(oldDebt.GetCreditCard().GetBillingDueDay())
-                    .atTime(23, 59);
-
-            payment.SetDate(paymentDate);
-            m_creditCardPaymentRepository.save(payment);
-
-            m_logger.info("Payment number " + payment.GetInstallment() +
-                          " of debt with id " + oldDebt.GetId() +
-                          " on credit card with id " +
-                          oldDebt.GetCreditCard().GetId() + " updated with due date " +
-                          paymentDate);
-        }
-    }
-
-    /**
-     * Change the number of installments of a debt
-     * @param debt The debt to be updated
-     * @param newInstallments The new number of installments
-     */
-    private void ChangeDebtInstallments(CreditCardDebt oldDebt, Integer newInstallments)
-    {
-        if (oldDebt.GetInstallments() == newInstallments)
-        {
-            return;
-        }
-
-        List<CreditCardPayment> payments = GetCreditCardPayments(oldDebt.GetId());
-
-        // New value for each installment
-        Double installmentValue = oldDebt.GetTotalAmount() / newInstallments;
-
-        // Delete and update payments
-        if (newInstallments < oldDebt.GetInstallments())
-        {
-            for (Integer i = 0; i < oldDebt.GetInstallments(); i++)
-            {
-                CreditCardPayment payment = payments.get(i);
-
-                // If the payment is greater than the new number of installments, delete
-                // it
-                if (payment.GetInstallment() > newInstallments)
-                {
-                    // If payment was made with a wallet, add the amount back to the
-                    // wallet balance
-                    if (payment.GetWallet() != null)
-                    {
-                        payment.GetWallet().SetBalance(
-                            payment.GetWallet().GetBalance() + payment.GetAmount());
-
-                        m_logger.info("Payment number " + payment.GetInstallment() +
-                                      " of debt with id " + oldDebt.GetId() +
-                                      " on credit card with id " +
-                                      oldDebt.GetCreditCard().GetId() +
-                                      " deleted and added to wallet with id " +
-                                      payment.GetWallet().GetId());
-
-                        m_walletRepository.save(payment.GetWallet());
-                    }
-
-                    m_creditCardPaymentRepository.delete(payment);
-
-                    m_logger.info("Payment number " + payment.GetInstallment() +
-                                  " of debt with id " + oldDebt.GetId() +
-                                  " on credit card with id " +
-                                  oldDebt.GetCreditCard().GetId() + " deleted");
-                }
-                // If the payment is less or equal than the new number of installments,
-                // update it
-                else
-                {
-                    payment.SetAmount(installmentValue);
-                    m_creditCardPaymentRepository.save(payment);
-
-                    m_logger.info("Payment number " + payment.GetInstallment() +
-                                  " of debt with id " + oldDebt.GetId() +
-                                  " on credit card with id " +
-                                  oldDebt.GetCreditCard().GetId() +
-                                  " updated with value " + installmentValue);
-                }
-            }
-        }
-        else // Insert and update payments
-        {
-            for (Integer i = 1; i <= newInstallments; i++)
-            {
-                if (i > oldDebt.GetInstallments())
-                {
-                    CreditCardPayment lastPayment = payments.getLast();
-
-                    // Calculate the payment date
-                    LocalDateTime paymentDate = lastPayment.GetDate().plusMonths(1);
-
-                    CreditCardPayment payment = new CreditCardPayment(oldDebt,
-                                                                      paymentDate,
-                                                                      installmentValue,
-                                                                      i);
-
-                    m_creditCardPaymentRepository.save(payment);
-
-                    m_logger.info("Payment number " + i + " of debt with id " +
-                                  oldDebt.GetId() + " on credit card with id " +
-                                  oldDebt.GetCreditCard().GetId() +
-                                  " registered with value " + installmentValue +
-                                  " and due date " + paymentDate);
-
-                    // Add new payment to the list
-                    payments.add(payment);
-                }
-                else
-                {
-                    CreditCardPayment payment = payments.get(i - 1);
-
-                    payment.SetAmount(installmentValue);
-                    m_creditCardPaymentRepository.save(payment);
-
-                    m_logger.info("Payment number " + payment.GetInstallment() +
-                                  " of debt with id " + oldDebt.GetId() +
-                                  " on credit card with id " +
-                                  oldDebt.GetCreditCard().GetId() +
-                                  " updated with value " + installmentValue);
-                }
-            }
-        }
-
-        // Update the number of installments
-        oldDebt.SetInstallments(newInstallments);
-        m_creditCardDebtRepository.save(oldDebt);
-    }
-
-    /**
-     * Change the total amount of a debt
-     * @param oldDebt The debt to be updated
-     * @param newAmount The new total amount
-     */
-    private void ChangeDebtTotalAmount(CreditCardDebt oldDebt, Double newAmount)
-    {
-        if (oldDebt.GetTotalAmount().equals(newAmount))
-        {
-            return;
-        }
-
-        List<CreditCardPayment> payments = GetCreditCardPayments(oldDebt.GetId());
-
-        // New value for each installment
-        Double installmentValue = newAmount / oldDebt.GetInstallments();
-
-        // Update payments
-        for (Integer i = 0; i < oldDebt.GetInstallments(); i++)
-        {
-            CreditCardPayment payment = payments.get(i);
-
-            // If the payment was made with a wallet, add the amount difference back to
-            // the wallet balance
-            if (payment.GetWallet() != null)
-            {
-                Double difference = installmentValue - payment.GetAmount();
-
-                payment.GetWallet().SetBalance(payment.GetWallet().GetBalance() +
-                                               difference);
-
-                m_logger.info("Payment number " + payment.GetInstallment() +
-                              " of debt with id " + oldDebt.GetId() +
-                              " on credit card with id " +
-                              oldDebt.GetCreditCard().GetId() +
-                              " updated and added to wallet with id " +
-                              payment.GetWallet().GetId());
-
-                m_walletRepository.save(payment.GetWallet());
-            }
-
-            payment.SetAmount(installmentValue);
-            m_creditCardPaymentRepository.save(payment);
-
-            m_logger.info("Payment number " + payment.GetInstallment() +
-                          " of debt with id " + oldDebt.GetId() +
-                          " on credit card with id " +
-                          oldDebt.GetCreditCard().GetId() + " updated with value " +
-                          installmentValue);
-        }
-
-        // Update the total amount
-        oldDebt.SetTotalAmount(newAmount);
-        m_creditCardDebtRepository.save(oldDebt);
-    }
-
-    /**
      * Get all credit cards
      * @return A list with all credit cards
      */
@@ -564,13 +371,13 @@ public class CreditCardService
     }
 
     /**
-     * Get credit card payments by debt id
+     * Get payments by debt id
      * @param debtId The debt id
      * @return A list with all credit card payments by debt id
      */
-    public List<CreditCardPayment> GetCreditCardPayments(Long crcId)
+    public List<CreditCardPayment> GetPaymentsByDebtId(Long debtId)
     {
-        return m_creditCardPaymentRepository.GetCreditCardPayments(crcId);
+        return m_creditCardPaymentRepository.GetPaymentsByDebtId(debtId);
     }
 
     /**
@@ -754,5 +561,233 @@ public class CreditCardService
         }
 
         return LocalDateTime.parse(date, Constants.DB_DATE_FORMATTER);
+    }
+
+    /**
+     * Delete a payment of a debt
+     * @param id The id of the payment
+     * @throws RuntimeException If the payment does not exist
+     * @note WARNING: The data in CreditCardDebt is not updated when a payment is
+     *   deleted
+     */
+    private void DeletePayment(Long id)
+    {
+        CreditCardPayment payment =
+            m_creditCardPaymentRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Payment with id " + id + " not found"));
+
+        // If payment was made with a wallet, add the amount back to the
+        // wallet balance
+        if (payment.GetWallet() != null)
+        {
+            payment.GetWallet().SetBalance(payment.GetWallet().GetBalance() +
+                                           payment.GetAmount());
+
+            m_logger.info("Payment number " + payment.GetInstallment() +
+                          " of debt with id " + payment.GetCreditCardDebt().GetId() +
+                          " on credit card with id " +
+                          payment.GetCreditCardDebt().GetCreditCard().GetId() +
+                          " deleted and added to wallet with id " +
+                          payment.GetWallet().GetId());
+
+            m_walletRepository.save(payment.GetWallet());
+        }
+
+        m_creditCardPaymentRepository.delete(payment);
+
+        m_logger.info("Payment number " + payment.GetInstallment() +
+                      " of debt with id " + payment.GetCreditCardDebt().GetId() +
+                      " on credit card with id " +
+                      payment.GetCreditCardDebt().GetCreditCard().GetId() + " deleted");
+    }
+
+    /**
+     * Update invoice month of a debt
+     * @param debt The debt to be updated
+     * @param invoiceMonth The new invoice month
+     */
+    private void ChangeInvoiceMonth(CreditCardDebt oldDebt, YearMonth invoice)
+    {
+        List<CreditCardPayment> payments = GetPaymentsByDebtId(oldDebt.GetId());
+
+        CreditCardPayment firstPayment = payments.getFirst();
+
+        // If the first payment is in the same month and year of the invoice, do not
+        // update
+        if (firstPayment == null ||
+            (firstPayment.GetDate().getMonth() == invoice.getMonth() &&
+             firstPayment.GetDate().getYear() == invoice.getYear()))
+        {
+            return;
+        }
+
+        for (Integer i = 0; i < oldDebt.GetInstallments(); i++)
+        {
+            CreditCardPayment payment = payments.get(i);
+
+            // Calculate the payment date
+            LocalDateTime paymentDate =
+                invoice.plusMonths(i)
+                    .atDay(oldDebt.GetCreditCard().GetBillingDueDay())
+                    .atTime(23, 59);
+
+            payment.SetDate(paymentDate);
+            m_creditCardPaymentRepository.save(payment);
+
+            m_logger.info("Payment number " + payment.GetInstallment() +
+                          " of debt with id " + oldDebt.GetId() +
+                          " on credit card with id " +
+                          oldDebt.GetCreditCard().GetId() + " updated with due date " +
+                          paymentDate);
+        }
+    }
+
+    /**
+     * Change the number of installments of a debt
+     * @param debt The debt to be updated
+     * @param newInstallments The new number of installments
+     */
+    private void ChangeDebtInstallments(CreditCardDebt oldDebt, Integer newInstallments)
+    {
+        if (oldDebt.GetInstallments() == newInstallments)
+        {
+            return;
+        }
+
+        List<CreditCardPayment> payments = GetPaymentsByDebtId(oldDebt.GetId());
+
+        // New value for each installment
+        Double installmentValue = oldDebt.GetTotalAmount() / newInstallments;
+
+        // Delete and update payments
+        if (newInstallments < oldDebt.GetInstallments())
+        {
+            for (Integer i = 0; i < oldDebt.GetInstallments(); i++)
+            {
+                CreditCardPayment payment = payments.get(i);
+
+                // If the payment is greater than the new number of installments, delete
+                // it
+                if (payment.GetInstallment() > newInstallments)
+                {
+                    DeletePayment(payment.GetId());
+                }
+                // If the payment is less or equal than the new number of installments,
+                // update it
+                else
+                {
+                    payment.SetAmount(installmentValue);
+                    m_creditCardPaymentRepository.save(payment);
+
+                    m_logger.info("Payment number " + payment.GetInstallment() +
+                                  " of debt with id " + oldDebt.GetId() +
+                                  " on credit card with id " +
+                                  oldDebt.GetCreditCard().GetId() +
+                                  " updated with value " + installmentValue);
+                }
+            }
+        }
+        else // Insert and update payments
+        {
+            for (Integer i = 1; i <= newInstallments; i++)
+            {
+                if (i > oldDebt.GetInstallments())
+                {
+                    CreditCardPayment lastPayment = payments.getLast();
+
+                    // Calculate the payment date
+                    LocalDateTime paymentDate = lastPayment.GetDate().plusMonths(1);
+
+                    CreditCardPayment payment = new CreditCardPayment(oldDebt,
+                                                                      paymentDate,
+                                                                      installmentValue,
+                                                                      i);
+
+                    m_creditCardPaymentRepository.save(payment);
+
+                    m_logger.info("Payment number " + i + " of debt with id " +
+                                  oldDebt.GetId() + " on credit card with id " +
+                                  oldDebt.GetCreditCard().GetId() +
+                                  " registered with value " + installmentValue +
+                                  " and due date " + paymentDate);
+
+                    // Add new payment to the list
+                    payments.add(payment);
+                }
+                else
+                {
+                    CreditCardPayment payment = payments.get(i - 1);
+
+                    payment.SetAmount(installmentValue);
+                    m_creditCardPaymentRepository.save(payment);
+
+                    m_logger.info("Payment number " + payment.GetInstallment() +
+                                  " of debt with id " + oldDebt.GetId() +
+                                  " on credit card with id " +
+                                  oldDebt.GetCreditCard().GetId() +
+                                  " updated with value " + installmentValue);
+                }
+            }
+        }
+
+        // Update the number of installments
+        oldDebt.SetInstallments(newInstallments);
+        m_creditCardDebtRepository.save(oldDebt);
+    }
+
+    /**
+     * Change the total amount of a debt
+     * @param oldDebt The debt to be updated
+     * @param newAmount The new total amount
+     */
+    private void ChangeDebtTotalAmount(CreditCardDebt oldDebt, Double newAmount)
+    {
+        if (oldDebt.GetTotalAmount().equals(newAmount))
+        {
+            return;
+        }
+
+        List<CreditCardPayment> payments = GetPaymentsByDebtId(oldDebt.GetId());
+
+        // New value for each installment
+        Double installmentValue = newAmount / oldDebt.GetInstallments();
+
+        // Update payments
+        for (Integer i = 0; i < oldDebt.GetInstallments(); i++)
+        {
+            CreditCardPayment payment = payments.get(i);
+
+            // If the payment was made with a wallet, add the amount difference back to
+            // the wallet balance
+            if (payment.GetWallet() != null)
+            {
+                Double difference = installmentValue - payment.GetAmount();
+
+                payment.GetWallet().SetBalance(payment.GetWallet().GetBalance() +
+                                               difference);
+
+                m_logger.info("Payment number " + payment.GetInstallment() +
+                              " of debt with id " + oldDebt.GetId() +
+                              " on credit card with id " +
+                              oldDebt.GetCreditCard().GetId() +
+                              " updated and added to wallet with id " +
+                              payment.GetWallet().GetId());
+
+                m_walletRepository.save(payment.GetWallet());
+            }
+
+            payment.SetAmount(installmentValue);
+            m_creditCardPaymentRepository.save(payment);
+
+            m_logger.info("Payment number " + payment.GetInstallment() +
+                          " of debt with id " + oldDebt.GetId() +
+                          " on credit card with id " +
+                          oldDebt.GetCreditCard().GetId() + " updated with value " +
+                          installmentValue);
+        }
+
+        // Update the total amount
+        oldDebt.SetTotalAmount(newAmount);
+        m_creditCardDebtRepository.save(oldDebt);
     }
 }

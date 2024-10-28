@@ -150,7 +150,7 @@
                                     <VBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                                        <children>
                                           <Label fx:id="invoiceTotal" text="\$ 0.00" />
-                                          <JFXButton onAction="#handleRegisterPayment" text="Register payment">
+                                          <JFXButton alignment="CENTER_RIGHT" onAction="#handleRegisterPayment" text="Register payment" textAlignment="RIGHT">
                                              <graphic>
                                                 <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>

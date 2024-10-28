@@ -42,6 +42,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import org.mymoney.entities.Category;
 import org.mymoney.entities.CreditCard;
+import org.mymoney.entities.CreditCardDebt;
 import org.mymoney.entities.CreditCardPayment;
 import org.mymoney.services.CategoryService;
 import org.mymoney.services.CreditCardService;
@@ -198,7 +199,82 @@ public class CreditCardController
 
     @FXML
     private void handleDeleteDebt()
-    { }
+    {
+        CreditCardPayment selectedPayment =
+            debtsTableView.getSelectionModel().getSelectedItem();
+
+        if (selectedPayment == null)
+        {
+            WindowUtils.ShowInformationDialog(
+                "Info",
+                "No payment selected",
+                "Please select a payment to delete the associated debt.");
+
+            return;
+        }
+
+        CreditCardDebt debt = selectedPayment.GetCreditCardDebt();
+
+        List<CreditCardPayment> payments =
+            creditCardService.GetPaymentsByDebtId(debt.GetId());
+
+        // Get the amount paid for the debt
+        Double refundAmount = payments.stream()
+                                  .filter(p -> p.GetWallet() != null)
+                                  .mapToDouble(CreditCardPayment::GetAmount)
+                                  .sum();
+
+        Long installmentsPaid =
+            payments.stream().filter(p -> p.GetWallet() != null).count();
+
+        // Create a message to show the user
+        StringBuilder message = new StringBuilder();
+        message.append("Description: ")
+            .append(debt.GetDescription())
+            .append("\n")
+            .append("Amount: ")
+            .append(UIUtils.FormatCurrency(debt.GetTotalAmount()))
+            .append("\n")
+            .append("Register date: ")
+            .append(debt.GetDate().format(Constants.DATE_FORMATTER_NO_TIME))
+            .append("\n")
+            .append("Installments: ")
+            .append(debt.GetInstallments())
+            .append("\n")
+            .append("Installments paid: ")
+            .append(installmentsPaid)
+            .append("\n")
+            .append("Category: ")
+            .append(debt.GetCategory().GetName())
+            .append("\n")
+            .append("Credit card: ")
+            .append(debt.GetCreditCard().GetName())
+            .append("\n");
+
+        if (refundAmount > 0)
+        {
+            message.append("Refund amount: ")
+                .append(UIUtils.FormatCurrency(refundAmount))
+                .append("\n");
+        }
+        else
+        {
+            message.append("No refund amount");
+        }
+
+        // Confirm deletion
+        if (WindowUtils.ShowConfirmationDialog(
+                "Delete debt",
+                "Are you sure you want to delete the debt?",
+                message.toString()))
+        {
+            creditCardService.DeleteDebt(debt.GetId());
+            UpdateDebtsTableView();
+            UpdateTotalDebtsInfo();
+            UpdateMoneyFlow();
+            UpdateDisplayCards();
+        }
+    }
 
     /**
      * Load credit cards from database
