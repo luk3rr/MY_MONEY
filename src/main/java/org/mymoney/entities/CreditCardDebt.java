@@ -6,7 +6,6 @@
 
 package org.mymoney.entities;
 
-import org.mymoney.util.Constants;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import org.mymoney.util.Constants;
 
 /**
  * Represents a credit card debt
@@ -44,6 +44,9 @@ public class CreditCardDebt
     @Column(name = "total_amount", nullable = false)
     private Double totalAmount;
 
+    @Column(name = "installments", nullable = false)
+    private Integer installments;
+
     @Column(name = "description", nullable = true)
     private String description;
 
@@ -63,14 +66,16 @@ public class CreditCardDebt
     public CreditCardDebt(CreditCard    creditCard,
                           Category      category,
                           LocalDateTime date,
+                          Integer       installments,
                           Double        totalAmount,
                           String        description)
     {
-        this.creditCard  = creditCard;
-        this.category    = category;
-        this.date        = date.format(Constants.DB_DATE_FORMATTER);
-        this.totalAmount = totalAmount;
-        this.description = description;
+        this.creditCard   = creditCard;
+        this.category     = category;
+        this.date         = date.format(Constants.DB_DATE_FORMATTER);
+        this.installments = installments;
+        this.totalAmount  = totalAmount;
+        this.description  = description;
     }
 
     /**
@@ -107,6 +112,15 @@ public class CreditCardDebt
     public LocalDateTime GetDate()
     {
         return LocalDateTime.parse(date, Constants.DB_DATE_FORMATTER);
+    }
+
+    /**
+     * Get the number of installments of the debt
+     * @return The number of installments of the debt
+     */
+    public Integer GetInstallments()
+    {
+        return installments;
     }
 
     /**
@@ -152,6 +166,15 @@ public class CreditCardDebt
     public void SetDate(LocalDateTime date)
     {
         this.date = date.format(Constants.DB_DATE_FORMATTER);
+    }
+
+    /**
+     * Set the number of installments of the debt
+     * @param installments The new number of installments of the debt
+     */
+    public void SetInstallments(Integer installments)
+    {
+        this.installments = installments;
     }
 
     /**

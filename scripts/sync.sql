@@ -301,11 +301,12 @@ AND temp_despesas_crc_mf.crc_nome IS NOT NULL;
 -- 4. Inserir as despesas do cartão com num_parcelas > 1
 -- OBS.: Se você tiver faturas diferentes, mas com o mesmo título e com quantidade de parcelas diferentes,
 --       o código abaixo ainda conseguirá identificar que são coisas diferentes, caso contrário, não garanto.
-INSERT INTO credit_card_debt (date, description, total_amount, category_id, crc_id)
+INSERT INTO credit_card_debt (date, description, installments, total_amount, category_id, crc_id)
 SELECT
     -- Data da primeira fatura
     first_dates.first_date,
     temp.dsp_desc AS description,
+    temp.num_parcelas AS installments,
     -- Soma de todas as faturas com a mesma descrição
     SUM(temp.valor) AS total_amount,
     ct.id AS category_id,
@@ -356,10 +357,11 @@ WHERE
 GROUP BY temp.dsp_desc, first_dates.first_date, ct.id, crc.id;
 
 -- 5. Inserir as despesas do cartão com num_parcelas = 1
-INSERT INTO credit_card_debt (date, description, total_amount, category_id, crc_id)
+INSERT INTO credit_card_debt (date, description, installments, total_amount, category_id, crc_id)
 SELECT
     temp.dsp_data AS date,
     temp.dsp_desc AS description,
+    temp.num_parcelas AS installments,
     temp.valor AS total_amount,
     ct.id AS category_id,
     crc.id AS crc_id

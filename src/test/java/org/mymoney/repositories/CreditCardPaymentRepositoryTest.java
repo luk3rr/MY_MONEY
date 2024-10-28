@@ -93,6 +93,7 @@ public class CreditCardPaymentRepositoryTest
                                                 Double     totalAmount)
     {
         CreditCardDebt creditCardDebt = new CreditCardDebt();
+        creditCardDebt.SetInstallments(1);
         creditCardDebt.SetTotalAmount(totalAmount);
         creditCardDebt.SetCreditCard(creditCard);
         creditCardDebt.SetDate(LocalDateTime.now().plusDays(5));

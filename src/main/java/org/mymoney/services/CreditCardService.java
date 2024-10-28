@@ -172,12 +172,12 @@ public class CreditCardService
      * @param registerDate The date the debt was registered
      * @param invoiceMonth The month of the invoice
      * @param value The value of the debt
-     * @param installment The number of installments of the debt
+     * @param installments The number of installments of the debt
      * @param description The description of the debt
      * @throws RuntimeException If the credit card does not exist
      * @throws RuntimeException If the category does not exist
      * @throws RuntimeException If the value is negative
-     * @throws RuntimeException If the installment is not in range [1,
+     * @throws RuntimeException If the installments is not in range [1,
      *     Constants.MAX_INSTALLMENTS]
      * @throws RuntimeException If the credit card does not have enough credit
      */
@@ -187,7 +187,7 @@ public class CreditCardService
                              LocalDateTime registerDate,
                              YearMonth     invoiceMonth,
                              Double        value,
-                             Integer       installment,
+                             Integer       installments,
                              String        description)
     {
         CreditCard creditCard = m_creditCardRepository.findById(crcId).orElseThrow(
@@ -206,7 +206,7 @@ public class CreditCardService
             throw new RuntimeException("Value must be non-negative");
         }
 
-        if (installment < 1 || installment > Constants.MAX_INSTALLMENTS)
+        if (installments < 1 || installments > Constants.MAX_INSTALLMENTS)
         {
             throw new RuntimeException("Installment must be in the range [1, " +
                                        Constants.MAX_INSTALLMENTS + "]");
@@ -231,17 +231,21 @@ public class CreditCardService
                 " does not have enough credit to register debt");
         }
 
-        CreditCardDebt debt =
-            new CreditCardDebt(creditCard, cat, registerDate, value, description);
+        CreditCardDebt debt = new CreditCardDebt(creditCard,
+                                                 cat,
+                                                 registerDate,
+                                                 installments,
+                                                 value,
+                                                 description);
 
         m_creditCardDebtRepository.save(debt);
 
         m_logger.info("Debit registered on credit card with id " + crcId +
                       " with value " + value + " and description " + description);
 
-        Double installmentValue = value / installment;
+        Double installmentValue = value / installments;
 
-        for (Integer i = 0; i < installment; i++)
+        for (Integer i = 0; i < installments; i++)
         {
             // Calculate the payment date
             LocalDateTime paymentDate = invoiceMonth.plusMonths(i)

@@ -83,6 +83,7 @@ public class CreditCardDebtRepositoryTest
     {
         CreditCardDebt creditCardDebt = new CreditCardDebt();
         creditCardDebt.SetCreditCard(m_creditCard);
+        creditCardDebt.SetInstallments(1);
         creditCardDebt.SetTotalAmount(totalAmount);
         creditCardDebt.SetDate(date);
         creditCardDebt.SetCategory(CreateCategory("category"));
