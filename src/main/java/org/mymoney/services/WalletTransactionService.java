@@ -216,6 +216,8 @@ public class WalletTransactionService
      * Update a transaction
      * @param transaction The transaction to be updated
      * @throws RuntimeException If the transaction does not exist
+     * @throws RuntimeException If the wallet does not exist
+     * @throws RuntimeException If the amount is less than or equal to zero
      */
     @Transactional
     public void UpdateTransaction(WalletTransaction transaction)
@@ -254,7 +256,8 @@ public class WalletTransactionService
 
         m_walletTransactionRepository.save(oldTransaction);
 
-        m_logger.info("Transaction " + transaction.GetId() + " updated successfully");
+        m_logger.info("Transaction with id " + transaction.GetId() +
+                      " updated successfully");
     }
 
     /**

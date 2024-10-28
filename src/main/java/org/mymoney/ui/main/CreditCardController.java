@@ -48,6 +48,7 @@ import org.mymoney.services.CreditCardService;
 import org.mymoney.ui.common.CreditCardPaneController;
 import org.mymoney.ui.dialog.AddCreditCardController;
 import org.mymoney.ui.dialog.AddCreditCardDebtController;
+import org.mymoney.ui.dialog.EditCreditCardDebtController;
 import org.mymoney.util.Animation;
 import org.mymoney.util.Constants;
 import org.mymoney.util.LoggerConfig;
@@ -173,7 +174,27 @@ public class CreditCardController
 
     @FXML
     private void handleEditDebt()
-    { }
+    {
+        CreditCardPayment selectedPayment =
+            debtsTableView.getSelectionModel().getSelectedItem();
+
+        if (selectedPayment == null)
+        {
+            WindowUtils.ShowInformationDialog("Info",
+                                              "No payment selected",
+                                              "Please select a payment to edit.");
+
+            return;
+        }
+
+        WindowUtils.OpenModalWindow(Constants.EDIT_CREDIT_CARD_DEBT_FXML,
+                                    "Edit Credit Card Debt",
+                                    springContext,
+                                    (EditCreditCardDebtController controller) -> {
+                                        controller.SetCreditCardDebt(
+                                            selectedPayment.GetCreditCardDebt());
+                                    });
+    }
 
     @FXML
     private void handleDeleteDebt()

@@ -31,6 +31,17 @@ public interface CreditCardPaymentRepository
     GetCreditCardPayments(@Param("month") Integer month, @Param("year") Integer year);
 
     /**
+     * Get credit card payments by debt id
+     * @param debtId The debt id
+     * @return A list with all credit card payments by debt id
+     */
+    @Query("SELECT ccp "
+           + "FROM CreditCardPayment ccp "
+           + "WHERE ccp.creditCardDebt.id = :debtId")
+    List<CreditCardPayment>
+    GetCreditCardPayments(@Param("debtId") Long debtId);
+
+    /**
      * Get the total paid amount of a credit card
      * @param creditCardId The credit card id
      * @return The total paid amount of the credit card
@@ -121,6 +132,18 @@ public interface CreditCardPaymentRepository
            + "WHERE ccp.wallet IS NULL")
     Double
     GetTotalPendingPayments();
+
+    /**
+     * Get the remaining debt of a purchase
+     * @param debtId The id of the debt
+     * @return The remaining debt of the purchase
+     */
+    @Query("SELECT COALESCE(SUM(ccp.amount), 0) "
+           + "FROM CreditCardPayment ccp "
+           + "WHERE ccp.creditCardDebt.id = :debtId "
+           + "AND ccp.wallet IS NULL")
+    Double
+    GetRemainingDebt(@Param("debtId") Long debtId);
 
     /**
      * Get the invoice amount of a credit card in a specified month and year
