@@ -358,10 +358,7 @@ public class WalletController
                     .mapToDouble(WalletTransaction::GetAmount)
                     .sum();
 
-            totalWallets = transactions.stream()
-                               .map(t -> t.GetWallet().GetId())
-                               .distinct()
-                               .count();
+            totalWallets = wallets.stream().map(w -> w.GetId()).distinct().count();
         }
         else if (selectedIndex > 0 && selectedIndex - 1 < walletTypes.size())
         {
@@ -395,13 +392,12 @@ public class WalletController
                     .mapToDouble(WalletTransaction::GetAmount)
                     .sum();
 
-            totalWallets = transactions.stream()
-                               .filter(t
-                                       -> t.GetWallet().GetType().GetId() ==
-                                              selectedWalletType.GetId())
-                               .map(t -> t.GetWallet().GetId())
-                               .distinct()
-                               .count();
+            totalWallets =
+                wallets.stream()
+                    .filter(w -> w.GetType().GetId() == selectedWalletType.GetId())
+                    .map(w -> w.GetId())
+                    .distinct()
+                    .count();
         }
         else
         {
