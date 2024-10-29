@@ -199,7 +199,6 @@ public class EditCreditCardDebtController
                 WindowUtils.ShowInformationDialog("Info",
                                                   "No changes",
                                                   "No changes were made.");
-                return;
             }
             else // If there is any modification, update the debt
             {

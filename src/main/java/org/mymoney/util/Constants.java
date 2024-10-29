@@ -70,6 +70,8 @@ public final class Constants
         UI_DIALOG_PATH + "edit_category.fxml";
     public static final String EDIT_TRANSACTION_FXML =
         UI_DIALOG_PATH + "edit_transaction.fxml";
+    public static final String EDIT_CREDIT_CARD_FXML =
+        UI_DIALOG_PATH + "edit_credit_card.fxml";
     public static final String EDIT_CREDIT_CARD_DEBT_FXML =
         UI_DIALOG_PATH + "edit_credit_card_debt.fxml";
 

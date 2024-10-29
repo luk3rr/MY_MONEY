@@ -935,7 +935,7 @@ public class WalletTransactionService
      */
     public Long GetTransactionCountByWallet(Long walletId)
     {
-        return m_walletTransactionRepository.CountTransactionsByWallet(walletId);
+        return m_walletTransactionRepository.GetTransactionCountByWallet(walletId);
     }
 
     /**

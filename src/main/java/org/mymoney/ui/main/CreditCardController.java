@@ -107,6 +107,7 @@ public class CreditCardController
     /**
      * Constructor
      * @param creditCardService CreditCardService
+     * @param categoryService CategoryService
      */
     public CreditCardController(CreditCardService creditCardService,
                                 CategoryService   categoryService)
@@ -277,6 +278,21 @@ public class CreditCardController
     }
 
     /**
+     * Update the display
+     * @note: This method can be called by other controllers to update the screen when
+     * there is a change
+     */
+    public void UpdateDisplay()
+    {
+        LoadCreditCards();
+
+        UpdateDebtsTableView();
+        UpdateTotalDebtsInfo();
+        UpdateMoneyFlow();
+        UpdateDisplayCards();
+    }
+
+    /**
      * Load credit cards from database
      */
     private void LoadCreditCards()
@@ -284,6 +300,9 @@ public class CreditCardController
         creditCards = creditCardService.GetAllCreditCardsOrderedByName();
     }
 
+    /**
+     * Update the debts table view
+     */
     private void UpdateDebtsTableView()
     {
         YearMonth selectedMonth = debtsListMonthFilterComboBox.getValue();
@@ -580,6 +599,9 @@ public class CreditCardController
         });
     }
 
+    /**
+     * Populate the year filter combo box
+     */
     private void PopulateYearFilterComboBox()
     {
         LocalDateTime oldestDebtDate = creditCardService.GetEarliestPaymentDate();

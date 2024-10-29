@@ -122,7 +122,7 @@ public class ManageCategoryController
                                         "Category has transactions",
                                         "Cannot remove a category with transactions");
             // TODO: Implement a way to change the category of the transactions
-            // TODO: Implement a way to arquive the category
+            // TODO: Implement a way to archive the category
             return;
         }
 

@@ -106,6 +106,7 @@ public class WalletService
      * Delete a wallet
      * @param id The id of the wallet to be deleted
      * @throws RuntimeException If the wallet does not exist
+     * @throws RuntimeException If the wallet has transactions
      */
     @Transactional
     public void DeleteWallet(Long id)
@@ -115,7 +116,7 @@ public class WalletService
                 -> new RuntimeException("Wallet with id " + id +
                                         " not found and cannot be deleted"));
 
-        if (m_walletTransactionRepository.CountTransactionsByWallet(id) > 0)
+        if (m_walletTransactionRepository.GetTransactionCountByWallet(id) > 0)
         {
             throw new RuntimeException("Wallet with id " + id +
                                        " has transactions and cannot be deleted");

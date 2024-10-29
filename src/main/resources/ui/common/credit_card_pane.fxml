@@ -51,9 +51,8 @@
                         </MenuButton>
                         <MenuButton fx:id="menuButton" minWidth="30.0" mnemonicParsing="false" stylesheets="@../../css/component/menu-button.css">
                           <items>
-                            <MenuItem mnemonicParsing="false" onAction="#handleRenameCreditCard" text="Rename" />
-                            <MenuItem mnemonicParsing="false" onAction="#handleChangeOperator" text="Change Operator" />
-                              <MenuItem mnemonicParsing="false" onAction="#handleChangeLimit" text="Change Limit" />
+                            <MenuItem mnemonicParsing="false" onAction="#handleEditCreditCard" text="Edit" />
+                              <MenuItem mnemonicParsing="false" onAction="#handleArchiveCreditCard" text="Archive" />
                               <MenuItem mnemonicParsing="false" onAction="#handleDeleteCreditCard" text="Delete" />
                           </items>
                            <graphic>

@@ -394,7 +394,7 @@ public interface WalletTransactionRepository
            + "FROM WalletTransaction wt "
            + "WHERE wt.wallet.id = :walletId")
     Long
-    CountTransactionsByWallet(@Param("walletId") Long walletId);
+    GetTransactionCountByWallet(@Param("walletId") Long walletId);
 
     /**
      * Get count of transactions by wallet where both the category and wallet are not

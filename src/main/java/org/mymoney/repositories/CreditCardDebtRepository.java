@@ -21,8 +21,7 @@ public interface CreditCardDebtRepository extends JpaRepository<CreditCardDebt, 
      * @return The total debt of the credit card
      */
     @Query("SELECT COALESCE(SUM(ccd.totalAmount), 0) FROM CreditCardDebt ccd "
-           + "JOIN ccd.creditCard cc "
-           + "WHERE cc.id = :creditCardId")
+           + "WHERE ccd.creditCard.id = :creditCardId")
     Double
     GetTotalDebt(@Param("creditCardId") Long creditCardId);
 
@@ -39,4 +38,14 @@ public interface CreditCardDebtRepository extends JpaRepository<CreditCardDebt, 
      */
     @Query("SELECT MAX(ccp.date) FROM CreditCardPayment ccp")
     String FindLatestPaymentDate();
+
+    /**
+     * Get count of debts by credit card
+     * @param creditCardId The id of the credit card
+     * @return The count of debts by credit card
+     */
+    @Query("SELECT COUNT(ccd) FROM CreditCardDebt ccd "
+           + "WHERE ccd.creditCard.id = :creditCardId")
+    Integer
+    GetDebtCountByCreditCard(@Param("creditCardId") Long creditCardId);
 }

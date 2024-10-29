@@ -310,7 +310,6 @@ public class WalletFullPaneController
                 "Are you sure you want to archive this wallet?"))
         {
             walletService.ArchiveWallet(wallet.GetId());
-            UpdateWalletPane(wallet);
 
             // Update wallet display in the main window
             walletController.UpdateDisplay();

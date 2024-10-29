@@ -79,38 +79,13 @@ public class CreditCardService
         // Remove leading and trailing whitespaces
         name = name.strip();
 
-        if (name.isBlank())
-        {
-            throw new RuntimeException("Credit card name cannot be empty");
-        }
-
         if (m_creditCardRepository.existsByName(name))
         {
             throw new RuntimeException("Credit card with name " + name +
                                        " already exists");
         }
 
-        if (dueDate < 1 || dueDate > Constants.MAX_BILLING_DUE_DAY)
-        {
-            throw new RuntimeException("Billing due day must be in the range [1, " +
-                                       Constants.MAX_BILLING_DUE_DAY + "]");
-        }
-
-        if (closingDay < 1 || closingDay > Constants.MAX_BILLING_DUE_DAY)
-        {
-            throw new RuntimeException("Closing day must be in the range [1, " +
-                                       Constants.MAX_BILLING_DUE_DAY + "]");
-        }
-
-        if (maxDebt <= 0)
-        {
-            throw new RuntimeException("Max debt must be positive");
-        }
-
-        if (lastFourDigits.isBlank() || lastFourDigits.length() != 4)
-        {
-            throw new RuntimeException("Last four digits must have length 4");
-        }
+        CreditCardBasicChecks(name, dueDate, closingDay, maxDebt, lastFourDigits);
 
         CreditCardOperator operator =
             m_creditCardOperatorRepository.findById(operatorId)
@@ -136,6 +111,7 @@ public class CreditCardService
      * Delete a credit card
      * @param id The id of the credit card
      * @throws RuntimeException If the credit card does not exist
+     * @throws RuntimeException If the credit card has debts
      */
     @Transactional
     public void DeleteCreditCard(Long id)
@@ -145,9 +121,76 @@ public class CreditCardService
                 -> new RuntimeException("Credit card with id " + id +
                                         " does not exist"));
 
+        if (GetDebtCountByCreditCard(id) > 0)
+        {
+            throw new RuntimeException("Credit card with id " + id +
+                                       " has debts and cannot be deleted");
+        }
+
         m_creditCardRepository.delete(creditCard);
 
-        m_logger.info("Credit card with id " + id + " deleted");
+        m_logger.info("Credit card with id " + id + " was permanently deleted");
+    }
+
+    /**
+     * Update a credit card
+     * @param crc The credit card to be updated
+     * @throws RuntimeException If the credit card does not exist
+     * @throws RuntimeException If the credit card name is empty
+     * @throws RuntimeException If the billingDueDay is not in the range [1,
+     *     Constants.MAX_BILLING_DUE_DAY]
+     * @throws RuntimeException If the maxDebt is negative
+     * @throws RuntimeException If the lastFourDigits is empty or has length different
+     *     from 4
+     */
+    @Transactional
+    public void UpdateCreditCard(CreditCard crc)
+    {
+        CreditCard oldCrc = m_creditCardRepository.findById(crc.GetId())
+                                .orElseThrow(()
+                                                 -> new RuntimeException(
+                                                     "Credit card with id " +
+                                                     crc.GetId() + " does not exist"));
+
+        CreditCardOperator operator =
+            m_creditCardOperatorRepository.findById(crc.GetOperator().GetId())
+                .orElseThrow(()
+                                 -> new RuntimeException(
+                                     "Credit card operator with id " +
+                                     crc.GetOperator().GetId() + " does not exist"));
+
+        // Remove leading and trailing whitespaces
+        crc.SetName(crc.GetName().strip());
+
+        CreditCardBasicChecks(crc.GetName(),
+                              crc.GetBillingDueDay(),
+                              crc.GetClosingDay(),
+                              crc.GetMaxDebt(),
+                              crc.GetLastFourDigits());
+
+        List<CreditCard> creditCards = m_creditCardRepository.findAll();
+
+        for (CreditCard creditCard : creditCards)
+        {
+            if (creditCard.GetName().equals(crc.GetName()) &&
+                !creditCard.GetId().equals(crc.GetId()))
+            {
+                throw new RuntimeException("Credit card with name " + crc.GetName() +
+                                           " already exists");
+            }
+        }
+
+        oldCrc.SetName(crc.GetName());
+
+        oldCrc.SetMaxDebt(crc.GetMaxDebt());
+        oldCrc.SetLastFourDigits(crc.GetLastFourDigits());
+        oldCrc.SetOperator(operator);
+        oldCrc.SetBillingDueDay(crc.GetBillingDueDay());
+        oldCrc.SetClosingDay(crc.GetClosingDay());
+
+        m_creditCardRepository.save(oldCrc);
+
+        m_logger.info("Credit card with id " + crc.GetId() + " updated successfully");
     }
 
     /**
@@ -561,6 +604,66 @@ public class CreditCardService
         }
 
         return LocalDateTime.parse(date, Constants.DB_DATE_FORMATTER);
+    }
+
+    /**
+     * Get count of debts by credit card
+     * @param id The id of the credit card
+     * @return The count of debts by credit card
+     */
+    public Integer GetDebtCountByCreditCard(Long id)
+    {
+
+        return m_creditCardDebtRepository.GetDebtCountByCreditCard(id);
+    }
+
+    /**
+     * Basic checks for credit card creation or update
+     * @param name The name of the credit card
+     * @param dueDate The day of the month the credit card bill is due
+     * @param closingDay The day of the month the credit card bill is closed
+     * @param maxDebt The maximum debt of the credit card
+     * @param lastFourDigits The last four digits of the credit card
+     * @throws RuntimeException If the credit card name is empty
+     * @throws RuntimeException If the credit card name is already in use
+     * @throws RuntimeException If the billingDueDay is not in the range [1,
+     *     Constants.MAX_BILLING_DUE_DAY]
+     * @throws RuntimeException If the maxDebt is negative
+     * @throws RuntimeException If the lastFourDigits is empty or has length different
+     *     from 4
+     */
+    private void CreditCardBasicChecks(String  name,
+                                       Integer dueDate,
+                                       Integer closingDay,
+                                       Double  maxDebt,
+                                       String  lastFourDigits)
+    {
+        if (name.isBlank())
+        {
+            throw new RuntimeException("Credit card name cannot be empty");
+        }
+
+        if (dueDate < 1 || dueDate > Constants.MAX_BILLING_DUE_DAY)
+        {
+            throw new RuntimeException("Billing due day must be in the range [1, " +
+                                       Constants.MAX_BILLING_DUE_DAY + "]");
+        }
+
+        if (closingDay < 1 || closingDay > Constants.MAX_BILLING_DUE_DAY)
+        {
+            throw new RuntimeException("Closing day must be in the range [1, " +
+                                       Constants.MAX_BILLING_DUE_DAY + "]");
+        }
+
+        if (maxDebt <= 0)
+        {
+            throw new RuntimeException("Max debt must be positive");
+        }
+
+        if (lastFourDigits.isBlank() || lastFourDigits.length() != 4)
+        {
+            throw new RuntimeException("Last four digits must have length 4");
+        }
     }
 
     /**

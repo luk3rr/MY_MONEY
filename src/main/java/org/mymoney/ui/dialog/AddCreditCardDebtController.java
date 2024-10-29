@@ -75,7 +75,7 @@ public class AddCreditCardDebtController
         this.creditCardService = creditCardService;
     }
 
-    public void SetCreditCardComboBox(CreditCard crc)
+    public void SetCreditCard(CreditCard crc)
     {
         if (creditCards.stream().noneMatch(c -> c.GetId() == crc.GetId()))
         {

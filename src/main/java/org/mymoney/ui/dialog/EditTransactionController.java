@@ -205,9 +205,10 @@ public class EditTransactionController
                 dateTimeWithCurrentHour.toLocalDate().equals(
                     transactionToUpdate.GetDate().toLocalDate()))
             {
-                WindowUtils.ShowInformationDialog("Information",
-                                                  "No changes",
-                                                  "No changes were made.");
+                WindowUtils.ShowInformationDialog(
+                    "Information",
+                    "No changes",
+                    "No changes were made to the transaction.");
             }
             else // If there is any modification, update the transaction
             {

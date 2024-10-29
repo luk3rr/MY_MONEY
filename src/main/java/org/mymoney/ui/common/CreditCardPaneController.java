@@ -9,6 +9,7 @@ package org.mymoney.ui.common;
 import com.jfoenix.controls.JFXButton;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -17,9 +18,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import org.mymoney.entities.CreditCard;
 import org.mymoney.services.CreditCardService;
+import org.mymoney.ui.dialog.AddCreditCardDebtController;
+import org.mymoney.ui.dialog.EditCreditCardController;
+import org.mymoney.ui.main.CreditCardController;
 import org.mymoney.util.Constants;
 import org.mymoney.util.UIUtils;
+import org.mymoney.util.WindowUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
@@ -84,6 +90,12 @@ public class CreditCardPaneController
     @FXML
     private ProgressBar limitProgressBar;
 
+    @Autowired
+    private ConfigurableApplicationContext springContext;
+
+    @Autowired
+    private CreditCardController creditCardController;
+
     private YearMonth currentDisplayedMonth;
 
     private CreditCardService creditCardService;
@@ -111,23 +123,71 @@ public class CreditCardPaneController
 
     @FXML
     private void handleAddDebt()
-    { }
+    {
+        WindowUtils.OpenModalWindow(
+            Constants.ADD_CREDIT_CARD_DEBT_FXML,
+            "Add Credit Card Debt",
+            springContext,
+            (AddCreditCardDebtController controller)
+                -> { controller.SetCreditCard(creditCard); },
+            List.of(() -> creditCardController.UpdateDisplay()));
+    }
 
     @FXML
-    private void handleRenameCreditCard()
-    { }
+    private void handleEditCreditCard()
+    {
+        WindowUtils.OpenModalWindow(
+            Constants.EDIT_CREDIT_CARD_FXML,
+            "Edit Credit Card",
+            springContext,
+            (EditCreditCardController controller)
+                -> { controller.SetCreditCard(creditCard); },
+            List.of(() -> creditCardController.UpdateDisplay()));
+    }
 
     @FXML
-    private void handleChangeOperator()
-    { }
-
-    @FXML
-    private void handleChangeLimit()
+    private void handleArchiveCreditCard()
     { }
 
     @FXML
     private void handleDeleteCreditCard()
-    { }
+    {
+        // Prevent the removal of a credit card with associated debts
+        if (creditCardService.GetDebtCountByCreditCard(creditCard.GetId()) > 0)
+        {
+            WindowUtils.ShowErrorDialog(
+                "Error",
+                "Credit card has debts",
+                "Cannot delete a credit card with associated debts");
+            return;
+        }
+
+        if (WindowUtils.ShowConfirmationDialog(
+                "Confirmation",
+                "Delete credit card " + creditCard.GetName(),
+                "Are you sure you want to remove this credit card?"))
+        {
+            try
+            {
+                creditCardService.DeleteCreditCard(creditCard.GetId());
+
+                WindowUtils.ShowSuccessDialog("Success",
+                                              "Credit card deleted",
+                                              "Credit card " + creditCard.GetName() +
+                                                  " has been deleted");
+
+                // Update credit card display in the main window
+                creditCardController.UpdateDisplay();
+            }
+            catch (RuntimeException e)
+            {
+                WindowUtils.ShowErrorDialog("Error",
+                                            "Error removing credit card",
+                                            e.getMessage());
+                return;
+            }
+        }
+    }
 
     @FXML
     private void handlePrevMonth()
