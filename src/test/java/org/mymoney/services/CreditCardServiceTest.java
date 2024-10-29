@@ -339,44 +339,44 @@ public class CreditCardServiceTest
     public void
     TestGetAvailableCreditWithDebt()
     {
-        Double previousFreeCredit = m_creditCard.GetMaxDebt();
+        Double maxDebt              = m_creditCard.GetMaxDebt();
+        Double totalPendingPayments = maxDebt / 2;
 
         when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.of(m_creditCard));
 
-        when(m_creditCardDebtRepository.GetTotalDebt(m_creditCard.GetId()))
-            .thenReturn(previousFreeCredit - previousFreeCredit / 2);
-
-        when(m_creditCardPaymentRepository.GetTotalPaidAmount(m_creditCard.GetId()))
-            .thenReturn(0.0);
+        when(
+            m_creditCardPaymentRepository.GetTotalPendingPayments(m_creditCard.GetId()))
+            .thenReturn(totalPendingPayments);
 
         Double availableCredit =
             m_creditCardService.GetAvailableCredit(m_creditCard.GetId());
 
-        assertEquals(previousFreeCredit / 2, availableCredit, Constants.EPSILON);
+        assertEquals(maxDebt - totalPendingPayments,
+                     availableCredit,
+                     Constants.EPSILON);
     }
 
     @Test
-    @DisplayName("Test if the available credit is returned correctly when there is a "
-                 + "debt and payments")
+    @DisplayName("Test if the available credit is returned correctly when there is a " +
+                 "debt and payments")
     public void
     TestGetAvailableCreditWithDebtAndPayments()
     {
         m_creditCard.SetMaxDebt(1000.0);
+        Double totalPendingPayments = 200.0;
 
         when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.of(m_creditCard));
 
-        when(m_creditCardDebtRepository.GetTotalDebt(m_creditCard.GetId()))
-            .thenReturn(300.0);
-
-        when(m_creditCardPaymentRepository.GetTotalPaidAmount(m_creditCard.GetId()))
-            .thenReturn(100.0);
+        when(
+            m_creditCardPaymentRepository.GetTotalPendingPayments(m_creditCard.GetId()))
+            .thenReturn(totalPendingPayments);
 
         Double availableCredit =
             m_creditCardService.GetAvailableCredit(m_creditCard.GetId());
 
-        assertEquals(800.0, availableCredit, Constants.EPSILON);
+        assertEquals(1000.0 - totalPendingPayments, availableCredit, Constants.EPSILON);
     }
 
     @Test

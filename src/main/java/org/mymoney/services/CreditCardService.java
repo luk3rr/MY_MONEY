@@ -206,10 +206,10 @@ public class CreditCardService
                 -> new RuntimeException("Credit card with id " + id +
                                         " does not exist"));
 
-        Double totalDebt = m_creditCardDebtRepository.GetTotalDebt(id);
-        Double totalPaid = m_creditCardPaymentRepository.GetTotalPaidAmount(id);
+        Double totalPendingPayments =
+            m_creditCardPaymentRepository.GetTotalPendingPayments(id);
 
-        return creditCard.GetMaxDebt() - totalDebt + totalPaid;
+        return creditCard.GetMaxDebt() - totalPendingPayments;
     }
 
     /**
@@ -456,7 +456,6 @@ public class CreditCardService
     {
         return m_creditCardRepository.findAllByArchivedFalseOrderByNameAsc();
     }
-
 
     /**
      * Get all credit card operators ordered by name

@@ -48,8 +48,7 @@ public interface CreditCardPaymentRepository
      */
     @Query("SELECT COALESCE(SUM(ccp.amount), 0) "
            + "FROM CreditCardPayment ccp "
-           + "JOIN ccp.creditCardDebt ccd "
-           + "WHERE ccd.creditCard.id = :creditCardId "
+           + "WHERE ccp.creditCardDebt.creditCard.id = :creditCardId "
            + "AND ccp.wallet IS NOT NULL")
     Double
     GetTotalPaidAmount(@Param("creditCardId") Long creditCardId);

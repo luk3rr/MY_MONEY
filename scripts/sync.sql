@@ -6,7 +6,7 @@
  * Script para obter os dados da base de dados antiga e inserir no My Money.
  * Deve ser executado a partir da raiz do projeto para que os caminhos relativos funcionem corretamente.
  * Pode ser executado com:
- *      $ sqlite3 data/mymoney.db < scripts/sync.sql
+ * $ sqlite3 data/mymoney.db < scripts/sync.sql
  */
 
 ATTACH DATABASE 'data/old.db' AS mf;
@@ -190,6 +190,7 @@ DROP TABLE IF EXISTS temp_despesas_mf;
 CREATE TEMP TABLE temp_despesas_crc_mf AS
 WITH DESPESAS_CRC_MF AS (
     SELECT DISTINCT -- Por algum motivo o desgraçado duplicou um tanto de despesa no banco
+         mf.dsp.id,
          mf.cts.descricao AS cts_nome,
          mf.crc.nome AS crc_nome,
          CASE -- Se houver uma data registrada, então a carteira foi arquivada
@@ -378,8 +379,7 @@ WHERE
         WHERE ccd.description = temp.dsp_desc
           AND ccd.date = temp.dsp_data
           AND ccd.total_amount = temp.valor
-    )
-GROUP BY temp.dsp_desc, temp.dsp_data, ct.id, crc.id;
+    );
 
 -- 6. Inserir parcelas das faturas
 INSERT INTO credit_card_payment (amount, date, installment, debt_id, wallet_id)
@@ -395,17 +395,40 @@ JOIN credit_card_debt crc_debt
     -- Relaciona a fatura com a parcela
     -- Pega a data da primeira fatura e o valor total para obter o id do debt
     ON crc_debt.description = temp.dsp_desc
-    AND crc_debt.date = (
-        SELECT MIN(dsp_data)
-        FROM temp_despesas_crc_mf AS sub_temp
-        WHERE sub_temp.dsp_desc = temp.dsp_desc
-          AND sub_temp.num_parcelas = temp.num_parcelas
-    )
-    AND crc_debt.total_amount = (
-        SELECT SUM(sub_temp.valor)
-        FROM temp_despesas_crc_mf AS sub_temp
-        WHERE sub_temp.dsp_desc = temp.dsp_desc
-          AND sub_temp.num_parcelas = temp.num_parcelas
+    AND (
+            (crc_debt.installments <> 1 
+            AND crc_debt.total_amount = (
+                SELECT SUM(sub_temp.valor)
+                FROM temp_despesas_crc_mf AS sub_temp
+                WHERE sub_temp.dsp_desc = temp.dsp_desc
+                AND sub_temp.num_parcelas = temp.num_parcelas
+            )
+            AND crc_debt.date = (
+                SELECT MIN(dsp_data)
+                FROM temp_despesas_crc_mf AS sub_temp
+                WHERE sub_temp.dsp_desc = temp.dsp_desc
+                AND sub_temp.num_parcelas = temp.num_parcelas
+            )
+        )
+        OR -- Usa o ID da base de dados antiga para diferenciar compras não parceladas
+        (
+            (crc_debt.installments = 1 
+            AND crc_debt.total_amount = (
+                SELECT sub_temp.valor
+                FROM temp_despesas_crc_mf AS sub_temp
+                WHERE sub_temp.dsp_desc = temp.dsp_desc
+                AND sub_temp.num_parcelas = temp.num_parcelas
+                AND sub_temp.id = temp.id
+            )           
+            AND crc_debt.date = (
+                SELECT dsp_data
+                FROM temp_despesas_crc_mf AS sub_temp
+                WHERE sub_temp.dsp_desc = temp.dsp_desc
+                AND sub_temp.num_parcelas = temp.num_parcelas
+                AND sub_temp.id = temp.id
+                )
+            )
+        )
     )
 -- Insere somente os dados que já não foram inseridos
 WHERE NOT EXISTS (
