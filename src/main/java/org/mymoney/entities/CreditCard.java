@@ -49,6 +49,11 @@ public class CreditCard
     @Column(name = "last_four_digits", nullable = true, length = 4)
     private String lastFourDigits;
 
+    @Column(name             = "archived",
+            nullable         = false,
+            columnDefinition = "boolean default false")
+    private Boolean archived = false; // Default value is false
+
     /**
      * Default constructor for JPA
      */
@@ -141,6 +146,15 @@ public class CreditCard
     }
 
     /**
+     * Get the archived status of the credit card
+     * @return The archived status of the credit card
+     */
+    public Boolean IsArchived()
+    {
+        return archived;
+    }
+
+    /**
      * Set the operator of the credit card
      * @param operator The new operator of the credit card
      */
@@ -192,5 +206,14 @@ public class CreditCard
     public void SetLastFourDigits(String lastFourDigits)
     {
         this.lastFourDigits = lastFourDigits;
+    }
+
+    /**
+     * Set the archived status of the credit card
+     * @param archived The new archived status of the credit card
+     */
+    public void SetArchived(Boolean archived)
+    {
+        this.archived = archived;
     }
 }

@@ -244,7 +244,7 @@ public class EditCreditCardDebtController
 
     private void LoadCreditCards()
     {
-        creditCards = creditCardService.GetAllCreditCardsOrderedByName();
+        creditCards = creditCardService.GetAllNonArchivedCreditCardsOrderedByName();
     }
 
     private void UpdateCreditCardLimitLabels()

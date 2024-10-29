@@ -49,6 +49,7 @@ import org.mymoney.services.CreditCardService;
 import org.mymoney.ui.common.CreditCardPaneController;
 import org.mymoney.ui.dialog.AddCreditCardController;
 import org.mymoney.ui.dialog.AddCreditCardDebtController;
+import org.mymoney.ui.dialog.ArchivedCreditCardsController;
 import org.mymoney.ui.dialog.EditCreditCardDebtController;
 import org.mymoney.util.Animation;
 import org.mymoney.util.Constants;
@@ -270,11 +271,21 @@ public class CreditCardController
                 message.toString()))
         {
             creditCardService.DeleteDebt(debt.GetId());
-            UpdateDebtsTableView();
-            UpdateTotalDebtsInfo();
-            UpdateMoneyFlow();
-            UpdateDisplayCards();
+            UpdateDisplay();
         }
+    }
+
+    @FXML
+    private void handleViewArchivedCreditCards()
+    {
+        WindowUtils.OpenModalWindow(Constants.ARCHIVED_CREDIT_CARDS_FXML,
+                                    "Archived Credit Cards",
+                                    springContext,
+                                    (ArchivedCreditCardsController controller)
+                                        -> {},
+                                    List.of(() -> {
+                                        UpdateDisplay();
+                                    }));
     }
 
     /**
@@ -297,7 +308,7 @@ public class CreditCardController
      */
     private void LoadCreditCards()
     {
-        creditCards = creditCardService.GetAllCreditCardsOrderedByName();
+        creditCards = creditCardService.GetAllNonArchivedCreditCardsOrderedByName();
     }
 
     /**

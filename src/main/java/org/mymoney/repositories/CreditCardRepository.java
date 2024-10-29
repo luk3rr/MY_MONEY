@@ -29,8 +29,20 @@ public interface CreditCardRepository extends JpaRepository<CreditCard, Long> {
     CreditCard findByName(String name);
 
     /**
+     * Get all credit cards that are archived
+     * @return A list with all credit cards that are archived
+     */
+    List<CreditCard> findAllByArchivedTrue();
+
+    /**
      * Get all credit cards ordered by name
      * @return A list with all credit cards ordered by name
      */
     List<CreditCard> findAllByOrderByNameAsc();
+
+    /**
+     * Get all credit cards are not archived ordered by name
+     * @return A list with all credit cards that are not archived ordered by name
+     */
+    List<CreditCard> findAllByArchivedFalseOrderByNameAsc();
 }

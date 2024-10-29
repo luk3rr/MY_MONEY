@@ -46,6 +46,6 @@ public interface CreditCardDebtRepository extends JpaRepository<CreditCardDebt, 
      */
     @Query("SELECT COUNT(ccd) FROM CreditCardDebt ccd "
            + "WHERE ccd.creditCard.id = :creditCardId")
-    Integer
+    Long
     GetDebtCountByCreditCard(@Param("creditCardId") Long creditCardId);
 }

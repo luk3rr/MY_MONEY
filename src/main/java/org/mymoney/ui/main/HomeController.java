@@ -210,7 +210,7 @@ public class HomeController
      */
     private void LoadCreditCardsFromDatabase()
     {
-        creditCards = creditCardService.GetAllCreditCardsOrderedByName();
+        creditCards = creditCardService.GetAllNonArchivedCreditCardsOrderedByName();
     }
 
     /**

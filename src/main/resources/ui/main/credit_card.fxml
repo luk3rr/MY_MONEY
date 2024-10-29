@@ -53,6 +53,15 @@
                                                       </ImageView>
                                                    </graphic>
                                                 </JFXButton>
+                                                <JFXButton onAction="#handleViewArchivedCreditCards" stylesheets="@../../css/component/buttons.css" text="Credit Card Archive">
+                                                   <graphic>
+                                                      <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../../icon/common/archive.png" />
+                                                         </image>
+                                                      </ImageView>
+                                                   </graphic>
+                                                </JFXButton>
                                              </children>
                                           </HBox>
                                        </children>

@@ -331,6 +331,52 @@ public class CreditCardService
     }
 
     /**
+     * Archive a credit card
+     * @param id The id of the credit card
+     * @throws RuntimeException If the credit card does not exist
+     * @throws RuntimeException If the credit card has pending payments
+     */
+    @Transactional
+    public void ArchiveCreditCard(Long id)
+    {
+        CreditCard creditCard = m_creditCardRepository.findById(id).orElseThrow(
+            ()
+                -> new RuntimeException("Credit card with id " + id +
+                                        " not found and cannot be archived"));
+
+        if (GetTotalPendingPayments(id) > 0)
+        {
+            throw new RuntimeException(
+                "Credit card with id " + id +
+                " has pending payments and cannot be archived");
+        }
+
+        creditCard.SetArchived(true);
+        m_creditCardRepository.save(creditCard);
+
+        m_logger.info("Credit card with id " + id + " was archived");
+    }
+
+    /**
+     * Unarchive a credit card
+     * @param id The id of the credit card
+     * @throws RuntimeException If the credit card does not exist
+     */
+    @Transactional
+    public void UnarchiveCreditCard(Long id)
+    {
+        CreditCard creditCard = m_creditCardRepository.findById(id).orElseThrow(
+            ()
+                -> new RuntimeException("Credit card with id " + id +
+                                        " not found and cannot be unarchived"));
+
+        creditCard.SetArchived(false);
+        m_creditCardRepository.save(creditCard);
+
+        m_logger.info("Credit card with id " + id + " was unarchived");
+    }
+
+    /**
      * Update the debt of a credit card
      * @param debt The debt to be updated
      * @param invoiceMonth The month of the invoice
@@ -385,6 +431,15 @@ public class CreditCardService
     }
 
     /**
+     * Get all archived credit cards
+     * @return A list with all archived credit cards
+     */
+    public List<CreditCard> GetAllArchivedCreditCards()
+    {
+        return m_creditCardRepository.findAllByArchivedTrue();
+    }
+
+    /**
      * Get all credit cards ordered by name
      * @return A list with all credit cards ordered by name
      */
@@ -392,6 +447,16 @@ public class CreditCardService
     {
         return m_creditCardRepository.findAllByOrderByNameAsc();
     }
+
+    /**
+     * Get all credit cards are not archived ordered by name
+     * @return A list with all credit cards that are not archived ordered by name
+     */
+    public List<CreditCard> GetAllNonArchivedCreditCardsOrderedByName()
+    {
+        return m_creditCardRepository.findAllByArchivedFalseOrderByNameAsc();
+    }
+
 
     /**
      * Get all credit card operators ordered by name
@@ -611,7 +676,7 @@ public class CreditCardService
      * @param id The id of the credit card
      * @return The count of debts by credit card
      */
-    public Integer GetDebtCountByCreditCard(Long id)
+    public Long GetDebtCountByCreditCard(Long id)
     {
 
         return m_creditCardDebtRepository.GetDebtCountByCreditCard(id);

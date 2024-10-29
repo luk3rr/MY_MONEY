@@ -52,6 +52,9 @@ public final class Constants
     public static final String ARCHIVED_WALLETS_FXML =
         UI_DIALOG_PATH + "archived_wallets.fxml";
 
+    public static final String ARCHIVED_CREDIT_CARDS_FXML =
+        UI_DIALOG_PATH + "archived_credit_cards.fxml";
+
     public static final String ADD_CREDIT_CARD_DEBT_FXML =
         UI_DIALOG_PATH + "add_credit_card_debt.fxml";
 

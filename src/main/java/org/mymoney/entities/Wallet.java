@@ -38,8 +38,9 @@ public class Wallet
     @Column(name = "balance", nullable = false)
     private Double balance;
 
-    @Column(name     = "archived",
-            nullable = false)
+    @Column(name             = "archived",
+            nullable         = false,
+            columnDefinition = "boolean default false")
     private Boolean archived = false; // Default value is false
 
     /**

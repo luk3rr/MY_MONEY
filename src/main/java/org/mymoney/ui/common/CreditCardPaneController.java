@@ -147,7 +147,33 @@ public class CreditCardPaneController
 
     @FXML
     private void handleArchiveCreditCard()
-    { }
+    {
+        if (WindowUtils.ShowConfirmationDialog(
+                "Confirmation",
+                "Archive credit card " + creditCard.GetName(),
+                "Are you sure you want to archive this credit card?"))
+        {
+            try
+            {
+                creditCardService.ArchiveCreditCard(creditCard.GetId());
+
+                WindowUtils.ShowSuccessDialog("Success",
+                                              "Credit card archived",
+                                              "Credit card " + creditCard.GetName() +
+                                                  " has been archived");
+
+                // Update credit card display in the main window
+                creditCardController.UpdateDisplay();
+            }
+            catch (RuntimeException e)
+            {
+                WindowUtils.ShowErrorDialog("Error",
+                                            "Error archiving credit card",
+                                            e.getMessage());
+                return;
+            }
+        }
+    }
 
     @FXML
     private void handleDeleteCreditCard()
