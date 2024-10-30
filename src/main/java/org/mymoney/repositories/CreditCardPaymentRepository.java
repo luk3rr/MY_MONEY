@@ -18,6 +18,21 @@ public interface CreditCardPaymentRepository
     extends JpaRepository<CreditCardPayment, Long> {
 
     /**
+     * Get all credit card payments in a month and year
+     * @param month The month
+     * @param year The year
+     * @return A list with all credit card payments in a month and year
+     */
+    @Query("SELECT ccp "
+           + "FROM CreditCardPayment ccp "
+           + "WHERE strftime('%m', ccp.date) = printf('%02d', :month) "
+           + "AND strftime('%Y', ccp.date) = printf('%04d', :year)"
+           + "AND ccp.wallet IS NOT NULL")
+    List<CreditCardPayment>
+    GetAllPaidPaymentsByMonth(@Param("month") Integer month,
+                              @Param("year") Integer  year);
+
+    /**
      * Get credit card payments in a month and year
      * @param month The month
      * @param year The year
@@ -96,6 +111,57 @@ public interface CreditCardPaymentRepository
     GetTotalPendingPayments(@Param("month") Integer month, @Param("year") Integer year);
 
     /**
+     * Get the total of all paid payments of all credit cards from a specified month
+     * and year
+     * @param month The month
+     * @param year The year
+     * @return The total of all paid payments of all credit cards from the specified
+     *   month and year
+     */
+    @Query("SELECT COALESCE(SUM(ccp.amount), 0) "
+           + "FROM CreditCardPayment ccp "
+           + "WHERE strftime('%m', ccp.date) = printf('%02d', :month) "
+           + "AND strftime('%Y', ccp.date) = printf('%04d', :year) "
+           + "AND ccp.wallet IS NOT NULL")
+    Double
+    GetPaidPaymentsByMonth(@Param("month") Integer month, @Param("year") Integer year);
+
+    /**
+     * Get the total of all paid payments of all credit cards from a specified month
+     * and year by wallet id
+     * @param month The month
+     * @param year The year
+     * @return The total of all paid payments of all credit cards from the specified
+     *   month and year by wallet id
+     */
+    @Query("SELECT COALESCE(SUM(ccp.amount), 0) "
+           + "FROM CreditCardPayment ccp "
+           + "WHERE strftime('%m', ccp.date) = printf('%02d', :month) "
+           + "AND strftime('%Y', ccp.date) = printf('%04d', :year) "
+           + "AND ccp.wallet.id = :walletId")
+    Double
+    GetPaidPaymentsByMonth(@Param("walletId") Long walletId,
+                           @Param("month") Integer month,
+                           @Param("year") Integer  year);
+
+    /**
+     * Get the total of all pending payments of all credit cards from a specified month
+     * and year
+     * @param month The month
+     * @param year The year
+     * @return The total of all pending payments of all credit cards from the specified
+     *   month and year
+     */
+    @Query("SELECT COALESCE(SUM(ccp.amount), 0) "
+           + "FROM CreditCardPayment ccp "
+           + "WHERE strftime('%m', ccp.date) = printf('%02d', :month) "
+           + "AND strftime('%Y', ccp.date) = printf('%04d', :year) "
+           + "AND ccp.wallet IS NULL")
+    Double
+    GetPendingPaymentsByMonth(@Param("month") Integer month,
+                              @Param("year") Integer  year);
+
+    /**
      * Get the total of all pending payments of all credit cards from a specified year
      * onward, including future years and the current year
      * @param year The starting year (inclusive)
@@ -108,6 +174,32 @@ public interface CreditCardPaymentRepository
            + "AND ccp.wallet IS NULL")
     Double
     GetTotalPendingPayments(@Param("year") Integer year);
+
+    /**
+     * Get the total of all paid payments of all credit cards from a specified year
+     * @param year The year
+     * @return The total of all paid payments of all credit cards from the specified
+     *     year
+     */
+    @Query("SELECT COALESCE(SUM(ccp.amount), 0) "
+           + "FROM CreditCardPayment ccp "
+           + "WHERE strftime('%Y', ccp.date) = printf('%04d', :year) "
+           + "AND ccp.wallet IS NOT NULL")
+    Double
+    GetPaidPaymentsByYear(@Param("year") Integer year);
+
+    /**
+     * Get the total of all pending payments of all credit cards from a specified year
+     * @param year The year
+     * @return The total of all pending payments of all credit cards from the specified
+     *     year
+     */
+    @Query("SELECT COALESCE(SUM(ccp.amount), 0) "
+           + "FROM CreditCardPayment ccp "
+           + "WHERE strftime('%Y', ccp.date) = printf('%04d', :year) "
+           + "AND ccp.wallet IS NULL")
+    Double
+    GetPendingPaymentsByYear(@Param("year") Integer year);
 
     /**
      * Get the total of all pending payments of a credit card

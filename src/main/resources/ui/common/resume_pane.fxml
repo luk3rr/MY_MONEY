@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="root" alignment="CENTER_LEFT" spacing="5.0" stylesheets="@../../css/scene/resume-pane.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.mymoney.ui.common.ResumePaneController">
+<VBox fx:id="root" alignment="CENTER_LEFT" spacing="5.0" stylesheets="@../../css/scene/resume-pane.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.mymoney.ui.common.ResumePaneController">
    <children>
       <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
          <children>
@@ -171,7 +171,7 @@
                      </children></HBox>
                   <HBox fx:id="creditCardPendingPaymentsHBox" alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
                      <children>
-                        <Label styleClass="foreseen-label" text="Total invoices to pay" />
+                        <Label styleClass="foreseen-label" text="Invoices to pay" />
                         <AnchorPane HBox.hgrow="ALWAYS">
                            <children>
                               <HBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

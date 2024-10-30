@@ -95,7 +95,7 @@ public class ResumePaneController
 
     private WalletTransactionService walletTransactionService;
 
-    CreditCardService creditCardService;
+    private CreditCardService creditCardService;
 
     /**
      * Constructor
@@ -128,17 +128,14 @@ public class ResumePaneController
 
         Double crcTotalDebtAmount = creditCardService.GetTotalDebtAmount(year);
 
-        // Get pending payments only if the year is the current year
-        // Otherwise, set it to 0.0
-        // The value of pending payments does not make sense for previous years
-        Double crcTotalPendingPayments =
-            year.equals(LocalDateTime.now().getYear())
-                ? creditCardService.GetTotalPendingPayments(year)
-                : 0.0;
+        Double crcPendingPayments = creditCardService.GetPendingPaymentsByYear(year);
+
+        Double crcPaidPayments = creditCardService.GetPaidPaymentsByYear(year);
 
         UpdateResumePane(allYearTransactions,
                          crcTotalDebtAmount,
-                         crcTotalPendingPayments);
+                         crcPendingPayments,
+                         crcPaidPayments);
     }
 
     /**
@@ -151,21 +148,21 @@ public class ResumePaneController
 
         Double crcTotalDebtAmount = creditCardService.GetTotalDebtAmount(month, year);
 
-        // Get pending payments only if the month is the current month
-        // Otherwise, set it to 0.0
-        // The value of pending payments does not make sense for previous months
-        Double crcTotalPendingPayments =
-            month.equals(LocalDateTime.now().getMonthValue()) &&
-                    year.equals(LocalDateTime.now().getYear())
-                ? creditCardService.GetTotalPendingPayments()
-                : 0.0;
+        Double crcPendingPayments =
+            creditCardService.GetPendingPaymentsByMonth(month, year);
 
-        UpdateResumePane(transactions, crcTotalDebtAmount, crcTotalPendingPayments);
+        Double crcPaidPayments = creditCardService.GetPaidPaymentsByMonth(month, year);
+
+        UpdateResumePane(transactions,
+                         crcTotalDebtAmount,
+                         crcPendingPayments,
+                         crcPaidPayments);
     }
 
     private void UpdateResumePane(List<WalletTransaction> transactions,
                                   Double                  crcTotalDebtAmount,
-                                  Double                  crcTotalPendingPayments)
+                                  Double                  crcTotalPendingPayments,
+                                  Double                  crcTotalPaidPayments)
     {
         Double totalConfirmedIncome =
             transactions.stream()
@@ -181,6 +178,9 @@ public class ResumePaneController
                 .mapToDouble(WalletTransaction::GetAmount)
                 .sum();
 
+        // Consider the paid payments of the credit card as total expenses
+        totalConfirmedExpenses += crcTotalPaidPayments;
+
         Double totalForeseenIncome =
             transactions.stream()
                 .filter(t -> t.GetType() == TransactionType.INCOME)
@@ -192,6 +192,9 @@ public class ResumePaneController
                 .filter(t -> t.GetType() == TransactionType.EXPENSE)
                 .mapToDouble(WalletTransaction::GetAmount)
                 .sum();
+
+        // Consider the payments of the credit card as total of foreseen expenses
+        totalForeseenExpenses += crcTotalPendingPayments + crcTotalPaidPayments;
 
         Double balance = totalConfirmedIncome - totalConfirmedExpenses;
 

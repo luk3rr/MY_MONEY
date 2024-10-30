@@ -432,12 +432,18 @@ public class HomeController
             logger.info("Found " + transactions.size() + " transactions for " + month +
                         "/" + year);
 
+            Double crcPaidPayments =
+                creditCardService.GetPaidPaymentsByMonth(month, year);
+
             // Calculate total expenses for the month
             Double totalExpenses =
                 transactions.stream()
                     .filter(t -> t.GetType() == TransactionType.EXPENSE)
                     .mapToDouble(WalletTransaction::GetAmount)
                     .sum();
+
+            // Consider credit card payments as expenses
+            totalExpenses += crcPaidPayments;
 
             // Calculate total incomes for the month
             Double totalIncomes =

@@ -488,6 +488,18 @@ public class CreditCardService
     }
 
     /**
+     * Get all paid payments of all credit cards in a month and year
+     * @param month The month
+     * @param year The year
+     * @return A list with all paid payments of all credit cards in a month and year
+     */
+    public List<CreditCardPayment> GetAllPaidPaymentsByMonth(Integer month,
+                                                             Integer year)
+    {
+        return m_creditCardPaymentRepository.GetAllPaidPaymentsByMonth(month, year);
+    }
+
+    /**
      * Get the total debt amount of all credit cards in a month and year
      * @param month The month
      * @param year The year
@@ -522,6 +534,48 @@ public class CreditCardService
     }
 
     /**
+     * Get the total of all paid payments of all credit cards from a specified month
+     * and year
+     * @param month The month
+     * @param year The year
+     * @return The total of all paid payments of all credit cards from the specified
+     *   month and year
+     */
+    public Double GetPaidPaymentsByMonth(Integer month, Integer year)
+    {
+        return m_creditCardPaymentRepository.GetPaidPaymentsByMonth(month, year);
+    }
+
+    /**
+     * Get the total of all paid payments of all credit cards from a specified month and
+     * year by a wallet
+     * @param walletId The wallet id
+     * @param month The month
+     * @param year The year
+     * @return The total of all paid payments of all credit cards from the specified
+     *   month and year by a wallet
+     */
+    public Double GetPaidPaymentsByMonth(Long walletId, Integer month, Integer year)
+    {
+        return m_creditCardPaymentRepository.GetPaidPaymentsByMonth(walletId,
+                                                                    month,
+                                                                    year);
+    }
+
+    /**
+     * Get the total of all pending payments of all credit cards from a specified month
+     * and year
+     * @param month The month
+     * @param year The year
+     * @return The total of all pending payments of all credit cards from the specified
+     *    month and year
+     */
+    public Double GetPendingPaymentsByMonth(Integer month, Integer year)
+    {
+        return m_creditCardPaymentRepository.GetPendingPaymentsByMonth(month, year);
+    }
+
+    /**
      * Get the total of all pending payments of all credit cards from a specified year
      * onward, including future years and the current year
      * @param year The starting year (inclusive)
@@ -531,6 +585,28 @@ public class CreditCardService
     public Double GetTotalPendingPayments(Integer year)
     {
         return m_creditCardPaymentRepository.GetTotalPendingPayments(year);
+    }
+
+    /**
+     * Get the total of all paid payments of all credit cards from a specified year
+     * @param year The year
+     * @return The total of all paid payments of all credit cards from the specified
+     *     year
+     */
+    public Double GetPaidPaymentsByYear(Integer year)
+    {
+        return m_creditCardPaymentRepository.GetPaidPaymentsByYear(year);
+    }
+
+    /**
+     * Get the total of all pending payments of all credit cards from a specified year
+     * @param year The year
+     * @return The total of all pending payments of all credit cards from the specified
+     *     year
+     */
+    public Double GetPendingPaymentsByYear(Integer year)
+    {
+        return m_creditCardPaymentRepository.GetPendingPaymentsByYear(year);
     }
 
     /**

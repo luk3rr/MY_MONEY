@@ -16,6 +16,7 @@ import javafx.scene.layout.VBox;
 import org.mymoney.entities.Transfer;
 import org.mymoney.entities.Wallet;
 import org.mymoney.entities.WalletTransaction;
+import org.mymoney.services.CreditCardService;
 import org.mymoney.services.WalletService;
 import org.mymoney.services.WalletTransactionService;
 import org.mymoney.ui.dialog.AddExpenseController;
@@ -106,9 +107,13 @@ public class WalletFullPaneController
 
     private WalletService walletService;
 
+    private CreditCardService creditCardService;
+
     private WalletTransactionService walletTransactionService;
 
     private Wallet wallet;
+
+    private Double crcPaidAmount;
 
     private List<WalletTransaction> transactions;
 
@@ -119,14 +124,17 @@ public class WalletFullPaneController
     /**
      * Constructor
      * @param walletService WalletService
+     * @param creditCardService CreditCardService
      * @param walletTransactionService WalletTransactionService
      * @note This constructor is used for dependency injection
      */
     @Autowired
     public WalletFullPaneController(WalletService            walletService,
+                                    CreditCardService        creditCardService,
                                     WalletTransactionService walletTransactionService)
     {
         this.walletService            = walletService;
+        this.creditCardService        = creditCardService;
         this.walletTransactionService = walletTransactionService;
     }
 
@@ -158,6 +166,10 @@ public class WalletFullPaneController
             walletTransactionService.GetTransfersByWalletAndMonth(wallet.GetId(),
                                                                   now.getMonthValue(),
                                                                   now.getYear());
+
+        crcPaidAmount = creditCardService.GetPaidPaymentsByMonth(wallet.GetId(),
+                                                                 now.getMonthValue(),
+                                                                 now.getYear());
     }
 
     /**
@@ -202,6 +214,9 @@ public class WalletFullPaneController
                 .filter(t -> t.GetStatus().equals(TransactionStatus.CONFIRMED))
                 .mapToDouble(WalletTransaction::GetAmount)
                 .sum();
+
+        // Consider the paid amount of the credit card
+        confirmedExpensesSum += crcPaidAmount;
 
         Double pendingExpensesSum =
             transactions.stream()

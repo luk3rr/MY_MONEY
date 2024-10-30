@@ -36,6 +36,7 @@ import org.mymoney.charts.DoughnutChart;
 import org.mymoney.entities.Wallet;
 import org.mymoney.entities.WalletTransaction;
 import org.mymoney.entities.WalletType;
+import org.mymoney.services.CreditCardService;
 import org.mymoney.services.WalletService;
 import org.mymoney.services.WalletTransactionService;
 import org.mymoney.ui.common.WalletFullPaneController;
@@ -113,6 +114,8 @@ public class WalletController
 
     private WalletService walletService;
 
+    private CreditCardService creditCardService;
+
     private WalletTransactionService walletTransactionService;
 
     private List<CheckBox> doughnutChartCheckBoxes;
@@ -136,14 +139,17 @@ public class WalletController
     /**
      * Constructor
      * @param walletService WalletService
+     * @param creditCardService CreditCardService
      * @param walletTransactionService WalletTransactionService
      * @note This constructor is used for dependency injection
      */
     @Autowired
     public WalletController(WalletService            walletService,
+                            CreditCardService        creditCardService,
                             WalletTransactionService walletTransactionService)
     {
         this.walletService            = walletService;
+        this.creditCardService        = creditCardService;
         this.walletTransactionService = walletTransactionService;
     }
 
@@ -624,6 +630,9 @@ public class WalletController
             {
                 logger.warning("Invalid index: " + selectedIndex);
             }
+
+            // Consider credit card payments as expenses
+            totalExpenses += creditCardService.GetPaidPaymentsByMonth(month, year);
 
             monthlyExpenses.put(date.format(formatter), totalExpenses);
             monthlyIncomes.put(date.format(formatter), totalIncomes);

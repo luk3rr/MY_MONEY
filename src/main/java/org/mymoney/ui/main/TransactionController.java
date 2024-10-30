@@ -38,6 +38,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.StringConverter;
 import org.mymoney.entities.Category;
+import org.mymoney.entities.CreditCardPayment;
 import org.mymoney.entities.WalletTransaction;
 import org.mymoney.services.CategoryService;
 import org.mymoney.services.CreditCardService;
@@ -436,15 +437,29 @@ public class TransactionController
                     date.getMonthValue(),
                     date.getYear());
 
+            List<CreditCardPayment> creditCardPayments =
+                creditCardService.GetAllPaidPaymentsByMonth(date.getMonthValue(),
+                                                            date.getYear());
+
             // Calculate total for each category
             for (Category category : categories)
             {
-                Double total =
+                Double totalWalletTransaction =
                     transactions.stream()
                         .filter(t -> t.GetType().equals(selectedTransactionType))
                         .filter(t -> t.GetCategory().GetId() == category.GetId())
                         .mapToDouble(WalletTransaction::GetAmount)
                         .sum();
+
+                Double totalCreditCardPayment =
+                    creditCardPayments.stream()
+                        .filter(p
+                                -> p.GetCreditCardDebt().GetCategory().GetId() ==
+                                       category.GetId())
+                        .mapToDouble(CreditCardPayment::GetAmount)
+                        .sum();
+
+                Double total = totalWalletTransaction + totalCreditCardPayment;
 
                 // Store total if it's greater than zero
                 if (total > 0)
