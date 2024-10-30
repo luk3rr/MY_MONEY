@@ -92,6 +92,9 @@ public class CreditCardController
     @FXML
     private JFXButton crcPrevButton;
 
+    @FXML
+    private Label invoiceMonth;
+
     @Autowired
     private ConfigurableApplicationContext springContext;
 
@@ -125,17 +128,17 @@ public class CreditCardController
         PopulateDebtsListMonthFilterComboBox();
         PopulateYearFilterComboBox();
         ConfigureTableView();
+        ConfigureListeners();
 
         // Select the default values
         LocalDateTime now = LocalDateTime.now();
 
         totalDebtsYearFilterComboBox.setValue(Year.from(now));
 
-        LocalDateTime currentDate = LocalDateTime.now();
+        YearMonth currentYearMonth = YearMonth.of(now.getYear(), now.getMonthValue());
 
         // Select the default values
-        debtsListMonthFilterComboBox.setValue(
-            YearMonth.of(currentDate.getYear(), currentDate.getMonthValue()));
+        debtsListMonthFilterComboBox.setValue(currentYearMonth);
 
         debtsListMonthFilterComboBox.setOnAction(event -> { UpdateDebtsTableView(); });
 
@@ -145,16 +148,6 @@ public class CreditCardController
         UpdateDebtsTableView();
 
         SetButtonsActions();
-
-        // Add listeners
-        totalDebtsYearFilterComboBox.valueProperty().addListener(
-            (observable, oldValue, newValue) -> { UpdateTotalDebtsInfo(); });
-
-        debtsListMonthFilterComboBox.valueProperty().addListener(
-            (observable, oldValue, newValue) -> { UpdateDebtsTableView(); });
-
-        debtSearchField.textProperty().addListener(
-            (observable, oldValue, newValue) -> { UpdateDebtsTableView(); });
     }
 
     @FXML
@@ -283,9 +276,29 @@ public class CreditCardController
                                     springContext,
                                     (ArchivedCreditCardsController controller)
                                         -> {},
-                                    List.of(() -> {
-                                        UpdateDisplay();
-                                    }));
+                                    List.of(() -> { UpdateDisplay(); }));
+    }
+
+    @FXML
+    private void handleTablePrevMonth()
+    {
+        YearMonth nowMonth = debtsListMonthFilterComboBox.getValue().minusMonths(1);
+
+        // Set previous month as current month
+        debtsListMonthFilterComboBox.setValue(nowMonth);
+
+        UpdateDebtsTableView();
+    }
+
+    @FXML
+    private void handleTableNextMonth()
+    {
+        YearMonth newMonth = debtsListMonthFilterComboBox.getValue().plusMonths(1);
+
+        // Set next month as current month
+        debtsListMonthFilterComboBox.setValue(newMonth);
+
+        UpdateDebtsTableView();
     }
 
     /**
@@ -573,9 +586,6 @@ public class CreditCardController
         YearMonth startYearMonth = YearMonth.from(oldestDebtDate);
         YearMonth endYearMonth   = YearMonth.from(newestDebtDate);
 
-        logger.info("Start year month: " + startYearMonth);
-        logger.info("End year month: " + endYearMonth);
-
         // Generate the list of years between the oldest and the current date
         List<YearMonth> yearMonths = new ArrayList<>();
 
@@ -675,6 +685,31 @@ public class CreditCardController
                 UpdateDisplayCards();
             }
         });
+    }
+
+    /**
+     * Configure the listeners
+     */
+    private void ConfigureListeners()
+    {
+        totalDebtsYearFilterComboBox.valueProperty().addListener(
+            (observable, oldValue, newYear) -> { UpdateTotalDebtsInfo(); });
+
+        debtsListMonthFilterComboBox.valueProperty().addListener(
+            (observable, oldValue, newMonth) -> {
+                final DateTimeFormatter formatter =
+                    DateTimeFormatter.ofPattern("MMM/yy");
+
+                if (newMonth != null)
+                {
+                    invoiceMonth.setText(newMonth.format(formatter));
+                }
+
+                UpdateDebtsTableView();
+            });
+
+        debtSearchField.textProperty().addListener(
+            (observable, oldValue, newValue) -> { UpdateDebtsTableView(); });
     }
 
     /**

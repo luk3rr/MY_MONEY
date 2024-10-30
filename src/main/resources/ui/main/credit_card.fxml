@@ -10,7 +10,9 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.mymoney.ui.main.CreditCardController">
    <children>
@@ -156,6 +158,35 @@
                                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                        </columnResizePolicy>
                                     </TableView>
+                                    <HBox alignment="CENTER" spacing="10.0" VBox.vgrow="NEVER">
+                                       <children>
+                                          <JFXButton onAction="#handleTablePrevMonth">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../../icon/common/arrow_left.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </JFXButton>
+                                          <Region prefWidth="20.0" />
+                                          <Label fx:id="invoiceMonth" alignment="CENTER" prefWidth="60.0" text="MM/YY" textAlignment="CENTER" HBox.hgrow="ALWAYS">
+                                             <font>
+                                                <Font name="System Bold" size="13.0" />
+                                             </font>
+                                          </Label>
+                                          <Region prefWidth="20.0" />
+                                          <JFXButton onAction="#handleTableNextMonth">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../../icon/common/arrow_right.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </JFXButton>
+                                       </children>
+                                    </HBox>
                                  </children>
                               </VBox>
                            </children>
