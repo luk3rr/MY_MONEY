@@ -437,9 +437,14 @@ public class TransactionController
                     date.getMonthValue(),
                     date.getYear());
 
+            // Get paid credit card payments for the month
+            // Only get paid payments if the selected transaction type is expense
+            // Otherwise, create an empty list
             List<CreditCardPayment> creditCardPayments =
-                creditCardService.GetAllPaidPaymentsByMonth(date.getMonthValue(),
-                                                            date.getYear());
+                selectedTransactionType.equals(TransactionType.EXPENSE)
+                    ? creditCardService.GetAllPaidPaymentsByMonth(date.getMonthValue(),
+                                                                  date.getYear())
+                    : new ArrayList<>();
 
             // Calculate total for each category
             for (Category category : categories)
