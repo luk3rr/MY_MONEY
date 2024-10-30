@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="root" minHeight="125.0" minWidth="250.0" stylesheets="@../../css/scene/pane.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.mymoney.ui.common.WalletFullPaneController">
+<AnchorPane fx:id="root" minHeight="125.0" minWidth="250.0" stylesheets="@../../css/scene/pane.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.mymoney.ui.common.WalletFullPaneController">
    <children>
       <VBox fx:id="rootVBox" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -49,10 +49,11 @@
                         </MenuButton>
                         <MenuButton fx:id="menuButton" minWidth="30.0" mnemonicParsing="false" stylesheets="@../../css/component/menu-button.css">
                           <items>
-                            <MenuItem mnemonicParsing="false" onAction="#handleRenameWallet" text="Rename wallet" />
-                            <MenuItem mnemonicParsing="false" onAction="#handleChangeWalletType" text="Change wallet type" />
-                              <MenuItem mnemonicParsing="false" onAction="#handleArchiveWallet" text="Archive wallet" />
-                              <MenuItem mnemonicParsing="false" onAction="#handleDeleteWallet" text="Delete wallet" />
+                            <MenuItem mnemonicParsing="false" onAction="#handleRenameWallet" text="Rename" />
+                            <MenuItem mnemonicParsing="false" onAction="#handleChangeWalletType" text="Change Type" />
+                              <MenuItem mnemonicParsing="false" onAction="#handleChangeWalletBalance" text="Adjust Balance" />
+                              <MenuItem mnemonicParsing="false" onAction="#handleArchiveWallet" text="Archive" />
+                              <MenuItem mnemonicParsing="false" onAction="#handleDeleteWallet" text="Delete" />
                           </items>
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

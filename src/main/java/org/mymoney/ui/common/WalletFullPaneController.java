@@ -21,6 +21,7 @@ import org.mymoney.services.WalletTransactionService;
 import org.mymoney.ui.dialog.AddExpenseController;
 import org.mymoney.ui.dialog.AddIncomeController;
 import org.mymoney.ui.dialog.AddTransferController;
+import org.mymoney.ui.dialog.ChangeWalletBalanceController;
 import org.mymoney.ui.dialog.ChangeWalletTypeController;
 import org.mymoney.ui.dialog.RenameWalletController;
 import org.mymoney.ui.main.WalletController;
@@ -297,6 +298,17 @@ public class WalletFullPaneController
                                     "Change wallet type",
                                     springContext,
                                     (ChangeWalletTypeController controller)
+                                        -> { controller.SetWalletComboBox(wallet); },
+                                    List.of(() -> walletController.UpdateDisplay()));
+    }
+
+    @FXML
+    private void handleChangeWalletBalance()
+    {
+        WindowUtils.OpenModalWindow(Constants.CHANGE_WALLET_BALANCE_FXML,
+                                    "Change wallet balance",
+                                    springContext,
+                                    (ChangeWalletBalanceController controller)
                                         -> { controller.SetWalletComboBox(wallet); },
                                     List.of(() -> walletController.UpdateDisplay()));
     }

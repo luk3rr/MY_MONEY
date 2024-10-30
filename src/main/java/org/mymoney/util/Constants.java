@@ -65,6 +65,8 @@ public final class Constants
 
     public static final String CHANGE_WALLET_TYPE_FXML =
         UI_DIALOG_PATH + "change_wallet_type.fxml";
+    public static final String CHANGE_WALLET_BALANCE_FXML =
+        UI_DIALOG_PATH + "change_wallet_balance.fxml";
     public static final String RENAME_WALLET_FXML =
         UI_DIALOG_PATH + "rename_wallet.fxml";
     public static final String MANAGE_CATEGORY_FXML =

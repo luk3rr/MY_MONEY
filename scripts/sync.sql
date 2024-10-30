@@ -250,6 +250,8 @@ SET
         SELECT
             CASE
                 -- Caso existam datas anteriores da mesma descrição, acrescenta 1 mês na data máxima
+                -- Garanta que o dia não seja maior que 28. Caso contrário, haverá problemas com 
+                -- a fatura de fevereiro de um ano não bissexto
                 WHEN EXISTS (
                     SELECT 1
                     FROM temp_despesas_crc_mf AS prev_desp
