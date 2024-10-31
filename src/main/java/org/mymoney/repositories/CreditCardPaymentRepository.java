@@ -46,6 +46,42 @@ public interface CreditCardPaymentRepository
     GetCreditCardPayments(@Param("month") Integer month, @Param("year") Integer year);
 
     /**
+     * Get credit card payments in a month and year by credit card
+     * @param crcId The credit card id
+     * @param month The month
+     * @param year The year
+     * @return A list with all credit card payments in a month and year by credit card
+     */
+    @Query("SELECT ccp "
+           + "FROM CreditCardPayment ccp "
+           + "WHERE strftime('%m', ccp.date) = printf('%02d', :month) "
+           + "AND strftime('%Y', ccp.date) = printf('%04d', :year)"
+           + "AND ccp.creditCardDebt.creditCard.id = :crcId")
+    List<CreditCardPayment>
+    GetCreditCardPayments(@Param("crcId") Long    crcId,
+                          @Param("month") Integer month,
+                          @Param("year") Integer  year);
+
+    /**
+     * Get credit card pending payments in a month and year by credit card
+     * @param crcId The credit card id
+     * @param month The month
+     * @param year The year
+     * @return A list with all credit card pending payments in a month and year by
+     *     credit card
+     */
+    @Query("SELECT ccp "
+           + "FROM CreditCardPayment ccp "
+           + "WHERE strftime('%m', ccp.date) = printf('%02d', :month) "
+           + "AND strftime('%Y', ccp.date) = printf('%04d', :year) "
+           + "AND ccp.creditCardDebt.creditCard.id = :crcId "
+           + "AND ccp.wallet IS NULL")
+    List<CreditCardPayment>
+    GetPendingCreditCardPayments(@Param("crcId") Long    crcId,
+                                 @Param("month") Integer month,
+                                 @Param("year") Integer  year);
+
+    /**
      * Get payments by debt id
      * @param debtId The debt id
      * @return A list with all credit card payments by debt id

@@ -19,6 +19,7 @@ import javafx.scene.layout.VBox;
 import org.mymoney.entities.CreditCard;
 import org.mymoney.services.CreditCardService;
 import org.mymoney.ui.dialog.AddCreditCardDebtController;
+import org.mymoney.ui.dialog.CreditCardInvoicePaymentController;
 import org.mymoney.ui.dialog.EditCreditCardController;
 import org.mymoney.ui.main.CreditCardController;
 import org.mymoney.util.Constants;
@@ -231,14 +232,23 @@ public class CreditCardPaneController
 
     @FXML
     private void handleRegisterPayment()
-    { }
+    {
+        WindowUtils.OpenModalWindow(
+            Constants.CREDIT_CARD_INVOICE_PAYMENT_FXML,
+            "Register Payment",
+            springContext,
+            (CreditCardInvoicePaymentController controller)
+                -> { controller.SetCreditCard(creditCard, currentDisplayedMonth); },
+            // Update the display after the payment is registered with the current month
+            List.of(() -> { creditCardController.UpdateDisplay(currentDisplayedMonth); }));
+    }
 
     /**
      * Load the Credit Card Pane
      * @param creditCard Credit Card to load
      * @return The updated VBox
      */
-    public VBox UpdateCreditCardPane(CreditCard crc)
+    public VBox UpdateCreditCardPane(CreditCard crc, YearMonth month)
     {
         // If the crc is null, do not update the pane
         if (crc == null)
@@ -248,6 +258,7 @@ public class CreditCardPaneController
         }
 
         this.creditCard = crc;
+        this.currentDisplayedMonth = month;
 
         crcName.setText(creditCard.GetName());
         crcOperator.setText(creditCard.GetOperator().GetName());

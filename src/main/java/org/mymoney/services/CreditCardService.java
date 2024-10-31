@@ -15,6 +15,7 @@ import org.mymoney.entities.CreditCard;
 import org.mymoney.entities.CreditCardDebt;
 import org.mymoney.entities.CreditCardOperator;
 import org.mymoney.entities.CreditCardPayment;
+import org.mymoney.entities.Wallet;
 import org.mymoney.repositories.CategoryRepository;
 import org.mymoney.repositories.CreditCardDebtRepository;
 import org.mymoney.repositories.CreditCardOperatorRepository;
@@ -191,25 +192,6 @@ public class CreditCardService
         m_creditCardRepository.save(oldCrc);
 
         m_logger.info("Credit card with id " + crc.GetId() + " updated successfully");
-    }
-
-    /**
-     * Get available credit of a credit card
-     * @param id The id of the credit card
-     * @return The available credit of the credit card
-     * @throws RuntimeException If the credit card does not exist
-     */
-    public Double GetAvailableCredit(Long id)
-    {
-        CreditCard creditCard = m_creditCardRepository.findById(id).orElseThrow(
-            ()
-                -> new RuntimeException("Credit card with id " + id +
-                                        " does not exist"));
-
-        Double totalPendingPayments =
-            m_creditCardPaymentRepository.GetTotalPendingPayments(id);
-
-        return creditCard.GetMaxDebt() - totalPendingPayments;
     }
 
     /**
@@ -422,6 +404,50 @@ public class CreditCardService
     }
 
     /**
+     * Pay a credit card invoice
+     * @param crcId The id of the credit card to pay the invoice
+     * @param walletId The id of the wallet to register the payment
+     * @param month The month of the invoice
+     * @param year The year of the invoice
+     * @throws RuntimeException If the credit card does not exist
+     * @throws RuntimeException If the wallet does not exist
+     */
+    @Transactional
+    public void PayInvoice(Long crcId, Long walletId, Integer month, Integer year)
+    {
+        Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
+            ()
+                -> new RuntimeException("Wallet with id " + walletId +
+                                        " does not exist"));
+
+        m_creditCardRepository.findById(crcId).orElseThrow(
+            ()
+                -> new RuntimeException("Credit card with id " + crcId +
+                                        " does not exist"));
+
+        List<CreditCardPayment> pendingPayments =
+            GetPendingCreditCardPayments(crcId, month, year);
+
+        Double pendingPaymentsTotal =
+            pendingPayments.stream().mapToDouble(CreditCardPayment::GetAmount).sum();
+
+        for (CreditCardPayment payment : pendingPayments)
+        {
+            payment.SetWallet(wallet);
+            m_creditCardPaymentRepository.save(payment);
+
+            m_logger.info(
+                "Payment number " + payment.GetInstallment() + " of debt with id " +
+                payment.GetCreditCardDebt().GetId() + " on credit card with id " +
+                payment.GetCreditCardDebt().GetCreditCard().GetId() + " paid");
+        }
+
+        // Subtract the total of pending payments from the wallet balance
+        wallet.SetBalance(wallet.GetBalance() - pendingPaymentsTotal);
+        m_walletRepository.save(wallet);
+    }
+
+    /**
      * Get all credit cards
      * @return A list with all credit cards
      */
@@ -467,6 +493,25 @@ public class CreditCardService
     }
 
     /**
+     * Get available credit of a credit card
+     * @param id The id of the credit card
+     * @return The available credit of the credit card
+     * @throws RuntimeException If the credit card does not exist
+     */
+    public Double GetAvailableCredit(Long id)
+    {
+        CreditCard creditCard = m_creditCardRepository.findById(id).orElseThrow(
+            ()
+                -> new RuntimeException("Credit card with id " + id +
+                                        " does not exist"));
+
+        Double totalPendingPayments =
+            m_creditCardPaymentRepository.GetTotalPendingPayments(id);
+
+        return creditCard.GetMaxDebt() - totalPendingPayments;
+    }
+
+    /**
      * Get credit card payments in a month and year
      * @param month The month
      * @param year The year
@@ -475,6 +520,36 @@ public class CreditCardService
     public List<CreditCardPayment> GetCreditCardPayments(Integer month, Integer year)
     {
         return m_creditCardPaymentRepository.GetCreditCardPayments(month, year);
+    }
+
+    /**
+     * Get credit card payments in a month and year by credit card id
+     * @param crcId The id of the credit card
+     * @param month The month
+     * @param year The year
+     * @return A list with all credit card payments in a month and year by credit card
+     *     id
+     */
+    public List<CreditCardPayment>
+    GetCreditCardPayments(Long crcId, Integer month, Integer year)
+    {
+        return m_creditCardPaymentRepository.GetCreditCardPayments(crcId, month, year);
+    }
+
+    /**
+     * Get credit card pending payments in a month and year by credit card id
+     * @param crcId The id of the credit card
+     * @param month The month
+     * @param year The year
+     * @return A list with all credit card pending payments in a month and year by
+     *     credit card id
+     */
+    public List<CreditCardPayment>
+    GetPendingCreditCardPayments(Long crcId, Integer month, Integer year)
+    {
+        return m_creditCardPaymentRepository.GetPendingCreditCardPayments(crcId,
+                                                                          month,
+                                                                          year);
     }
 
     /**

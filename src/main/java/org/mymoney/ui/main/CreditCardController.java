@@ -303,6 +303,23 @@ public class CreditCardController
 
     /**
      * Update the display
+     * @param yearMonth YearMonth - The year and month to be displayed in credit card
+     * resume and table view
+     * @note: This method can be called by other controllers to update the screen when
+     * there is a change
+     */
+    public void UpdateDisplay(YearMonth yearMonth)
+    {
+        LoadCreditCards();
+
+        UpdateDebtsTableView();
+        UpdateTotalDebtsInfo();
+        UpdateMoneyFlow();
+        UpdateDisplayCards(yearMonth);
+    }
+
+    /**
+     * Update the display
      * @note: This method can be called by other controllers to update the screen when
      * there is a change
      */
@@ -399,6 +416,14 @@ public class CreditCardController
      */
     private void UpdateDisplayCards()
     {
+        UpdateDisplayCards(YearMonth.now());
+    }
+
+    /**
+     * Update the display of the credit cards
+     */
+    private void UpdateDisplayCards(YearMonth defaultMonth)
+    {
         crcPane1.getChildren().clear();
 
         if (!creditCards.isEmpty())
@@ -420,7 +445,7 @@ public class CreditCardController
 
                 CreditCardPaneController crcPaneController = loader.getController();
 
-                crcPaneController.UpdateCreditCardPane(crc);
+                crcPaneController.UpdateCreditCardPane(crc, defaultMonth);
 
                 AnchorPane.setTopAnchor(newContent, 0.0);
                 AnchorPane.setBottomAnchor(newContent, 0.0);
