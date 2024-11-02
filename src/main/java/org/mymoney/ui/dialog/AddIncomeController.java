@@ -123,7 +123,16 @@ public class AddIncomeController
 
         // Update wallet after balance when the value field changes
         incomeValueField.textProperty().addListener(
-            (observable, oldValue, newValue) -> { WalletAfterBalance(); });
+            (observable, oldValue, newValue) -> {
+                if (!newValue.matches(Constants.MONETARY_VALUE_REGEX))
+                {
+                    incomeValueField.setText(oldValue);
+                }
+                else
+                {
+                    WalletAfterBalance();
+                }
+            });
     }
 
     @FXML

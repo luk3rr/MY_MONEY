@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.mymoney.entities.WalletType;
 import org.mymoney.services.WalletService;
+import org.mymoney.util.Constants;
 import org.mymoney.util.WindowUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -56,6 +57,14 @@ public class AddWalletController
 
         walletTypeComboBox.getItems().addAll(
             walletTypes.stream().map(WalletType::GetName).toList());
+
+        walletBalanceField.textProperty().addListener(
+            (observable, oldValue, newValue) -> {
+                if (!newValue.matches(Constants.MONETARY_VALUE_REGEX))
+                {
+                    walletBalanceField.setText(oldValue);
+                }
+            });
     }
 
     @FXML

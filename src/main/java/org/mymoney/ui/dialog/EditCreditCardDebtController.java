@@ -134,12 +134,29 @@ public class EditCreditCardDebtController
         });
 
         valueField.textProperty().addListener((observable, oldValue, newValue) -> {
-            UpdateAvailableLimitAfterDebtLabel();
-            UpdateMsgLabel();
+            if (!newValue.matches(Constants.MONETARY_VALUE_REGEX))
+            {
+                valueField.setText(oldValue);
+            }
+            else
+            {
+                UpdateAvailableLimitAfterDebtLabel();
+                UpdateMsgLabel();
+            }
         });
 
         installmentsField.textProperty().addListener(
-            (observable, oldValue, newValue) -> { UpdateMsgLabel(); });
+            (observable, oldValue, newValue) -> {
+                if (!newValue.matches(Constants.GetDigitsRegexUpTo(
+                        Constants.INSTALLMENTS_FIELD_MAX_DIGITS)))
+                {
+                    installmentsField.setText(oldValue);
+                }
+                else
+                {
+                    UpdateMsgLabel();
+                }
+            });
     }
 
     @FXML

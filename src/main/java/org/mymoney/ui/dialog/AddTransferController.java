@@ -119,8 +119,15 @@ public class AddTransferController
         // Update sender wallet after balance when transfer value changes
         transferValueField.textProperty().addListener(
             (observable, oldValue, newValue) -> {
-                UpdateSenderWalletAfterBalance();
-                UpdateReceiverWalletAfterBalance();
+                if (!newValue.matches(Constants.MONETARY_VALUE_REGEX))
+                {
+                    transferValueField.setText(oldValue);
+                }
+                else
+                {
+                    UpdateSenderWalletAfterBalance();
+                    UpdateReceiverWalletAfterBalance();
+                }
             });
     }
 

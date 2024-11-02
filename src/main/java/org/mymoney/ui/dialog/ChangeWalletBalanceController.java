@@ -65,6 +65,13 @@ public class ChangeWalletBalanceController
 
         walletComboBox.getItems().addAll(
             wallets.stream().map(Wallet::GetName).toList());
+
+        balanceField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches(Constants.MONETARY_VALUE_REGEX))
+            {
+                balanceField.setText(oldValue);
+            }
+        });
     }
 
     @FXML

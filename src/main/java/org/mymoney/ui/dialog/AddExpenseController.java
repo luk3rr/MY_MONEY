@@ -125,7 +125,16 @@ public class AddExpenseController
 
         // Update wallet after balance when the value field changes
         expenseValueField.textProperty().addListener(
-            (observable, oldValue, newValue) -> { WalletAfterBalance(); });
+            (observable, oldValue, newValue) -> {
+                if (!newValue.matches(Constants.MONETARY_VALUE_REGEX))
+                {
+                    expenseValueField.setText(oldValue);
+                }
+                else
+                {
+                    WalletAfterBalance();
+                }
+            });
     }
 
     @FXML

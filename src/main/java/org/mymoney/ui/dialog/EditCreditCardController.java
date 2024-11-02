@@ -83,9 +83,17 @@ public class EditCreditCardController
         // digits
         lastFourDigitsField.textProperty().addListener(
             (observable, oldValue, newValue) -> {
-                if (!newValue.matches("\\d*") || newValue.length() > 4)
+                if (!newValue.matches(Constants.GetDigitsRegexUpTo(4)))
                 {
                     lastFourDigitsField.setText(oldValue);
+                }
+            });
+
+        limitField.textProperty().addListener(
+            (observable, oldValue, newValue) -> {
+                if (!newValue.matches(Constants.MONETARY_VALUE_REGEX))
+                {
+                    limitField.setText(oldValue);
                 }
             });
     }
@@ -156,10 +164,9 @@ public class EditCreditCardController
 
                 creditCardService.UpdateCreditCard(crcToUpdate);
 
-                WindowUtils.ShowSuccessDialog(
-                    "Success",
-                    "Credit card updated",
-                    "The credit card updated successfully.");
+                WindowUtils.ShowSuccessDialog("Success",
+                                              "Credit card updated",
+                                              "The credit card updated successfully.");
             }
 
             Stage stage = (Stage)nameField.getScene().getWindow();

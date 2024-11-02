@@ -6,6 +6,7 @@
 
 package org.mymoney.util;
 
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -169,8 +170,9 @@ public final class Constants
     public static final Double ONE_SECOND_IN_NS = 1_000_000_000.0;
 
     // Credit card
-    public static final Integer MAX_BILLING_DUE_DAY = 28;
-    public static final Short   MAX_INSTALLMENTS    = 12 * 3;
+    public static final Integer MAX_BILLING_DUE_DAY           = 28;
+    public static final Integer INSTALLMENTS_FIELD_MAX_DIGITS = 3;
+    public static final Short   MAX_INSTALLMENTS              = 999;
 
     // Animation constants
     public static final Double MENU_COLLAPSED_WIDTH = 80.0;
@@ -211,6 +213,26 @@ public final class Constants
     public static final String PERCENTAGE_FORMAT = "0.00";
 
     public static final String CREDIT_CARD_NUMBER_FORMAT = "**** **** **** ####";
+
+    // Regex
+    public static final String DIGITS_ONLY_REGEX    = "\\d*";
+    public static final String MONETARY_VALUE_REGEX = "\\d*\\.?\\d{0,2}";
+
+    /**
+     * Get a regex that matches digits up to n
+     * @param n The maximum number of digits
+     * @return The regex
+     * @throws IllegalArgumentException If n is negative
+     */
+    public static String GetDigitsRegexUpTo(Integer n)
+    {
+        if (n < 0)
+        {
+            throw new IllegalArgumentException("n must be non-negative");
+        }
+
+        return "\\d{0," + n + "}";
+    }
 
     // Prevent instantiation
     private Constants() { }

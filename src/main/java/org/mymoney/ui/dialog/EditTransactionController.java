@@ -142,7 +142,16 @@ public class EditTransactionController
         statusComboBox.setOnAction(e -> { WalletAfterBalance(); });
 
         transactionValueField.textProperty().addListener(
-            (observable, oldValue, newValue) -> WalletAfterBalance());
+            (observable, oldValue, newValue) -> {
+                if (!newValue.matches(Constants.MONETARY_VALUE_REGEX))
+                {
+                    transactionValueField.setText(oldValue);
+                }
+                else
+                {
+                    WalletAfterBalance();
+                }
+            });
     }
 
     @FXML

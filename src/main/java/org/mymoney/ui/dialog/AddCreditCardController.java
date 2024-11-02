@@ -68,9 +68,17 @@ public class AddCreditCardController
         // digits
         lastFourDigitsField.textProperty().addListener(
             (observable, oldValue, newValue) -> {
-                if (!newValue.matches("\\d*") || newValue.length() > 4)
+                if (!newValue.matches(Constants.DIGITS_ONLY_REGEX) || newValue.length() > 4)
                 {
                     lastFourDigitsField.setText(oldValue);
+                }
+            });
+
+        limitField.textProperty().addListener(
+            (observable, oldValue, newValue) -> {
+                if (!newValue.matches(Constants.MONETARY_VALUE_REGEX))
+                {
+                    limitField.setText(oldValue);
                 }
             });
     }
