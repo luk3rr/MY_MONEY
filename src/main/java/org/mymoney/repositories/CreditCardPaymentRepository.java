@@ -82,6 +82,18 @@ public interface CreditCardPaymentRepository
                                  @Param("year") Integer  year);
 
     /**
+     * Get all pending credit card payments
+     * @param crcId The credit card id
+     * @return A list with all pending credit card payments
+     */
+    @Query("SELECT ccp "
+           + "FROM CreditCardPayment ccp "
+           + "WHERE ccp.creditCardDebt.creditCard.id = :crcId "
+           + "AND ccp.wallet IS NULL")
+    List<CreditCardPayment>
+    GetAllPendingCreditCardPayments(@Param("crcId") Long crcId);
+
+    /**
      * Get payments by debt id
      * @param debtId The debt id
      * @return A list with all credit card payments by debt id

@@ -186,7 +186,23 @@ public class CreditCardService
         oldCrc.SetMaxDebt(crc.GetMaxDebt());
         oldCrc.SetLastFourDigits(crc.GetLastFourDigits());
         oldCrc.SetOperator(operator);
+
+        // Update bill due day for each pending payment where the payment date is
+        // greater than the current day. Overdue payments are not updated
+        List<CreditCardPayment> payments =
+            GetAllPendingCreditCardPayments(oldCrc.GetId())
+                .stream()
+                .filter(p -> p.GetDate().isAfter(LocalDateTime.now()))
+                .toList();
+
+        for (CreditCardPayment payment : payments)
+        {
+            payment.SetDate(payment.GetDate().withDayOfMonth(crc.GetBillingDueDay()));
+            m_creditCardPaymentRepository.save(payment);
+        }
+
         oldCrc.SetBillingDueDay(crc.GetBillingDueDay());
+
         oldCrc.SetClosingDay(crc.GetClosingDay());
 
         m_creditCardRepository.save(oldCrc);
@@ -550,6 +566,16 @@ public class CreditCardService
         return m_creditCardPaymentRepository.GetPendingCreditCardPayments(crcId,
                                                                           month,
                                                                           year);
+    }
+
+    /**
+     * Get all pending credit card payments
+     * @param crcId The id of the credit card
+     * @return A list with all pending credit card payments
+     */
+    public List<CreditCardPayment> GetAllPendingCreditCardPayments(Long crcId)
+    {
+        return m_creditCardPaymentRepository.GetAllPendingCreditCardPayments(crcId);
     }
 
     /**
