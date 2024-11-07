@@ -14,6 +14,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
@@ -83,7 +84,7 @@ public class CreditCardServiceTest
         m_creditCard        = new CreditCard("Credit Card",
                                       10,
                                       4,
-                                      1000.0,
+                                      new BigDecimal("1000.0"),
                                       m_crcLastFourDigits,
                                       m_operator);
 
@@ -196,7 +197,7 @@ public class CreditCardServiceTest
             .thenReturn(false);
 
         // Case when the max debt is negative
-        m_creditCard.SetMaxDebt(-1.0);
+        m_creditCard.SetMaxDebt(new BigDecimal("-1.0"));
 
         assertThrows(RuntimeException.class,
                      ()
@@ -327,7 +328,7 @@ public class CreditCardServiceTest
         when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.of(m_creditCard));
 
-        Double availableCredit =
+        BigDecimal availableCredit =
             m_creditCardService.GetAvailableCredit(m_creditCard.GetId());
 
         assertEquals(m_creditCard.GetMaxDebt(), availableCredit);
@@ -339,8 +340,8 @@ public class CreditCardServiceTest
     public void
     TestGetAvailableCreditWithDebt()
     {
-        Double maxDebt              = m_creditCard.GetMaxDebt();
-        Double totalPendingPayments = maxDebt / 2;
+        BigDecimal maxDebt              = m_creditCard.GetMaxDebt();
+        BigDecimal totalPendingPayments = maxDebt.divide(new BigDecimal("2"));
 
         when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.of(m_creditCard));
@@ -349,22 +350,23 @@ public class CreditCardServiceTest
             m_creditCardPaymentRepository.GetTotalPendingPayments(m_creditCard.GetId()))
             .thenReturn(totalPendingPayments);
 
-        Double availableCredit =
+        BigDecimal availableCredit =
             m_creditCardService.GetAvailableCredit(m_creditCard.GetId());
 
-        assertEquals(maxDebt - totalPendingPayments,
-                     availableCredit,
+        assertEquals(maxDebt.subtract(totalPendingPayments).doubleValue(),
+                     availableCredit.doubleValue(),
                      Constants.EPSILON);
     }
 
     @Test
-    @DisplayName("Test if the available credit is returned correctly when there is a " +
-                 "debt and payments")
+    @DisplayName("Test if the available credit is returned correctly when there is a "
+                 + "debt and payments")
     public void
     TestGetAvailableCreditWithDebtAndPayments()
     {
-        m_creditCard.SetMaxDebt(1000.0);
-        Double totalPendingPayments = 200.0;
+        m_creditCard.SetMaxDebt(new BigDecimal("1000.0"));
+
+        BigDecimal totalPendingPayments = new BigDecimal("200.0");
 
         when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.of(m_creditCard));
@@ -373,10 +375,13 @@ public class CreditCardServiceTest
             m_creditCardPaymentRepository.GetTotalPendingPayments(m_creditCard.GetId()))
             .thenReturn(totalPendingPayments);
 
-        Double availableCredit =
+        BigDecimal availableCredit =
             m_creditCardService.GetAvailableCredit(m_creditCard.GetId());
 
-        assertEquals(1000.0 - totalPendingPayments, availableCredit, Constants.EPSILON);
+        assertEquals(
+            new BigDecimal("1000.0").subtract(totalPendingPayments).doubleValue(),
+            availableCredit.doubleValue(),
+            Constants.EPSILON);
     }
 
     @Test
@@ -395,7 +400,7 @@ public class CreditCardServiceTest
     @DisplayName("Test if the debt is registered successfully")
     public void TestRegisterDebt()
     {
-        m_creditCard.SetMaxDebt(1000.0);
+        m_creditCard.SetMaxDebt(new BigDecimal("1000.0"));
 
         when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.of(m_creditCard));
@@ -407,7 +412,7 @@ public class CreditCardServiceTest
                                          m_category,
                                          m_registerDate,
                                          m_invoiceMonth,
-                                         100.0,
+                                         new BigDecimal("100.0"),
                                          1,
                                          m_description);
 
@@ -431,7 +436,7 @@ public class CreditCardServiceTest
                                                              m_category,
                                                              m_registerDate,
                                                              m_invoiceMonth,
-                                                             100.0,
+                                                             new BigDecimal("100.0"),
                                                              1,
                                                              m_description));
 
@@ -455,7 +460,7 @@ public class CreditCardServiceTest
                                                              m_category,
                                                              m_registerDate,
                                                              m_invoiceMonth,
-                                                             100.0,
+                                                             new BigDecimal("100.0"),
                                                              1,
                                                              m_description));
 
@@ -483,7 +488,7 @@ public class CreditCardServiceTest
                                                              m_category,
                                                              m_registerDate,
                                                              m_invoiceMonth,
-                                                             -1.0,
+                                                             new BigDecimal("-1.0"),
                                                              1,
                                                              m_description));
 
@@ -511,7 +516,7 @@ public class CreditCardServiceTest
                                                              m_category,
                                                              m_registerDate,
                                                              m_invoiceMonth,
-                                                             100.0,
+                                                             new BigDecimal("100.0"),
                                                              0,
                                                              m_description));
 
@@ -542,7 +547,7 @@ public class CreditCardServiceTest
                                                     m_category,
                                                     m_registerDate,
                                                     m_invoiceMonth,
-                                                    100.0,
+                                                    new BigDecimal("100.0"),
                                                     Constants.MAX_INSTALLMENTS + 1,
                                                     m_description));
 
@@ -561,7 +566,7 @@ public class CreditCardServiceTest
     public void
     TestRegisterDebtNotEnoughCredit()
     {
-        m_creditCard.SetMaxDebt(100.0);
+        m_creditCard.SetMaxDebt(new BigDecimal("100.0"));
 
         when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.of(m_creditCard));
@@ -575,7 +580,7 @@ public class CreditCardServiceTest
                                                              m_category,
                                                              m_registerDate,
                                                              m_invoiceMonth,
-                                                             200.0,
+                                                             new BigDecimal("200.0"),
                                                              1,
                                                              m_description));
 
@@ -602,11 +607,13 @@ public class CreditCardServiceTest
         ArgumentCaptor<CreditCardPayment> paymentCaptor =
             ArgumentCaptor.forClass(CreditCardPayment.class);
 
+        BigDecimal debtValue = new BigDecimal("100.0");
+
         m_creditCardService.RegisterDebt(m_creditCard.GetId(),
                                          m_category,
                                          m_registerDate,
                                          m_invoiceMonth,
-                                         100.0,
+                                         debtValue,
                                          5,
                                          m_description);
 
@@ -618,7 +625,7 @@ public class CreditCardServiceTest
 
         assertEquals(5, capturedPayments.size(), "The number of payments is incorrect");
 
-        Double expectedInstallmentValue = 100.0 / 5;
+        BigDecimal expectedInstallmentValue = debtValue.divide(new BigDecimal("5"));
 
         for (Integer installmentNumber = 0; installmentNumber < capturedPayments.size();
              installmentNumber++)
@@ -626,8 +633,8 @@ public class CreditCardServiceTest
             CreditCardPayment payment = capturedPayments.get(installmentNumber);
 
             // Check if the payment amount is correct
-            assertEquals(expectedInstallmentValue,
-                         payment.GetAmount(),
+            assertEquals(expectedInstallmentValue.doubleValue(),
+                         payment.GetAmount().doubleValue(),
                          Constants.EPSILON,
                          "The payment amount of installment " + installmentNumber +
                              " is incorrect");

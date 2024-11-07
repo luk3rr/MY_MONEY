@@ -6,6 +6,7 @@
 
 package org.mymoney.ui.dialog;
 
+import java.math.BigDecimal;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -95,10 +96,10 @@ public class ChangeWalletBalanceController
 
         try
         {
-            Double newBalance = Double.parseDouble(newBalanceStr);
+            BigDecimal newBalance = new BigDecimal(newBalanceStr);
 
             // Check if has modification
-            if (Math.abs(wallet.GetBalance() - newBalance) < Constants.EPSILON)
+            if (wallet.GetBalance().compareTo(newBalance) == 0)
             {
                 WindowUtils.ShowInformationDialog("Information",
                                                   "No changes",

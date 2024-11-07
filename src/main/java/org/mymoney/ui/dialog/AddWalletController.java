@@ -6,6 +6,7 @@
 
 package org.mymoney.ui.dialog;
 
+import java.math.BigDecimal;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -98,7 +99,7 @@ public class AddWalletController
 
         try
         {
-            Double walletBalance = Double.parseDouble(walletBalanceStr);
+            BigDecimal walletBalance = new BigDecimal(walletBalanceStr);
 
             walletService.CreateWallet(walletName, walletBalance, walletType);
 

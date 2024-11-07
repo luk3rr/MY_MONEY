@@ -6,6 +6,7 @@
 
 package org.mymoney.ui.dialog;
 
+import java.math.BigDecimal;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -89,13 +90,12 @@ public class EditCreditCardController
                 }
             });
 
-        limitField.textProperty().addListener(
-            (observable, oldValue, newValue) -> {
-                if (!newValue.matches(Constants.MONETARY_VALUE_REGEX))
-                {
-                    limitField.setText(oldValue);
-                }
-            });
+        limitField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches(Constants.MONETARY_VALUE_REGEX))
+            {
+                limitField.setText(oldValue);
+            }
+        });
     }
 
     @FXML
@@ -136,13 +136,13 @@ public class EditCreditCardController
 
         try
         {
-            Double  crcLimit      = Double.parseDouble(crcLimitStr);
-            Integer crcClosingDay = Integer.parseInt(crcClosingDayStr);
-            Integer crcDueDay     = Integer.parseInt(crcDueDayStr);
+            BigDecimal crcLimit      = new BigDecimal(crcLimitStr);
+            Integer    crcClosingDay = Integer.parseInt(crcClosingDayStr);
+            Integer    crcDueDay     = Integer.parseInt(crcDueDayStr);
 
             // Check if has any modification
             if (crcToUpdate.GetName().equals(crcName) &&
-                Math.abs(crcLimit - crcToUpdate.GetMaxDebt()) < Constants.EPSILON &&
+                crcLimit.compareTo(crcToUpdate.GetMaxDebt()) == 0 &&
                 crcToUpdate.GetLastFourDigits().equals(crcLastFourDigitsStr) &&
                 crcToUpdate.GetClosingDay() == crcClosingDay &&
                 crcToUpdate.GetBillingDueDay() == crcDueDay &&

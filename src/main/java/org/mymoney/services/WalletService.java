@@ -6,6 +6,7 @@
 
 package org.mymoney.services;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.logging.Logger;
 import org.mymoney.entities.Wallet;
@@ -45,7 +46,7 @@ public class WalletService
      * @return The id of the created wallet
      */
     @Transactional
-    public Long CreateWallet(String name, Double balance)
+    public Long CreateWallet(String name, BigDecimal balance)
     {
         // Remove leading and trailing whitespaces
         name = name.strip();
@@ -78,7 +79,7 @@ public class WalletService
      * @return The id of the created wallet
      */
     @Transactional
-    public Long CreateWallet(String name, Double balance, WalletType walletType)
+    public Long CreateWallet(String name, BigDecimal balance, WalletType walletType)
     {
         // Remove leading and trailing whitespaces
         name = name.strip();
@@ -241,7 +242,7 @@ public class WalletService
      * @throws RuntimeException If the wallet does not exist
      */
     @Transactional
-    public void UpdateWalletBalance(Long id, Double newBalance)
+    public void UpdateWalletBalance(Long id, BigDecimal newBalance)
     {
         Wallet wallet = m_walletRepository.findById(id).orElseThrow(
             () -> new RuntimeException("Wallet with id " + id + " not found"));

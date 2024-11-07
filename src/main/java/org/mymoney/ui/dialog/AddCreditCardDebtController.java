@@ -6,6 +6,7 @@
 
 package org.mymoney.ui.dialog;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -157,7 +158,7 @@ public class AddCreditCardDebtController
 
         try
         {
-            Double debtValue = Double.parseDouble(valueStr);
+            BigDecimal debtValue = new BigDecimal(valueStr);
 
             Integer installments =
                 installmentsStr.isEmpty() ? 1 : Integer.parseInt(installmentsStr);
@@ -230,7 +231,7 @@ public class AddCreditCardDebtController
 
         crcLimitLabel.setText(UIUtils.FormatCurrency(crc.GetMaxDebt()));
 
-        Double availableLimit = creditCardService.GetAvailableCredit(crc.GetId());
+        BigDecimal availableLimit = creditCardService.GetAvailableCredit(crc.GetId());
 
         crcAvailableLimitLabel.setText(UIUtils.FormatCurrency(availableLimit));
     }
@@ -257,19 +258,19 @@ public class AddCreditCardDebtController
 
         try
         {
-            Double debtValue = Double.parseDouble(valueField.getText());
+            BigDecimal debtValue = new BigDecimal(valueField.getText());
 
-            if (debtValue <= 0)
+            if (debtValue.compareTo(BigDecimal.ZERO) <= 0)
             {
                 UIUtils.ResetLabel(msgLabel);
                 return;
             }
 
-            Double availableLimitAfterDebt =
-                creditCardService.GetAvailableCredit(crc.GetId()) - debtValue;
+            BigDecimal availableLimitAfterDebt =
+                creditCardService.GetAvailableCredit(crc.GetId()).subtract(debtValue);
 
             // Set the style according to the balance value after the expense
-            if (availableLimitAfterDebt < 0)
+            if (availableLimitAfterDebt.compareTo(BigDecimal.ZERO) < 0)
             {
                 UIUtils.SetLabelStyle(crcLimitAvailableAfterDebtLabel,
                                       Constants.NEGATIVE_BALANCE_STYLE);

@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -43,8 +44,8 @@ public class CreditCard
     @Column(name = "closing_day", nullable = false)
     private Integer closingDay;
 
-    @Column(name = "max_debt", nullable = false)
-    private Double maxDebt;
+    @Column(name = "max_debt", nullable = false, scale = 2)
+    private BigDecimal maxDebt;
 
     @Column(name = "last_four_digits", nullable = true, length = 4)
     private String lastFourDigits;
@@ -70,7 +71,7 @@ public class CreditCard
     public CreditCard(String             name,
                       Integer            billingDueDay,
                       Integer            closingDay,
-                      Double             maxDebt,
+                      BigDecimal         maxDebt,
                       String             lastFourDigits,
                       CreditCardOperator operator)
     {
@@ -131,7 +132,7 @@ public class CreditCard
      * Get the maximum debt allowed for the credit card
      * @return The maximum debt allowed for the credit card
      */
-    public Double GetMaxDebt()
+    public BigDecimal GetMaxDebt()
     {
         return maxDebt;
     }
@@ -194,7 +195,7 @@ public class CreditCard
      * Set the maximum debt allowed for the credit card
      * @param maxDebt The new maximum debt allowed for the credit card
      */
-    public void SetMaxDebt(Double maxDebt)
+    public void SetMaxDebt(BigDecimal maxDebt)
     {
         this.maxDebt = maxDebt;
     }

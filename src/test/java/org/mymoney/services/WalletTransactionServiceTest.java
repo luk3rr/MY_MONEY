@@ -14,6 +14,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
@@ -67,12 +68,12 @@ public class WalletTransactionServiceTest
     private WalletTransaction m_wallet1ExpenseTransaction;
     private Category          m_category;
     private LocalDateTime     m_date;
-    private Double            m_incomeAmount;
-    private Double            m_expenseAmount;
-    private Double            m_transferAmount;
+    private BigDecimal        m_incomeAmount;
+    private BigDecimal        m_expenseAmount;
+    private BigDecimal        m_transferAmount;
     private String            m_description = "";
 
-    private Wallet CreateWallet(Long id, String name, Double balance)
+    private Wallet CreateWallet(Long id, String name, BigDecimal balance)
     {
         Wallet wallet = new Wallet(id, name, balance);
         return wallet;
@@ -82,7 +83,7 @@ public class WalletTransactionServiceTest
                                     Wallet        sender,
                                     Wallet        receiver,
                                     LocalDateTime date,
-                                    Double        amount,
+                                    BigDecimal    amount,
                                     String        description)
     {
         Transfer transfer =
@@ -95,7 +96,7 @@ public class WalletTransactionServiceTest
                                                       TransactionType   type,
                                                       TransactionStatus status,
                                                       LocalDateTime     date,
-                                                      Double            amount,
+                                                      BigDecimal        amount,
                                                       String            description)
     {
         WalletTransaction walletTransaction = new WalletTransaction(wallet,
@@ -117,14 +118,15 @@ public class WalletTransactionServiceTest
     @BeforeEach
     public void BeforeEach()
     {
-        m_incomeAmount   = 500.0;
-        m_expenseAmount  = 200.0;
-        m_transferAmount = 125.5;
-        m_date           = LocalDateTime.now();
-        m_category       = new Category("etc");
+        m_incomeAmount   = new BigDecimal("500");
+        m_expenseAmount  = new BigDecimal("200");
+        m_transferAmount = new BigDecimal("125.5");
 
-        m_wallet1 = CreateWallet(1L, "Wallet1", 1000.0);
-        m_wallet2 = CreateWallet(2L, "Wallet2", 2000.0);
+        m_date     = LocalDateTime.now();
+        m_category = new Category("etc");
+
+        m_wallet1 = CreateWallet(1L, "Wallet1", new BigDecimal("1000"));
+        m_wallet2 = CreateWallet(2L, "Wallet2", new BigDecimal("2000"));
 
         m_transfer = CreateTransfer(1L,
                                     m_wallet1,
@@ -156,8 +158,8 @@ public class WalletTransactionServiceTest
     @DisplayName("Test if the money transfer is successful")
     public void TestTransferMoneySuccess()
     {
-        Double m_senderPreviousBalance   = m_wallet1.GetBalance();
-        Double m_receiverPreviousBalance = m_wallet2.GetBalance();
+        BigDecimal m_senderPreviousBalance   = m_wallet1.GetBalance();
+        BigDecimal m_receiverPreviousBalance = m_wallet2.GetBalance();
 
         when(m_walletRepository.findById(m_wallet1.GetId()))
             .thenReturn(Optional.of(m_wallet1));
@@ -181,12 +183,12 @@ public class WalletTransactionServiceTest
         verify(m_walletRepository).save(m_wallet1);
         verify(m_walletRepository).save(m_wallet2);
 
-        assertEquals(m_senderPreviousBalance - m_transferAmount,
-                     m_wallet1.GetBalance(),
+        assertEquals(m_senderPreviousBalance.subtract(m_transferAmount).doubleValue(),
+                     m_wallet1.GetBalance().doubleValue(),
                      Constants.EPSILON);
 
-        assertEquals(m_receiverPreviousBalance + m_transferAmount,
-                     m_wallet2.GetBalance(),
+        assertEquals(m_receiverPreviousBalance.add(m_transferAmount).doubleValue(),
+                     m_wallet2.GetBalance().doubleValue(),
                      Constants.EPSILON);
 
         // Check if the transfer was saved
@@ -197,8 +199,8 @@ public class WalletTransactionServiceTest
 
         assertEquals(m_wallet1, transferCaptor.getValue().GetSenderWallet());
         assertEquals(m_wallet2, transferCaptor.getValue().GetReceiverWallet());
-        assertEquals(m_transferAmount,
-                     transferCaptor.getValue().GetAmount(),
+        assertEquals(m_transferAmount.doubleValue(),
+                     transferCaptor.getValue().GetAmount().doubleValue(),
                      Constants.EPSILON);
     }
 
@@ -268,13 +270,14 @@ public class WalletTransactionServiceTest
     public void
     TestTransferMoneyAmountZero()
     {
-        assertThrows(RuntimeException.class,
-                     ()
-                         -> m_walletTransactionService.TransferMoney(m_wallet1.GetId(),
-                                                                     m_wallet2.GetId(),
-                                                                     m_date,
-                                                                     0.0,
-                                                                     m_description));
+        assertThrows(
+            RuntimeException.class,
+            ()
+                -> m_walletTransactionService.TransferMoney(m_wallet1.GetId(),
+                                                            m_wallet2.GetId(),
+                                                            m_date,
+                                                            new BigDecimal("0.0"),
+                                                            m_description));
 
         // Verify that the transfer was not saved
         verify(m_transferRepository, never()).save(any(Transfer.class));
@@ -284,7 +287,7 @@ public class WalletTransactionServiceTest
     @DisplayName("Test if the confirmed income is added successfully")
     public void TestAddConfirmedIncome()
     {
-        Double previousBalance = m_wallet1.GetBalance();
+        BigDecimal previousBalance = m_wallet1.GetBalance();
 
         when(m_walletRepository.findById(m_wallet1.GetId()))
             .thenReturn(Optional.of(m_wallet1));
@@ -308,8 +311,8 @@ public class WalletTransactionServiceTest
 
         // Check if the wallet balance was updated
         verify(m_walletRepository).save(m_wallet1);
-        assertEquals(previousBalance + m_incomeAmount,
-                     m_wallet1.GetBalance(),
+        assertEquals(previousBalance.add(m_incomeAmount).doubleValue(),
+                     m_wallet1.GetBalance().doubleValue(),
                      Constants.EPSILON);
     }
 
@@ -317,7 +320,7 @@ public class WalletTransactionServiceTest
     @DisplayName("Test if the pending income is added successfully")
     public void TestAddPendingIncome()
     {
-        Double previousBalance = m_wallet1.GetBalance();
+        BigDecimal previousBalance = m_wallet1.GetBalance();
 
         when(m_walletRepository.findById(m_wallet1.GetId()))
             .thenReturn(Optional.of(m_wallet1));
@@ -340,7 +343,9 @@ public class WalletTransactionServiceTest
 
         // Check if the wallet balance is the same
         verify(m_walletRepository, never()).save(any(Wallet.class));
-        assertEquals(previousBalance, m_wallet1.GetBalance(), Constants.EPSILON);
+        assertEquals(previousBalance.doubleValue(),
+                     m_wallet1.GetBalance().doubleValue(),
+                     Constants.EPSILON);
     }
 
     @Test
@@ -383,7 +388,7 @@ public class WalletTransactionServiceTest
     @DisplayName("Test if the confirmed expense is added successfully")
     public void TestAddConfirmedExpense()
     {
-        Double previousBalance = m_wallet1.GetBalance();
+        BigDecimal previousBalance = m_wallet1.GetBalance();
 
         when(m_walletRepository.findById(m_wallet1.GetId()))
             .thenReturn(Optional.of(m_wallet1));
@@ -407,8 +412,8 @@ public class WalletTransactionServiceTest
 
         // Check if the wallet balance was updated
         verify(m_walletRepository).save(m_wallet1);
-        assertEquals(previousBalance - m_expenseAmount,
-                     m_wallet1.GetBalance(),
+        assertEquals(previousBalance.subtract(m_expenseAmount).doubleValue(),
+                     m_wallet1.GetBalance().doubleValue(),
                      Constants.EPSILON);
     }
 
@@ -416,7 +421,7 @@ public class WalletTransactionServiceTest
     @DisplayName("Test if the pending expense is added successfully")
     public void TestAddPendingExpense()
     {
-        Double previousBalance = m_wallet1.GetBalance();
+        BigDecimal previousBalance = m_wallet1.GetBalance();
 
         when(m_walletRepository.findById(m_wallet1.GetId()))
             .thenReturn(Optional.of(m_wallet1));
@@ -439,7 +444,9 @@ public class WalletTransactionServiceTest
 
         // Check if the wallet balance is the same
         verify(m_walletRepository, never()).save(m_wallet1);
-        assertEquals(previousBalance, m_wallet1.GetBalance(), Constants.EPSILON);
+        assertEquals(previousBalance.doubleValue(),
+                     m_wallet1.GetBalance().doubleValue(),
+                     Constants.EPSILON);
     }
 
     @Test
@@ -485,9 +492,9 @@ public class WalletTransactionServiceTest
     TestChangeTransactionTypeFromExpenseToIncome()
     {
         // Setup previous state
-        Double oldBalance      = m_wallet1.GetBalance();
-        Double expenseAmount   = m_wallet1ExpenseTransaction.GetAmount();
-        Double newIncomeAmount = 300.0;
+        BigDecimal oldBalance      = m_wallet1.GetBalance();
+        BigDecimal expenseAmount   = m_wallet1ExpenseTransaction.GetAmount();
+        BigDecimal newIncomeAmount = new BigDecimal("300.0");
 
         WalletTransaction updatedTransaction =
             CreateWalletTransaction(m_wallet1,
@@ -514,8 +521,8 @@ public class WalletTransactionServiceTest
         m_walletTransactionService.UpdateTransaction(updatedTransaction);
 
         // Verify that the old expense was reverted and new income was applied
-        assertEquals(oldBalance + expenseAmount + newIncomeAmount,
-                     m_wallet1.GetBalance(),
+        assertEquals(oldBalance.add(expenseAmount).add(newIncomeAmount).doubleValue(),
+                     m_wallet1.GetBalance().doubleValue(),
                      Constants.EPSILON);
 
         // Verify repository interactions
@@ -532,7 +539,7 @@ public class WalletTransactionServiceTest
     public void
     TestChangeTransactionStatusFromConfirmedToPending()
     {
-        Double            oldBalance = m_wallet1.GetBalance();
+        BigDecimal        oldBalance = m_wallet1.GetBalance();
         WalletTransaction updatedTransaction =
             CreateWalletTransaction(m_wallet1,
                                     m_category,
@@ -558,8 +565,8 @@ public class WalletTransactionServiceTest
         m_walletTransactionService.UpdateTransaction(updatedTransaction);
 
         // Verify that the balance was reverted for the expense
-        assertEquals(oldBalance + m_expenseAmount,
-                     m_wallet1.GetBalance(),
+        assertEquals(oldBalance.add(m_expenseAmount).doubleValue(),
+                     m_wallet1.GetBalance().doubleValue(),
                      Constants.EPSILON);
 
         // Verify repository interactions
@@ -576,9 +583,9 @@ public class WalletTransactionServiceTest
     public void
     TestChangeTransactionWallet()
     {
-        Double oldWallet1Balance = m_wallet1.GetBalance();
-        Double oldWallet2Balance = m_wallet2.GetBalance();
-        Double amount            = m_wallet1IncomeTransaction.GetAmount();
+        BigDecimal oldWallet1Balance = m_wallet1.GetBalance();
+        BigDecimal oldWallet2Balance = m_wallet2.GetBalance();
+        BigDecimal amount            = m_wallet1IncomeTransaction.GetAmount();
 
         WalletTransaction updatedTransaction =
             CreateWalletTransaction(m_wallet2,
@@ -607,11 +614,12 @@ public class WalletTransactionServiceTest
 
         // Verify that the amount was reverted from the old wallet and added to the new
         // wallet
-        assertEquals(oldWallet1Balance - amount,
-                     m_wallet1.GetBalance(),
+        assertEquals(oldWallet1Balance.subtract(amount).doubleValue(),
+                     m_wallet1.GetBalance().doubleValue(),
                      Constants.EPSILON);
-        assertEquals(oldWallet2Balance + amount,
-                     m_wallet2.GetBalance(),
+
+        assertEquals(oldWallet2Balance.add(amount).doubleValue(),
+                     m_wallet2.GetBalance().doubleValue(),
                      Constants.EPSILON);
 
         // Verify repository interactions
@@ -653,7 +661,7 @@ public class WalletTransactionServiceTest
     @DisplayName("Test if the confirmed expense is deleted successfully")
     public void TestDeleteConfirmedExpense()
     {
-        Double previousBalance = m_wallet1.GetBalance();
+        BigDecimal previousBalance = m_wallet1.GetBalance();
 
         when(
             m_walletTransactionRepository.findById(m_wallet1ExpenseTransaction.GetId()))
@@ -668,8 +676,8 @@ public class WalletTransactionServiceTest
         // Check if the wallet balance was updated
         verify(m_walletRepository).save(m_wallet1);
 
-        assertEquals(previousBalance + m_expenseAmount,
-                     m_wallet1.GetBalance(),
+        assertEquals(previousBalance.add(m_expenseAmount).doubleValue(),
+                     m_wallet1.GetBalance().doubleValue(),
                      Constants.EPSILON);
     }
 
@@ -677,7 +685,7 @@ public class WalletTransactionServiceTest
     @DisplayName("Test if the pending expense is deleted successfully")
     public void TestDeletePendingExpense()
     {
-        Double previousBalance = m_wallet1.GetBalance();
+        BigDecimal previousBalance = m_wallet1.GetBalance();
         m_wallet1ExpenseTransaction.SetStatus(TransactionStatus.PENDING);
 
         when(
@@ -693,14 +701,16 @@ public class WalletTransactionServiceTest
         // Check if the wallet balance was not updated
         verify(m_walletRepository, never()).save(any(Wallet.class));
 
-        assertEquals(previousBalance, m_wallet1.GetBalance(), Constants.EPSILON);
+        assertEquals(previousBalance.doubleValue(),
+                     m_wallet1.GetBalance().doubleValue(),
+                     Constants.EPSILON);
     }
 
     @Test
     @DisplayName("Test if the confirmed income transaction is deleted successfully")
     public void TestDeleteConfirmedIncome()
     {
-        Double previousBalance = m_wallet1.GetBalance();
+        BigDecimal previousBalance = m_wallet1.GetBalance();
 
         when(m_walletTransactionRepository.findById(m_wallet1IncomeTransaction.GetId()))
             .thenReturn(Optional.of(m_wallet1IncomeTransaction));
@@ -714,8 +724,8 @@ public class WalletTransactionServiceTest
         // Check if the wallet balance was updated
         verify(m_walletRepository).save(m_wallet1);
 
-        assertEquals(previousBalance - m_incomeAmount,
-                     m_wallet1.GetBalance(),
+        assertEquals(previousBalance.subtract(m_incomeAmount).doubleValue(),
+                     m_wallet1.GetBalance().doubleValue(),
                      Constants.EPSILON);
     }
 
@@ -723,7 +733,7 @@ public class WalletTransactionServiceTest
     @DisplayName("Test if the pending income transaction is deleted successfully")
     public void TestDeletePendingIncome()
     {
-        Double previousBalance = m_wallet1.GetBalance();
+        BigDecimal previousBalance = m_wallet1.GetBalance();
         m_wallet1IncomeTransaction.SetStatus(TransactionStatus.PENDING);
 
         when(m_walletTransactionRepository.findById(m_wallet1IncomeTransaction.GetId()))
@@ -738,7 +748,9 @@ public class WalletTransactionServiceTest
         // Check if the wallet balance was not updated
         verify(m_walletRepository, never()).save(any(Wallet.class));
 
-        assertEquals(previousBalance, m_wallet1.GetBalance(), Constants.EPSILON);
+        assertEquals(previousBalance.doubleValue(),
+                     m_wallet1.GetBalance().doubleValue(),
+                     Constants.EPSILON);
     }
 
     @Test
@@ -761,7 +773,7 @@ public class WalletTransactionServiceTest
     public void TestConfirmIncomeTransaction()
     {
         m_wallet1IncomeTransaction.SetStatus(TransactionStatus.PENDING);
-        Double previousBalance = m_wallet1.GetBalance();
+        BigDecimal previousBalance = m_wallet1.GetBalance();
 
         when(m_walletTransactionRepository.findById(m_wallet1IncomeTransaction.GetId()))
             .thenReturn(Optional.of(m_wallet1IncomeTransaction));
@@ -776,8 +788,8 @@ public class WalletTransactionServiceTest
 
         // Check if the wallet balance was updated
         verify(m_walletRepository).save(m_wallet1);
-        assertEquals(previousBalance + m_incomeAmount,
-                     m_wallet1.GetBalance(),
+        assertEquals(previousBalance.add(m_incomeAmount).doubleValue(),
+                     m_wallet1.GetBalance().doubleValue(),
                      Constants.EPSILON);
     }
 
@@ -786,7 +798,7 @@ public class WalletTransactionServiceTest
     public void TestConfirmExpenseTransaction()
     {
         m_wallet1ExpenseTransaction.SetStatus(TransactionStatus.PENDING);
-        Double previousBalance = m_wallet1.GetBalance();
+        BigDecimal previousBalance = m_wallet1.GetBalance();
 
         when(
             m_walletTransactionRepository.findById(m_wallet1ExpenseTransaction.GetId()))
@@ -802,8 +814,8 @@ public class WalletTransactionServiceTest
 
         // Check if the wallet balance was updated
         verify(m_walletRepository).save(m_wallet1);
-        assertEquals(previousBalance - m_expenseAmount,
-                     m_wallet1.GetBalance(),
+        assertEquals(previousBalance.subtract(m_expenseAmount).doubleValue(),
+                     m_wallet1.GetBalance().doubleValue(),
                      Constants.EPSILON);
     }
 

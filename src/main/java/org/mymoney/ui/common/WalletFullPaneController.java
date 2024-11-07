@@ -6,6 +6,7 @@
 
 package org.mymoney.ui.common;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import javafx.fxml.FXML;
@@ -113,7 +114,7 @@ public class WalletFullPaneController
 
     private Wallet wallet;
 
-    private Double crcPaidAmount;
+    private BigDecimal crcPaidAmount;
 
     private List<WalletTransaction> transactions;
 
@@ -194,55 +195,57 @@ public class WalletFullPaneController
         walletIcon.setImage(
             new Image(Constants.WALLET_TYPE_ICONS_PATH + wallet.GetType().GetIcon()));
 
-        Double confirmedIncomesSum =
+        BigDecimal confirmedIncomesSum =
             transactions.stream()
                 .filter(t -> t.GetType().equals(TransactionType.INCOME))
                 .filter(t -> t.GetStatus().equals(TransactionStatus.CONFIRMED))
-                .mapToDouble(WalletTransaction::GetAmount)
-                .sum();
+                .map(WalletTransaction::GetAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        Double pendingIncomesSum =
+        BigDecimal pendingIncomesSum =
             transactions.stream()
                 .filter(t -> t.GetType().equals(TransactionType.INCOME))
                 .filter(t -> t.GetStatus().equals(TransactionStatus.PENDING))
-                .mapToDouble(WalletTransaction::GetAmount)
-                .sum();
+                .map(WalletTransaction::GetAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        Double confirmedExpensesSum =
+        BigDecimal confirmedExpensesSum =
             transactions.stream()
                 .filter(t -> t.GetType().equals(TransactionType.EXPENSE))
                 .filter(t -> t.GetStatus().equals(TransactionStatus.CONFIRMED))
-                .mapToDouble(WalletTransaction::GetAmount)
-                .sum();
+                .map(WalletTransaction::GetAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // Consider the paid amount of the credit card
-        confirmedExpensesSum += crcPaidAmount;
+        confirmedExpensesSum = confirmedExpensesSum.add(crcPaidAmount);
 
-        Double pendingExpensesSum =
+        BigDecimal pendingExpensesSum =
             transactions.stream()
                 .filter(t -> t.GetType().equals(TransactionType.EXPENSE))
                 .filter(t -> t.GetStatus().equals(TransactionStatus.PENDING))
-                .mapToDouble(WalletTransaction::GetAmount)
-                .sum();
+                .map(WalletTransaction::GetAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        Double creditedTransfersSum =
+        BigDecimal creditedTransfersSum =
             transfers.stream()
                 .filter(t -> t.GetReceiverWallet().GetId() == wallet.GetId())
-                .mapToDouble(Transfer::GetAmount)
-                .sum();
+                .map(Transfer::GetAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        Double debitedTransfersSum =
+        BigDecimal debitedTransfersSum =
             transfers.stream()
                 .filter(t -> t.GetSenderWallet().GetId() == wallet.GetId())
-                .mapToDouble(Transfer::GetAmount)
-                .sum();
+                .map(Transfer::GetAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        Double openingBalance = wallet.GetBalance() - confirmedIncomesSum +
-                                confirmedExpensesSum - creditedTransfersSum +
-                                debitedTransfersSum;
+        BigDecimal openingBalance = wallet.GetBalance()
+                                        .subtract(confirmedIncomesSum)
+                                        .add(confirmedExpensesSum)
+                                        .subtract(creditedTransfersSum)
+                                        .add(debitedTransfersSum);
 
-        Double foreseenBalance =
-            wallet.GetBalance() + pendingIncomesSum - pendingExpensesSum;
+        BigDecimal foreseenBalance =
+            wallet.GetBalance().add(pendingIncomesSum).subtract(pendingExpensesSum);
 
         SetLabelValue(openingBalanceSign, openingBalanceValue, openingBalance);
         SetLabelValue(incomesSign, incomesValue, confirmedIncomesSum);
@@ -389,13 +392,13 @@ public class WalletFullPaneController
         walletType.setText("");
         walletIcon.setImage(null);
 
-        SetLabelValue(openingBalanceSign, openingBalanceValue, 0.0);
-        SetLabelValue(incomesSign, incomesValue, 0.0);
-        SetLabelValue(expensesSign, expensesValue, 0.0);
-        SetLabelValue(creditedTransfersSign, creditedTransfersValue, 0.0);
-        SetLabelValue(debitedTransfersSign, debitedTransfersValue, 0.0);
-        SetLabelValue(currentBalanceSign, currentBalanceValue, 0.0);
-        SetLabelValue(foreseenBalanceSign, foreseenBalanceValue, 0.0);
+        SetLabelValue(openingBalanceSign, openingBalanceValue, BigDecimal.ZERO);
+        SetLabelValue(incomesSign, incomesValue, BigDecimal.ZERO);
+        SetLabelValue(expensesSign, expensesValue, BigDecimal.ZERO);
+        SetLabelValue(creditedTransfersSign, creditedTransfersValue, BigDecimal.ZERO);
+        SetLabelValue(debitedTransfersSign, debitedTransfersValue, BigDecimal.ZERO);
+        SetLabelValue(currentBalanceSign, currentBalanceValue, BigDecimal.ZERO);
+        SetLabelValue(foreseenBalanceSign, foreseenBalanceValue, BigDecimal.ZERO);
     }
 
     /**
@@ -404,12 +407,12 @@ public class WalletFullPaneController
      * @param valueLabel Label to set the value
      * @param value Value to set
      */
-    private void SetLabelValue(Label signLabel, Label valueLabel, Double value)
+    private void SetLabelValue(Label signLabel, Label valueLabel, BigDecimal value)
     {
-        if (value + Constants.EPSILON < 0)
+        if (value.compareTo(BigDecimal.ZERO) < 0)
         {
             signLabel.setText("-");
-            valueLabel.setText(UIUtils.FormatCurrency(-value));
+            valueLabel.setText(UIUtils.FormatCurrency(value.abs()));
             UIUtils.SetLabelStyle(signLabel, Constants.NEGATIVE_BALANCE_STYLE);
             UIUtils.SetLabelStyle(valueLabel, Constants.NEGATIVE_BALANCE_STYLE);
         }

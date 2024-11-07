@@ -8,6 +8,7 @@ package org.mymoney.repositories;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,7 +60,7 @@ public class WalletTransactionRepositoryTest
     }
 
     private WalletTransaction
-    CreateWalletTransaction(Wallet walletName, double amount, LocalDateTime date)
+    CreateWalletTransaction(Wallet walletName, BigDecimal amount, LocalDateTime date)
     {
         WalletTransaction walletTransaction = new WalletTransaction();
         walletTransaction.SetWallet(walletName);
@@ -73,7 +74,7 @@ public class WalletTransactionRepositoryTest
         return walletTransaction;
     }
 
-    private Wallet CreateWallet(String name, double balance)
+    private Wallet CreateWallet(String name, BigDecimal balance)
     {
         Wallet wallet = new Wallet();
         wallet.SetName(name);
@@ -86,8 +87,8 @@ public class WalletTransactionRepositoryTest
     @BeforeEach
     public void SetUp()
     {
-        m_wallet1 = CreateWallet("Wallet1", 1000.0);
-        m_wallet2 = CreateWallet("Wallet2", 2000.0);
+        m_wallet1 = CreateWallet("Wallet1", new BigDecimal("1000.0"));
+        m_wallet2 = CreateWallet("Wallet2", new BigDecimal("2000.0"));
     }
 
     @Test
@@ -96,22 +97,31 @@ public class WalletTransactionRepositoryTest
     {
         // Create the wallet transactions
         WalletTransaction walletTransaction1 =
-            CreateWalletTransaction(m_wallet1, 140.0, LocalDateTime.now());
+            CreateWalletTransaction(m_wallet1,
+                                    new BigDecimal("140.0"),
+                                    LocalDateTime.now());
         WalletTransaction walletTransaction2 =
-            CreateWalletTransaction(m_wallet1, 210.0, LocalDateTime.now().minusDays(1));
+            CreateWalletTransaction(m_wallet1,
+                                    new BigDecimal("210.0"),
+                                    LocalDateTime.now().minusDays(1));
 
         WalletTransaction walletTransaction3 =
-            CreateWalletTransaction(m_wallet1, 300.0, LocalDateTime.now().minusDays(2));
+            CreateWalletTransaction(m_wallet1,
+                                    new BigDecimal("300.0"),
+                                    LocalDateTime.now().minusDays(2));
 
-        CreateWalletTransaction(m_wallet1, 300.0, LocalDateTime.now().minusDays(3));
+        CreateWalletTransaction(m_wallet1,
+                                new BigDecimal("300.0"),
+                                LocalDateTime.now().minusDays(3));
 
         // Request the last 3 transactions
         Pageable request = PageRequest.ofSize(3);
 
         // Get the last transactions in the wallet by date
         List<WalletTransaction> lastTransactions =
-            m_walletTransactionRepository.FindLastTransactionsByWallet(m_wallet1.GetId(),
-                                                                      request);
+            m_walletTransactionRepository.FindLastTransactionsByWallet(
+                m_wallet1.GetId(),
+                request);
 
         // Check if the last transactions are correct
         assertEquals(3, lastTransactions.size());
@@ -133,8 +143,9 @@ public class WalletTransactionRepositoryTest
 
         // Get the last transactions in the wallet by date
         List<WalletTransaction> lastTransactions =
-            m_walletTransactionRepository.FindLastTransactionsByWallet(m_wallet1.GetId(),
-                                                                      request);
+            m_walletTransactionRepository.FindLastTransactionsByWallet(
+                m_wallet1.GetId(),
+                request);
 
         // Check if the last transactions are correct
         assertEquals(0, lastTransactions.size());
@@ -148,14 +159,22 @@ public class WalletTransactionRepositoryTest
     {
         // Create the wallet transactions
         WalletTransaction walletTransaction1 =
-            CreateWalletTransaction(m_wallet1, 140.0, LocalDateTime.now());
+            CreateWalletTransaction(m_wallet1,
+                                    new BigDecimal("140.0"),
+                                    LocalDateTime.now());
         WalletTransaction walletTransaction2 =
-            CreateWalletTransaction(m_wallet1, 210.0, LocalDateTime.now().minusDays(1));
+            CreateWalletTransaction(m_wallet1,
+                                    new BigDecimal("210.0"),
+                                    LocalDateTime.now().minusDays(1));
 
         WalletTransaction walletTransaction3 =
-            CreateWalletTransaction(m_wallet2, 300.0, LocalDateTime.now().minusDays(2));
+            CreateWalletTransaction(m_wallet2,
+                                    new BigDecimal("300.0"),
+                                    LocalDateTime.now().minusDays(2));
 
-        CreateWalletTransaction(m_wallet2, 300.0, LocalDateTime.now().minusDays(3));
+        CreateWalletTransaction(m_wallet2,
+                                new BigDecimal("300.0"),
+                                LocalDateTime.now().minusDays(3));
 
         // Request the last 3 transactions
         Pageable request = PageRequest.ofSize(3);

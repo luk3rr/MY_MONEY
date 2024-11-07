@@ -8,6 +8,7 @@ package org.mymoney.ui.main;
 
 import com.jfoenix.controls.JFXButton;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
@@ -214,10 +215,10 @@ public class CreditCardController
             creditCardService.GetPaymentsByDebtId(debt.GetId());
 
         // Get the amount paid for the debt
-        Double refundAmount = payments.stream()
-                                  .filter(p -> p.GetWallet() != null)
-                                  .mapToDouble(CreditCardPayment::GetAmount)
-                                  .sum();
+        BigDecimal refundAmount = payments.stream()
+                                      .filter(p -> p.GetWallet() != null)
+                                      .map(CreditCardPayment::GetAmount)
+                                      .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         Long installmentsPaid =
             payments.stream().filter(p -> p.GetWallet() != null).count();
@@ -246,7 +247,7 @@ public class CreditCardController
             .append(debt.GetCreditCard().GetName())
             .append("\n");
 
-        if (refundAmount > 0)
+        if (refundAmount.compareTo(BigDecimal.ZERO) > 0)
         {
             message.append("Refund amount: ")
                 .append(UIUtils.FormatCurrency(refundAmount))
@@ -390,10 +391,10 @@ public class CreditCardController
         // Get the selected year from the year filter combo box
         Year selectedYear = totalDebtsYearFilterComboBox.getValue();
 
-        Double totalDebts =
+        BigDecimal totalDebts =
             creditCardService.GetTotalDebtAmount(selectedYear.getValue());
 
-        Double totalPendingPayments = creditCardService.GetTotalPendingPayments();
+        BigDecimal totalPendingPayments = creditCardService.GetTotalPendingPayments();
 
         Label totalTotalDebtsLabel = new Label(UIUtils.FormatCurrency(totalDebts));
 
@@ -511,16 +512,16 @@ public class CreditCardController
             // Calculate total for each category
             for (Category category : categories)
             {
-                Double total =
+                BigDecimal total =
                     payments.stream()
                         .filter(t
                                 -> t.GetCreditCardDebt().GetCategory().GetId() ==
                                        category.GetId())
-                        .mapToDouble(CreditCardPayment::GetAmount)
-                        .sum();
+                        .map(CreditCardPayment::GetAmount)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
 
                 monthlyTotals.putIfAbsent(yearMonth, new LinkedHashMap<>());
-                monthlyTotals.get(yearMonth).put(category, total);
+                monthlyTotals.get(yearMonth).put(category, total.doubleValue());
             }
         }
 

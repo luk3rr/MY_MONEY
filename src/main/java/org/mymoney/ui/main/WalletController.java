@@ -8,6 +8,7 @@ package org.mymoney.ui.main;
 
 import com.jfoenix.controls.JFXButton;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -331,10 +332,10 @@ public class WalletController
      */
     private void UpdateTotalBalanceView()
     {
-        Double pendingExpenses       = 0.0;
-        Double pendingIncomes        = 0.0;
-        Double walletsCurrentBalance = 0.0;
-        Long   totalWallets          = 0L;
+        BigDecimal pendingExpenses       = BigDecimal.ZERO;
+        BigDecimal pendingIncomes        = BigDecimal.ZERO;
+        BigDecimal walletsCurrentBalance = BigDecimal.ZERO;
+        Long       totalWallets          = 0L;
 
         // Filter wallet type according to the selected item
         // If "All Wallets" is selected, show all transactions
@@ -347,22 +348,23 @@ public class WalletController
                         totalBalancePaneWalletTypeComboBox.getSelectionModel()
                             .getSelectedIndex());
 
-            walletsCurrentBalance =
-                wallets.stream().mapToDouble(Wallet::GetBalance).sum();
+            walletsCurrentBalance = wallets.stream()
+                                        .map(Wallet::GetBalance)
+                                        .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             pendingExpenses =
                 transactions.stream()
                     .filter(t -> t.GetType().equals(TransactionType.EXPENSE))
                     .filter(t -> t.GetStatus().equals(TransactionStatus.PENDING))
-                    .mapToDouble(WalletTransaction::GetAmount)
-                    .sum();
+                    .map(WalletTransaction::GetAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             pendingIncomes =
                 transactions.stream()
                     .filter(t -> t.GetType().equals(TransactionType.INCOME))
                     .filter(t -> t.GetStatus().equals(TransactionStatus.PENDING))
-                    .mapToDouble(WalletTransaction::GetAmount)
-                    .sum();
+                    .map(WalletTransaction::GetAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             totalWallets = wallets.stream().map(w -> w.GetId()).distinct().count();
         }
@@ -375,8 +377,8 @@ public class WalletController
             walletsCurrentBalance =
                 wallets.stream()
                     .filter(w -> w.GetType().GetId() == selectedWalletType.GetId())
-                    .mapToDouble(Wallet::GetBalance)
-                    .sum();
+                    .map(Wallet::GetBalance)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             pendingExpenses =
                 transactions.stream()
@@ -385,8 +387,8 @@ public class WalletController
                                    selectedWalletType.GetId())
                     .filter(t -> t.GetType().equals(TransactionType.EXPENSE))
                     .filter(t -> t.GetStatus().equals(TransactionStatus.PENDING))
-                    .mapToDouble(WalletTransaction::GetAmount)
-                    .sum();
+                    .map(WalletTransaction::GetAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             pendingIncomes =
                 transactions.stream()
@@ -395,8 +397,8 @@ public class WalletController
                                    selectedWalletType.GetId())
                     .filter(t -> t.GetType().equals(TransactionType.INCOME))
                     .filter(t -> t.GetStatus().equals(TransactionStatus.PENDING))
-                    .mapToDouble(WalletTransaction::GetAmount)
-                    .sum();
+                    .map(WalletTransaction::GetAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             totalWallets =
                 wallets.stream()
@@ -410,8 +412,8 @@ public class WalletController
             logger.warning("Invalid index: " + selectedIndex);
         }
 
-        Double foreseenBalance =
-            walletsCurrentBalance - pendingExpenses + pendingIncomes;
+        BigDecimal foreseenBalance =
+            walletsCurrentBalance.add(pendingExpenses).subtract(pendingIncomes);
 
         Label totalBalanceValueLabel =
             new Label(UIUtils.FormatCurrency(walletsCurrentBalance));
@@ -526,12 +528,14 @@ public class WalletController
                 // If the wallet type is not found, skip
                 if (wt != null)
                 {
-                    Double totalBalance =
+                    BigDecimal totalBalance =
                         wallets.stream()
                             .filter(w -> w.GetType().GetId() == wt.GetId())
-                            .mapToDouble(Wallet::GetBalance)
-                            .sum();
-                    pieChartData.add(new PieChart.Data(wt.GetName(), totalBalance));
+                            .map(Wallet::GetBalance)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                    pieChartData.add(
+                        new PieChart.Data(wt.GetName(), totalBalance.doubleValue()));
                 }
             }
         }
@@ -587,22 +591,22 @@ public class WalletController
             logger.info("Found " + transactions.size() + " transactions for " + month +
                         "/" + year);
 
-            Double totalExpenses = 0.0;
-            Double totalIncomes  = 0.0;
+            BigDecimal totalExpenses = BigDecimal.ZERO;
+            BigDecimal totalIncomes  = BigDecimal.ZERO;
 
             if (selectedIndex == 0)
             {
                 // Calculate total expenses for the month
                 totalExpenses = transactions.stream()
                                     .filter(t -> t.GetType() == TransactionType.EXPENSE)
-                                    .mapToDouble(WalletTransaction::GetAmount)
-                                    .sum();
+                                    .map(WalletTransaction::GetAmount)
+                                    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
                 // Calculate total incomes for the month
                 totalIncomes = transactions.stream()
                                    .filter(t -> t.GetType() == TransactionType.INCOME)
-                                   .mapToDouble(WalletTransaction::GetAmount)
-                                   .sum();
+                                   .map(WalletTransaction::GetAmount)
+                                   .reduce(BigDecimal.ZERO, BigDecimal::add);
             }
             else if (selectedIndex > 0 && selectedIndex - 1 < walletTypes.size())
             {
@@ -614,8 +618,8 @@ public class WalletController
                                             -> t.GetWallet().GetType().GetId() ==
                                                    selectedWalletType.GetId())
                                     .filter(t -> t.GetType() == TransactionType.EXPENSE)
-                                    .mapToDouble(WalletTransaction::GetAmount)
-                                    .sum();
+                                    .map(WalletTransaction::GetAmount)
+                                    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
                 // Calculate total incomes for the month
                 totalIncomes = transactions.stream()
@@ -623,8 +627,8 @@ public class WalletController
                                            -> t.GetWallet().GetType().GetId() ==
                                                   selectedWalletType.GetId())
                                    .filter(t -> t.GetType() == TransactionType.INCOME)
-                                   .mapToDouble(WalletTransaction::GetAmount)
-                                   .sum();
+                                   .map(WalletTransaction::GetAmount)
+                                   .reduce(BigDecimal.ZERO, BigDecimal::add);
             }
             else
             {
@@ -632,10 +636,11 @@ public class WalletController
             }
 
             // Consider credit card payments as expenses
-            totalExpenses += creditCardService.GetPaidPaymentsByMonth(month, year);
+            totalExpenses = totalExpenses.add(
+                creditCardService.GetPaidPaymentsByMonth(month, year));
 
-            monthlyExpenses.put(date.format(formatter), totalExpenses);
-            monthlyIncomes.put(date.format(formatter), totalIncomes);
+            monthlyExpenses.put(date.format(formatter), totalExpenses.doubleValue());
+            monthlyIncomes.put(date.format(formatter), totalIncomes.doubleValue());
         }
 
         // Create two series: one for incomes and one for expenses

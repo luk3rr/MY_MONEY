@@ -6,6 +6,7 @@
 
 package org.mymoney.ui.dialog;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -167,7 +168,7 @@ public class AddExpenseController
 
         try
         {
-            Double expenseValue = Double.parseDouble(expenseValueString);
+            BigDecimal expenseValue = new BigDecimal(expenseValueString);
 
             Wallet wallet = wallets.stream()
                                 .filter(w -> w.GetName().equals(walletName))
@@ -226,7 +227,7 @@ public class AddExpenseController
                             .findFirst()
                             .get();
 
-        if (wallet.GetBalance() < 0)
+        if (wallet.GetBalance().compareTo(BigDecimal.ZERO) < 0)
         {
             UIUtils.SetLabelStyle(walletCurrentBalanceValueLabel,
                                   Constants.NEGATIVE_BALANCE_STYLE);
@@ -255,9 +256,9 @@ public class AddExpenseController
 
         try
         {
-            Double expenseValue = Double.parseDouble(expenseValueString);
+            BigDecimal expenseValue = new BigDecimal(expenseValueString);
 
-            if (expenseValue < 0)
+            if (expenseValue.compareTo(BigDecimal.ZERO) < 0)
             {
                 UIUtils.ResetLabel(walletAfterBalanceValueLabel);
                 return;
@@ -268,10 +269,11 @@ public class AddExpenseController
                                 .findFirst()
                                 .get();
 
-            Double walletAfterBalanceValue = wallet.GetBalance() - expenseValue;
+            BigDecimal walletAfterBalanceValue =
+                wallet.GetBalance().subtract(expenseValue);
 
             // Set the style according to the balance value after the expense
-            if (walletAfterBalanceValue < 0)
+            if (walletAfterBalanceValue.compareTo(BigDecimal.ZERO) < 0)
             {
                 // Remove old style and add negative style
                 UIUtils.SetLabelStyle(walletAfterBalanceValueLabel,

@@ -6,9 +6,6 @@
 
 package org.mymoney.entities;
 
-import org.mymoney.util.Constants;
-import org.mymoney.util.TransactionStatus;
-import org.mymoney.util.TransactionType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,7 +16,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import org.mymoney.util.Constants;
+import org.mymoney.util.TransactionStatus;
+import org.mymoney.util.TransactionType;
 
 /**
  * Represents a transaction in a wallet
@@ -52,8 +53,8 @@ public class WalletTransaction
     @Column(name = "date", nullable = false)
     private String date;
 
-    @Column(name = "amount", nullable = false)
-    private Double amount;
+    @Column(name = "amount", nullable = false, scale = 2)
+    private BigDecimal amount;
 
     @Column(name = "description", nullable = true)
     private String description;
@@ -77,7 +78,7 @@ public class WalletTransaction
                              TransactionType   type,
                              TransactionStatus status,
                              LocalDateTime     date,
-                             Double            amount,
+                             BigDecimal        amount,
                              String            description)
     {
         this.wallet      = wallet;
@@ -138,7 +139,7 @@ public class WalletTransaction
      * Get the amount of the transaction
      * @return The amount of the transaction
      */
-    public Double GetAmount()
+    public BigDecimal GetAmount()
     {
         return amount;
     }
@@ -201,7 +202,7 @@ public class WalletTransaction
      * Set the amount of the transaction
      * @param amount The amount of the transaction
      */
-    public void SetAmount(Double amount)
+    public void SetAmount(BigDecimal amount)
     {
         this.amount = amount;
     }

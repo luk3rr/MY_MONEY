@@ -6,6 +6,7 @@
 
 package org.mymoney.ui.dialog;
 
+import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -87,7 +88,7 @@ public class EditCreditCardDebtController
         crcLimitLabel.setText(
             UIUtils.FormatCurrency(crcDebt.GetCreditCard().GetMaxDebt()));
 
-        Double availableLimit =
+        BigDecimal availableLimit =
             creditCardService.GetAvailableCredit(crcDebt.GetCreditCard().GetId());
 
         crcAvailableLimitLabel.setText(UIUtils.FormatCurrency(availableLimit));
@@ -181,7 +182,7 @@ public class EditCreditCardDebtController
 
         try
         {
-            Double debtValue = Double.parseDouble(valueStr);
+            BigDecimal debtValue = new BigDecimal(valueStr);
 
             Integer installments =
                 installmentsStr.isEmpty() ? 1 : Integer.parseInt(installmentsStr);
@@ -207,8 +208,7 @@ public class EditCreditCardDebtController
             // Check if has any modification
             if (debtToUpdate.GetCreditCard().GetId() == crc.GetId() &&
                 debtToUpdate.GetCategory().GetId() == category.GetId() &&
-                Math.abs(debtValue - debtToUpdate.GetTotalAmount()) <
-                    Constants.EPSILON &&
+                debtValue.compareTo(debtToUpdate.GetTotalAmount()) == 0 &&
                 debtToUpdate.GetInstallments() == installments &&
                 debtToUpdate.GetDescription().equals(description) &&
                 invoice.equals(invoiceMonth))
@@ -278,7 +278,7 @@ public class EditCreditCardDebtController
 
         crcLimitLabel.setText(UIUtils.FormatCurrency(crc.GetMaxDebt()));
 
-        Double availableLimit = creditCardService.GetAvailableCredit(crc.GetId());
+        BigDecimal availableLimit = creditCardService.GetAvailableCredit(crc.GetId());
 
         crcAvailableLimitLabel.setText(UIUtils.FormatCurrency(availableLimit));
     }
@@ -305,21 +305,21 @@ public class EditCreditCardDebtController
 
         try
         {
-            Double debtValue = Double.parseDouble(valueField.getText());
+            BigDecimal debtValue = new BigDecimal(valueField.getText());
 
-            if (debtValue <= 0)
+            if (debtValue.compareTo(BigDecimal.ZERO) <= 0)
             {
                 UIUtils.ResetLabel(msgLabel);
                 return;
             }
 
-            Double diff = debtValue - debtToUpdate.GetTotalAmount();
+            BigDecimal diff = debtValue.subtract(debtToUpdate.GetTotalAmount());
 
-            Double availableLimitAfterDebt =
-                creditCardService.GetAvailableCredit(crc.GetId()) - diff;
+            BigDecimal availableLimitAfterDebt =
+                creditCardService.GetAvailableCredit(crc.GetId()).subtract(diff);
 
             // Set the style according to the balance value after the expense
-            if (availableLimitAfterDebt < 0)
+            if (availableLimitAfterDebt.compareTo(BigDecimal.ZERO) < 0)
             {
                 UIUtils.SetLabelStyle(crcLimitAvailableAfterDebtLabel,
                                       Constants.NEGATIVE_BALANCE_STYLE);

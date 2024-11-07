@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -427,7 +428,7 @@ public class CSVImportController
                     }
                     else if (dbColumn.equals("balance"))
                     {
-                        wt.SetBalance(Double.parseDouble(
+                        wt.SetBalance(new BigDecimal(
                             GetValueForColumn(csvHeaders, row, csvColumn)));
                     }
                 }
@@ -473,7 +474,7 @@ public class CSVImportController
                     }
                     else if (dbColumn.equals("max_debt"))
                     {
-                        crc.SetMaxDebt(Double.parseDouble(
+                        crc.SetMaxDebt(new BigDecimal(
                             GetValueForColumn(csvHeaders, row, csvColumn)));
                     }
                     else if (dbColumn.equals("closing_day"))

@@ -125,17 +125,17 @@ public class RemoveTransactionController
             if (transactionType == TransactionType.EXPENSE)
             {
                 message
-                    .append(
-                        UIUtils.FormatCurrency(selectedIncome.GetWallet().GetBalance() +
-                                               selectedIncome.GetAmount()))
+                    .append(UIUtils.FormatCurrency(
+                        selectedIncome.GetWallet().GetBalance().add(
+                            selectedIncome.GetAmount())))
                     .append("\n");
             }
             else
             {
                 message
-                    .append(
-                        UIUtils.FormatCurrency(selectedIncome.GetWallet().GetBalance() -
-                                               selectedIncome.GetAmount()))
+                    .append(UIUtils.FormatCurrency(
+                        selectedIncome.GetWallet().GetBalance().add(
+                            selectedIncome.GetAmount())))
                     .append("\n");
             }
         }

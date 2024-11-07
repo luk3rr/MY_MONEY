@@ -14,6 +14,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +61,7 @@ public class WalletServiceTest
     private WalletType m_walletType1;
     private WalletType m_walletType2;
 
-    private Wallet CreateWallet(Long id, String name, Double balance)
+    private Wallet CreateWallet(Long id, String name, BigDecimal balance)
     {
         Wallet wallet = new Wallet(id, name, balance);
         return wallet;
@@ -81,8 +82,8 @@ public class WalletServiceTest
     @BeforeEach
     public void BeforeEach()
     {
-        m_wallet1 = CreateWallet(1L, "Wallet1", 1000.0);
-        m_wallet2 = CreateWallet(2L, "Wallet2", 2000.0);
+        m_wallet1 = CreateWallet(1L, "Wallet1", new BigDecimal("1000"));
+        m_wallet2 = CreateWallet(2L, "Wallet2", new BigDecimal("2000"));
 
         m_walletType1 = CreateWalletType(1L, "Type1");
         m_walletType2 = CreateWalletType(2L, "Type2");
@@ -103,8 +104,8 @@ public class WalletServiceTest
 
         assertEquals(m_wallet1.GetName(), walletCaptor.getValue().GetName());
 
-        assertEquals(m_wallet1.GetBalance(),
-                     walletCaptor.getValue().GetBalance(),
+        assertEquals(m_wallet1.GetBalance().doubleValue(),
+                     walletCaptor.getValue().GetBalance().doubleValue(),
                      Constants.EPSILON);
     }
 
@@ -329,13 +330,15 @@ public class WalletServiceTest
             .thenReturn(Optional.of(m_wallet1));
         when(m_walletRepository.save(any(Wallet.class))).thenReturn(m_wallet1);
 
-        Double newBalance = 2000.0;
+        BigDecimal newBalance = new BigDecimal("2000.0");
 
         m_walletService.UpdateWalletBalance(m_wallet1.GetId(), newBalance);
 
         // Check if the wallet balance was updated
         verify(m_walletRepository).save(m_wallet1);
-        assertEquals(newBalance, m_wallet1.GetBalance(), Constants.EPSILON);
+        assertEquals(newBalance.doubleValue(),
+                     m_wallet1.GetBalance().doubleValue(),
+                     Constants.EPSILON);
     }
 
     @Test
@@ -349,7 +352,8 @@ public class WalletServiceTest
 
         assertThrows(
             RuntimeException.class,
-            () -> m_walletService.UpdateWalletBalance(m_wallet1.GetId(), 1000.0));
+            () -> m_walletService.UpdateWalletBalance(m_wallet1.GetId(),
+                                                      new BigDecimal("1000.0")));
 
         // Verify that the wallet balance was not updated
         verify(m_walletRepository, never()).save(any(Wallet.class));

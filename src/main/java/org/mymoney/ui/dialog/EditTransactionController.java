@@ -6,6 +6,7 @@
 
 package org.mymoney.ui.dialog;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -184,7 +185,7 @@ public class EditTransactionController
 
         try
         {
-            Double transactionValue = Double.parseDouble(transactionValueString);
+            BigDecimal transactionValue = new BigDecimal(transactionValueString);
 
             Wallet wallet = wallets.stream()
                                 .filter(w -> w.GetName().equals(walletName))
@@ -206,8 +207,7 @@ public class EditTransactionController
             if (wallet.GetName().equals(transactionToUpdate.GetWallet().GetName()) &&
                 category.GetName().equals(
                     transactionToUpdate.GetCategory().GetName()) &&
-                Math.abs(transactionValue - transactionToUpdate.GetAmount()) <
-                    Constants.EPSILON &&
+                transactionValue.compareTo(transactionToUpdate.GetAmount()) == 0 &&
                 description.equals(transactionToUpdate.GetDescription()) &&
                 status == transactionToUpdate.GetStatus() &&
                 type == transactionToUpdate.GetType() &&
@@ -286,9 +286,9 @@ public class EditTransactionController
 
         try
         {
-            Double transactionValue = Double.parseDouble(transactionValueString);
+            BigDecimal transactionValue = new BigDecimal(transactionValueString);
 
-            if (transactionValue < 0)
+            if (transactionValue.compareTo(BigDecimal.ZERO) < 0)
             {
                 UIUtils.ResetLabel(walletAfterBalanceValueLabel);
                 return;
@@ -299,22 +299,23 @@ public class EditTransactionController
                                 .findFirst()
                                 .get();
 
-            Double walletAfterBalanceValue = 0.0;
+            BigDecimal walletAfterBalanceValue = BigDecimal.ZERO;
 
             if (transactionToUpdate.GetStatus().equals(TransactionStatus.CONFIRMED))
             {
                 // If the transaction is confirmed, the balance will be updated
                 // based on the difference between the new and the old value
-                Double diff = transactionValue - transactionToUpdate.GetAmount();
+                BigDecimal diff =
+                    transactionValue.subtract(transactionToUpdate.GetAmount());
 
                 if (transactionTypeString.equals(TransactionType.EXPENSE.toString()))
                 {
-                    walletAfterBalanceValue = wallet.GetBalance() - diff;
+                    walletAfterBalanceValue = wallet.GetBalance().subtract(diff);
                 }
                 else if (transactionTypeString.equals(
                              TransactionType.INCOME.toString()))
                 {
-                    walletAfterBalanceValue = wallet.GetBalance() + diff;
+                    walletAfterBalanceValue = wallet.GetBalance().add(diff);
                 }
                 else
                 {
@@ -328,12 +329,13 @@ public class EditTransactionController
                 // updated based on the new value
                 if (transactionTypeString.equals(TransactionType.EXPENSE.toString()))
                 {
-                    walletAfterBalanceValue = wallet.GetBalance() - transactionValue;
+                    walletAfterBalanceValue =
+                        wallet.GetBalance().subtract(transactionValue);
                 }
                 else if (transactionTypeString.equals(
                              TransactionType.INCOME.toString()))
                 {
-                    walletAfterBalanceValue = wallet.GetBalance() + transactionValue;
+                    walletAfterBalanceValue = wallet.GetBalance().add(transactionValue);
                 }
                 else
                 {
@@ -343,7 +345,7 @@ public class EditTransactionController
             }
 
             // Episilon is used to avoid floating point arithmetic errors
-            if (walletAfterBalanceValue < Constants.EPSILON)
+            if (walletAfterBalanceValue.compareTo(BigDecimal.ZERO) < 0)
             {
                 // Remove old style and add negative style
                 UIUtils.SetLabelStyle(walletAfterBalanceValueLabel,

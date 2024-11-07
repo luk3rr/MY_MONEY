@@ -7,6 +7,7 @@
 package org.mymoney.ui.common;
 
 import com.jfoenix.controls.JFXButton;
+import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -240,7 +241,8 @@ public class CreditCardPaneController
             (CreditCardInvoicePaymentController controller)
                 -> { controller.SetCreditCard(creditCard, currentDisplayedMonth); },
             // Update the display after the payment is registered with the current month
-            List.of(() -> { creditCardController.UpdateDisplay(currentDisplayedMonth); }));
+            List.of(
+                () -> { creditCardController.UpdateDisplay(currentDisplayedMonth); }));
     }
 
     /**
@@ -257,7 +259,7 @@ public class CreditCardPaneController
             return rootVBox;
         }
 
-        this.creditCard = crc;
+        this.creditCard            = crc;
         this.currentDisplayedMonth = month;
 
         crcName.setText(creditCard.GetName());
@@ -265,11 +267,11 @@ public class CreditCardPaneController
         crcOperatorIcon.setImage(new Image(Constants.CRC_OPERATOR_ICONS_PATH +
                                            creditCard.GetOperator().GetIcon()));
 
-        Double limit = creditCard.GetMaxDebt();
-        Double pendingPayments =
+        BigDecimal limit = creditCard.GetMaxDebt();
+        BigDecimal pendingPayments =
             creditCardService.GetTotalPendingPayments(creditCard.GetId());
 
-        Double limitAvailable =
+        BigDecimal limitAvailable =
             creditCardService.GetAvailableCredit(creditCard.GetId());
 
         limitLabel.setText(UIUtils.FormatCurrency(limit));
@@ -279,9 +281,13 @@ public class CreditCardPaneController
         limitAvailableLabel.setText(UIUtils.FormatCurrency(limitAvailable));
 
         // Set percentage of the usage of the limit
-        Double limitProgress = limit == 0 ? 0 : pendingPayments / limit;
-        limitProgressBar.setProgress(limitProgress);
-        limitProgressLabel.setText(UIUtils.FormatPercentage(limitProgress * 100));
+        BigDecimal limitProgress = limit.compareTo(BigDecimal.ZERO) == 0
+                                       ? BigDecimal.ZERO
+                                       : pendingPayments.divide(limit);
+
+        limitProgressBar.setProgress(limitProgress.doubleValue());
+        limitProgressLabel.setText(
+            UIUtils.FormatPercentage(limitProgress.doubleValue() * 100));
 
         dueDateLabel.setText(creditCard.GetBillingDueDay().toString());
 

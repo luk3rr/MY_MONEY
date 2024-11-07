@@ -6,6 +6,7 @@
 
 package org.mymoney.ui.dialog;
 
+import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -81,14 +82,14 @@ public class CreditCardInvoicePaymentController
 
         crcNameLabel.setText(crc.GetName());
 
-        Double invoiceAmount =
+        BigDecimal invoiceAmount =
             creditCardService
                 .GetPendingCreditCardPayments(crc.GetId(),
                                               invoiceDate.getMonthValue(),
                                               invoiceDate.getYear())
                 .stream()
-                .mapToDouble(CreditCardPayment::GetAmount)
-                .sum();
+                .map(CreditCardPayment::GetAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         crcInvoiceDueLabel.setText(UIUtils.FormatCurrency(invoiceAmount));
 
@@ -135,16 +136,16 @@ public class CreditCardInvoicePaymentController
             return;
         }
 
-        Double invoiceAmount =
+        BigDecimal invoiceAmount =
             creditCardService
                 .GetPendingCreditCardPayments(creditCard.GetId(),
                                               invoiceDate.getMonthValue(),
                                               invoiceDate.getYear())
                 .stream()
-                .mapToDouble(CreditCardPayment::GetAmount)
-                .sum();
+                .map(CreditCardPayment::GetAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        if (Math.abs(invoiceAmount) < Constants.EPSILON)
+        if (invoiceAmount.compareTo(BigDecimal.ZERO) == 0)
         {
             WindowUtils.ShowInformationDialog("Information",
                                               "Invoice already paid",
@@ -197,7 +198,7 @@ public class CreditCardInvoicePaymentController
                             .findFirst()
                             .get();
 
-        if (wallet.GetBalance() < 0)
+        if (wallet.GetBalance().compareTo(BigDecimal.ZERO) < 0)
         {
             UIUtils.SetLabelStyle(walletCurrentBalanceLabel,
                                   Constants.NEGATIVE_BALANCE_STYLE);
@@ -221,14 +222,14 @@ public class CreditCardInvoicePaymentController
             return;
         }
 
-        Double invoiceAmount =
+        BigDecimal invoiceAmount =
             creditCardService
                 .GetPendingCreditCardPayments(creditCard.GetId(),
                                               invoiceDate.getMonthValue(),
                                               invoiceDate.getYear())
                 .stream()
-                .mapToDouble(CreditCardPayment::GetAmount)
-                .sum();
+                .map(CreditCardPayment::GetAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         try
         {
@@ -237,10 +238,11 @@ public class CreditCardInvoicePaymentController
                                 .findFirst()
                                 .get();
 
-            Double walletAfterBalanceValue = wallet.GetBalance() - invoiceAmount;
+            BigDecimal walletAfterBalanceValue =
+                wallet.GetBalance().subtract(invoiceAmount);
 
             // Set the style according to the balance value after the expense
-            if (walletAfterBalanceValue < 0)
+            if (walletAfterBalanceValue.compareTo(BigDecimal.ZERO) < 0)
             {
                 // Remove old style and add negative style
                 UIUtils.SetLabelStyle(walletAfterBalanceLabel,

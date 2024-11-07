@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import org.mymoney.util.Constants;
 
@@ -41,8 +42,8 @@ public class CreditCardPayment
     @Column(name = "date", nullable = false)
     private String date;
 
-    @Column(name = "amount", nullable = false)
-    private Double amount;
+    @Column(name = "amount", nullable = false, scale = 2)
+    private BigDecimal amount;
 
     @Column(name = "installment", nullable = false)
     private Integer installment;
@@ -63,7 +64,7 @@ public class CreditCardPayment
     public CreditCardPayment(Wallet         wallet,
                              CreditCardDebt debt,
                              LocalDateTime  date,
-                             Double         amount,
+                             BigDecimal     amount,
                              Integer        installment)
     {
         this.wallet         = wallet;
@@ -82,7 +83,7 @@ public class CreditCardPayment
      */
     public CreditCardPayment(CreditCardDebt debt,
                              LocalDateTime  date,
-                             Double         amount,
+                             BigDecimal     amount,
                              Integer        installment)
     {
         this.creditCardDebt = debt;
@@ -131,7 +132,7 @@ public class CreditCardPayment
      * Get the amount paid
      * @return The amount paid
      */
-    public Double GetAmount()
+    public BigDecimal GetAmount()
     {
         return amount;
     }
@@ -151,7 +152,7 @@ public class CreditCardPayment
      */
     public Integer GetTotalInstallments()
     {
-        return (int)Math.ceil(creditCardDebt.GetTotalAmount() / this.amount);
+        return creditCardDebt.GetInstallments();
     }
 
     /**
@@ -185,7 +186,7 @@ public class CreditCardPayment
      * Set the amount paid
      * @param amount The amount paid
      */
-    public void SetAmount(Double amount)
+    public void SetAmount(BigDecimal amount)
     {
         this.amount = amount;
     }

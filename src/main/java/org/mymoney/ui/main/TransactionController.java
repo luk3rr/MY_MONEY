@@ -6,6 +6,7 @@
 
 package org.mymoney.ui.main;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
@@ -296,16 +297,16 @@ public class TransactionController
             {
                 message
                     .append(UIUtils.FormatCurrency(
-                        selectedTransaction.GetWallet().GetBalance() +
-                        selectedTransaction.GetAmount()))
+                        selectedTransaction.GetWallet().GetBalance().add(
+                            selectedTransaction.GetAmount())))
                     .append("\n");
             }
             else
             {
                 message
                     .append(UIUtils.FormatCurrency(
-                        selectedTransaction.GetWallet().GetBalance() -
-                        selectedTransaction.GetAmount()))
+                        selectedTransaction.GetWallet().GetBalance().subtract(
+                            selectedTransaction.GetAmount())))
                     .append("\n");
             }
         }
@@ -449,28 +450,28 @@ public class TransactionController
             // Calculate total for each category
             for (Category category : categories)
             {
-                Double totalWalletTransaction =
+                BigDecimal totalWalletTransaction =
                     transactions.stream()
                         .filter(t -> t.GetType().equals(selectedTransactionType))
                         .filter(t -> t.GetCategory().GetId() == category.GetId())
-                        .mapToDouble(WalletTransaction::GetAmount)
-                        .sum();
+                        .map(WalletTransaction::GetAmount)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-                Double totalCreditCardPayment =
+                BigDecimal totalCreditCardPayment =
                     creditCardPayments.stream()
                         .filter(p
                                 -> p.GetCreditCardDebt().GetCategory().GetId() ==
                                        category.GetId())
-                        .mapToDouble(CreditCardPayment::GetAmount)
-                        .sum();
+                        .map(CreditCardPayment::GetAmount)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-                Double total = totalWalletTransaction + totalCreditCardPayment;
+                BigDecimal total = totalWalletTransaction.add(totalCreditCardPayment);
 
                 // Store total if it's greater than zero
-                if (total > 0)
+                if (total.compareTo(BigDecimal.ZERO) > 0)
                 {
                     monthlyTotals.putIfAbsent(yearMonth, new LinkedHashMap<>());
-                    monthlyTotals.get(yearMonth).put(category, total);
+                    monthlyTotals.get(yearMonth).put(category, total.doubleValue());
                 }
             }
         }

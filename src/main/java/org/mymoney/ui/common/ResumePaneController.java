@@ -6,6 +6,7 @@
 
 package org.mymoney.ui.common;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import javafx.fxml.FXML;
@@ -126,11 +127,12 @@ public class ResumePaneController
         List<WalletTransaction> allYearTransactions =
             walletTransactionService.GetNonArchivedTransactionsByYear(year);
 
-        Double crcTotalDebtAmount = creditCardService.GetTotalDebtAmount(year);
+        BigDecimal crcTotalDebtAmount = creditCardService.GetTotalDebtAmount(year);
 
-        Double crcPendingPayments = creditCardService.GetPendingPaymentsByYear(year);
+        BigDecimal crcPendingPayments =
+            creditCardService.GetPendingPaymentsByYear(year);
 
-        Double crcPaidPayments = creditCardService.GetPaidPaymentsByYear(year);
+        BigDecimal crcPaidPayments = creditCardService.GetPaidPaymentsByYear(year);
 
         UpdateResumePane(allYearTransactions,
                          crcTotalDebtAmount,
@@ -146,12 +148,14 @@ public class ResumePaneController
         List<WalletTransaction> transactions =
             walletTransactionService.GetNonArchivedTransactionsByMonth(month, year);
 
-        Double crcTotalDebtAmount = creditCardService.GetTotalDebtAmount(month, year);
+        BigDecimal crcTotalDebtAmount =
+            creditCardService.GetTotalDebtAmount(month, year);
 
-        Double crcPendingPayments =
+        BigDecimal crcPendingPayments =
             creditCardService.GetPendingPaymentsByMonth(month, year);
 
-        Double crcPaidPayments = creditCardService.GetPaidPaymentsByMonth(month, year);
+        BigDecimal crcPaidPayments =
+            creditCardService.GetPaidPaymentsByMonth(month, year);
 
         UpdateResumePane(transactions,
                          crcTotalDebtAmount,
@@ -160,43 +164,44 @@ public class ResumePaneController
     }
 
     private void UpdateResumePane(List<WalletTransaction> transactions,
-                                  Double                  crcTotalDebtAmount,
-                                  Double                  crcTotalPendingPayments,
-                                  Double                  crcTotalPaidPayments)
+                                  BigDecimal              crcTotalDebtAmount,
+                                  BigDecimal              crcTotalPendingPayments,
+                                  BigDecimal              crcTotalPaidPayments)
     {
-        Double totalConfirmedIncome =
+        BigDecimal totalConfirmedIncome =
             transactions.stream()
                 .filter(t -> t.GetType().equals(TransactionType.INCOME))
                 .filter(t -> t.GetStatus().equals(TransactionStatus.CONFIRMED))
-                .mapToDouble(WalletTransaction::GetAmount)
-                .sum();
+                .map(WalletTransaction::GetAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        Double totalConfirmedExpenses =
+        BigDecimal totalConfirmedExpenses =
             transactions.stream()
                 .filter(t -> t.GetType().equals(TransactionType.EXPENSE))
                 .filter(t -> t.GetStatus().equals(TransactionStatus.CONFIRMED))
-                .mapToDouble(WalletTransaction::GetAmount)
-                .sum();
+                .map(WalletTransaction::GetAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // Consider the paid payments of the credit card as total expenses
-        totalConfirmedExpenses += crcTotalPaidPayments;
+        totalConfirmedExpenses = totalConfirmedExpenses.add(crcTotalPaidPayments);
 
-        Double totalForeseenIncome =
+        BigDecimal totalForeseenIncome =
             transactions.stream()
                 .filter(t -> t.GetType() == TransactionType.INCOME)
-                .mapToDouble(WalletTransaction::GetAmount)
-                .sum();
+                .map(WalletTransaction::GetAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        Double totalForeseenExpenses =
+        BigDecimal totalForeseenExpenses =
             transactions.stream()
                 .filter(t -> t.GetType() == TransactionType.EXPENSE)
-                .mapToDouble(WalletTransaction::GetAmount)
-                .sum();
+                .map(WalletTransaction::GetAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // Consider the payments of the credit card as total of foreseen expenses
-        totalForeseenExpenses += crcTotalPendingPayments + crcTotalPaidPayments;
+        totalForeseenExpenses = totalForeseenExpenses.add(crcTotalPendingPayments)
+                                    .add(crcTotalPaidPayments);
 
-        Double balance = totalConfirmedIncome - totalConfirmedExpenses;
+        BigDecimal balance = totalConfirmedIncome.subtract(totalConfirmedExpenses);
 
         incomesCurrentValue.setText(UIUtils.FormatCurrency(totalConfirmedIncome));
         incomesCurrentSign.setText(" "); // default
@@ -219,7 +224,7 @@ public class ResumePaneController
         balanceCurrentValue.setText(UIUtils.FormatCurrency(balance));
 
         // Set the balance label and sign label according to the balance value
-        if (balance > 0)
+        if (balance.compareTo(BigDecimal.ZERO) > 0)
         {
             balanceCurrentValue.setText(UIUtils.FormatCurrency(balance));
             balanceCurrentSign.setText("+");
@@ -230,9 +235,9 @@ public class ResumePaneController
             balanceCurrentSign.getStyleClass().clear();
             balanceCurrentSign.getStyleClass().add(Constants.POSITIVE_BALANCE_STYLE);
         }
-        else if (balance < 0)
+        else if (balance.compareTo(BigDecimal.ZERO) < 0)
         {
-            balanceCurrentValue.setText(UIUtils.FormatCurrency(-balance));
+            balanceCurrentValue.setText(UIUtils.FormatCurrency(balance.abs()));
             balanceCurrentSign.setText("-");
 
             balanceCurrentValue.getStyleClass().clear();
@@ -253,16 +258,17 @@ public class ResumePaneController
             balanceCurrentSign.getStyleClass().add(Constants.NEUTRAL_BALANCE_STYLE);
         }
 
-        Double foreseenBalance = totalForeseenIncome - totalForeseenExpenses;
+        BigDecimal foreseenBalance =
+            totalForeseenIncome.subtract(totalForeseenExpenses);
 
-        if (foreseenBalance > 0)
+        if (foreseenBalance.compareTo(BigDecimal.ZERO) > 0)
         {
             balanceForeseenValue.setText(UIUtils.FormatCurrency(foreseenBalance));
             balanceForeseenSign.setText("+");
         }
-        else if (foreseenBalance < 0)
+        else if (foreseenBalance.compareTo(BigDecimal.ZERO) < 0)
         {
-            balanceForeseenValue.setText(UIUtils.FormatCurrency(-foreseenBalance));
+            balanceForeseenValue.setText(UIUtils.FormatCurrency(foreseenBalance.abs()));
             balanceForeseenSign.setText("-");
         }
         else
@@ -274,14 +280,15 @@ public class ResumePaneController
         // Mensal Economies
         Double savingsPercentage = 0.0;
 
-        if (totalConfirmedIncome <= 0)
+        if (totalConfirmedIncome.compareTo(BigDecimal.ZERO) <= 0)
         {
             savingsPercentage = 0.0;
         }
         else
         {
-            savingsPercentage = (totalConfirmedIncome - totalConfirmedExpenses) /
-                                totalConfirmedIncome * 100;
+            savingsPercentage =
+                totalConfirmedIncome.subtract(totalConfirmedExpenses).doubleValue() /
+                totalConfirmedIncome.doubleValue() * 100;
         }
 
         // Set the economy label and sign label according to the economy value
@@ -324,10 +331,11 @@ public class ResumePaneController
 
         Double foreseenSavingsPercentage = 0.0;
 
-        if (totalForeseenIncome > 0)
+        if (totalForeseenIncome.compareTo(BigDecimal.ZERO) > 0)
         {
-            foreseenSavingsPercentage = (totalForeseenIncome - totalForeseenExpenses) /
-                                        totalForeseenIncome * 100;
+            foreseenSavingsPercentage =
+                totalForeseenIncome.subtract(totalForeseenExpenses).doubleValue() /
+                totalForeseenIncome.doubleValue() * 100;
         }
 
         if (foreseenSavingsPercentage > 0)

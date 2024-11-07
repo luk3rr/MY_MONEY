@@ -6,6 +6,7 @@
 
 package org.mymoney.services;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Logger;
@@ -65,7 +66,7 @@ public class WalletTransactionService
     public Long TransferMoney(Long          senderId,
                               Long          receiverId,
                               LocalDateTime date,
-                              Double        amount,
+                              BigDecimal    amount,
                               String        description)
     {
         if (senderId.equals(receiverId))
@@ -73,7 +74,7 @@ public class WalletTransactionService
             throw new RuntimeException("Sender and receiver wallets must be different");
         }
 
-        if (amount <= 0)
+        if (amount.compareTo(BigDecimal.ZERO) <= 0)
         {
             throw new RuntimeException("Amount to transfer must be greater than zero");
         }
@@ -90,7 +91,7 @@ public class WalletTransactionService
                         -> new RuntimeException(
                             "Receiver wallet not found and cannot transfer money"));
 
-        if (senderWallet.GetBalance() < amount)
+        if (senderWallet.GetBalance().compareTo(amount) < 0)
         {
             throw new RuntimeException(
                 "Sender wallet does not have enough balance to transfer");
@@ -99,8 +100,8 @@ public class WalletTransactionService
         Transfer transfer = m_transferRepository.save(
             new Transfer(senderWallet, receiverWallet, date, amount, description));
 
-        senderWallet.SetBalance(senderWallet.GetBalance() - amount);
-        receiverWallet.SetBalance(receiverWallet.GetBalance() + amount);
+        senderWallet.SetBalance(senderWallet.GetBalance().subtract(amount));
+        receiverWallet.SetBalance(receiverWallet.GetBalance().add(amount));
 
         m_walletRepository.save(senderWallet);
         m_walletRepository.save(receiverWallet);
@@ -128,14 +129,14 @@ public class WalletTransactionService
     public Long AddIncome(Long              walletId,
                           Category          category,
                           LocalDateTime     date,
-                          Double            amount,
+                          BigDecimal        amount,
                           String            description,
                           TransactionStatus status)
     {
         Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
             () -> new RuntimeException("Wallet with id " + walletId + " not found"));
 
-        if (amount <= 0)
+        if (amount.compareTo(BigDecimal.ZERO) <= 0)
         {
             throw new RuntimeException("Amount must be greater than zero");
         }
@@ -152,7 +153,7 @@ public class WalletTransactionService
 
         if (status == TransactionStatus.CONFIRMED)
         {
-            wallet.SetBalance(wallet.GetBalance() + amount);
+            wallet.SetBalance(wallet.GetBalance().add(amount));
             m_walletRepository.save(wallet);
         }
 
@@ -178,14 +179,14 @@ public class WalletTransactionService
     public Long AddExpense(Long              walletId,
                            Category          category,
                            LocalDateTime     date,
-                           Double            amount,
+                           BigDecimal        amount,
                            String            description,
                            TransactionStatus status)
     {
         Wallet wallet = m_walletRepository.findById(walletId).orElseThrow(
             () -> new RuntimeException("Wallet with id " + walletId + " not found"));
 
-        if (amount <= 0)
+        if (amount.compareTo(BigDecimal.ZERO) <= 0)
         {
             throw new RuntimeException("Amount must be greater than zero");
         }
@@ -200,9 +201,9 @@ public class WalletTransactionService
 
         m_walletTransactionRepository.save(wt);
 
-        if (status == TransactionStatus.CONFIRMED)
+        if (status.equals(TransactionStatus.CONFIRMED))
         {
-            wallet.SetBalance(wallet.GetBalance() - amount);
+            wallet.SetBalance(wallet.GetBalance().subtract(amount));
             m_walletRepository.save(wallet);
         }
 
@@ -238,7 +239,7 @@ public class WalletTransactionService
                                                      " not found"));
 
         // Check if the amount is greater than zero
-        if (transaction.GetAmount() <= 0)
+        if (transaction.GetAmount().compareTo(BigDecimal.ZERO) <= 0)
         {
             throw new RuntimeException("Amount must be greater than or equal to zero");
         }
@@ -286,11 +287,12 @@ public class WalletTransactionService
             // Revert the old transaction
             if (oldType.equals(TransactionType.EXPENSE))
             {
-                wallet.SetBalance(wallet.GetBalance() + oldTransaction.GetAmount());
+                wallet.SetBalance(wallet.GetBalance().add(oldTransaction.GetAmount()));
             }
             else if (oldType.equals(TransactionType.INCOME))
             {
-                wallet.SetBalance(wallet.GetBalance() - oldTransaction.GetAmount());
+                wallet.SetBalance(
+                    wallet.GetBalance().subtract(oldTransaction.GetAmount()));
             }
             else
             {
@@ -302,11 +304,12 @@ public class WalletTransactionService
             // Apply the new transaction
             if (newType.equals(TransactionType.EXPENSE))
             {
-                wallet.SetBalance(wallet.GetBalance() - oldTransaction.GetAmount());
+                wallet.SetBalance(
+                    wallet.GetBalance().subtract(oldTransaction.GetAmount()));
             }
             else if (newType.equals(TransactionType.INCOME))
             {
-                wallet.SetBalance(wallet.GetBalance() + oldTransaction.GetAmount());
+                wallet.SetBalance(wallet.GetBalance().add(oldTransaction.GetAmount()));
             }
             else
             {
@@ -346,22 +349,22 @@ public class WalletTransactionService
             if (oldTransaction.GetType().equals(TransactionType.EXPENSE))
             {
                 // Revert expense from old wallet
-                oldWallet.SetBalance(oldWallet.GetBalance() +
-                                     oldTransaction.GetAmount());
+                oldWallet.SetBalance(
+                    oldWallet.GetBalance().add(oldTransaction.GetAmount()));
 
                 // Apply expense to new wallet
-                newWallet.SetBalance(newWallet.GetBalance() -
-                                     oldTransaction.GetAmount());
+                newWallet.SetBalance(
+                    newWallet.GetBalance().subtract(oldTransaction.GetAmount()));
             }
             else if (oldTransaction.GetType().equals(TransactionType.INCOME))
             {
                 // Revert income from old wallet
-                oldWallet.SetBalance(oldWallet.GetBalance() -
-                                     oldTransaction.GetAmount());
+                oldWallet.SetBalance(
+                    oldWallet.GetBalance().subtract(oldTransaction.GetAmount()));
 
                 // Apply income to new wallet
-                newWallet.SetBalance(newWallet.GetBalance() +
-                                     oldTransaction.GetAmount());
+                newWallet.SetBalance(
+                    newWallet.GetBalance().add(oldTransaction.GetAmount()));
             }
             else
             {
@@ -388,16 +391,17 @@ public class WalletTransactionService
      * and the transaction in the database
      */
     private void ChangeTransactionAmount(WalletTransaction oldTransaction,
-                                         Double            newAmount)
+                                         BigDecimal        newAmount)
     {
+        BigDecimal oldAmount = oldTransaction.GetAmount();
+
+        BigDecimal diff = oldAmount.subtract(newAmount).abs();
+
         // Check if the new amount is the same as the old amount
-        if (Math.abs(newAmount - oldTransaction.GetAmount()) < Constants.EPSILON)
+        if (diff.compareTo(BigDecimal.ZERO) == 0)
         {
             return;
         }
-
-        // Calculate the difference between the new and old amount
-        Double diff = newAmount - oldTransaction.GetAmount();
 
         Wallet wallet = oldTransaction.GetWallet();
 
@@ -406,11 +410,22 @@ public class WalletTransactionService
         {
             if (oldTransaction.GetType().equals(TransactionType.EXPENSE))
             {
-                wallet.SetBalance(wallet.GetBalance() - diff);
+                BigDecimal balance = wallet.GetBalance();
+
+                if (oldAmount.compareTo(newAmount) > 0)
+                {
+                    wallet.SetBalance(balance.add(diff));
+                }
+                else
+                {
+                    wallet.SetBalance(balance.subtract(diff));
+                }
+
+                wallet.SetBalance(wallet.GetBalance().subtract(diff));
             }
             else if (oldTransaction.GetType().equals(TransactionType.INCOME))
             {
-                wallet.SetBalance(wallet.GetBalance() + diff);
+                wallet.SetBalance(wallet.GetBalance().add(diff));
             }
             else
             {
@@ -453,7 +468,7 @@ public class WalletTransactionService
                 if (newStatus.equals(TransactionStatus.PENDING))
                 {
                     // Revert the expense
-                    wallet.SetBalance(wallet.GetBalance() + transaction.GetAmount());
+                    wallet.SetBalance(wallet.GetBalance().add(transaction.GetAmount()));
                 }
             }
             else if (oldStatus.equals(TransactionStatus.PENDING))
@@ -461,7 +476,8 @@ public class WalletTransactionService
                 if (newStatus.equals(TransactionStatus.CONFIRMED))
                 {
                     // Apply the expense
-                    wallet.SetBalance(wallet.GetBalance() - transaction.GetAmount());
+                    wallet.SetBalance(
+                        wallet.GetBalance().subtract(transaction.GetAmount()));
                 }
             }
             else
@@ -477,14 +493,15 @@ public class WalletTransactionService
             {
                 if (newStatus.equals(TransactionStatus.PENDING))
                 {
-                    wallet.SetBalance(wallet.GetBalance() - transaction.GetAmount());
+                    wallet.SetBalance(
+                        wallet.GetBalance().subtract(transaction.GetAmount()));
                 }
             }
             else if (oldStatus.equals(TransactionStatus.PENDING))
             {
                 if (newStatus.equals(TransactionStatus.CONFIRMED))
                 {
-                    wallet.SetBalance(wallet.GetBalance() + transaction.GetAmount());
+                    wallet.SetBalance(wallet.GetBalance().add(transaction.GetAmount()));
                 }
             }
             else
@@ -525,14 +542,14 @@ public class WalletTransactionService
         // Update the wallet balance if the transaction is confirmed
         if (transaction.GetStatus() == TransactionStatus.CONFIRMED)
         {
-            Double amount = transaction.GetAmount();
+            BigDecimal amount = transaction.GetAmount();
             if (transaction.GetType() == TransactionType.INCOME)
             {
-                wallet.SetBalance(wallet.GetBalance() - amount);
+                wallet.SetBalance(wallet.GetBalance().subtract(amount));
             }
             else
             {
-                wallet.SetBalance(wallet.GetBalance() + amount);
+                wallet.SetBalance(wallet.GetBalance().add(amount));
             }
 
             m_walletRepository.save(wallet);
@@ -569,11 +586,11 @@ public class WalletTransactionService
 
         if (transaction.GetType() == TransactionType.EXPENSE)
         {
-            wallet.SetBalance(wallet.GetBalance() - transaction.GetAmount());
+            wallet.SetBalance(wallet.GetBalance().subtract(transaction.GetAmount()));
         }
         else
         {
-            wallet.SetBalance(wallet.GetBalance() + transaction.GetAmount());
+            wallet.SetBalance(wallet.GetBalance().add(transaction.GetAmount()));
         }
 
         transaction.SetStatus(TransactionStatus.CONFIRMED);

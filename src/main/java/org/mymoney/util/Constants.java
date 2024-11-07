@@ -6,7 +6,6 @@
 
 package org.mymoney.util;
 
-import jakarta.persistence.criteria.CriteriaBuilder.In;
 import java.time.format.DateTimeFormatter;
 
 /**

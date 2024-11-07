@@ -6,6 +6,7 @@
 
 package org.mymoney.ui.dialog;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -160,7 +161,7 @@ public class AddTransferController
 
         try
         {
-            Double transferValue = Double.parseDouble(transferValueString);
+            BigDecimal transferValue = new BigDecimal(transferValueString);
 
             Wallet senderWallet = wallets.stream()
                                       .filter(w -> w.GetName().equals(senderWalletName))
@@ -218,7 +219,7 @@ public class AddTransferController
                                   .findFirst()
                                   .get();
 
-        if (senderWallet.GetBalance() < 0)
+        if (senderWallet.GetBalance().compareTo(BigDecimal.ZERO) < 0)
         {
             UIUtils.SetLabelStyle(senderWalletCurrentBalanceValueLabel,
                                   Constants.NEGATIVE_BALANCE_STYLE);
@@ -247,7 +248,7 @@ public class AddTransferController
                                     .findFirst()
                                     .get();
 
-        if (receiverWallet.GetBalance() < 0)
+        if (receiverWallet.GetBalance().compareTo(BigDecimal.ZERO) < 0)
         {
             UIUtils.SetLabelStyle(receiverWalletCurrentBalanceValueLabel,
                                   Constants.NEGATIVE_BALANCE_STYLE);
@@ -276,9 +277,9 @@ public class AddTransferController
 
         try
         {
-            Double transferValue = Double.parseDouble(transferValueString);
+            BigDecimal transferValue = new BigDecimal(transferValueString);
 
-            if (transferValue < 0)
+            if (transferValue.compareTo(BigDecimal.ZERO) < 0)
             {
                 UIUtils.ResetLabel(senderWalletAfterBalanceValueLabel);
                 return;
@@ -289,10 +290,11 @@ public class AddTransferController
                                       .findFirst()
                                       .get();
 
-            Double senderWalletAfterBalance = senderWallet.GetBalance() - transferValue;
+            BigDecimal senderWalletAfterBalance =
+                senderWallet.GetBalance().subtract(transferValue);
 
             // Episilon is used to avoid floating point arithmetic errors
-            if (senderWalletAfterBalance < Constants.EPSILON)
+            if (senderWalletAfterBalance.compareTo(BigDecimal.ZERO) < 0)
             {
                 // Remove old style and add negative style
                 UIUtils.SetLabelStyle(senderWalletAfterBalanceValueLabel,
@@ -328,9 +330,9 @@ public class AddTransferController
 
         try
         {
-            Double transferValue = Double.parseDouble(transferValueString);
+            BigDecimal transferValue = new BigDecimal(transferValueString);
 
-            if (transferValue < 0)
+            if (transferValue.compareTo(BigDecimal.ZERO) < 0)
             {
                 UIUtils.ResetLabel(receiverWalletAfterBalanceValueLabel);
                 return;
@@ -342,11 +344,11 @@ public class AddTransferController
                     .findFirst()
                     .get();
 
-            Double receiverWalletAfterBalance =
-                receiverWallet.GetBalance() + transferValue;
+            BigDecimal receiverWalletAfterBalance =
+                receiverWallet.GetBalance().add(transferValue);
 
             // Episilon is used to avoid floating point arithmetic errors
-            if (receiverWalletAfterBalance < Constants.EPSILON)
+            if (receiverWalletAfterBalance.compareTo(BigDecimal.ZERO) < 0)
             {
                 // Remove old style and add negative style
                 UIUtils.SetLabelStyle(receiverWalletAfterBalanceValueLabel,

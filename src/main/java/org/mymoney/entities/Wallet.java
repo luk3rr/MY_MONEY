@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 
 /**
  * Represents a wallet
@@ -35,8 +36,8 @@ public class Wallet
     @Column(name = "name", nullable = false, length = 50, unique = true)
     private String name;
 
-    @Column(name = "balance", nullable = false)
-    private Double balance;
+    @Column(name = "balance", nullable = false, scale = 2)
+    private BigDecimal balance;
 
     @Column(name             = "archived",
             nullable         = false,
@@ -53,7 +54,7 @@ public class Wallet
      * @param id The id of the wallet type
      * @param name The name of the wallet type
      */
-    public Wallet(Long id, String name, Double balance)
+    public Wallet(Long id, String name, BigDecimal balance)
     {
         this.id      = id;
         this.name    = name;
@@ -65,7 +66,7 @@ public class Wallet
      * @param name The name of the wallet
      * @param balance The balance of the wallet
      */
-    public Wallet(String name, Double balance)
+    public Wallet(String name, BigDecimal balance)
     {
         this.name    = name;
         this.balance = balance;
@@ -77,7 +78,7 @@ public class Wallet
      * @param balance The balance of the wallet
      * @param type The type of the wallet
      */
-    public Wallet(String name, Double balance, WalletType type)
+    public Wallet(String name, BigDecimal balance, WalletType type)
     {
         this.name    = name;
         this.balance = balance;
@@ -115,7 +116,7 @@ public class Wallet
      * Get the balance of the wallet
      * @return The balance of the wallet
      */
-    public Double GetBalance()
+    public BigDecimal GetBalance()
     {
         return balance;
     }
@@ -151,7 +152,7 @@ public class Wallet
      * Set the balance of the wallet
      * @param balance The new balance of the wallet
      */
-    public void SetBalance(Double balance)
+    public void SetBalance(BigDecimal balance)
     {
         this.balance = balance;
     }

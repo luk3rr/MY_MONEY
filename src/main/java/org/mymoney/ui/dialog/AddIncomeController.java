@@ -6,6 +6,7 @@
 
 package org.mymoney.ui.dialog;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -165,7 +166,7 @@ public class AddIncomeController
 
         try
         {
-            Double incomeValue = Double.parseDouble(incomeValueString);
+            BigDecimal incomeValue = new BigDecimal(incomeValueString);
 
             Wallet wallet = wallets.stream()
                                 .filter(w -> w.GetName().equals(walletName))
@@ -224,7 +225,7 @@ public class AddIncomeController
                             .findFirst()
                             .get();
 
-        if (wallet.GetBalance() < 0)
+        if (wallet.GetBalance().compareTo(BigDecimal.ZERO) < 0)
         {
             UIUtils.SetLabelStyle(walletCurrentBalanceValueLabel,
                                   Constants.NEGATIVE_BALANCE_STYLE);
@@ -253,9 +254,9 @@ public class AddIncomeController
 
         try
         {
-            Double incomeValue = Double.parseDouble(incomeValueString);
+            BigDecimal incomeValue = new BigDecimal(incomeValueString);
 
-            if (incomeValue < 0)
+            if (incomeValue.compareTo(BigDecimal.ZERO) < 0)
             {
                 UIUtils.ResetLabel(walletAfterBalanceValueLabel);
                 return;
@@ -266,10 +267,10 @@ public class AddIncomeController
                                 .findFirst()
                                 .get();
 
-            Double walletAfterBalanceValue = wallet.GetBalance() + incomeValue;
+            BigDecimal walletAfterBalanceValue = wallet.GetBalance().add(incomeValue);
 
             // Episilon is used to avoid floating point arithmetic errors
-            if (walletAfterBalanceValue < 0)
+            if (walletAfterBalanceValue.compareTo(BigDecimal.ZERO) < 0)
             {
                 // Remove old style and add negative style
                 UIUtils.SetLabelStyle(walletAfterBalanceValueLabel,

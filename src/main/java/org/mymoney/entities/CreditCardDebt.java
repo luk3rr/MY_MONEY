@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import org.mymoney.util.Constants;
 
@@ -41,8 +42,8 @@ public class CreditCardDebt
     @Column(name = "date", nullable = false)
     private String date;
 
-    @Column(name = "total_amount", nullable = false)
-    private Double totalAmount;
+    @Column(name = "total_amount", nullable = false, scale = 2)
+    private BigDecimal totalAmount;
 
     @Column(name = "installments", nullable = false)
     private Integer installments;
@@ -67,7 +68,7 @@ public class CreditCardDebt
                           Category      category,
                           LocalDateTime date,
                           Integer       installments,
-                          Double        totalAmount,
+                          BigDecimal    totalAmount,
                           String        description)
     {
         this.creditCard   = creditCard;
@@ -127,7 +128,7 @@ public class CreditCardDebt
      * Get the total amount of the debt
      * @return The total amount of the debt
      */
-    public Double GetTotalAmount()
+    public BigDecimal GetTotalAmount()
     {
         return totalAmount;
     }
@@ -181,7 +182,7 @@ public class CreditCardDebt
      * Set the total amount of the debt
      * @param totalAmount The new total amount of the debt
      */
-    public void SetTotalAmount(Double totalAmount)
+    public void SetTotalAmount(BigDecimal totalAmount)
     {
         this.totalAmount = totalAmount;
     }

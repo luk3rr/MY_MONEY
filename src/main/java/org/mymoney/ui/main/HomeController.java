@@ -7,6 +7,7 @@
 package org.mymoney.ui.main;
 
 import com.jfoenix.controls.JFXButton;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
@@ -432,28 +433,28 @@ public class HomeController
             logger.info("Found " + transactions.size() + " transactions for " + month +
                         "/" + year);
 
-            Double crcPaidPayments =
+            BigDecimal crcPaidPayments =
                 creditCardService.GetPaidPaymentsByMonth(month, year);
 
             // Calculate total expenses for the month
-            Double totalExpenses =
+            BigDecimal totalExpenses =
                 transactions.stream()
                     .filter(t -> t.GetType() == TransactionType.EXPENSE)
-                    .mapToDouble(WalletTransaction::GetAmount)
-                    .sum();
+                    .map(WalletTransaction::GetAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             // Consider credit card payments as expenses
-            totalExpenses += crcPaidPayments;
+            totalExpenses = totalExpenses.add(crcPaidPayments);
 
             // Calculate total incomes for the month
-            Double totalIncomes =
+            BigDecimal totalIncomes =
                 transactions.stream()
                     .filter(t -> t.GetType() == TransactionType.INCOME)
-                    .mapToDouble(WalletTransaction::GetAmount)
-                    .sum();
+                    .map(WalletTransaction::GetAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            monthlyExpenses.put(date.format(formatter), totalExpenses);
-            monthlyIncomes.put(date.format(formatter), totalIncomes);
+            monthlyExpenses.put(date.format(formatter), totalExpenses.doubleValue());
+            monthlyIncomes.put(date.format(formatter), totalIncomes.doubleValue());
         }
 
         // Create two series: one for incomes and one for expenses

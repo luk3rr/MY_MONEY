@@ -6,6 +6,7 @@
 
 package org.mymoney.ui.dialog;
 
+import java.math.BigDecimal;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -68,19 +69,19 @@ public class AddCreditCardController
         // digits
         lastFourDigitsField.textProperty().addListener(
             (observable, oldValue, newValue) -> {
-                if (!newValue.matches(Constants.DIGITS_ONLY_REGEX) || newValue.length() > 4)
+                if (!newValue.matches(Constants.DIGITS_ONLY_REGEX) ||
+                    newValue.length() > 4)
                 {
                     lastFourDigitsField.setText(oldValue);
                 }
             });
 
-        limitField.textProperty().addListener(
-            (observable, oldValue, newValue) -> {
-                if (!newValue.matches(Constants.MONETARY_VALUE_REGEX))
-                {
-                    limitField.setText(oldValue);
-                }
-            });
+        limitField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches(Constants.MONETARY_VALUE_REGEX))
+            {
+                limitField.setText(oldValue);
+            }
+        });
     }
 
     @FXML
@@ -121,7 +122,8 @@ public class AddCreditCardController
 
         try
         {
-            Double  crcLimit      = Double.parseDouble(crcLimitStr);
+            BigDecimal crcLimit = new BigDecimal(crcLimitStr);
+
             Integer crcClosingDay = Integer.parseInt(crcClosingDayStr);
             Integer crcDueDay     = Integer.parseInt(crcDueDayStr);
 
