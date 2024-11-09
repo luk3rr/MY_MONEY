@@ -3,13 +3,15 @@
  * Created on: October 27, 2024
  * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
  *
- * Script para obter os dados da base de dados antiga e inserir no My Money.
+ * Script para obter os dados da base de dados antiga e inserir no Moinex.
  * Deve ser executado a partir da raiz do projeto para que os caminhos relativos funcionem corretamente.
  * Pode ser executado com:
- * $ sqlite3 data/mymoney.db < scripts/sync.sql
+ * $ sqlite3 $HOME/.moinex/data/moinex.db < scripts/sync.sql
+ *
+ * Garanta que old.db esteja na raiz do projeto ou altere o caminho do arquivo abaixo.
  */
 
-ATTACH DATABASE 'data/old.db' AS mf;
+ATTACH DATABASE 'old.db' AS mf;
 
 -- RECEITAS
 CREATE TEMP TABLE temp_receitas_mf AS
@@ -26,7 +28,7 @@ WITH RECEITAS_MF AS (
          CASE
             -- Receitas fixas têm o campo data_efetivacao nulo
             WHEN mf.rct.data_efetivacao IS NOT NULL
-            -- Formata a data para o formato utilizado no My Money
+            -- Formata a data para o formato utilizado no Moinex
             THEN strftime('%Y-%m-%dT%H:%M:%S', mf.rct.data_efetivacao)
             ELSE strftime('%Y-%m-%dT%H:%M:%S', mf.rct_fx.data_efetivacao)
          END AS rct_data,
@@ -112,7 +114,7 @@ WITH DESPESAS_MF AS (
          CASE
             -- Despesas fixas têm o campo data_efetivacao nulo
             WHEN mf.dsp.data_efetivacao IS NOT NULL
-            -- Formata a data para o formato utilizado no My Money
+            -- Formata a data para o formato utilizado no Moinex
             THEN strftime('%Y-%m-%dT%H:%M:%S', mf.dsp.data_efetivacao)
             ELSE strftime('%Y-%m-%dT%H:%M:%S', mf.dsp_fx.data_efetivacao)
          END AS dsp_data,
@@ -203,7 +205,7 @@ WITH DESPESAS_CRC_MF AS (
          CASE
             -- Despesas fixas têm o campo data_efetivacao nulo
             WHEN mf.dsp.data_efetivacao IS NOT NULL
-            -- Formata a data para o formato utilizado no My Money
+            -- Formata a data para o formato utilizado no Moinex
             THEN strftime('%Y-%m-%dT%H:%M:%S', mf.dsp.data_efetivacao)
             ELSE strftime('%Y-%m-%dT%H:%M:%S', mf.dsp_fx.data_efetivacao)
          END AS dsp_data,

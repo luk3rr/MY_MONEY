@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="root" alignment="CENTER_LEFT" spacing="5.0" stylesheets="@../../css/scene/resume-pane.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.mymoney.ui.common.ResumePaneController">
+<VBox fx:id="root" alignment="CENTER_LEFT" spacing="5.0" stylesheets="@../../css/scene/resume-pane.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.moinex.ui.common.ResumePaneController">
    <children>
       <HBox alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
          <children>

@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" spacing="10.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.mymoney.ui.dialog.ManageCategoryController">
+<VBox alignment="CENTER" spacing="10.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.moinex.ui.dialog.ManageCategoryController">
    <children>
       <HBox alignment="CENTER_LEFT" spacing="5.0">
          <children>

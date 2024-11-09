@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=Moinex
+Comment=Aplicativo Moinex
+Exec=sh -c 'java -jar /opt/moinex/moinex.jar'
+Icon=moinex-icon
+Terminal=false
+Type=Application
+Categories=Utility;
