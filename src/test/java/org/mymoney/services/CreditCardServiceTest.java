@@ -328,6 +328,10 @@ public class CreditCardServiceTest
         when(m_creditCardRepository.findById(m_creditCard.GetId()))
             .thenReturn(Optional.of(m_creditCard));
 
+        when(
+            m_creditCardPaymentRepository.GetTotalPendingPayments(m_creditCard.GetId()))
+            .thenReturn(new BigDecimal("0.0"));
+
         BigDecimal availableCredit =
             m_creditCardService.GetAvailableCredit(m_creditCard.GetId());
 
@@ -407,6 +411,10 @@ public class CreditCardServiceTest
 
         when(m_categoryRepository.findById(m_category.GetId()))
             .thenReturn(Optional.of(m_category));
+
+        when(
+            m_creditCardPaymentRepository.GetTotalPendingPayments(m_creditCard.GetId()))
+            .thenReturn(new BigDecimal("0.0"));
 
         m_creditCardService.RegisterDebt(m_creditCard.GetId(),
                                          m_category,
@@ -602,6 +610,10 @@ public class CreditCardServiceTest
 
         when(m_categoryRepository.findById(m_category.GetId()))
             .thenReturn(Optional.of(m_category));
+
+        when(
+            m_creditCardPaymentRepository.GetTotalPendingPayments(m_creditCard.GetId()))
+            .thenReturn(new BigDecimal("0.0"));
 
         // Capture the payment that was saved and check if it is correct
         ArgumentCaptor<CreditCardPayment> paymentCaptor =

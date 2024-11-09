@@ -8,6 +8,7 @@ package org.mymoney.ui.common;
 
 import com.jfoenix.controls.JFXButton;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -281,9 +282,10 @@ public class CreditCardPaneController
         limitAvailableLabel.setText(UIUtils.FormatCurrency(limitAvailable));
 
         // Set percentage of the usage of the limit
-        BigDecimal limitProgress = limit.compareTo(BigDecimal.ZERO) == 0
-                                       ? BigDecimal.ZERO
-                                       : pendingPayments.divide(limit);
+        BigDecimal limitProgress =
+            limit.compareTo(BigDecimal.ZERO) == 0
+                ? BigDecimal.ZERO
+                : pendingPayments.divide(limit, 2, RoundingMode.HALF_UP);
 
         limitProgressBar.setProgress(limitProgress.doubleValue());
         limitProgressLabel.setText(

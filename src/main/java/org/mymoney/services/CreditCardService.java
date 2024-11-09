@@ -248,6 +248,7 @@ public class CreditCardService
                                  -> new RuntimeException("Category with name " +
                                                          category + " does not exist"));
 
+
         if (value == null)
         {
             throw new RuntimeException("Value cannot be null");
@@ -274,7 +275,12 @@ public class CreditCardService
             throw new RuntimeException("Invoice month cannot be null");
         }
 
+
+
         BigDecimal availableCredit = GetAvailableCredit(crcId);
+
+
+        System.out.println("OK INSIDE");
 
         if (value.compareTo(availableCredit) > 0)
         {
