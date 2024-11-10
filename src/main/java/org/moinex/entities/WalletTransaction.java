@@ -8,13 +8,14 @@ package org.moinex.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
 import org.moinex.util.Constants;
 import org.moinex.util.TransactionStatus;
 import org.moinex.util.TransactionType;
@@ -33,6 +34,10 @@ public class WalletTransaction extends BaseTransaction
 
     @Column(name = "date", nullable = false)
     private String date;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private TransactionStatus status;
 
     /**
      * Default constructor for JPA
@@ -57,9 +62,10 @@ public class WalletTransaction extends BaseTransaction
                              BigDecimal        amount,
                              String            description)
     {
-        super(wallet, category, type, status, amount, description);
+        super(wallet, category, type, amount, description);
 
-        this.date = date.format(Constants.DB_DATE_FORMATTER);
+        this.date   = date.format(Constants.DB_DATE_FORMATTER);
+        this.status = status;
     }
 
     /**
@@ -80,6 +86,14 @@ public class WalletTransaction extends BaseTransaction
         return LocalDateTime.parse(date, Constants.DB_DATE_FORMATTER);
     }
 
+    /**
+     * Get the status of the transaction
+     * @return The status of the transaction
+     */
+    public TransactionStatus GetStatus()
+    {
+        return status;
+    }
 
     /**
      * Set the type of the transaction
@@ -88,5 +102,14 @@ public class WalletTransaction extends BaseTransaction
     public void SetDate(LocalDateTime date)
     {
         this.date = date.format(Constants.DB_DATE_FORMATTER);
+    }
+
+    /**
+     * Set the status of the transaction
+     * @param status The status of the transaction
+     */
+    public void SetStatus(TransactionStatus status)
+    {
+        this.status = status;
     }
 }

@@ -13,7 +13,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
 import java.math.BigDecimal;
-import org.moinex.util.TransactionStatus;
 import org.moinex.util.TransactionType;
 
 /**
@@ -33,10 +32,6 @@ public abstract class BaseTransaction
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private TransactionType type;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private TransactionStatus status;
 
     @Column(name = "amount", nullable = false, scale = 2)
     private BigDecimal amount;
@@ -60,14 +55,12 @@ public abstract class BaseTransaction
     public BaseTransaction(Wallet            wallet,
                            Category          category,
                            TransactionType   type,
-                           TransactionStatus status,
                            BigDecimal        amount,
                            String            description)
     {
         this.wallet      = wallet;
         this.category    = category;
         this.type        = type;
-        this.status      = status;
         this.amount      = amount;
         this.description = description;
     }
@@ -118,15 +111,6 @@ public abstract class BaseTransaction
     }
 
     /**
-     * Get the status of the transaction
-     * @return The status of the transaction
-     */
-    public TransactionStatus GetStatus()
-    {
-        return status;
-    }
-
-    /**
      * Set the wallet that the transaction belongs to
      * @param wallet The wallet that the transaction belongs to
      */
@@ -169,14 +153,5 @@ public abstract class BaseTransaction
     public void SetType(TransactionType type)
     {
         this.type = type;
-    }
-
-    /**
-     * Set the status of the transaction
-     * @param status The status of the transaction
-     */
-    public void SetStatus(TransactionStatus status)
-    {
-        this.status = status;
     }
 }
