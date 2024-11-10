@@ -16,7 +16,7 @@ MOINEX_DIR="$HOME/.moinex"
 DOT_LOCAL_DIR="$HOME/.local"
 
 # Criar diretórios
-if sudo mkdir -p "$MOINEX_DIR/bin"; then
+if mkdir -p "$MOINEX_DIR/bin"; then
     print_success ">> Diretório $MOINEX_DIR/bin criado"
 else
     print_error "Erro ao criar o diretório $MOINEX_DIR/bin"
@@ -94,7 +94,7 @@ else
 fi
 
 # Copiar o JAR para /opt
-if sudo cp target/Moinex-1.0-SNAPSHOT.jar "$MOINEX_DIR/bin/moinex.jar"; then
+if cp target/Moinex-1.0-SNAPSHOT.jar "$MOINEX_DIR/bin/moinex.jar"; then
     print_success ">> JAR copiado para $MOINEX_DIR/bin"
 else
     print_error "Erro ao copiar o JAR para $MOINEX_DIR/bin"
