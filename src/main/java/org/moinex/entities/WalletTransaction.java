@@ -8,16 +8,13 @@ package org.moinex.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 import org.moinex.util.Constants;
 import org.moinex.util.TransactionStatus;
 import org.moinex.util.TransactionType;
@@ -27,37 +24,15 @@ import org.moinex.util.TransactionType;
  */
 @Entity
 @Table(name = "wallet_transaction")
-public class WalletTransaction
+public class WalletTransaction extends BaseTransaction
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "wallet_id", referencedColumnName = "id", nullable = false)
-    private Wallet wallet;
-
-    @ManyToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false)
-    private Category category;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false)
-    private TransactionType type;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private TransactionStatus status;
-
     @Column(name = "date", nullable = false)
     private String date;
-
-    @Column(name = "amount", nullable = false, scale = 2)
-    private BigDecimal amount;
-
-    @Column(name = "description", nullable = true)
-    private String description;
 
     /**
      * Default constructor for JPA
@@ -69,6 +44,7 @@ public class WalletTransaction
      * @param wallet The wallet that the transaction belongs to
      * @param category The category of the transaction
      * @param type The type of the transaction
+     * @param status The status of the transaction
      * @param date The date of the transaction
      * @param amount The amount of the transaction
      * @param description A description of the transaction
@@ -81,13 +57,9 @@ public class WalletTransaction
                              BigDecimal        amount,
                              String            description)
     {
-        this.wallet      = wallet;
-        this.category    = category;
-        this.type        = type;
-        this.status      = status;
-        this.date        = date.format(Constants.DB_DATE_FORMATTER);
-        this.amount      = amount;
-        this.description = description;
+        super(wallet, category, type, status, amount, description);
+
+        this.date = date.format(Constants.DB_DATE_FORMATTER);
     }
 
     /**
@@ -100,24 +72,6 @@ public class WalletTransaction
     }
 
     /**
-     * Get the wallet that the transaction belongs to
-     * @return The wallet that the transaction belongs to
-     */
-    public Wallet GetWallet()
-    {
-        return wallet;
-    }
-
-    /**
-     * Get the category of the transaction
-     * @return The category of the transaction
-     */
-    public Category GetCategory()
-    {
-        return category;
-    }
-
-    /**
      * Get the type of the transaction
      * @return The type of the transaction
      */
@@ -126,59 +80,6 @@ public class WalletTransaction
         return LocalDateTime.parse(date, Constants.DB_DATE_FORMATTER);
     }
 
-    /**
-     * Get the description of the transaction
-     * @return The description of the transaction
-     */
-    public String GetDescription()
-    {
-        return description;
-    }
-
-    /**
-     * Get the amount of the transaction
-     * @return The amount of the transaction
-     */
-    public BigDecimal GetAmount()
-    {
-        return amount;
-    }
-
-    /**
-     * Get the type of the transaction
-     * @return The type of the transaction
-     */
-    public TransactionType GetType()
-    {
-        return type;
-    }
-
-    /**
-     * Get the status of the transaction
-     * @return The status of the transaction
-     */
-    public TransactionStatus GetStatus()
-    {
-        return status;
-    }
-
-    /**
-     * Set the wallet that the transaction belongs to
-     * @param wallet The wallet that the transaction belongs to
-     */
-    public void SetWallet(Wallet wallet)
-    {
-        this.wallet = wallet;
-    }
-
-    /**
-     * Set the category of the transaction
-     * @param category The category of the transaction
-     */
-    public void SetCategory(Category category)
-    {
-        this.category = category;
-    }
 
     /**
      * Set the type of the transaction
@@ -187,41 +88,5 @@ public class WalletTransaction
     public void SetDate(LocalDateTime date)
     {
         this.date = date.format(Constants.DB_DATE_FORMATTER);
-    }
-
-    /**
-     * Set the description of the transaction
-     * @param description The description of the transaction
-     */
-    public void SetDescription(String description)
-    {
-        this.description = description;
-    }
-
-    /**
-     * Set the amount of the transaction
-     * @param amount The amount of the transaction
-     */
-    public void SetAmount(BigDecimal amount)
-    {
-        this.amount = amount;
-    }
-
-    /**
-     * Set the type of the transaction
-     * @param type The type of the transaction
-     */
-    public void SetType(TransactionType type)
-    {
-        this.type = type;
-    }
-
-    /**
-     * Set the status of the transaction
-     * @param status The status of the transaction
-     */
-    public void SetStatus(TransactionStatus status)
-    {
-        this.status = status;
     }
 }
