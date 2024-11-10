@@ -2,7 +2,7 @@
 Version=1.0
 Name=Moinex
 Comment=Aplicativo Moinex
-Exec=sh -c 'java -jar /opt/moinex/moinex.jar'
+Exec=sh -c "$HOME/.moinex/run.sh"
 Icon=moinex-icon
 Terminal=false
 Type=Application

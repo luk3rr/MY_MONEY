@@ -98,4 +98,11 @@ else
     exit 1
 fi
 
+if cp scripts/run.sh "$HOME/.moinex/"; then
+    print_success ">> Script de execução copiado para $HOME/.moinex/"
+else
+    print_error "Erro ao copiar o script de execução"
+    exit 1
+fi
+
 print_success ">> Instalação concluída com sucesso. Aproveite o Moinex!"
