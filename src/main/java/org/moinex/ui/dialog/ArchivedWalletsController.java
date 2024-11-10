@@ -191,9 +191,14 @@ public class ArchivedWalletsController
         else
         {
             archivedWallets.stream()
-                .filter(w
-                        -> w.GetName().toLowerCase().contains(similarTextOrId) ||
-                               w.GetId().toString().contains(similarTextOrId))
+                .filter(w -> {
+                    String type = w.GetType().GetName().toLowerCase();
+                    String name = w.GetName().toLowerCase();
+                    String id   = w.GetId().toString();
+
+                    return type.contains(similarTextOrId) ||
+                        name.contains(similarTextOrId) || id.contains(similarTextOrId);
+                })
                 .forEach(walletTableView.getItems()::add);
         }
 

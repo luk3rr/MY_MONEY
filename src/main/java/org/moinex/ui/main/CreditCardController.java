@@ -371,12 +371,22 @@ public class CreditCardController
                 .GetCreditCardPayments(selectedMonth.getMonthValue(),
                                        selectedMonth.getYear())
                 .stream()
-                .filter(
-                    p
-                    -> p.GetCreditCardDebt().GetDescription().toLowerCase().contains(
-                           similarTextOrId) ||
-                           String.valueOf(p.GetCreditCardDebt().GetId())
-                               .contains(similarTextOrId))
+                .filter(p -> {
+                    String description =
+                        p.GetCreditCardDebt().GetDescription().toLowerCase();
+                    String id = String.valueOf(p.GetCreditCardDebt().GetId());
+                    String category =
+                        p.GetCreditCardDebt().GetCategory().GetName().toLowerCase();
+                    String cardName =
+                        p.GetCreditCardDebt().GetCreditCard().GetName().toLowerCase();
+                    String value = p.GetAmount().toString();
+
+                    return description.contains(similarTextOrId) ||
+                        id.contains(similarTextOrId) ||
+                        category.contains(similarTextOrId) ||
+                        cardName.contains(similarTextOrId) ||
+                        value.contains(similarTextOrId);
+                })
                 .forEach(debtsTableView.getItems()::add);
         }
 

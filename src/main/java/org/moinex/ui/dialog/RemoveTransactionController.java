@@ -193,7 +193,7 @@ public class RemoveTransactionController
         incomes.stream()
             .filter(t
                     -> t.GetDescription().toLowerCase().contains(similarTextOrId) ||
-                           String.valueOf(t.GetId()).contains(similarTextOrId))
+                           t.GetId().toString().contains(similarTextOrId))
             .forEach(transactionsTableView.getItems()::add);
 
         transactionsTableView.refresh();

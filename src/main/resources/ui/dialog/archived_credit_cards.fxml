@@ -22,7 +22,7 @@
             <TextField fx:id="searchField" promptText="Enter ID or Description" HBox.hgrow="ALWAYS" />
          </children>
       </HBox>
-      <Label text="Select the wallet" />
+      <Label text="Select the credit card" />
       <TableView fx:id="creditCardTableView" maxHeight="300.0" minWidth="800.0" stylesheets="@../../css/component/table-view.css">
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

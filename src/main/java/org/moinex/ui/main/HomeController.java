@@ -439,7 +439,7 @@ public class HomeController
             // Calculate total expenses for the month
             BigDecimal totalExpenses =
                 transactions.stream()
-                    .filter(t -> t.GetType() == TransactionType.EXPENSE)
+                    .filter(t -> t.GetType().equals(TransactionType.EXPENSE))
                     .map(WalletTransaction::GetAmount)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
@@ -449,7 +449,7 @@ public class HomeController
             // Calculate total incomes for the month
             BigDecimal totalIncomes =
                 transactions.stream()
-                    .filter(t -> t.GetType() == TransactionType.INCOME)
+                    .filter(t -> t.GetType().equals(TransactionType.INCOME))
                     .map(WalletTransaction::GetAmount)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 

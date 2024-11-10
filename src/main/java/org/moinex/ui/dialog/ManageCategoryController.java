@@ -169,9 +169,15 @@ public class ManageCategoryController
         else
         {
             categories.stream()
-                .filter(category
-                        -> category.GetName().toLowerCase().contains(similarTextOrId) ||
-                               category.GetId().toString().contains(similarTextOrId))
+                .filter(c -> {
+                    String name     = c.GetName().toLowerCase();
+                    String id       = c.GetId().toString();
+                    String archived = c.IsArchived() ? "yes" : "no";
+
+                    return name.contains(similarTextOrId) ||
+                        id.contains(similarTextOrId) ||
+                        archived.contains(similarTextOrId);
+                })
                 .forEach(categoryTableView.getItems()::add);
         }
 

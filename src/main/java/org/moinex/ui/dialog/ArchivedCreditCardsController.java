@@ -187,9 +187,14 @@ public class ArchivedCreditCardsController
         else
         {
             archivedCreditCards.stream()
-                .filter(c
-                        -> c.GetName().toLowerCase().contains(similarTextOrId) ||
-                               c.GetId().toString().contains(similarTextOrId))
+                .filter(c -> {
+                    String operatorName = c.GetOperator().GetName().toLowerCase();
+                    String id           = c.GetId().toString();
+                    String name         = c.GetName().toLowerCase();
+
+                    return operatorName.contains(similarTextOrId) ||
+                        id.contains(similarTextOrId) || name.contains(similarTextOrId);
+                })
                 .forEach(creditCardTableView.getItems()::add);
         }
 

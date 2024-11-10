@@ -137,14 +137,14 @@
                                                             <ComboBox fx:id="debtsListMonthFilterComboBox" minWidth="150.0" stylesheets="@../../css/component/combo-box.css" />
                                                          </children>
                                                       </HBox>
-                                                      <HBox alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="ALWAYS">
+                                                      <HBox alignment="CENTER_RIGHT" spacing="5.0" VBox.vgrow="ALWAYS">
                                                          <children>
                                                             <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                                                <image>
                                                                   <Image url="@../../icon/common/find.png" />
                                                                </image>
                                                             </ImageView>
-                                                            <TextField fx:id="debtSearchField" promptText="Enter ID or Description" HBox.hgrow="ALWAYS" />
+                                                            <TextField fx:id="debtSearchField" maxWidth="400.0" promptText="Enter ID or Description" HBox.hgrow="ALWAYS" />
                                                          </children>
                                                       </HBox>
                                                    </children>

@@ -5,8 +5,6 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
@@ -16,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane minWidth="1200.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.moinex.ui.main.TransactionController">
+<AnchorPane minWidth="1200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.moinex.ui.main.TransactionController">
    <children>
       <VBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -72,19 +70,24 @@
                                  <children>
                                     <HBox alignment="CENTER" fillHeight="false" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                        <children>
-                                          <MenuButton fx:id="addTransactionMenuButton" mnemonicParsing="false" stylesheets="@../../css/component/buttons.css" text="New Transaction">
-                                            <items>
-                                              <MenuItem fx:id="addIncomeMenuItem" mnemonicParsing="false" onAction="#handleAddIncome" text="Add Income" />
-                                              <MenuItem fx:id="addExpenseMenuItem" mnemonicParsing="false" onAction="#handleAddExpense" text="Add Expense" />
-                                            </items>
+                                          <JFXButton onAction="#handleAddIncome" stylesheets="@../../css/component/buttons.css" text="Add Income">
                                              <graphic>
                                                 <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
                                                    <image>
-                                                      <Image url="@../../icon/common/add.png" />
+                                                      <Image url="@../../icon/common/income_black.png" />
                                                    </image>
                                                 </ImageView>
                                              </graphic>
-                                          </MenuButton>
+                                          </JFXButton>
+                                          <JFXButton onAction="#handleAddExpense" stylesheets="@../../css/component/buttons.css" text="Add Expense">
+                                             <graphic>
+                                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../../icon/common/expense_black.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </JFXButton>
                                           <JFXButton onAction="#handleManageCategories" stylesheets="@../../css/component/buttons.css" text="Manage Categories">
                                              <graphic>
                                                 <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">

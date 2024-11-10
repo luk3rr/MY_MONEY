@@ -386,9 +386,23 @@ public class TransactionController
                 .filter(t
                         -> selectedTransactionType == null ||
                                t.GetType().equals(selectedTransactionType))
-                .filter(t
-                        -> t.GetDescription().toLowerCase().contains(similarTextOrId) ||
-                               String.valueOf(t.GetId()).contains(similarTextOrId))
+                .filter(t -> {
+                    String description = t.GetDescription().toLowerCase();
+                    String id          = t.GetId().toString();
+                    String category    = t.GetCategory().GetName().toLowerCase();
+                    String wallet      = t.GetWallet().GetName().toLowerCase();
+                    String amount      = t.GetAmount().toString();
+                    String type        = t.GetType().toString().toLowerCase();
+                    String status      = t.GetStatus().toString().toLowerCase();
+
+                    return description.contains(similarTextOrId) ||
+                        id.contains(similarTextOrId) ||
+                        category.contains(similarTextOrId) ||
+                        wallet.contains(similarTextOrId) ||
+                        amount.contains(similarTextOrId) ||
+                        type.contains(similarTextOrId) ||
+                        status.contains(similarTextOrId);
+                })
                 .forEach(transactionsTableView.getItems()::add);
         }
 
