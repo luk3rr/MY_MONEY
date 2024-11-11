@@ -114,7 +114,7 @@ public class RecurringTransactionService
 
             // Check if the next due date has already passed and generate the missing
             // transactions
-            if (!nextDueDate.isAfter(today))
+            if (!nextDueDate.isAfter(today) && !recurring.GetEndDate().isBefore(today))
             {
                 while (!nextDueDate.isAfter(today))
                 {

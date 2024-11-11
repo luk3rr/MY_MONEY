@@ -88,6 +88,15 @@
                                                 </ImageView>
                                              </graphic>
                                           </JFXButton>
+                                          <JFXButton onAction="#handleManageCategories" stylesheets="@../../css/component/buttons.css" text="Periodic">
+                                             <graphic>
+                                                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../../icon/common/reload.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </JFXButton>
                                           <JFXButton onAction="#handleManageCategories" stylesheets="@../../css/component/buttons.css" text="Manage Categories">
                                              <graphic>
                                                 <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
