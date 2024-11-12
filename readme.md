@@ -1,3 +1,9 @@
+<h1 align="center">
+  <br>
+  <img src="./img/icons/moinex-icon-2560.jpg" alt="logo" width="300">
+  <br>
+</h1>
+
 # MOINEX
 
 **MOINEX** é uma aplicação de gerenciamento financeiro pessoal que permite aos usuários registrar, visualizar e acompanhar suas transações financeiras. A aplicação possibilita a categorização de receitas e despesas, cálculo de balanços mensais e exibição de gráficos, proporcionando uma visão clara da saúde financeira de forma intuitiva.
@@ -23,4 +29,4 @@ sh scripts/install.sh
 
 Após a execução, os diretórios necessários serão criados, e o banco de dados SQLite será armazenado em **`$HOME/.moinex/data/`**.
 
-Os logs serão armazenados no diretório **`$HOME/.local/state/moinex`**. 
+Os logs serão armazenados no diretório **`$HOME/.local/state/moinex`**.
