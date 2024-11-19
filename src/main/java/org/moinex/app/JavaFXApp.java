@@ -17,7 +17,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * JavaFX application entry point
- * TODO: Methods to access monetary data in the database should return BigDecimal
  */
 public class JavaFXApp extends Application
 {
