@@ -280,8 +280,6 @@ public class CreditCardService
         BigDecimal availableCredit = GetAvailableCredit(crcId);
 
 
-        System.out.println("OK INSIDE");
-
         if (value.compareTo(availableCredit) > 0)
         {
             throw new RuntimeException(

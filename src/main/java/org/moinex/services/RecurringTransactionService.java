@@ -17,6 +17,7 @@ import org.moinex.repositories.RecurringTransactionRepository;
 import org.moinex.repositories.WalletRepository;
 import org.moinex.util.LoggerConfig;
 import org.moinex.util.RecurringTransactionFrequency;
+import org.moinex.util.RecurringTransactionStatus;
 import org.moinex.util.TransactionStatus;
 import org.moinex.util.TransactionType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,12 +85,13 @@ public class RecurringTransactionService
                     () -> new RuntimeException("Recurring transaction not found"));
 
         // Check if the recurring transaction has already ended
-        if (recurringTransaction.GetEndDate().isBefore(LocalDateTime.now()))
+        if (recurringTransaction.GetStatus().equals(
+                RecurringTransactionStatus.INACTIVE))
         {
             throw new RuntimeException("Recurring transaction has already ended");
         }
 
-        recurringTransaction.SetEndDate(LocalDateTime.now());
+        recurringTransaction.SetStatus(RecurringTransactionStatus.INACTIVE);
         recurringTransactionRepository.save(recurringTransaction);
 
         m_logger.info("Stopped recurring transaction " + recurringTransaction.GetId());
@@ -103,12 +105,13 @@ public class RecurringTransactionService
     @Transactional
     public void ProcessRecurringTransactions()
     {
-        List<RecurringTransaction> recurringTransactions =
-            recurringTransactionRepository.findAll();
+        List<RecurringTransaction> activeRecurringTransactions =
+            recurringTransactionRepository.findByStatus(
+                RecurringTransactionStatus.ACTIVE);
 
         LocalDateTime today = LocalDateTime.now();
 
-        for (RecurringTransaction recurring : recurringTransactions)
+        for (RecurringTransaction recurring : activeRecurringTransactions)
         {
             LocalDateTime nextDueDate = recurring.GetNextDueDate();
 
@@ -126,6 +129,13 @@ public class RecurringTransactionService
 
                 // Update the next due date in the recurring transaction
                 recurring.SetNextDueDate(nextDueDate);
+                recurringTransactionRepository.save(recurring);
+            }
+
+            // Check if the recurring transaction has ended
+            if (recurring.GetEndDate().isBefore(today))
+            {
+                recurring.SetStatus(RecurringTransactionStatus.INACTIVE);
                 recurringTransactionRepository.save(recurring);
             }
         }

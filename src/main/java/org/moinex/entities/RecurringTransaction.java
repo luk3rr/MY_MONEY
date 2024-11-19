@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import org.moinex.util.Constants;
 import org.moinex.util.RecurringTransactionFrequency;
+import org.moinex.util.RecurringTransactionStatus;
 import org.moinex.util.TransactionType;
 
 @Entity
@@ -43,6 +44,12 @@ public class RecurringTransaction extends BaseTransaction
     @Enumerated(EnumType.STRING)
     @Column(name = "frequency", nullable = false)
     private RecurringTransactionFrequency frequency;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name             = "status",
+            nullable         = false,
+            columnDefinition = "varchar default 'ACTIVE'")
+    private RecurringTransactionStatus status = RecurringTransactionStatus.ACTIVE;
 
     /**
      * Default constructor for JPA
@@ -152,6 +159,15 @@ public class RecurringTransaction extends BaseTransaction
     }
 
     /**
+     * Get the status of the transaction
+     * @return The status of the transaction
+     */
+    public RecurringTransactionStatus GetStatus()
+    {
+        return status;
+    }
+
+    /**
      * Set the start date of the transaction
      * @param startDate The start date of the transaction
      */
@@ -181,5 +197,14 @@ public class RecurringTransaction extends BaseTransaction
     public void SetFrequency(RecurringTransactionFrequency frequency)
     {
         this.frequency = frequency;
+    }
+
+    /**
+     * Set the status of the transaction
+     * @param status The status of the transaction
+     */
+    public void SetStatus(RecurringTransactionStatus status)
+    {
+        this.status = status;
     }
 }

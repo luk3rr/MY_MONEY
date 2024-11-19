@@ -6,7 +6,10 @@
 
 package org.moinex.repositories;
 
+import java.util.List;
+
 import org.moinex.entities.RecurringTransaction;
+import org.moinex.util.RecurringTransactionStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +20,14 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface RecurringTransactionRepository
-    extends JpaRepository<RecurringTransaction, Long> { }
+    extends JpaRepository<RecurringTransaction, Long>
+{
+
+    /**
+     * Get the recurring transaction by its status
+     * @param status The status of the recurring transaction
+     * @return A list of recurring transactions with the given status
+     */
+    List<RecurringTransaction> findByStatus(RecurringTransactionStatus status);
+
+}

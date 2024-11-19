@@ -29,6 +29,7 @@ import org.moinex.entities.Wallet;
 import org.moinex.repositories.RecurringTransactionRepository;
 import org.moinex.repositories.WalletRepository;
 import org.moinex.util.RecurringTransactionFrequency;
+import org.moinex.util.RecurringTransactionStatus;
 import org.moinex.util.TransactionStatus;
 import org.moinex.util.TransactionType;
 
@@ -178,6 +179,8 @@ public class RecurringTransactionServiceTest
                      recurringTransactionCaptor.getValue().GetEndDate());
         assertEquals(dailyRT.GetDescription(),
                      recurringTransactionCaptor.getValue().GetDescription());
+        assertEquals(dailyRT.GetStatus(),
+                     recurringTransactionCaptor.getValue().GetStatus());
         // assertEquals(dailyRT.GetFrequency(),
         //              recurringTransactionCaptor.getValue().GetFrequency());
     }
@@ -224,9 +227,9 @@ public class RecurringTransactionServiceTest
         verify(recurringTransactionRepository)
             .save(recurringTransactionCaptor.capture());
 
-        // Check if the date without time is the same
-        assertEquals(LocalDateTime.now().toLocalDate(),
-                     recurringTransactionCaptor.getValue().GetEndDate().toLocalDate());
+        // Check if the status of the recurring transaction is INACTIVE
+        assertEquals(recurringTransactionCaptor.getValue().GetStatus(),
+                     RecurringTransactionStatus.INACTIVE);
     }
 
     @Test
@@ -256,7 +259,7 @@ public class RecurringTransactionServiceTest
             .thenReturn(Optional.of(dailyRT));
 
         // Change the end date to a date in the past
-        dailyRT.SetEndDate(LocalDateTime.now().minusDays(40));
+        dailyRT.SetStatus(RecurringTransactionStatus.INACTIVE);
 
         assertThrows(RuntimeException.class,
                      ()
@@ -275,7 +278,8 @@ public class RecurringTransactionServiceTest
 
         dailyRT.SetNextDueDate(today.minusDays(10));
 
-        when(recurringTransactionRepository.findAll())
+        when(recurringTransactionRepository.findByStatus(
+                 RecurringTransactionStatus.ACTIVE))
             .thenReturn(Collections.singletonList(dailyRT));
 
         recurringTransactionService.ProcessRecurringTransactions();
@@ -318,7 +322,8 @@ public class RecurringTransactionServiceTest
 
         weeklyRecurringTransaction.SetNextDueDate(today.minusWeeks(5));
 
-        when(recurringTransactionRepository.findAll())
+        when(recurringTransactionRepository.findByStatus(
+                 RecurringTransactionStatus.ACTIVE))
             .thenReturn(Collections.singletonList(weeklyRecurringTransaction));
 
         recurringTransactionService.ProcessRecurringTransactions();
@@ -362,7 +367,8 @@ public class RecurringTransactionServiceTest
 
         monthlyRecurringTransaction.SetNextDueDate(today.minusMonths(12));
 
-        when(recurringTransactionRepository.findAll())
+        when(recurringTransactionRepository.findByStatus(
+                 RecurringTransactionStatus.ACTIVE))
             .thenReturn(Collections.singletonList(monthlyRecurringTransaction));
 
         recurringTransactionService.ProcessRecurringTransactions();
@@ -406,7 +412,8 @@ public class RecurringTransactionServiceTest
 
         yearlyRecurringTransaction.SetNextDueDate(today.minusYears(5));
 
-        when(recurringTransactionRepository.findAll())
+        when(recurringTransactionRepository.findByStatus(
+                 RecurringTransactionStatus.ACTIVE))
             .thenReturn(Collections.singletonList(yearlyRecurringTransaction));
 
         recurringTransactionService.ProcessRecurringTransactions();
@@ -439,5 +446,37 @@ public class RecurringTransactionServiceTest
 
         verify(recurringTransactionRepository, atLeastOnce())
             .save(yearlyRecurringTransaction);
+    }
+
+    @Test
+    @DisplayName(
+        "Test if the active recurring transactions with end date in the past are "
+        + "stopped")
+    public void
+    TestProcessRecurringTransactionEnds()
+    {
+        LocalDateTime today =
+            LocalDateTime.now().withHour(23).withMinute(59).withSecond(0).withNano(0);
+
+        dailyRT.SetNextDueDate(today.minusDays(10));
+        dailyRT.SetEndDate(today.minusDays(5));
+        dailyRT.SetStatus(RecurringTransactionStatus.ACTIVE);
+
+        when(recurringTransactionRepository.findByStatus(
+                 RecurringTransactionStatus.ACTIVE))
+            .thenReturn(Collections.singletonList(dailyRT));
+
+        recurringTransactionService.ProcessRecurringTransactions();
+
+        // Captures and check if the recurring transaction was saved with the status as
+        // INACTIVE
+        ArgumentCaptor<RecurringTransaction> captor =
+            ArgumentCaptor.forClass(RecurringTransaction.class);
+        verify(recurringTransactionRepository, times(1)).save(captor.capture());
+
+        RecurringTransaction capturedTransaction = captor.getValue();
+
+        assertEquals(RecurringTransactionStatus.INACTIVE,
+                     capturedTransaction.GetStatus());
     }
 }
