@@ -84,6 +84,13 @@ public final class Constants
     public static final String CREDIT_CARD_INVOICE_PAYMENT_FXML =
         UI_DIALOG_PATH + "credit_card_invoice_payment.fxml";
 
+    public static final String RECURRING_TRANSACTIONS_FXML =
+        UI_DIALOG_PATH + "recurring_transaction.fxml";
+    public static final String ADD_RECURRING_TRANSACTION_FXML =
+        UI_DIALOG_PATH + "add_recurring_transaction.fxml";
+    public static final String EDIT_RECURRING_TRANSACTION_FXML =
+        UI_DIALOG_PATH + "edit_recurring_transaction.fxml";
+
     public static final String WALLET_FULL_PANE_FXML =
         UI_COMMON_PATH + "wallet_full_pane.fxml";
     public static final String RESUME_PANE_FXML = UI_COMMON_PATH + "resume_pane.fxml";

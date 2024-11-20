@@ -149,14 +149,15 @@ public class RecurringTransactionServiceTest
     {
         when(walletRepository.findById(wallet.GetId())).thenReturn(Optional.of(wallet));
 
-        recurringTransactionService.CreateRecurringTransaction(dailyRT.GetWallet(),
-                                                               dailyRT.GetCategory(),
-                                                               dailyRT.GetType(),
-                                                               dailyRT.GetAmount(),
-                                                               dailyRT.GetStartDate(),
-                                                               dailyRT.GetEndDate(),
-                                                               dailyRT.GetDescription(),
-                                                               dailyRT.GetFrequency());
+        recurringTransactionService.CreateRecurringTransaction(
+            dailyRT.GetWallet().GetId(),
+            dailyRT.GetCategory(),
+            dailyRT.GetType(),
+            dailyRT.GetAmount(),
+            dailyRT.GetStartDate().toLocalDate(),
+            dailyRT.GetEndDate().toLocalDate(),
+            dailyRT.GetDescription(),
+            dailyRT.GetFrequency());
 
         // Capture the recurring transaction that was saved
         ArgumentCaptor<RecurringTransaction> recurringTransactionCaptor =
@@ -196,12 +197,12 @@ public class RecurringTransactionServiceTest
         assertThrows(RuntimeException.class,
                      ()
                          -> recurringTransactionService.CreateRecurringTransaction(
-                             dailyRT.GetWallet(),
+                             dailyRT.GetWallet().GetId(),
                              dailyRT.GetCategory(),
                              dailyRT.GetType(),
                              dailyRT.GetAmount(),
-                             dailyRT.GetStartDate(),
-                             dailyRT.GetEndDate(),
+                             dailyRT.GetStartDate().toLocalDate(),
+                             dailyRT.GetEndDate().toLocalDate(),
                              dailyRT.GetDescription(),
                              dailyRT.GetFrequency()));
 

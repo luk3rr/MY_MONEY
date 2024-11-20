@@ -7,12 +7,15 @@
 package org.moinex.services;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.logging.Logger;
 import org.moinex.entities.Category;
 import org.moinex.entities.RecurringTransaction;
 import org.moinex.entities.Wallet;
+import org.moinex.repositories.CategoryRepository;
 import org.moinex.repositories.RecurringTransactionRepository;
 import org.moinex.repositories.WalletRepository;
 import org.moinex.util.LoggerConfig;
@@ -43,29 +46,119 @@ public class RecurringTransactionService
 
     public RecurringTransactionService() { }
 
+    /**
+     * Check if the date and interval between start and end date is valid
+     * @param startDate The start date
+     * @param endDate The end date
+     * @param frequency The frequency of the recurring transaction
+     * TODO: Adicionar verificação aos testes
+     */
+    private void CheckDateAndIntervalIsValid(LocalDate                     startDate,
+                                             LocalDate                     endDate,
+                                             RecurringTransactionFrequency frequency)
+    {
+        // Check if interval between start and end date is valid
+        if (startDate.isBefore(LocalDate.now()))
+        {
+            throw new RuntimeException("Start date cannot be before today");
+        }
+
+        if (endDate.isBefore(startDate))
+        {
+            throw new RuntimeException("End date cannot be before start date");
+        }
+
+        // Check if any transaction can be generated
+        if (frequency == RecurringTransactionFrequency.DAILY &&
+            !(startDate.plusDays(1).isBefore(endDate) ||
+              startDate.plusDays(1).equals(endDate)))
+        {
+            throw new RuntimeException(
+                "End date must be at least one day after the start date");
+        }
+        else if (frequency == RecurringTransactionFrequency.WEEKLY &&
+                 !(startDate.plusWeeks(1).isBefore(endDate) ||
+                   startDate.plusWeeks(1).equals(endDate)))
+        {
+            throw new RuntimeException(
+                "End date must be at least one week after the start date");
+        }
+        else if (frequency == RecurringTransactionFrequency.MONTHLY &&
+                 !(startDate.plusMonths(1).isBefore(endDate) ||
+                   startDate.plusMonths(1).equals(endDate)))
+        {
+            throw new RuntimeException(
+                "End date must be at least one month after the start date");
+        }
+        else if (frequency == RecurringTransactionFrequency.YEARLY &&
+                 !(startDate.plusYears(1).isBefore(endDate) ||
+                   startDate.plusYears(1).equals(endDate)))
+        {
+            throw new RuntimeException(
+                "End date must be at least one year after the start date");
+        }
+    }
+
     @Transactional
-    public Long CreateRecurringTransaction(Wallet                        wallet,
+    public Long CreateRecurringTransaction(Long                          walletId,
                                            Category                      category,
                                            TransactionType               type,
                                            BigDecimal                    amount,
-                                           LocalDateTime                 startDate,
-                                           LocalDateTime                 endDate,
+                                           LocalDate                     startDate,
                                            String                        description,
                                            RecurringTransactionFrequency frequency)
     {
-        walletRepository.findById(wallet.GetId())
-            .orElseThrow(()
-                             -> new RuntimeException("Wallet with id " +
-                                                     wallet.GetId() + " not found"));
+        LocalDate defaultEndDate = LocalDate.now().plusYears(100);
+
+        return CreateRecurringTransaction(walletId,
+                                          category,
+                                          type,
+                                          amount,
+                                          startDate,
+                                          defaultEndDate,
+                                          description,
+                                          frequency);
+    }
+
+    @Transactional
+    public Long CreateRecurringTransaction(Long                          walletId,
+                                           Category                      category,
+                                           TransactionType               type,
+                                           BigDecimal                    amount,
+                                           LocalDate                     startDate,
+                                           LocalDate                     endDate,
+                                           String                        description,
+                                           RecurringTransactionFrequency frequency)
+    {
+        Wallet wt = walletRepository.findById(walletId).orElseThrow(
+            () -> new RuntimeException("Wallet with id " + walletId + " not found"));
+
+        if (startDate == null || endDate == null)
+        {
+            throw new RuntimeException("Start and end date cannot be null");
+        }
+
+        if (amount.compareTo(BigDecimal.ZERO) <= 0)
+        {
+            throw new RuntimeException("Amount must be greater than zero");
+        }
+
+        // Define the end date as the last second of the day
+        LocalDateTime startDateWithTime = startDate.atTime(0, 0, 0, 0);
+
+        LocalDateTime endDateWithTime = endDate.atTime(23, 59, 59, 0);
+
+        // Ensure the date and interval between start and end date is valid
+        CheckDateAndIntervalIsValid(startDate, endDate, frequency);
 
         RecurringTransaction recurringTransaction =
-            new RecurringTransaction(wallet,
+            new RecurringTransaction(wt,
                                      category,
                                      type,
                                      amount,
-                                     startDate,
-                                     endDate,
-                                     startDate,
+                                     startDateWithTime,
+                                     endDateWithTime,
+                                     startDateWithTime,
                                      frequency,
                                      description);
 
@@ -212,5 +305,85 @@ public class RecurringTransactionService
 
         // Set the time to 23:59
         return nextDueDate.withHour(23).withMinute(59).withSecond(0).withNano(0);
+    }
+
+    /**
+     * Get the date of the last transaction that will be generated
+     * @param startDate The start date
+     * @param endDate The end date
+     * @param frequency The frequency of the recurring transaction
+     * @return The date of the last transaction
+     * @throws RuntimeException If the frequency is invalid
+     */
+    public LocalDate GetLastTransactionDate(LocalDate                     startDate,
+                                            LocalDate                     endDate,
+                                            RecurringTransactionFrequency frequency)
+    {
+        CheckDateAndIntervalIsValid(startDate, endDate, frequency);
+
+        Long interval = 0L;
+
+        switch (frequency)
+        {
+            case DAILY:
+                interval = ChronoUnit.DAYS.between(startDate, endDate);
+                break;
+            case WEEKLY:
+                interval = ChronoUnit.DAYS.between(startDate, endDate) / 7;
+                break;
+            case MONTHLY:
+                interval = ChronoUnit.MONTHS.between(startDate, endDate);
+                break;
+            case YEARLY:
+                interval = ChronoUnit.YEARS.between(startDate, endDate);
+                break;
+        }
+
+        LocalDate lastTransactionDate =
+            AddFrequencyToDate(startDate, interval, frequency);
+
+        if (lastTransactionDate.isAfter(endDate))
+        {
+            interval--;
+            lastTransactionDate = AddFrequencyToDate(startDate, interval, frequency);
+        }
+
+        return lastTransactionDate;
+    }
+
+    /**
+     * Add the frequency to a date
+     * @param date The date
+     * @param interval The interval
+     * @param frequency The frequency
+     * @return The new date
+     * @throws RuntimeException If the frequency is invalid
+     */
+    private LocalDate AddFrequencyToDate(LocalDate                     date,
+                                         long                          interval,
+                                         RecurringTransactionFrequency frequency)
+    {
+        switch (frequency)
+        {
+            case DAILY:
+                return date.plusDays(interval);
+            case WEEKLY:
+                return date.plusWeeks(interval);
+            case MONTHLY:
+                return date.plusMonths(interval);
+            case YEARLY:
+                return date.plusYears(interval);
+            default:
+                throw new RuntimeException("Invalid frequency");
+        }
+    }
+
+    /**
+     * Get all recurring transactions
+     * @return List of recurring transactions
+     */
+    public List<RecurringTransaction> GetAllRecurringTransactions()
+    {
+        return recurringTransactionRepository.findAll();
     }
 }

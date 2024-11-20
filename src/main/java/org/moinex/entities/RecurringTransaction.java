@@ -115,6 +115,7 @@ public class RecurringTransaction extends BaseTransaction
         this.startDate   = startDate.format(Constants.DB_DATE_FORMATTER);
         this.endDate     = endDate.format(Constants.DB_DATE_FORMATTER);
         this.nextDueDate = nextDueDate.format(Constants.DB_DATE_FORMATTER);
+        this.frequency   = frequency;
     }
 
     /**
