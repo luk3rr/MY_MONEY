@@ -272,6 +272,33 @@ public class RecurringTransactionController
             -> new SimpleStringProperty(param.getValue().GetEndDate().format(
                 Constants.DATE_FORMATTER_NO_TIME)));
 
+        // If the end date is the default date, show "Indefinite"
+        endDateColumn.setCellFactory(
+            column -> new TableCell<RecurringTransaction, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty)
+                {
+                    super.updateItem(item, empty);
+                    if (item == null || empty)
+                    {
+                        setText(null);
+                    }
+                    else
+                    {
+                        if (item.equals(
+                                Constants.RECURRING_TRANSACTION_DEFAULT_END_DATE.format(
+                                    Constants.DATE_FORMATTER_NO_TIME)))
+                        {
+                            setText("Indefinite");
+                        }
+                        else
+                        {
+                            setText(item);
+                        }
+                    }
+                }
+            });
+
         TableColumn<RecurringTransaction, String> nextDueDateColumn =
             new TableColumn<>("Next Due Date");
         nextDueDateColumn.setCellValueFactory(

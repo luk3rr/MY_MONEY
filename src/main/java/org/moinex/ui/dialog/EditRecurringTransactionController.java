@@ -8,6 +8,7 @@ package org.moinex.ui.dialog;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
 import javafx.fxml.FXML;
@@ -111,7 +112,16 @@ public class EditRecurringTransactionController
         categoryComboBox.setValue(rt.GetCategory().GetName());
 
         nextDueDatePicker.setValue(rt.GetNextDueDate().toLocalDate());
-        endDatePicker.setValue(rt.GetEndDate().toLocalDate());
+
+        if (rt.GetEndDate().toLocalDate().equals(
+                Constants.RECURRING_TRANSACTION_DEFAULT_END_DATE))
+        {
+            endDatePicker.setValue(null);
+        }
+        else
+        {
+            endDatePicker.setValue(rt.GetEndDate().toLocalDate());
+        }
 
         frequencyComboBox.setValue(rt.GetFrequency().name());
 
@@ -155,6 +165,15 @@ public class EditRecurringTransactionController
                 valueField.setText(oldValue);
             }
         });
+
+        // Allow the user to set the value to null if the text is erased
+        endDatePicker.getEditor().textProperty().addListener(
+            (observable, oldValue, newValue) -> {
+                if (newValue == null || newValue.trim().isEmpty())
+                {
+                    endDatePicker.setValue(null);
+                }
+            });
 
         activeCheckBox.setOnAction(e -> { UpdateInfoLabel(); });
     }
@@ -208,6 +227,13 @@ public class EditRecurringTransactionController
             RecurringTransactionFrequency frequency =
                 RecurringTransactionFrequency.valueOf(frequencyString);
 
+            Boolean endDateChanged =
+                (endDate != null &&
+                 !endDate.equals(rtToUpdate.GetEndDate().toLocalDate())) ||
+                (endDate == null &&
+                 !rtToUpdate.GetEndDate().toLocalDate().equals(
+                     Constants.RECURRING_TRANSACTION_DEFAULT_END_DATE));
+
             // Check if has any modification
             if (rtToUpdate.GetWallet().GetName().equals(walletName) &&
                 rtToUpdate.GetDescription().equals(description) &&
@@ -215,8 +241,7 @@ public class EditRecurringTransactionController
                 rtToUpdate.GetType().equals(type) &&
                 rtToUpdate.GetCategory().GetName().equals(categoryString) &&
                 rtToUpdate.GetNextDueDate().toLocalDate().equals(nextDueDate) &&
-                rtToUpdate.GetEndDate().toLocalDate().equals(endDate) &&
-                rtToUpdate.GetFrequency().equals(frequency) &&
+                !endDateChanged && rtToUpdate.GetFrequency().equals(frequency) &&
                 rtToUpdate.GetStatus().equals(
                     activeCheckBox.isSelected() ? RecurringTransactionStatus.ACTIVE
                                                 : RecurringTransactionStatus.INACTIVE))
@@ -250,9 +275,10 @@ public class EditRecurringTransactionController
 
                 recurringTransactionService.UpdateRecurringTransaction(rtToUpdate);
 
-                WindowUtils.ShowSuccessDialog("Success",
-                                              "Income created",
-                                              "The income was successfully created.");
+                WindowUtils.ShowSuccessDialog(
+                    "Success",
+                    "Recurring transaction updated",
+                    "Recurring transaction updated successfully.");
             }
 
             Stage stage = (Stage)descriptionField.getScene().getWindow();

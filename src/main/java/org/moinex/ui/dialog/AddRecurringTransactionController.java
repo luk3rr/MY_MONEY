@@ -127,6 +127,15 @@ public class AddRecurringTransactionController
                 valueField.setText(oldValue);
             }
         });
+
+        // Allow the user to set the value to null if the text is erased
+        endDatePicker.getEditor().textProperty().addListener(
+            (observable, oldValue, newValue) -> {
+                if (newValue == null || newValue.trim().isEmpty())
+                {
+                    endDatePicker.setValue(null);
+                }
+            });
     }
 
     @FXML
@@ -202,9 +211,10 @@ public class AddRecurringTransactionController
                     frequency);
             }
 
-            WindowUtils.ShowSuccessDialog("Success",
-                                          "Income created",
-                                          "The income was successfully created.");
+            WindowUtils.ShowSuccessDialog(
+                "Success",
+                "Recurring transaction created",
+                "Recurring transaction created successfully.");
 
             Stage stage = (Stage)descriptionField.getScene().getWindow();
             stage.close();
@@ -257,8 +267,7 @@ public class AddRecurringTransactionController
             }
             else
             {
-                msg = "Starts on " + startDate + ", frequency " +
-                      frequencyString;
+                msg = "Starts on " + startDate + ", frequency " + frequencyString;
             }
         }
 
