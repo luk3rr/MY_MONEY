@@ -6,6 +6,8 @@
 
 package org.moinex.util;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -83,6 +85,13 @@ public final class Constants
 
     public static final String CREDIT_CARD_INVOICE_PAYMENT_FXML =
         UI_DIALOG_PATH + "credit_card_invoice_payment.fxml";
+
+    public static final String RECURRING_TRANSACTIONS_FXML =
+        UI_DIALOG_PATH + "recurring_transaction.fxml";
+    public static final String ADD_RECURRING_TRANSACTION_FXML =
+        UI_DIALOG_PATH + "add_recurring_transaction.fxml";
+    public static final String EDIT_RECURRING_TRANSACTION_FXML =
+        UI_DIALOG_PATH + "edit_recurring_transaction.fxml";
 
     public static final String WALLET_FULL_PANE_FXML =
         UI_COMMON_PATH + "wallet_full_pane.fxml";
@@ -191,6 +200,16 @@ public final class Constants
     public static final Double  XYBAR_CHART_ANIMATION_DURATION = 0.3; // s
     public static final Double  TOOLTIP_ANIMATION_DURATION     = 0.5; // s
     public static final Double  TOOLTIP_ANIMATION_DELAY        = 0.5; // s
+
+    // Enough time for you to become poor :)
+    public static final LocalDate RECURRING_TRANSACTION_DEFAULT_END_DATE =
+        LocalDate.of(2100, 12, 31);
+
+    public static final LocalTime RECURRING_TRANSACTION_DEFAULT_TIME =
+        LocalTime.of(23, 59, 59, 0);
+
+    public static final LocalTime RECURRING_TRANSACTION_DUE_DATE_DEFAULT_TIME =
+        LocalTime.of(0, 0, 0, 0);
 
     // Date formats
     public static final String DB_DATE_FORMAT        = "yyyy-MM-dd'T'HH:mm:ss";

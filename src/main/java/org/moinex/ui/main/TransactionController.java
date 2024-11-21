@@ -49,6 +49,7 @@ import org.moinex.ui.dialog.AddExpenseController;
 import org.moinex.ui.dialog.AddIncomeController;
 import org.moinex.ui.dialog.EditTransactionController;
 import org.moinex.ui.dialog.ManageCategoryController;
+import org.moinex.ui.dialog.RecurringTransactionController;
 import org.moinex.util.Animation;
 import org.moinex.util.Constants;
 import org.moinex.util.LoggerConfig;
@@ -333,6 +334,22 @@ public class TransactionController
             UpdateTransactionTableView();
             UpdateMoneyFlow();
         }
+    }
+
+    @FXML
+    private void handleRecurringTransactions()
+    {
+        WindowUtils.OpenModalWindow(Constants.RECURRING_TRANSACTIONS_FXML,
+                                    "Recurring transactions",
+                                    springContext,
+                                    (RecurringTransactionController controller)
+                                        -> {},
+                                    List.of(() -> {
+                                        UpdateMonthResume();
+                                        UpdateYearResume();
+                                        UpdateTransactionTableView();
+                                        UpdateMoneyFlow();
+                                    }));
     }
 
     @FXML
