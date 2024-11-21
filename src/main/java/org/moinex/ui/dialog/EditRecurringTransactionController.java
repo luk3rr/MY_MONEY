@@ -1,5 +1,5 @@
 /*
- * Filename: AddRecurringTransactionController.java
+ * Filename: EditRecurringTransactionController.java
  * Created on: November 20, 2024
  * Author: Lucas Araújo <araujolucas@dcc.ufmg.br>
  */
@@ -11,18 +11,21 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.moinex.entities.Category;
+import org.moinex.entities.RecurringTransaction;
 import org.moinex.entities.Wallet;
 import org.moinex.services.CategoryService;
 import org.moinex.services.RecurringTransactionService;
 import org.moinex.services.WalletService;
 import org.moinex.util.Constants;
 import org.moinex.util.RecurringTransactionFrequency;
+import org.moinex.util.RecurringTransactionStatus;
 import org.moinex.util.TransactionType;
 import org.moinex.util.UIUtils;
 import org.moinex.util.WindowUtils;
@@ -30,10 +33,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- * Controller for the Add Recurring Transaction dialog
+ * Controller for the Edit Recurring Transaction dialog
  */
 @Controller
-public class AddRecurringTransactionController
+public class EditRecurringTransactionController
 {
     @FXML
     private ComboBox<String> walletComboBox;
@@ -54,10 +57,13 @@ public class AddRecurringTransactionController
     private ComboBox<String> frequencyComboBox;
 
     @FXML
-    private DatePicker startDatePicker;
+    private DatePicker nextDueDatePicker;
 
     @FXML
     private DatePicker endDatePicker;
+
+    @FXML
+    private CheckBox activeCheckBox;
 
     @FXML
     private Label infoLabel;
@@ -72,7 +78,9 @@ public class AddRecurringTransactionController
 
     private List<Category> categories;
 
-    public AddRecurringTransactionController() { }
+    private RecurringTransaction rtToUpdate;
+
+    public EditRecurringTransactionController() { }
 
     /**
      * Constructor
@@ -82,7 +90,7 @@ public class AddRecurringTransactionController
      * @note This constructor is used for dependency injection
      */
     @Autowired
-    public AddRecurringTransactionController(
+    public EditRecurringTransactionController(
         WalletService               walletService,
         RecurringTransactionService recurringTransactionService,
         CategoryService             categoryService)
@@ -92,6 +100,26 @@ public class AddRecurringTransactionController
         this.categoryService             = categoryService;
     }
 
+    public void SetRecurringTransaction(RecurringTransaction rt)
+    {
+        rtToUpdate = rt;
+
+        walletComboBox.setValue(rt.GetWallet().GetName());
+        descriptionField.setText(rt.GetDescription());
+        valueField.setText(rt.GetAmount().toString());
+        typeComboBox.setValue(rt.GetType().name());
+        categoryComboBox.setValue(rt.GetCategory().GetName());
+
+        nextDueDatePicker.setValue(rt.GetNextDueDate().toLocalDate());
+        endDatePicker.setValue(rt.GetEndDate().toLocalDate());
+
+        frequencyComboBox.setValue(rt.GetFrequency().name());
+
+        activeCheckBox.setSelected(rt.GetStatus() == RecurringTransactionStatus.ACTIVE);
+
+        UpdateInfoLabel();
+    }
+
     @FXML
     private void initialize()
     {
@@ -99,7 +127,7 @@ public class AddRecurringTransactionController
         LoadCategories();
 
         // Configure date picker
-        UIUtils.SetDatePickerFormat(startDatePicker);
+        UIUtils.SetDatePickerFormat(nextDueDatePicker);
         UIUtils.SetDatePickerFormat(endDatePicker);
 
         // For each element in enum RecurringTransactionStatus, add its name to the
@@ -114,7 +142,7 @@ public class AddRecurringTransactionController
                 .map(Enum::name)
                 .toList());
 
-        startDatePicker.setOnAction(e -> { UpdateInfoLabel(); });
+        nextDueDatePicker.setOnAction(e -> { UpdateInfoLabel(); });
 
         endDatePicker.setOnAction(e -> { UpdateInfoLabel(); });
 
@@ -127,6 +155,8 @@ public class AddRecurringTransactionController
                 valueField.setText(oldValue);
             }
         });
+
+        activeCheckBox.setOnAction(e -> { UpdateInfoLabel(); });
     }
 
     @FXML
@@ -144,14 +174,14 @@ public class AddRecurringTransactionController
         String    valueString     = valueField.getText();
         String    typeString      = typeComboBox.getValue();
         String    categoryString  = categoryComboBox.getValue();
-        LocalDate startDate       = startDatePicker.getValue();
+        LocalDate nextDueDate     = nextDueDatePicker.getValue();
         LocalDate endDate         = endDatePicker.getValue();
         String    frequencyString = frequencyComboBox.getValue();
 
         if (walletName == null || description == null ||
             description.strip().isEmpty() || valueString == null ||
             valueString.strip().isEmpty() || typeString == null ||
-            categoryString == null || startDate == null || frequencyString == null)
+            categoryString == null || nextDueDate == null || frequencyString == null)
         {
             WindowUtils.ShowErrorDialog("Error",
                                         "Empty fields",
@@ -178,33 +208,52 @@ public class AddRecurringTransactionController
             RecurringTransactionFrequency frequency =
                 RecurringTransactionFrequency.valueOf(frequencyString);
 
-            if (endDate == null)
+            // Check if has any modification
+            if (rtToUpdate.GetWallet().GetName().equals(walletName) &&
+                rtToUpdate.GetDescription().equals(description) &&
+                rtToUpdate.GetAmount().compareTo(transactionAmount) == 0 &&
+                rtToUpdate.GetType().equals(type) &&
+                rtToUpdate.GetCategory().GetName().equals(categoryString) &&
+                rtToUpdate.GetNextDueDate().toLocalDate().equals(nextDueDate) &&
+                rtToUpdate.GetEndDate().toLocalDate().equals(endDate) &&
+                rtToUpdate.GetFrequency().equals(frequency) &&
+                rtToUpdate.GetStatus().equals(
+                    activeCheckBox.isSelected() ? RecurringTransactionStatus.ACTIVE
+                                                : RecurringTransactionStatus.INACTIVE))
             {
-                recurringTransactionService.CreateRecurringTransaction(
-                    wallet.GetId(),
-                    category,
-                    type,
-                    transactionAmount,
-                    startDate,
-                    description,
-                    frequency);
+                WindowUtils.ShowInformationDialog(
+                    "Information",
+                    "No changes",
+                    "No changes were made to the transaction.");
             }
-            else
+            else // If there is any modification, update the transaction
             {
-                recurringTransactionService.CreateRecurringTransaction(
-                    wallet.GetId(),
-                    category,
-                    type,
-                    transactionAmount,
-                    startDate,
-                    endDate,
-                    description,
-                    frequency);
-            }
+                rtToUpdate.SetWallet(wallet);
+                rtToUpdate.SetDescription(description);
+                rtToUpdate.SetAmount(transactionAmount);
+                rtToUpdate.SetType(type);
+                rtToUpdate.SetCategory(category);
+                rtToUpdate.SetNextDueDate(
+                    nextDueDate.atTime(Constants.RECURRING_TRANSACTION_DEFAULT_TIME));
 
-            WindowUtils.ShowSuccessDialog("Success",
-                                          "Income created",
-                                          "The income was successfully created.");
+                // If the end date not set, set the default end date
+                endDate = endDate == null
+                              ? Constants.RECURRING_TRANSACTION_DEFAULT_END_DATE
+                              : endDate;
+
+                rtToUpdate.SetEndDate(
+                    endDate.atTime(Constants.RECURRING_TRANSACTION_DEFAULT_TIME));
+                rtToUpdate.SetFrequency(frequency);
+                rtToUpdate.SetStatus(activeCheckBox.isSelected()
+                                         ? RecurringTransactionStatus.ACTIVE
+                                         : RecurringTransactionStatus.INACTIVE);
+
+                recurringTransactionService.UpdateRecurringTransaction(rtToUpdate);
+
+                WindowUtils.ShowSuccessDialog("Success",
+                                              "Income created",
+                                              "The income was successfully created.");
+            }
 
             Stage stage = (Stage)descriptionField.getScene().getWindow();
             stage.close();
@@ -225,20 +274,24 @@ public class AddRecurringTransactionController
 
     private void UpdateInfoLabel()
     {
-        LocalDate startDate       = startDatePicker.getValue();
+        LocalDate nextDueDate     = nextDueDatePicker.getValue();
         LocalDate endDate         = endDatePicker.getValue();
         String    frequencyString = frequencyComboBox.getValue();
 
         String msg = "";
 
-        if (startDate != null && frequencyString != null)
+        if (!activeCheckBox.isSelected())
+        {
+            msg = "Recurring transaction is inactive";
+        }
+        else if (nextDueDate != null && frequencyString != null)
         {
             RecurringTransactionFrequency frequency =
                 RecurringTransactionFrequency.valueOf(frequencyString);
 
             if (endDate != null)
             {
-                msg = "Starts on " + startDate + ", ends on " + endDate +
+                msg = "Starts on " + nextDueDate + ", ends on " + endDate +
                       ", frequency " + frequencyString;
 
                 try
@@ -246,7 +299,7 @@ public class AddRecurringTransactionController
 
                     msg +=
                         "\nLast transaction: " +
-                        recurringTransactionService.GetLastTransactionDate(startDate,
+                        recurringTransactionService.GetLastTransactionDate(nextDueDate,
                                                                            endDate,
                                                                            frequency);
                 }
@@ -257,8 +310,7 @@ public class AddRecurringTransactionController
             }
             else
             {
-                msg = "Starts on " + startDate + ", frequency " +
-                      frequencyString;
+                msg = "Starts on " + nextDueDate + ", frequency " + frequencyString;
             }
         }
 

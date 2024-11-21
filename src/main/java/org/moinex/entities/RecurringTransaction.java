@@ -81,11 +81,13 @@ public class RecurringTransaction extends BaseTransaction
     {
         super(wallet, category, type, amount, description);
 
-        this.id          = id;
-        this.startDate   = startDate.format(Constants.DB_DATE_FORMATTER);
-        this.endDate     = endDate.format(Constants.DB_DATE_FORMATTER);
-        this.nextDueDate = nextDueDate.format(Constants.DB_DATE_FORMATTER);
-        this.frequency   = frequency;
+        this.id        = id;
+        this.startDate = startDate.format(Constants.DB_DATE_FORMATTER);
+        this.endDate   = endDate.format(Constants.DB_DATE_FORMATTER);
+        this.nextDueDate =
+            nextDueDate.with(Constants.RECURRING_TRANSACTION_DUE_DATE_DEFAULT_TIME)
+                .format(Constants.DB_DATE_FORMATTER);
+        this.frequency = frequency;
     }
 
     /**
@@ -112,10 +114,12 @@ public class RecurringTransaction extends BaseTransaction
     {
         super(wallet, category, type, amount, description);
 
-        this.startDate   = startDate.format(Constants.DB_DATE_FORMATTER);
-        this.endDate     = endDate.format(Constants.DB_DATE_FORMATTER);
-        this.nextDueDate = nextDueDate.format(Constants.DB_DATE_FORMATTER);
-        this.frequency   = frequency;
+        this.startDate = startDate.format(Constants.DB_DATE_FORMATTER);
+        this.endDate   = endDate.format(Constants.DB_DATE_FORMATTER);
+        this.nextDueDate =
+            nextDueDate.with(Constants.RECURRING_TRANSACTION_DUE_DATE_DEFAULT_TIME)
+                .format(Constants.DB_DATE_FORMATTER);
+        this.frequency = frequency;
     }
 
     /**
@@ -188,7 +192,10 @@ public class RecurringTransaction extends BaseTransaction
 
     public void SetNextDueDate(LocalDateTime nextDueDate)
     {
-        this.nextDueDate = nextDueDate.format(Constants.DB_DATE_FORMATTER);
+        // Set the default time for the next due date
+        this.nextDueDate =
+            nextDueDate.with(Constants.RECURRING_TRANSACTION_DUE_DATE_DEFAULT_TIME)
+                .format(Constants.DB_DATE_FORMATTER);
     }
 
     /**

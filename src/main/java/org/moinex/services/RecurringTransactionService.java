@@ -15,9 +15,9 @@ import java.util.logging.Logger;
 import org.moinex.entities.Category;
 import org.moinex.entities.RecurringTransaction;
 import org.moinex.entities.Wallet;
-import org.moinex.repositories.CategoryRepository;
 import org.moinex.repositories.RecurringTransactionRepository;
 import org.moinex.repositories.WalletRepository;
+import org.moinex.util.Constants;
 import org.moinex.util.LoggerConfig;
 import org.moinex.util.RecurringTransactionFrequency;
 import org.moinex.util.RecurringTransactionStatus;
@@ -47,11 +47,12 @@ public class RecurringTransactionService
     public RecurringTransactionService() { }
 
     /**
-     * Check if the date and interval between start and end date is valid
+     * Check if the start date and end date is valid
      * @param startDate The start date
      * @param endDate The end date
      * @param frequency The frequency of the recurring transaction
-     * TODO: Adicionar verificação aos testes
+     * @throws RuntimeException If the date and interval between start and end date is
+     *     invalid
      */
     private void CheckDateAndIntervalIsValid(LocalDate                     startDate,
                                              LocalDate                     endDate,
@@ -99,6 +100,23 @@ public class RecurringTransactionService
         }
     }
 
+    /**
+     * Create a recurring transaction
+     * @param walletId The id of the wallet
+     * @param category The category of the transaction
+     * @param type The type of the transaction
+     * @param amount The amount of the transaction
+     * @param startDate The start date of the recurring transaction
+     * @param description The description of the transaction
+     * @param frequency The frequency of the recurring transaction
+     * @return The id of the recurring transaction
+     * @throws RuntimeException If the wallet is not found
+     * @throws RuntimeException If the start date or end date is null
+     * @throws RuntimeException If the amount is less than or equal to zero
+     * @throws RuntimeException If the date and interval between start and end date is
+     *     invalid
+     * @throws RuntimeException If the frequency is invalid
+     */
     @Transactional
     public Long CreateRecurringTransaction(Long                          walletId,
                                            Category                      category,
@@ -108,7 +126,7 @@ public class RecurringTransactionService
                                            String                        description,
                                            RecurringTransactionFrequency frequency)
     {
-        LocalDate defaultEndDate = LocalDate.now().plusYears(100);
+        LocalDate defaultEndDate = Constants.RECURRING_TRANSACTION_DEFAULT_END_DATE;
 
         return CreateRecurringTransaction(walletId,
                                           category,
@@ -120,6 +138,23 @@ public class RecurringTransactionService
                                           frequency);
     }
 
+    /**
+     * Create a recurring transaction
+     * @param walletId The id of the wallet
+     * @param category The category of the transaction
+     * @param type The type of the transaction
+     * @param amount The amount of the transaction
+     * @param startDate The start date of the recurring transaction
+     * @param description The description of the transaction
+     * @param frequency The frequency of the recurring transaction
+     * @return The id of the recurring transaction
+     * @throws RuntimeException If the wallet is not found
+     * @throws RuntimeException If the start date or end date is null
+     * @throws RuntimeException If the amount is less than or equal to zero
+     * @throws RuntimeException If the date and interval between start and end date is
+     *     invalid
+     * @throws RuntimeException If the frequency is invalid
+     */
     @Transactional
     public Long CreateRecurringTransaction(Long                          walletId,
                                            Category                      category,
@@ -144,9 +179,11 @@ public class RecurringTransactionService
         }
 
         // Define the end date as the last second of the day
-        LocalDateTime startDateWithTime = startDate.atTime(0, 0, 0, 0);
+        LocalDateTime startDateWithTime =
+            startDate.atTime(Constants.RECURRING_TRANSACTION_DEFAULT_TIME);
 
-        LocalDateTime endDateWithTime = endDate.atTime(23, 59, 59, 0);
+        LocalDateTime endDateWithTime =
+            endDate.atTime(Constants.RECURRING_TRANSACTION_DEFAULT_TIME);
 
         // Ensure the date and interval between start and end date is valid
         CheckDateAndIntervalIsValid(startDate, endDate, frequency);
@@ -188,6 +225,68 @@ public class RecurringTransactionService
         recurringTransactionRepository.save(recurringTransaction);
 
         m_logger.info("Stopped recurring transaction " + recurringTransaction.GetId());
+    }
+
+    /**
+     * Delete a recurring transaction
+     * @param recurringTransactionId The id of the recurring transaction
+     * @throws RuntimeException If the recurring transaction is not found
+     */
+    @Transactional
+    public void DeleteRecurringTransaction(Long recurringTransactionId)
+    {
+        RecurringTransaction recurringTransaction =
+            recurringTransactionRepository.findById(recurringTransactionId)
+                .orElseThrow(
+                    ()
+                        -> new RuntimeException("Recurring transaction with id " +
+                                                recurringTransactionId + " not found"));
+
+        recurringTransactionRepository.delete(recurringTransaction);
+
+        m_logger.info("Deleted recurring transaction " + recurringTransaction.GetId());
+    }
+
+    @Transactional
+    public void UpdateRecurringTransaction(RecurringTransaction rt)
+    {
+        RecurringTransaction rtToUpdate =
+            recurringTransactionRepository.findById(rt.GetId())
+                .orElseThrow(
+                    ()
+                        -> new RuntimeException("Recurring transaction with id " +
+                                                rt.GetId() + " not found"));
+
+        if (rt.GetStartDate() == null || rt.GetEndDate() == null)
+        {
+            throw new RuntimeException("Start and end date cannot be null");
+        }
+
+        if (rt.GetAmount().compareTo(BigDecimal.ZERO) <= 0)
+        {
+            throw new RuntimeException("Amount must be greater than zero");
+        }
+
+        rt.SetEndDate(
+            rt.GetEndDate().with(Constants.RECURRING_TRANSACTION_DEFAULT_TIME));
+
+        // Ensure the date and interval between start and end date is valid
+        CheckDateAndIntervalIsValid(rt.GetStartDate().toLocalDate(),
+                                    rt.GetEndDate().toLocalDate(),
+                                    rt.GetFrequency());
+
+        rtToUpdate.SetWallet(rt.GetWallet());
+        rtToUpdate.SetCategory(rt.GetCategory());
+        rtToUpdate.SetType(rt.GetType());
+        rtToUpdate.SetAmount(rt.GetAmount());
+        rtToUpdate.SetEndDate(rt.GetEndDate());
+        rtToUpdate.SetNextDueDate(rt.GetNextDueDate());
+        rtToUpdate.SetDescription(rt.GetDescription());
+        rtToUpdate.SetFrequency(rt.GetFrequency());
+        rtToUpdate.SetStatus(rt.GetStatus());
+
+        recurringTransactionRepository.save(rtToUpdate);
+        m_logger.info("Recurring transaction " + rt.GetId() + " successfully updated");
     }
 
     /**
@@ -303,8 +402,7 @@ public class RecurringTransactionService
                 throw new RuntimeException("Invalid frequency");
         }
 
-        // Set the time to 23:59
-        return nextDueDate.withHour(23).withMinute(59).withSecond(0).withNano(0);
+        return nextDueDate.with(Constants.RECURRING_TRANSACTION_DEFAULT_TIME);
     }
 
     /**

@@ -85,63 +85,54 @@ public class RecurringTransactionController
     @FXML
     private void handleEdit()
     {
-        // RecurringTransaction selectedCategory =
-        //     recurringTransactionTableView.getSelectionModel().getSelectedItem();
+        RecurringTransaction selectedRt =
+            recurringTransactionTableView.getSelectionModel().getSelectedItem();
 
-        // if (selectedCategory == null)
-        // {
-        //     WindowUtils.ShowErrorDialog("Error",
-        //                                 "No category selected",
-        //                                 "Please select a category to edit");
-        //     return;
-        // }
+        if (selectedRt == null)
+        {
+            WindowUtils.ShowErrorDialog(
+                "Error",
+                "No recurring transaction selected",
+                "Please select a recurring transaction to edit");
+            return;
+        }
 
-        // WindowUtils.OpenModalWindow(Constants.EDIT_CATEGORY_FXML,
-        //                             "Edit RecurringTransaction",
-        //                             springContext,
-        //                             (EditCategoryController controller)
-        //                                 -> controller.SetCategory(selectedCategory),
-        //                             List.of(() -> {
-        //                                 LoadRecurringTransactionFromDatabase();
-        //                                 UpdateRecurringTransactionTableView();
-        //                             }));
+        WindowUtils.OpenModalWindow(
+            Constants.EDIT_RECURRING_TRANSACTION_FXML,
+            "Edit Recurring Transaction",
+            springContext,
+            (EditRecurringTransactionController controller)
+                -> controller.SetRecurringTransaction(selectedRt),
+            List.of(() -> {
+                LoadRecurringTransactionFromDatabase();
+                UpdateRecurringTransactionTableView();
+            }));
     }
 
     @FXML
     private void handleDelete()
     {
-        // RecurringTransaction selectedCategory =
-        //     recurringTransactionTableView.getSelectionModel().getSelectedItem();
+        RecurringTransaction selectedRt =
+            recurringTransactionTableView.getSelectionModel().getSelectedItem();
 
-        // if (selectedCategory == null)
-        //{
-        //     WindowUtils.ShowErrorDialog("Error",
-        //                                 "No category selected",
-        //                                 "Please select a category to remove");
-        //     return;
-        // }
+        if (selectedRt == null)
+        {
+            WindowUtils.ShowErrorDialog(
+                "Error",
+                "No recurring transaction selected",
+                "Please select a recurring transaction to delete");
+            return;
+        }
 
-        //// Prevent the removal of categories with associated transactions
-        // if (categoryService.CountTransactions(selectedCategory.GetId()) > 0)
-        //{
-        //     WindowUtils.ShowErrorDialog("Error",
-        //                                 "RecurringTransaction has transactions",
-        //                                 "Cannot remove a category with
-        //                                 transactions");
-        //     // TODO: Implement a way to change the category of the transactions
-        //     // TODO: Implement a way to archive the category
-        //     return;
-        // }
-
-        // if (WindowUtils.ShowConfirmationDialog(
-        //         "Confirmation",
-        //         "Remove category " + selectedCategory.GetName(),
-        //         "Are you sure you want to remove this category?"))
-        //{
-        //     categoryService.DeleteCategory(selectedCategory.GetId());
-        //     LoadRecurringTransactionFromDatabase();
-        //     UpdateRecurringTransactionTableView();
-        // }
+        if (WindowUtils.ShowConfirmationDialog(
+                "Confirmation",
+                "Remove recurring transaction with ID " + selectedRt.GetId(),
+                "Are you sure you want to delete this recurring transaction?"))
+        {
+            recurringTransactionService.DeleteRecurringTransaction(selectedRt.GetId());
+            LoadRecurringTransactionFromDatabase();
+            UpdateRecurringTransactionTableView();
+        }
     }
 
     @FXML
