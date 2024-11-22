@@ -1,0 +1,109 @@
+@startuml
+class WalletType {
+    -id : INT
+    -name : CHAR
+    -icon : CHAR
+}
+
+class Wallet {
+    -id : INT
+    -type_id : INT
+    -name : CHAR
+    -balance : REAL
+    -is_archived : BOOL
+}
+
+class BaseTransaction {
+    -wallet_id : INT
+    -category_id : INT
+    -type : ENUM
+    -amount : REAL
+    -description : CHAR
+
+}
+
+class RecurringTransaction {
+    -id : INT
+    -status : ENUM
+    -start_date : DATE
+    -end_date : DATE
+    -next_due_date : DATE
+    -frequency : ENUM
+}
+
+class WalletTransaction {
+    -id : INT
+    -status : ENUM
+    -date : DATE
+}
+
+class Transfer {
+    -id : INT
+    -sender_wallet_id : INT
+    -receiver_wallet_id : INT
+    -date : DATE
+    -amount : REAL
+    -description : CHAR
+}
+
+class Category {
+    -id : INT
+    -name : CHAR
+    -is_archived : BOOL
+}
+
+class CreditCardOperator {
+    -id : INT
+    -name : CHAR
+    -icon : CHAR
+}
+
+class CreditCard {
+    -id : INT
+    -operator_id : INT
+    -name : CHAR
+    -billing_due_day : INT
+    -closing_day : INT
+    -last_four_digits : CHAR
+    -max_debt : REAL
+    -is_archived : BOOL
+}
+
+class CreditCardDebt {
+    -id : INT
+    -crc_id : INT
+    -category_id : INT
+    -date : DATE
+    -total_amount : REAL
+    -installments : INT
+    -description : CHAR
+}
+
+class CreditCardPayment {
+    -id : INT
+    -wallet_id : INT
+    -debt_id : INT
+    -date : DATE
+    -amount : REAL
+    -installment : INT
+}
+
+WalletType <-- "0..*" Wallet : type_id
+
+BaseTransaction <|--- RecurringTransaction
+BaseTransaction <|--- WalletTransaction
+
+Wallet <-- "0..*" RecurringTransaction : wallet_id
+Wallet <-- "0..*" WalletTransaction : wallet_id
+Wallet <-- "0..*" Transfer : sender_wallet_id
+Wallet <-- "0..*" Transfer : receiver_wallet_id
+Wallet <-- "0..*" CreditCardPayment : wallet_id
+
+Category <-- "0..*" RecurringTransaction : category_id
+Category <-- "0..*" WalletTransaction : category_id
+Category <-- "0..*" CreditCardDebt : category_id
+
+CreditCardOperator <-- "0..*" CreditCard : operator_id
+CreditCard *-- "0..*" CreditCardDebt : crc_id
+CreditCardDebt *-- "0..*" CreditCardPayment : debt_id
+@enduml

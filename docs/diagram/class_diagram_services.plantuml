@@ -1,0 +1,125 @@
+@startuml
+class CreditCardService {
+  - m_creditCardDebtRepository : CreditCardDebtRepository
+  - m_creditCardPaymentRepository : CreditCardPaymentRepository
+  - m_creditCardRepository : CreditCardRepository
+  - m_creditCardOperatorRepository : CreditCardOperatorRepository
+  - m_walletRepository : WalletRepository
+  - m_categoryRepository : CategoryRepository
+  + DeleteCreditCard()
+  + UpdateCreditCard()
+  + DeleteDebt()
+  + ArchiveCreditCard()
+  + UnarchiveCreditCard()
+  + UpdateCreditCardDebt()
+  + PayInvoice()
+  + GetAvailableCredit()
+  + GetTotalDebtAmount()
+  + GetTotalPendingPayments()
+  + GetPaidPaymentsByMonth()
+  + GetPendingPaymentsByMonth()
+  + GetPaidPaymentsByYear()
+  + GetPendingPaymentsByYear()
+  + GetRemainingDebt()
+  + GetInvoiceAmount()
+  + GetNextInvoiceDate()
+  + GetEarliestPaymentDate()
+  + GetLatestPaymentDate()
+  + GetDebtCountByCreditCard()
+  + DeletePayment()
+  + ChangeInvoiceMonth()
+  + ChangeDebtInstallments()
+  + ChangeDebtTotalAmount()
+}
+
+class InicializationService {
+  - recurringTransactionService : RecurringTransactionService
+  + Initialize()
+}
+
+class WalletTransactionService {
+  - m_walletRepository : WalletRepository
+  - m_transferRepository : TransferRepository
+  - m_walletTransactionRepository : WalletTransactionRepository
+  + UpdateTransaction()
+  + DeleteTransaction()
+  + ConfirmTransaction()
+  + GetTransactionById()
+  + GetOldestTransactionDate()
+  + GetNonArchivedOldestTransactionDate()
+  + GetNewestTransactionDate()
+  + GetNonArchivedNewestTransactionDate()
+  + GetTransactionCountByWallet()
+  + GetNonArchivedTransactionCountByWallet()
+}
+
+class WalletService {
+  - m_walletRepository : WalletRepository
+  - m_walletTransactionRepository : WalletTransactionRepository
+  - m_walletTypeRepository : WalletTypeRepository
+  + CreateWallet()
+  + DeleteWallet()
+  + ArchiveWallet()
+  + UnarchiveWallet()
+  + RenameWallet()
+  + ChangeWalletType()
+  + UpdateWalletBalance()
+  + GetWalletByName()
+  + GetWalletById()
+}
+
+class RecurringTransactionService {
+  - recurringTransactionRepository : RecurringTransactionRepository
+  - walletTransactionService : WalletTransactionService
+  - walletRepository : WalletRepository
+  + StopRecurringTransaction()
+  + DeleteRecurringTransaction()
+  + UpdateRecurringTransaction()
+  + ProcessRecurringTransactions()
+}
+
+class CategoryService {
+  - categoryRepository : CategoryRepository
+  + AddCategory()
+  + DeleteCategory()
+  + RenameCategory()
+  + ArchiveCategory()
+  + UnarchiveCategory()
+  + GetCategoryByName()
+  + CountTransactions()
+}
+
+interface CreditCardDebtRepository
+interface CreditCardPaymentRepository
+interface CreditCardRepository
+interface CreditCardOperatorRepository
+interface WalletRepository
+interface CategoryRepository
+interface TransferRepository
+interface WalletTransactionRepository
+interface WalletTypeRepository
+interface RecurringTransactionRepository
+
+CreditCardService --> CreditCardDebtRepository : uses
+CreditCardService --> CreditCardPaymentRepository : uses
+CreditCardService --> CreditCardRepository : uses
+CreditCardService --> CreditCardOperatorRepository : uses
+CreditCardService --> WalletRepository : uses
+CreditCardService --> CategoryRepository : uses
+
+RecurringTransactionService --> RecurringTransactionRepository : uses
+RecurringTransactionService --> WalletTransactionService : uses
+RecurringTransactionService --> WalletRepository : uses
+
+WalletTransactionService --> WalletRepository : uses
+WalletTransactionService --> TransferRepository : uses
+WalletTransactionService --> WalletTransactionRepository : uses
+
+WalletService --> WalletRepository : uses
+WalletService --> WalletTransactionRepository : uses
+WalletService --> WalletTypeRepository : uses
+
+CategoryService --> CategoryRepository : uses
+
+InicializationService --> RecurringTransactionService : uses
+@enduml

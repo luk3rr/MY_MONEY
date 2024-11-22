@@ -58,7 +58,7 @@
   4. O sistema registra a receita na carteira selecionada e atualiza o saldo.
 - **Fluxos alternativos:**
   - **2.1:** Caso o valor da receita seja inválido (ex.: valor negativo), o sistema exibe uma mensagem de erro.
-  - **2.2:** Caso o usuário não forneça os dados obrigatórios, o sistema exibe uma mensagem de erro e solicita que ele preencha os dados novamente. 
+  - **2.2:** Caso o usuário não forneça os dados obrigatórios, o sistema exibe uma mensagem de erro e solicita que ele preencha os dados novamente.
 - **Pós-condição:**
   - A receita é registrada na carteira e o saldo da mesma é atualizado.
 
@@ -130,3 +130,72 @@
   3. O usuário pode filtrar as transações por período ou categoria, caso deseje.
 - **Pós-condição:**
   - O usuário visualiza o saldo atualizado e o histórico de transações.
+
+---
+
+### 10. Registrar Dívida no Cartão de Crédito
+- **Ator:** Usuário
+- **Pré-condição:** O usuário deve possuir ao menos um cartão de crédito cadastrado.
+- **Fluxo normal:**
+  1. O usuário seleciona a opção "Registrar Dívida no Cartão de Crédito".
+  2. O sistema solicita os dados da dívida (valor, descrição, categoria, e data de vencimento).
+  3. O usuário preenche os dados e confirma.
+  4. O sistema registra a dívida associada ao cartão e atualiza o saldo devedor do cartão.
+- **Fluxos alternativos:**
+  - **2.1:** Caso o usuário não forneça os dados obrigatórios, o sistema exibe uma mensagem de erro e solicita que ele preencha novamente.
+  - **2.2:** Caso o valor informado seja inválido (ex.: negativo), o sistema exibe uma mensagem de erro.
+- **Pós-condição:**
+  - A dívida é registrada no cartão de crédito e o saldo devedor do cartão é atualizado.
+
+---
+
+### 11. Registrar Pagamento da Fatura do Cartão de Crédito
+- **Ator:** Usuário
+- **Pré-condição:** O usuário deve possuir ao menos um cartão de crédito com saldo devedor registrado.
+- **Fluxo normal:**
+  1. O usuário seleciona a opção "Registrar Pagamento da Fatura do Cartão de Crédito".
+  2. O sistema solicita a carteira de onde será debitado.
+  3. O usuário preenche os dados e confirma.
+  4. O sistema debita o valor da carteira selecionada e reduz o saldo devedor do cartão.
+- **Pós-condição:**
+  - O pagamento é registrado, o saldo da carteira é atualizado e o saldo devedor do cartão é reduzido.
+
+---
+
+### 12. Arquivar Carteira
+- **Ator:** Usuário
+- **Pré-condição:** O saldo da carteira deve ser igual a zero e não deve haver transações pendentes associadas.
+- **Fluxo normal:**
+  1. O usuário seleciona a opção "Arquivar Carteira".
+  2. O sistema verifica se o saldo é zero e se há transações pendentes.
+  3. Caso todas as condições sejam atendidas, o sistema arquiva a carteira.
+- **Pós-condição:**
+  - A carteira é arquivada e não fica mais disponível para novas transações.
+
+---
+
+### 13. Arquivar Categoria
+- **Ator:** Usuário
+- **Pré-condição:** A categoria não deve estar associada a transações ativas ou recorrentes.
+- **Fluxo normal:**
+  1. O usuário seleciona a opção "Arquivar Categoria".
+  2. O sistema verifica se a categoria possui associações com transações ativas ou recorrentes.
+  3. Caso não existam associações, o sistema arquiva a categoria.
+- **Pós-condição:**
+  - A categoria é arquivada e não pode ser associada a novas transações.
+
+---
+
+### 14. Arquivar Cartão de Crédito
+- **Ator:** Usuário
+- **Pré-condição:** O saldo devedor do cartão deve ser zero e não devem haver faturas pendentes.
+- **Fluxo normal:**
+  1. O usuário seleciona a opção "Arquivar Cartão de Crédito".
+  2. O sistema verifica se o saldo devedor é zero e se não há faturas pendentes.
+  3. Caso todas as condições sejam atendidas, o sistema arquiva o cartão de crédito.
+- **Fluxos alternativos:**
+  - **6.2:** Caso existam faturas pendentes, o sistema exibe uma mensagem de erro e impede o arquivamento.
+- **Pós-condição:**
+  - O cartão de crédito é arquivado e não pode ser utilizado para novas transações.
+
+---
