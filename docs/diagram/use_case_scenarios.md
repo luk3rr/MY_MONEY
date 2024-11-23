@@ -164,11 +164,9 @@
 
 ### 12. Arquivar Carteira
 - **Ator:** Usuário
-- **Pré-condição:** O saldo da carteira deve ser igual a zero e não deve haver transações pendentes associadas.
+- **Pré-condição:** Nenhuma
 - **Fluxo normal:**
   1. O usuário seleciona a opção "Arquivar Carteira".
-  2. O sistema verifica se o saldo é zero e se há transações pendentes.
-  3. Caso todas as condições sejam atendidas, o sistema arquiva a carteira.
 - **Pós-condição:**
   - A carteira é arquivada e não fica mais disponível para novas transações.
 
@@ -176,11 +174,9 @@
 
 ### 13. Arquivar Categoria
 - **Ator:** Usuário
-- **Pré-condição:** A categoria não deve estar associada a transações ativas ou recorrentes.
+- **Pré-condição:** Nenhuma
 - **Fluxo normal:**
   1. O usuário seleciona a opção "Arquivar Categoria".
-  2. O sistema verifica se a categoria possui associações com transações ativas ou recorrentes.
-  3. Caso não existam associações, o sistema arquiva a categoria.
 - **Pós-condição:**
   - A categoria é arquivada e não pode ser associada a novas transações.
 
