@@ -8,11 +8,13 @@ package org.moinex.ui.common;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import org.moinex.entities.WalletTransaction;
 import org.moinex.services.CreditCardService;
+import org.moinex.services.RecurringTransactionService;
 import org.moinex.services.WalletTransactionService;
 import org.moinex.util.Constants;
 import org.moinex.util.TransactionStatus;
@@ -96,20 +98,25 @@ public class ResumePaneController
 
     private WalletTransactionService walletTransactionService;
 
+    private RecurringTransactionService recurringTransactionService;
+
     private CreditCardService creditCardService;
 
     /**
      * Constructor
      * @param walletTransactionService WalletTransactionService
+     * @param recurringTransactionService RecurringTransactionService
      * @param creditCardService CreditCardService
      * @note This constructor is used for dependency injection
      */
     @Autowired
-    public ResumePaneController(WalletTransactionService walletTransactionService,
-                                CreditCardService        creditCardService)
+    public ResumePaneController(WalletTransactionService    walletTransactionService,
+                                RecurringTransactionService recurringTransactionService,
+                                CreditCardService           creditCardService)
     {
-        this.walletTransactionService = walletTransactionService;
-        this.creditCardService        = creditCardService;
+        this.walletTransactionService    = walletTransactionService;
+        this.recurringTransactionService = recurringTransactionService;
+        this.creditCardService           = creditCardService;
     }
 
     @FXML
@@ -145,8 +152,16 @@ public class ResumePaneController
      */
     public void UpdateResumePane(Integer month, Integer year)
     {
+        // Get all transactions of the month, including future transactions
         List<WalletTransaction> transactions =
             walletTransactionService.GetNonArchivedTransactionsByMonth(month, year);
+
+        List<WalletTransaction> futureTransactions =
+            recurringTransactionService.GetFutureTransactionsByMonth(
+                YearMonth.of(year, month),
+                YearMonth.of(year, month));
+
+        transactions.addAll(futureTransactions);
 
         BigDecimal crcTotalDebtAmount =
             creditCardService.GetTotalDebtAmount(month, year);

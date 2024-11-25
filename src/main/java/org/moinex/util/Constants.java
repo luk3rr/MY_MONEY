@@ -188,6 +188,9 @@ public final class Constants
     public static final Double MENU_EXPANDED_WIDTH  = 220.0;
 
     public static final Integer XYBAR_CHART_MONTHS         = 12;
+    public static final Integer XYBAR_CHART_FUTURE_MONTHS  = 3;
+    public static final Integer MONTH_RESUME_FUTURE_MONTHS = 3;
+
     public static final Integer CRC_XYBAR_CHART_MAX_MONTHS = 25;
     public static final Integer XYBAR_CHART_TICKS          = 6;
 

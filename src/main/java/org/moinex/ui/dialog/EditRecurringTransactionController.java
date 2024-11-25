@@ -8,7 +8,6 @@ package org.moinex.ui.dialog;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.List;
 import javafx.fxml.FXML;

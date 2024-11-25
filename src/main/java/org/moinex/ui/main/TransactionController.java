@@ -452,7 +452,8 @@ public class TransactionController
         LocalDateTime     currentDate = LocalDateTime.now();
         DateTimeFormatter formatter   = DateTimeFormatter.ofPattern("MMM/yy");
 
-        List<Category> categories = categoryService.GetNonArchivedCategoriesOrderedByName();
+        List<Category> categories =
+            categoryService.GetNonArchivedCategoriesOrderedByName();
         Map<YearMonth, Map<Category, Double>> monthlyTotals = new LinkedHashMap<>();
 
         // Loop through the last few months
@@ -777,12 +778,13 @@ public class TransactionController
                                    ? oldestCreditCard
                                    : oldestWalletTransaction;
 
-        LocalDate now = LocalDate.now();
+        LocalDate future =
+            LocalDate.now().plusMonths(Constants.MONTH_RESUME_FUTURE_MONTHS);
 
         // Generate a list of YearMonth objects from the oldest transaction date to
         // the current date
         YearMonth startMonth   = YearMonth.from(oldest);
-        YearMonth currentMonth = YearMonth.from(now);
+        YearMonth currentMonth = YearMonth.from(future);
 
         // Generate the list of months between the oldest and the current date
         List<YearMonth> months = new ArrayList<>();
@@ -799,7 +801,7 @@ public class TransactionController
         // Custom string converter to format the YearMonth as "Month/Year"
         monthResumeComboBox.setConverter(new StringConverter<YearMonth>() {
             private final DateTimeFormatter formatter =
-                DateTimeFormatter.ofPattern("MMM yyyy");
+                DateTimeFormatter.ofPattern("yyyy MMM");
 
             @Override
             public String toString(YearMonth yearMonth)

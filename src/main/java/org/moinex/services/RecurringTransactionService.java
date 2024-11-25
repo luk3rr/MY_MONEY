@@ -9,12 +9,15 @@ package org.moinex.services;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import org.moinex.entities.Category;
 import org.moinex.entities.RecurringTransaction;
 import org.moinex.entities.Wallet;
+import org.moinex.entities.WalletTransaction;
 import org.moinex.repositories.RecurringTransactionRepository;
 import org.moinex.repositories.WalletRepository;
 import org.moinex.util.Constants;
@@ -483,5 +486,43 @@ public class RecurringTransactionService
     public List<RecurringTransaction> GetAllRecurringTransactions()
     {
         return recurringTransactionRepository.findAll();
+    }
+
+    public List<WalletTransaction> GetFutureTransactionsByMonth(YearMonth startMonth,
+                                                                YearMonth endMonth)
+    {
+        List<RecurringTransaction> recurringTransactions =
+            recurringTransactionRepository.findByStatus(
+                RecurringTransactionStatus.ACTIVE);
+
+        List<WalletTransaction> futureTransactions = new ArrayList<>();
+
+        // Generate the future transactions for each recurring transaction
+        for (RecurringTransaction recurring : recurringTransactions)
+        {
+            LocalDateTime nextDueDate = recurring.GetNextDueDate();
+
+            while (nextDueDate.isBefore(endMonth.atEndOfMonth().atTime(23, 59, 59)))
+            {
+                if (nextDueDate.isAfter(startMonth.atDay(1).atTime(0, 0, 0)))
+                {
+                    futureTransactions.add(
+                        new WalletTransaction(recurring.GetWallet(),
+                                              recurring.GetCategory(),
+                                              recurring.GetType(),
+                                              TransactionStatus.PENDING,
+                                              nextDueDate,
+                                              recurring.GetAmount(),
+                                              recurring.GetDescription()));
+                }
+
+                // Calculate the next due date
+                nextDueDate =
+                    CalculateNextDueDate(nextDueDate, recurring.GetFrequency());
+                recurring.SetNextDueDate(nextDueDate);
+            }
+        }
+
+        return futureTransactions;
     }
 }

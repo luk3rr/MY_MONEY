@@ -9,6 +9,7 @@ package org.moinex.ui.main;
 import com.jfoenix.controls.JFXButton;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,6 +40,7 @@ import org.moinex.entities.CreditCard;
 import org.moinex.entities.Wallet;
 import org.moinex.entities.WalletTransaction;
 import org.moinex.services.CreditCardService;
+import org.moinex.services.RecurringTransactionService;
 import org.moinex.services.WalletService;
 import org.moinex.services.WalletTransactionService;
 import org.moinex.ui.common.ResumePaneController;
@@ -112,6 +114,8 @@ public class HomeController
 
     private WalletTransactionService walletTransactionService;
 
+    private RecurringTransactionService recurringTransactionService;
+
     private CreditCardService creditCardService;
 
     private Integer walletPaneCurrentPage = 0;
@@ -124,17 +128,20 @@ public class HomeController
      * Constructor for injecting the wallet and credit card services
      * @param walletService The wallet service
      * @param walletTransactionService The wallet transaction service
+     * @param recurringTransactionService The recurring transaction service
      * @param creditCardService The credit card service
      * @note This constructor is used for dependency injection
      */
     @Autowired
-    public HomeController(WalletService            walletService,
-                          WalletTransactionService walletTransactionService,
-                          CreditCardService        creditCardService)
+    public HomeController(WalletService               walletService,
+                          WalletTransactionService    walletTransactionService,
+                          RecurringTransactionService recurringTransactionService,
+                          CreditCardService           creditCardService)
     {
-        this.walletService            = walletService;
-        this.walletTransactionService = walletTransactionService;
-        this.creditCardService        = creditCardService;
+        this.walletService               = walletService;
+        this.walletTransactionService    = walletTransactionService;
+        this.recurringTransactionService = recurringTransactionService;
+        this.creditCardService           = creditCardService;
     }
 
     @FXML
@@ -415,26 +422,42 @@ public class HomeController
         Map<String, Double> monthlyExpenses = new LinkedHashMap<>();
         Map<String, Double> monthlyIncomes  = new LinkedHashMap<>();
 
-        LocalDateTime     currentDate = LocalDateTime.now();
-        DateTimeFormatter formatter   = DateTimeFormatter.ofPattern("MMM/yy");
+        LocalDateTime maxMonth =
+            LocalDateTime.now().plusMonths(Constants.XYBAR_CHART_FUTURE_MONTHS);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM/yy");
 
-        // Collect data for the last months
-        for (Integer i = 0; i < Constants.XYBAR_CHART_MONTHS; i++)
+        Integer totalMonths =
+            Constants.XYBAR_CHART_MONTHS + Constants.XYBAR_CHART_FUTURE_MONTHS;
+
+        // Collect data for the last months and the future months
+        for (Integer i = 0; i < totalMonths; i++)
         {
             // Get the data from the oldest month to the most recent, to keep the order
-            LocalDateTime date =
-                currentDate.minusMonths(Constants.XYBAR_CHART_MONTHS - i - 1);
-            Integer month = date.getMonthValue();
-            Integer year  = date.getYear();
+            LocalDateTime date  = maxMonth.minusMonths(totalMonths - i - 1);
+            Integer       month = date.getMonthValue();
+            Integer       year  = date.getYear();
 
             // Get transactions
             List<WalletTransaction> transactions =
                 walletTransactionService.GetNonArchivedTransactionsByMonth(month, year);
-            logger.info("Found " + transactions.size() + " transactions for " + month +
-                        "/" + year);
+
+            // Get future transactions and merge with the current transactions
+            List<WalletTransaction> futureTransactions =
+                recurringTransactionService.GetFutureTransactionsByMonth(
+                    YearMonth.of(year, month),
+                    YearMonth.of(year, month));
+
+            transactions.addAll(futureTransactions);
+
+            logger.info("Found " + transactions.size() + " (" +
+                        futureTransactions.size() + " future) transactions for " +
+                        month + "/" + year);
 
             BigDecimal crcPaidPayments =
                 creditCardService.GetPaidPaymentsByMonth(month, year);
+
+            BigDecimal crcPendingPayments =
+                creditCardService.GetPendingPaymentsByMonth(month, year);
 
             // Calculate total expenses for the month
             BigDecimal totalExpenses =
@@ -444,7 +467,7 @@ public class HomeController
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             // Consider credit card payments as expenses
-            totalExpenses = totalExpenses.add(crcPaidPayments);
+            totalExpenses = totalExpenses.add(crcPaidPayments).add(crcPendingPayments);
 
             // Calculate total incomes for the month
             BigDecimal totalIncomes =

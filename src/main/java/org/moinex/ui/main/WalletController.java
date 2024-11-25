@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -38,6 +39,7 @@ import org.moinex.entities.Wallet;
 import org.moinex.entities.WalletTransaction;
 import org.moinex.entities.WalletType;
 import org.moinex.services.CreditCardService;
+import org.moinex.services.RecurringTransactionService;
 import org.moinex.services.WalletService;
 import org.moinex.services.WalletTransactionService;
 import org.moinex.ui.common.WalletFullPaneController;
@@ -119,6 +121,8 @@ public class WalletController
 
     private WalletTransactionService walletTransactionService;
 
+    private RecurringTransactionService recurringTransactionService;
+
     private List<CheckBox> doughnutChartCheckBoxes;
 
     private List<WalletTransaction> transactions;
@@ -142,16 +146,20 @@ public class WalletController
      * @param walletService WalletService
      * @param creditCardService CreditCardService
      * @param walletTransactionService WalletTransactionService
+     * @param recurringTransactionService RecurringTransactionService
      * @note This constructor is used for dependency injection
      */
     @Autowired
-    public WalletController(WalletService            walletService,
-                            CreditCardService        creditCardService,
-                            WalletTransactionService walletTransactionService)
+    public WalletController(WalletService               walletService,
+                            CreditCardService           creditCardService,
+                            WalletTransactionService    walletTransactionService,
+                            RecurringTransactionService recurringTransactionService)
+
     {
-        this.walletService            = walletService;
-        this.creditCardService        = creditCardService;
-        this.walletTransactionService = walletTransactionService;
+        this.walletService               = walletService;
+        this.creditCardService           = creditCardService;
+        this.walletTransactionService    = walletTransactionService;
+        this.recurringTransactionService = recurringTransactionService;
     }
 
     @FXML
@@ -568,8 +576,12 @@ public class WalletController
         Map<String, Double> monthlyExpenses = new LinkedHashMap<>();
         Map<String, Double> monthlyIncomes  = new LinkedHashMap<>();
 
-        LocalDateTime     currentDate = LocalDateTime.now();
-        DateTimeFormatter formatter   = DateTimeFormatter.ofPattern("MMM/yy");
+        LocalDateTime maxMonth =
+            LocalDateTime.now().plusMonths(Constants.XYBAR_CHART_FUTURE_MONTHS);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM/yy");
+
+        Integer totalMonths =
+            Constants.XYBAR_CHART_MONTHS + Constants.XYBAR_CHART_FUTURE_MONTHS;
 
         // Filter wallet type according to the selected item
         // If "All Wallets" is selected, show all transactions
@@ -577,19 +589,28 @@ public class WalletController
             moneyFlowPaneWalletTypeComboBox.getSelectionModel().getSelectedIndex();
 
         // Collect data for the last months
-        for (Integer i = 0; i < Constants.XYBAR_CHART_MONTHS; i++)
+        for (Integer i = 0; i < totalMonths; i++)
         {
             // Get the data from the oldest month to the most recent, to keep the order
-            LocalDateTime date =
-                currentDate.minusMonths(Constants.XYBAR_CHART_MONTHS - i - 1);
-            Integer month = date.getMonthValue();
-            Integer year  = date.getYear();
+            LocalDateTime date  = maxMonth.minusMonths(totalMonths - i - 1);
+            Integer       month = date.getMonthValue();
+            Integer       year  = date.getYear();
 
             // Get transactions
             List<WalletTransaction> transactions =
                 walletTransactionService.GetNonArchivedTransactionsByMonth(month, year);
-            logger.info("Found " + transactions.size() + " transactions for " + month +
-                        "/" + year);
+
+            // Get future transactions and merge with the current transactions
+            List<WalletTransaction> futureTransactions =
+                recurringTransactionService.GetFutureTransactionsByMonth(
+                    YearMonth.of(year, month),
+                    YearMonth.of(year, month));
+
+            transactions.addAll(futureTransactions);
+
+            logger.info("Found " + transactions.size() + " (" +
+                        futureTransactions.size() + " future) transactions for " +
+                        month + "/" + year);
 
             BigDecimal totalExpenses = BigDecimal.ZERO;
             BigDecimal totalIncomes  = BigDecimal.ZERO;
@@ -636,8 +657,12 @@ public class WalletController
             }
 
             // Consider credit card payments as expenses
+            // TODO: Fix after adding default wallet to paid credit card transactions
             totalExpenses = totalExpenses.add(
                 creditCardService.GetPaidPaymentsByMonth(month, year));
+
+            totalExpenses = totalExpenses.add(
+                creditCardService.GetPendingPaymentsByMonth(month, year));
 
             monthlyExpenses.put(date.format(formatter), totalExpenses.doubleValue());
             monthlyIncomes.put(date.format(formatter), totalIncomes.doubleValue());
