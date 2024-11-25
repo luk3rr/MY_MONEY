@@ -276,7 +276,7 @@ public class AddRecurringTransactionController
 
     private void LoadWallets()
     {
-        wallets = walletService.GetAllWallets();
+        wallets = walletService.GetAllNonArchivedWalletsOrderedByName();
 
         walletComboBox.getItems().addAll(
             wallets.stream().map(Wallet::GetName).toList());
@@ -284,7 +284,7 @@ public class AddRecurringTransactionController
 
     private void LoadCategories()
     {
-        categories = categoryService.GetNonArchivedCategories();
+        categories = categoryService.GetNonArchivedCategoriesOrderedByName();
 
         categoryComboBox.getItems().addAll(
             categories.stream().map(Category::GetName).toList());

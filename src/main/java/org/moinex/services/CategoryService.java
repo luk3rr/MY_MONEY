@@ -164,12 +164,12 @@ public class CategoryService
     }
 
     /**
-     * Get all non-archived categories
+     * Get all non-archived categories ordered by name
      * @return List of categories
      */
-    public List<Category> GetNonArchivedCategories()
+    public List<Category> GetNonArchivedCategoriesOrderedByName()
     {
-        return categoryRepository.findAllByArchivedFalse();
+        return categoryRepository.findAllByArchivedFalseOrderByNameAsc();
     }
 
     /**

@@ -372,7 +372,7 @@ public class AddTransferController
 
     private void LoadWallets()
     {
-        wallets = walletService.GetAllWallets();
+        wallets = walletService.GetAllNonArchivedWalletsOrderedByName();
 
         senderWalletComboBox.getItems().addAll(
             wallets.stream().map(Wallet::GetName).toList());

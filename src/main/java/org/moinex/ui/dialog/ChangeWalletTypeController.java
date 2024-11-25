@@ -140,7 +140,7 @@ public class ChangeWalletTypeController
 
     private void LoadWallets()
     {
-        wallets = walletService.GetAllWallets();
+        wallets = walletService.GetAllNonArchivedWalletsOrderedByName();
     }
 
     private void LoadWalletTypes()

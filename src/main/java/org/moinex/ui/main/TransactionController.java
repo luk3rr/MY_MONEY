@@ -452,7 +452,7 @@ public class TransactionController
         LocalDateTime     currentDate = LocalDateTime.now();
         DateTimeFormatter formatter   = DateTimeFormatter.ofPattern("MMM/yy");
 
-        List<Category> categories = categoryService.GetNonArchivedCategories();
+        List<Category> categories = categoryService.GetNonArchivedCategoriesOrderedByName();
         Map<YearMonth, Map<Category, Double>> monthlyTotals = new LinkedHashMap<>();
 
         // Loop through the last few months

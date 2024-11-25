@@ -109,6 +109,6 @@ public class RenameWalletController
 
     private void LoadWallets()
     {
-        wallets = walletService.GetAllWallets();
+        wallets = walletService.GetAllNonArchivedWalletsOrderedByName();
     }
 }

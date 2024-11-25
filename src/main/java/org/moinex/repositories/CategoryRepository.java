@@ -18,10 +18,10 @@ import org.springframework.stereotype.Repository;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     /**
-     * Get all non archived categories
+     * Get all non archived categories ordered by name
      * @return List of categories
      */
-     List<Category> findAllByArchivedFalse();
+     List<Category> findAllByArchivedFalseOrderByNameAsc();
 
     /**
      * Check if a category with a given name exists

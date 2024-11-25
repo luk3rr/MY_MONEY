@@ -209,7 +209,7 @@ public class AddCreditCardDebtController
 
     private void LoadCategories()
     {
-        categories = categoryService.GetCategories();
+        categories = categoryService.GetNonArchivedCategoriesOrderedByName();
     }
 
     private void LoadCreditCards()
@@ -369,7 +369,7 @@ public class AddCreditCardDebtController
             @Override
             public String toString(YearMonth yearMonth)
             {
-                return yearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"));
+                return yearMonth.format(DateTimeFormatter.ofPattern("yyyy MMMM"));
             }
 
             @Override

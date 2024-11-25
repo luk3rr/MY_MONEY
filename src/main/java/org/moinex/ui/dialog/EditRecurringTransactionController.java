@@ -345,7 +345,7 @@ public class EditRecurringTransactionController
 
     private void LoadWallets()
     {
-        wallets = walletService.GetAllWallets();
+        wallets = walletService.GetAllNonArchivedWalletsOrderedByName();
 
         walletComboBox.getItems().addAll(
             wallets.stream().map(Wallet::GetName).toList());
@@ -353,7 +353,7 @@ public class EditRecurringTransactionController
 
     private void LoadCategories()
     {
-        categories = categoryService.GetNonArchivedCategories();
+        categories = categoryService.GetNonArchivedCategoriesOrderedByName();
 
         categoryComboBox.getItems().addAll(
             categories.stream().map(Category::GetName).toList());

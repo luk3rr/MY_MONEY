@@ -266,7 +266,7 @@ public class CreditCardInvoicePaymentController
 
     private void LoadWallets()
     {
-        wallets = walletService.GetAllWallets();
+        wallets = walletService.GetAllNonArchivedWalletsOrderedByName();
 
         walletComboBox.getItems().addAll(
             wallets.stream().map(Wallet::GetName).toList());

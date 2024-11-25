@@ -377,7 +377,7 @@ public class EditTransactionController
 
     private void LoadCategories()
     {
-        categories = categoryService.GetNonArchivedCategories();
+        categories = categoryService.GetNonArchivedCategoriesOrderedByName();
 
         categoryComboBox.getItems().addAll(
             categories.stream().map(Category::GetName).toList());
