@@ -96,6 +96,13 @@ public class CreditCardInvoicePaymentController
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM/yy");
 
         crcInvoiceMonthLabel.setText(invoiceDate.format(formatter));
+
+        if (crc.GetDefaultBillingWallet() != null)
+        {
+            walletComboBox.setValue(crc.GetDefaultBillingWallet().GetName());
+            UpdateWalletBalance();
+            WalletAfterBalance();
+        }
     }
 
     @FXML

@@ -35,6 +35,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import org.moinex.charts.DoughnutChart;
+import org.moinex.entities.CreditCardPayment;
 import org.moinex.entities.Wallet;
 import org.moinex.entities.WalletTransaction;
 import org.moinex.entities.WalletType;
@@ -606,6 +607,9 @@ public class WalletController
                     YearMonth.of(year, month),
                     YearMonth.of(year, month));
 
+            List<CreditCardPayment> crcPayments =
+                creditCardService.GetCreditCardPayments(month, year);
+
             transactions.addAll(futureTransactions);
 
             logger.info("Found " + transactions.size() + " (" +
@@ -622,6 +626,11 @@ public class WalletController
                                     .filter(t -> t.GetType() == TransactionType.EXPENSE)
                                     .map(WalletTransaction::GetAmount)
                                     .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                totalExpenses =
+                    totalExpenses.add(crcPayments.stream()
+                                          .map(CreditCardPayment::GetAmount)
+                                          .reduce(BigDecimal.ZERO, BigDecimal::add));
 
                 // Calculate total incomes for the month
                 totalIncomes = transactions.stream()
@@ -642,6 +651,32 @@ public class WalletController
                                     .map(WalletTransaction::GetAmount)
                                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+                totalExpenses = totalExpenses.add(
+                    crcPayments.stream()
+                        .filter(p -> {
+                            if (p.GetWallet() != null)
+                            {
+                                return p.GetWallet().GetType().GetId() ==
+                                    selectedWalletType.GetId();
+                            }
+                            else if (p.GetCreditCardDebt()
+                                         .GetCreditCard()
+                                         .GetDefaultBillingWallet() != null)
+                            {
+                                return p.GetCreditCardDebt()
+                                           .GetCreditCard()
+                                           .GetDefaultBillingWallet()
+                                           .GetType()
+                                           .GetId() == selectedWalletType.GetId();
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        })
+                        .map(CreditCardPayment::GetAmount)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add));
+
                 // Calculate total incomes for the month
                 totalIncomes = transactions.stream()
                                    .filter(t
@@ -655,14 +690,6 @@ public class WalletController
             {
                 logger.warning("Invalid index: " + selectedIndex);
             }
-
-            // Consider credit card payments as expenses
-            // TODO: Fix after adding default wallet to paid credit card transactions
-            totalExpenses = totalExpenses.add(
-                creditCardService.GetPaidPaymentsByMonth(month, year));
-
-            totalExpenses = totalExpenses.add(
-                creditCardService.GetPendingPaymentsByMonth(month, year));
 
             monthlyExpenses.put(date.format(formatter), totalExpenses.doubleValue());
             monthlyIncomes.put(date.format(formatter), totalIncomes.doubleValue());

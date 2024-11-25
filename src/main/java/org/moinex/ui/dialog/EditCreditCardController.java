@@ -14,7 +14,9 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.moinex.entities.CreditCard;
 import org.moinex.entities.CreditCardOperator;
+import org.moinex.entities.Wallet;
 import org.moinex.services.CreditCardService;
+import org.moinex.services.WalletService;
 import org.moinex.util.Constants;
 import org.moinex.util.WindowUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,9 +46,16 @@ public class EditCreditCardController
     @FXML
     private ComboBox<String> operatorComboBox;
 
+    @FXML
+    private ComboBox<String> defaultBillingWalletComboBox;
+
     private CreditCardService creditCardService;
 
+    private WalletService walletService;
+
     private List<CreditCardOperator> operators;
+
+    private List<Wallet> wallets;
 
     private CreditCard crcToUpdate;
 
@@ -55,12 +64,15 @@ public class EditCreditCardController
     /**
      * Constructor
      * @param creditCardService The credit card service
+     * @param walletService The wallet service
      * @note This constructor is used for dependency injection
      */
     @Autowired
-    public EditCreditCardController(CreditCardService creditCardService)
+    public EditCreditCardController(CreditCardService creditCardService,
+                                    WalletService     walletService)
     {
         this.creditCardService = creditCardService;
+        this.walletService     = walletService;
     }
 
     public void SetCreditCard(CreditCard crc)
@@ -73,6 +85,16 @@ public class EditCreditCardController
         operatorComboBox.setValue(crc.GetOperator().GetName());
         closingDayComboBox.setValue(crc.GetClosingDay().toString());
         dueDayComboBox.setValue(crc.GetBillingDueDay().toString());
+
+        if (crc.GetDefaultBillingWallet() != null)
+        {
+            defaultBillingWalletComboBox.setValue(
+                crc.GetDefaultBillingWallet().GetName());
+        }
+        else
+        {
+            defaultBillingWalletComboBox.setValue(null);
+        }
     }
 
     @FXML
@@ -111,11 +133,12 @@ public class EditCreditCardController
         String crcName = nameField.getText();
         crcName        = crcName.strip(); // Remove leading and trailing whitespaces
 
-        String crcLimitStr          = limitField.getText();
-        String crcLastFourDigitsStr = lastFourDigitsField.getText();
-        String crcClosingDayStr     = closingDayComboBox.getValue();
-        String crcDueDayStr         = dueDayComboBox.getValue();
-        String crcOperatorName      = operatorComboBox.getValue();
+        String crcLimitStr                 = limitField.getText();
+        String crcLastFourDigitsStr        = lastFourDigitsField.getText();
+        String crcClosingDayStr            = closingDayComboBox.getValue();
+        String crcDueDayStr                = dueDayComboBox.getValue();
+        String crcOperatorName             = operatorComboBox.getValue();
+        String crcDefaultBillingWalletName = defaultBillingWalletComboBox.getValue();
 
         if (crcName.isEmpty() || crcLimitStr.isEmpty() ||
             crcLastFourDigitsStr.isEmpty() || crcOperatorName == null ||
@@ -123,7 +146,7 @@ public class EditCreditCardController
         {
             WindowUtils.ShowErrorDialog("Error",
                                         "Empty fields",
-                                        "Please fill all the fields.");
+                                        "Please fill all required fields.");
 
             return;
         }
@@ -140,13 +163,31 @@ public class EditCreditCardController
             Integer    crcClosingDay = Integer.parseInt(crcClosingDayStr);
             Integer    crcDueDay     = Integer.parseInt(crcDueDayStr);
 
+            Wallet crcDefaultBillingWallet =
+                crcDefaultBillingWalletName != null &&
+                        !crcDefaultBillingWalletName.isEmpty()
+                    ? wallets.stream()
+                          .filter(w -> w.GetName().equals(crcDefaultBillingWalletName))
+                          .findFirst()
+                          .get()
+                    : null;
+
+            Boolean defaultWalletChanged =
+                (crcDefaultBillingWallet != null &&
+                 crcToUpdate.GetDefaultBillingWallet() != null &&
+                 crcDefaultBillingWallet.GetId() ==
+                     crcToUpdate.GetDefaultBillingWallet().GetId()) ||
+                (crcDefaultBillingWallet == null &&
+                 crcToUpdate.GetDefaultBillingWallet() == null);
+
             // Check if has any modification
             if (crcToUpdate.GetName().equals(crcName) &&
                 crcLimit.compareTo(crcToUpdate.GetMaxDebt()) == 0 &&
                 crcToUpdate.GetLastFourDigits().equals(crcLastFourDigitsStr) &&
                 crcToUpdate.GetClosingDay() == crcClosingDay &&
                 crcToUpdate.GetBillingDueDay() == crcDueDay &&
-                crcToUpdate.GetOperator().GetId() == crcOperator.GetId())
+                crcToUpdate.GetOperator().GetId() == crcOperator.GetId() &&
+                defaultWalletChanged)
             {
                 WindowUtils.ShowInformationDialog(
                     "Information",
@@ -161,6 +202,7 @@ public class EditCreditCardController
                 crcToUpdate.SetClosingDay(crcClosingDay);
                 crcToUpdate.SetBillingDueDay(crcDueDay);
                 crcToUpdate.SetOperator(crcOperator);
+                crcToUpdate.SetDefaultBillingWallet(crcDefaultBillingWallet);
 
                 creditCardService.UpdateCreditCard(crcToUpdate);
 
@@ -191,6 +233,11 @@ public class EditCreditCardController
         operators = creditCardService.GetAllCreditCardOperatorsOrderedByName();
     }
 
+    private void LoadWallets()
+    {
+        wallets = walletService.GetAllNonArchivedWalletsOrderedByName();
+    }
+
     private void PopulateComboBoxes()
     {
         for (int i = 1; i <= Constants.MAX_BILLING_DUE_DAY; i++)
@@ -205,5 +252,15 @@ public class EditCreditCardController
         {
             operatorComboBox.getItems().add(operator.GetName());
         }
+
+        LoadWallets();
+
+        for (Wallet wallet : wallets)
+        {
+            defaultBillingWalletComboBox.getItems().add(wallet.GetName());
+        }
+
+        // Add blank option to the default billing wallet combo box
+        defaultBillingWalletComboBox.getItems().add("");
     }
 }

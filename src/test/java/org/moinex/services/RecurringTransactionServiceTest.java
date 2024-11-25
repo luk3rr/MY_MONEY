@@ -13,6 +13,8 @@ import static org.mockito.Mockito.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Year;
+import java.time.YearMonth;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +29,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.moinex.entities.Category;
 import org.moinex.entities.RecurringTransaction;
 import org.moinex.entities.Wallet;
+import org.moinex.entities.WalletTransaction;
 import org.moinex.repositories.RecurringTransactionRepository;
 import org.moinex.repositories.WalletRepository;
 import org.moinex.util.Constants;
@@ -588,5 +591,87 @@ public class RecurringTransactionServiceTest
 
         assertEquals(RecurringTransactionStatus.INACTIVE,
                      capturedTransaction.GetStatus());
+    }
+
+    @Test
+    @DisplayName(
+        "Test if get future recurring transactions by month returns the correct "
+        + "transactions")
+    public void
+    TestGetFutureRecurringTransactionsByMonth()
+    {
+        YearMonth     november2011YearMonth = YearMonth.of(2011, 11);
+        LocalDateTime november2011DateTime =
+            LocalDate.of(2011, 11, 1)
+                .atTime(Constants.RECURRING_TRANSACTION_DEFAULT_TIME);
+
+        Integer expectedTransactions = 0;
+
+        dailyRT.SetNextDueDate(november2011DateTime);
+        expectedTransactions += november2011YearMonth.lengthOfMonth();
+
+        weeklyRecurringTransaction.SetNextDueDate(november2011DateTime);
+        expectedTransactions += 5; // In 4 weeks there are 5 transactions, because it
+                                   // includes the transaction of November 1st
+
+        monthlyRecurringTransaction.SetNextDueDate(november2011DateTime);
+        expectedTransactions += 1;
+
+        yearlyRecurringTransaction.SetNextDueDate(november2011DateTime);
+        expectedTransactions += 1;
+
+        when(recurringTransactionRepository.findByStatus(
+                 RecurringTransactionStatus.ACTIVE))
+            .thenReturn(List.of(dailyRT,
+                                weeklyRecurringTransaction,
+                                monthlyRecurringTransaction,
+                                yearlyRecurringTransaction));
+
+        List<WalletTransaction> futureRecurringTransactions =
+            recurringTransactionService.GetFutureTransactionsByMonth(
+                november2011YearMonth,
+                november2011YearMonth);
+
+        assertEquals(expectedTransactions, futureRecurringTransactions.size());
+    }
+
+    @Test
+    @DisplayName(
+        "Test if get future recurring transactions by year returns the correct "
+        + "transactions")
+    public void
+    TestGetFutureRecurringTransactionsByYear()
+    {
+        Year          year2011 = Year.of(2011);
+        LocalDateTime january2011DateTime =
+            LocalDate.of(2011, 1, 1)
+                .atTime(Constants.RECURRING_TRANSACTION_DEFAULT_TIME);
+
+        Integer expectedTransactions = 0;
+
+        dailyRT.SetNextDueDate(january2011DateTime);
+        expectedTransactions += 365;
+
+        weeklyRecurringTransaction.SetNextDueDate(january2011DateTime);
+        expectedTransactions += 53; // In 52 weeks there are 53 transactions, because it
+                                    // includes the transaction of January 1st
+
+        monthlyRecurringTransaction.SetNextDueDate(january2011DateTime);
+        expectedTransactions += 12;
+
+        yearlyRecurringTransaction.SetNextDueDate(january2011DateTime);
+        expectedTransactions += 1;
+
+        when(recurringTransactionRepository.findByStatus(
+                 RecurringTransactionStatus.ACTIVE))
+            .thenReturn(List.of(dailyRT,
+                                weeklyRecurringTransaction,
+                                monthlyRecurringTransaction,
+                                yearlyRecurringTransaction));
+
+        List<WalletTransaction> futureRecurringTransactions =
+            recurringTransactionService.GetFutureTransactionsByYear(year2011, year2011);
+
+        assertEquals(expectedTransactions, futureRecurringTransactions.size());
     }
 }

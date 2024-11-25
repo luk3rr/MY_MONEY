@@ -35,6 +35,13 @@ public class CreditCard
     @JoinColumn(name = "operator_id", referencedColumnName = "id")
     private CreditCardOperator operator;
 
+    @ManyToOne()
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    @JoinColumn(name                 = "default_billing_wallet_id",
+                referencedColumnName = "id",
+                nullable             = true)
+    private Wallet defaultBillingWallet;
+
     @Column(name = "name", nullable = false, length = 50, unique = true)
     private String name;
 
@@ -81,6 +88,35 @@ public class CreditCard
         this.maxDebt        = maxDebt;
         this.lastFourDigits = lastFourDigits;
         this.operator       = operator;
+
+        this.defaultBillingWallet = null;
+    }
+
+    /**
+     * Constructor for CreditCard
+     * @param name The name of the credit card
+     * @param billingDueDay The day of the month the bill is due
+     * @param closingDay The day of the month the bill is closed
+     * @param maxDebt The maximum debt allowed for the credit card
+     * @param lastFourDigits The last four digits of the credit card
+     * @param operator The operator of the credit card
+     * @param defaultBillingWallet The default billing wallet of the credit card
+     */
+    public CreditCard(String             name,
+                      Integer            billingDueDay,
+                      Integer            closingDay,
+                      BigDecimal         maxDebt,
+                      String             lastFourDigits,
+                      CreditCardOperator operator,
+                      Wallet             defaultBillingWallet)
+    {
+        this.name                 = name;
+        this.billingDueDay        = billingDueDay;
+        this.closingDay           = closingDay;
+        this.maxDebt              = maxDebt;
+        this.lastFourDigits       = lastFourDigits;
+        this.operator             = operator;
+        this.defaultBillingWallet = defaultBillingWallet;
     }
 
     /**
@@ -99,6 +135,15 @@ public class CreditCard
     public CreditCardOperator GetOperator()
     {
         return operator;
+    }
+
+    /**
+     * Get the default billing wallet of the credit card
+     * @return The default billing wallet of the credit card
+     */
+    public Wallet GetDefaultBillingWallet()
+    {
+        return defaultBillingWallet;
     }
 
     /**
@@ -162,6 +207,15 @@ public class CreditCard
     public void SetOperator(CreditCardOperator operator)
     {
         this.operator = operator;
+    }
+
+    /**
+     * Set the default billing wallet of the credit card
+     * @param defaultBillingWallet The new default billing wallet of the credit card
+     */
+    public void SetDefaultBillingWallet(Wallet defaultBillingWallet)
+    {
+        this.defaultBillingWallet = defaultBillingWallet;
     }
 
     /**

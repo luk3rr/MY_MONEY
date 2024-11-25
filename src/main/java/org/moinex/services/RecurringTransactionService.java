@@ -9,6 +9,7 @@ package org.moinex.services;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Year;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -488,6 +489,56 @@ public class RecurringTransactionService
         return recurringTransactionRepository.findAll();
     }
 
+    /**
+     * Get future transactions by year
+     * @param startYear The start year
+     * @param endYear The end year
+     */
+    public List<WalletTransaction> GetFutureTransactionsByYear(Year startYear,
+                                                               Year endYear)
+    {
+        List<RecurringTransaction> recurringTransactions =
+            recurringTransactionRepository.findByStatus(
+                RecurringTransactionStatus.ACTIVE);
+
+        List<WalletTransaction> futureTransactions = new ArrayList<>();
+
+        // Generate the future transactions for each recurring transaction
+        for (RecurringTransaction recurring : recurringTransactions)
+        {
+            LocalDateTime nextDueDate = recurring.GetNextDueDate();
+
+            while (nextDueDate.isBefore(
+                endYear.atMonth(12).atDay(31).atTime(23, 59, 59, 59)))
+            {
+                if (nextDueDate.isAfter(startYear.atDay(1).atTime(0, 0, 0)) ||
+                    nextDueDate.equals(startYear.atDay(1).atTime(0, 0, 0)))
+                {
+                    futureTransactions.add(
+                        new WalletTransaction(recurring.GetWallet(),
+                                              recurring.GetCategory(),
+                                              recurring.GetType(),
+                                              TransactionStatus.PENDING,
+                                              nextDueDate,
+                                              recurring.GetAmount(),
+                                              recurring.GetDescription()));
+                }
+
+                // Calculate the next due date
+                nextDueDate =
+                    CalculateNextDueDate(nextDueDate, recurring.GetFrequency());
+                recurring.SetNextDueDate(nextDueDate);
+            }
+        }
+
+        return futureTransactions;
+    }
+
+    /**
+     * Get future transactions by month
+     * @param startMonth The start month
+     * @param endMonth The end month
+     */
     public List<WalletTransaction> GetFutureTransactionsByMonth(YearMonth startMonth,
                                                                 YearMonth endMonth)
     {
@@ -502,9 +553,10 @@ public class RecurringTransactionService
         {
             LocalDateTime nextDueDate = recurring.GetNextDueDate();
 
-            while (nextDueDate.isBefore(endMonth.atEndOfMonth().atTime(23, 59, 59)))
+            while (nextDueDate.isBefore(endMonth.atEndOfMonth().atTime(23, 59, 59, 59)))
             {
-                if (nextDueDate.isAfter(startMonth.atDay(1).atTime(0, 0, 0)))
+                if (nextDueDate.isAfter(startMonth.atDay(1).atTime(0, 0, 0, 0)) ||
+                    nextDueDate.equals(startMonth.atDay(1).atTime(0, 0, 0, 0)))
                 {
                     futureTransactions.add(
                         new WalletTransaction(recurring.GetWallet(),

@@ -79,6 +79,36 @@ public class CreditCardService
                                  String     lastFourDigits,
                                  Long       operatorId)
     {
+        return CreateCreditCard(name,
+                                dueDate,
+                                closingDay,
+                                maxDebt,
+                                lastFourDigits,
+                                operatorId,
+                                null);
+    }
+
+    /**
+     * Creates a new credit card
+     * @param name The name of the credit card
+     * @param billingDueDay The day of the month the credit card bill is due
+     * @param closingDay The day of the month the credit card bill is closed
+     * @param maxDebt The maximum debt of the credit card
+     * @throws RuntimeException If the credit card name is already in use
+     * @throws RuntimeException If the billingDueDay is not in the range [1,
+     *     Constants.MAX_BILLING_DUE_DAY]
+     * @throws RuntimeException If the maxDebt is negative
+     * @return The id of the created credit card
+     */
+    @Transactional
+    public Long CreateCreditCard(String     name,
+                                 Integer    dueDate,
+                                 Integer    closingDay,
+                                 BigDecimal maxDebt,
+                                 String     lastFourDigits,
+                                 Long       operatorId,
+                                 Long       defaultBillingWalletId)
+    {
         // Remove leading and trailing whitespaces
         name = name.strip();
 
@@ -97,13 +127,23 @@ public class CreditCardService
                         -> new RuntimeException("Credit card operator with id " +
                                                 operatorId + " does not exist"));
 
+        Wallet defaultBillingWallet =
+            defaultBillingWalletId != null
+                ? m_walletRepository.findById(defaultBillingWalletId)
+                      .orElseThrow(()
+                                       -> new RuntimeException("Wallet with id " +
+                                                               defaultBillingWalletId +
+                                                               " does not exist"))
+                : null;
+
         CreditCard newCreditCard =
             m_creditCardRepository.save(new CreditCard(name,
                                                        dueDate,
                                                        closingDay,
                                                        maxDebt,
                                                        lastFourDigits,
-                                                       operator));
+                                                       operator,
+                                                       defaultBillingWallet));
 
         m_logger.info("Credit card " + name + " has created successfully");
 
@@ -188,6 +228,7 @@ public class CreditCardService
         oldCrc.SetMaxDebt(crc.GetMaxDebt());
         oldCrc.SetLastFourDigits(crc.GetLastFourDigits());
         oldCrc.SetOperator(operator);
+        oldCrc.SetDefaultBillingWallet(crc.GetDefaultBillingWallet());
 
         // Update bill due day for each pending payment where the payment date is
         // greater than the current day. Overdue payments are not updated
@@ -248,7 +289,6 @@ public class CreditCardService
                                  -> new RuntimeException("Category with name " +
                                                          category + " does not exist"));
 
-
         if (value == null)
         {
             throw new RuntimeException("Value cannot be null");
@@ -275,10 +315,7 @@ public class CreditCardService
             throw new RuntimeException("Invoice month cannot be null");
         }
 
-
-
         BigDecimal availableCredit = GetAvailableCredit(crcId);
-
 
         if (value.compareTo(availableCredit) > 0)
         {
