@@ -11,6 +11,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+
 import org.moinex.util.Constants;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -38,6 +40,7 @@ public class JavaFXApp extends Application
             new FXMLLoader(getClass().getResource(Constants.SPLASH_SCREEN_FXML));
         Parent splashRoot  = splashLoader.load();
         Stage  splashStage = new Stage();
+        splashStage.initStyle(StageStyle.UNDECORATED); // Remove window border
         splashStage.setScene(new Scene(splashRoot));
         splashStage.show();
 
