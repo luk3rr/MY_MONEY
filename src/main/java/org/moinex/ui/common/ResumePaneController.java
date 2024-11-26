@@ -8,6 +8,7 @@ package org.moinex.ui.common;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.Year;
 import java.time.YearMonth;
 import java.util.List;
 import javafx.fxml.FXML;
@@ -133,6 +134,12 @@ public class ResumePaneController
     {
         List<WalletTransaction> allYearTransactions =
             walletTransactionService.GetNonArchivedTransactionsByYear(year);
+
+        List<WalletTransaction> futureTransactions =
+            recurringTransactionService.GetFutureTransactionsByYear(Year.of(year),
+                                                                    Year.of(year));
+
+        allYearTransactions.addAll(futureTransactions);
 
         BigDecimal crcTotalDebtAmount = creditCardService.GetTotalDebtAmount(year);
 

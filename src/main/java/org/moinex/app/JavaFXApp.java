@@ -6,12 +6,12 @@
 
 package org.moinex.app;
 
-import org.moinex.util.Constants;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.moinex.util.Constants;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -34,12 +34,42 @@ public class JavaFXApp extends Application
     @Override
     public void start(Stage primaryStage) throws Exception
     {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(Constants.MAIN_FXML));
-        loader.setControllerFactory(springContext::getBean);
-        Parent root = loader.load();
-        primaryStage.setTitle(Constants.APP_NAME);
-        primaryStage.setScene(new Scene(root));
-        primaryStage.show();
+        FXMLLoader splashLoader =
+            new FXMLLoader(getClass().getResource(Constants.SPLASH_SCREEN_FXML));
+        Parent splashRoot  = splashLoader.load();
+        Stage  splashStage = new Stage();
+        splashStage.setScene(new Scene(splashRoot));
+        splashStage.show();
+
+        new Thread(() -> {
+            try
+            {
+                springContext =
+                    new SpringApplicationBuilder()
+                        .sources(MainApplication.class)
+                        .run(getParameters().getRaw().toArray(new String[0]));
+
+                FXMLLoader loader =
+                    new FXMLLoader(getClass().getResource(Constants.MAIN_FXML));
+                loader.setControllerFactory(springContext::getBean);
+                Parent mainRoot = loader.load();
+
+                // wait 1 second before showing the main window
+                Thread.sleep(1000);
+
+                javafx.application.Platform.runLater(() -> {
+                    primaryStage.setTitle(Constants.APP_NAME);
+                    primaryStage.setScene(new Scene(mainRoot));
+                    primaryStage.show();
+                    splashStage.close();
+                });
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                javafx.application.Platform.exit();
+            }
+        }).start();
     }
 
     @Override

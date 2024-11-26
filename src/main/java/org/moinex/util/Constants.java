@@ -41,6 +41,8 @@ public final class Constants
     public static final String SAVINGS_FXML     = UI_MAIN_PATH + "savings.fxml";
     public static final String CSV_IMPORT_FXML  = UI_MAIN_PATH + "csv_import.fxml";
     public static final String SETTINGS_FXML    = UI_MAIN_PATH + "settings.fxml";
+    public static final String SPLASH_SCREEN_FXML =
+        UI_MAIN_PATH + "splash_screen.fxml";
 
     public static final String ADD_WALLET_FXML   = UI_DIALOG_PATH + "add_wallet.fxml";
     public static final String ADD_INCOME_FXML   = UI_DIALOG_PATH + "add_income.fxml";
@@ -190,6 +192,7 @@ public final class Constants
     public static final Integer XYBAR_CHART_MONTHS         = 12;
     public static final Integer XYBAR_CHART_FUTURE_MONTHS  = 3;
     public static final Integer MONTH_RESUME_FUTURE_MONTHS = 3;
+    public static final Integer YEAR_RESUME_FUTURE_YEARS   = 1;
 
     public static final Integer CRC_XYBAR_CHART_MAX_MONTHS = 25;
     public static final Integer XYBAR_CHART_TICKS          = 6;

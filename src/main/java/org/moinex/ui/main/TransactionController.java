@@ -671,12 +671,13 @@ public class TransactionController
                                    ? oldestCreditCard
                                    : oldestWalletTransaction;
 
-        LocalDate now = LocalDate.now();
+        LocalDate youngest =
+            LocalDate.now().plusYears(Constants.YEAR_RESUME_FUTURE_YEARS);
 
         // Generate a list of Year objects from the oldest transaction date to the
         // current date
         Year startYear   = Year.from(oldest);
-        Year currentYear = Year.from(now);
+        Year currentYear = Year.from(youngest);
 
         // Generate the list of years between the oldest and the current date
         List<Year> years = new ArrayList<>();
