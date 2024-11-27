@@ -157,7 +157,9 @@ public class CreditCardController
         WindowUtils.OpenModalWindow(Constants.ADD_CREDIT_CARD_DEBT_FXML,
                                     "Add Credit Card Debt",
                                     springContext,
-                                    (AddCreditCardDebtController controller) -> {});
+                                    (AddCreditCardDebtController controller)
+                                        -> {},
+                                    List.of(() -> { UpdateDisplay(); }));
     }
 
     @FXML
@@ -166,7 +168,9 @@ public class CreditCardController
         WindowUtils.OpenModalWindow(Constants.ADD_CREDIT_CARD_FXML,
                                     "Add Credit Card",
                                     springContext,
-                                    (AddCreditCardController controller) -> {});
+                                    (AddCreditCardController controller)
+                                        -> {},
+                                    List.of(() -> { UpdateDisplayCards(); }));
     }
 
     @FXML
@@ -187,10 +191,12 @@ public class CreditCardController
         WindowUtils.OpenModalWindow(Constants.EDIT_CREDIT_CARD_DEBT_FXML,
                                     "Edit Credit Card Debt",
                                     springContext,
-                                    (EditCreditCardDebtController controller) -> {
+                                    (EditCreditCardDebtController controller)
+                                        -> {
                                         controller.SetCreditCardDebt(
                                             selectedPayment.GetCreditCardDebt());
-                                    });
+                                    },
+                                    List.of(() -> { UpdateDisplay(); }));
     }
 
     @FXML
