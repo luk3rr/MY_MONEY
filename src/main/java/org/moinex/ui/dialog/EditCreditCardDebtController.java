@@ -7,6 +7,7 @@
 package org.moinex.ui.dialog;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -351,9 +352,9 @@ public class EditCreditCardDebtController
             return;
         }
 
-        String value = valueField.getText();
+        String valueStr = valueField.getText();
 
-        if (value.isEmpty())
+        if (valueStr.isEmpty())
         {
             UIUtils.ResetLabel(msgLabel);
             return;
@@ -361,24 +362,49 @@ public class EditCreditCardDebtController
 
         try
         {
-            Double debtValue = Double.parseDouble(valueField.getText());
+            BigDecimal debtValue = new BigDecimal(valueField.getText());
 
-            if (debtValue <= 0)
+            if (debtValue.compareTo(BigDecimal.ZERO) <= 0)
             {
                 UIUtils.ResetLabel(msgLabel);
                 return;
             }
 
-            String msgBase = "Repeat for %d months of %s";
+            // Show mensage according to the value of each installment
+            BigDecimal exactInstallmentValue =
+                debtValue.divide(new BigDecimal(installments), 2, RoundingMode.FLOOR);
 
-            msgLabel.setText(
-                String.format(msgBase,
-                              installments,
-                              UIUtils.FormatCurrency(debtValue / installments)));
+            BigDecimal remainder = debtValue.subtract(
+                exactInstallmentValue.multiply(new BigDecimal(installments)));
+
+            Boolean exactDivision = remainder.compareTo(BigDecimal.ZERO) == 0;
+
+            if (exactDivision)
+            {
+                String msgBase = "Repeat for %d months of %s";
+                msgLabel.setText(
+                    String.format(msgBase,
+                                  installments,
+                                  UIUtils.FormatCurrency(exactInstallmentValue)));
+            }
+            else
+            {
+                String msgBase =
+                    "Repeat for %d months.\nFirst month of %s and the last "
+                    + "%s of %s";
+
+                remainder = remainder.setScale(2, RoundingMode.HALF_UP);
+
+                msgLabel.setText(String.format(msgBase,
+                                               installments,
+                                               exactInstallmentValue.add(remainder),
+                                               installments - 1,
+                                               exactInstallmentValue));
+            }
         }
         catch (NumberFormatException e)
         {
-            msgLabel.setText("Valor da dívida inválido");
+            msgLabel.setText("Invalid debt value");
         }
     }
 
