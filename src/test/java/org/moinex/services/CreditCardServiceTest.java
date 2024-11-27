@@ -675,4 +675,190 @@ public class CreditCardServiceTest
                              " is incorrect");
         }
     }
+
+    @Test
+    @DisplayName("Test if the payment is registered correctly when the debt is divided "
+                 + "into installments")
+    public void
+    TestRegisterPaymentWithInstallmentsExactDivision()
+    {
+        // Case: 120 / 3 = 40
+        BigDecimal debtValue    = new BigDecimal("120.0");
+        Integer    installments = 3;
+
+        when(m_creditCardRepository.findById(m_creditCard.GetId()))
+            .thenReturn(Optional.of(m_creditCard));
+
+        when(m_categoryRepository.findById(m_category.GetId()))
+            .thenReturn(Optional.of(m_category));
+
+        when(
+            m_creditCardPaymentRepository.GetTotalPendingPayments(m_creditCard.GetId()))
+            .thenReturn(new BigDecimal("0.0"));
+
+        // Capture the payment that was saved and check if it is correct
+        ArgumentCaptor<CreditCardPayment> paymentCaptor =
+            ArgumentCaptor.forClass(CreditCardPayment.class);
+
+        m_creditCardService.RegisterDebt(m_creditCard.GetId(),
+                                         m_category,
+                                         m_registerDate,
+                                         m_invoiceMonth,
+                                         debtValue,
+                                         installments,
+                                         m_description);
+
+        // Verify if the payment was saved
+        verify(m_creditCardPaymentRepository, times(installments))
+            .save(paymentCaptor.capture());
+
+        // Get the captured payments and check if they are correct
+        List<CreditCardPayment> capturedPayments = paymentCaptor.getAllValues();
+
+        assertEquals(installments,
+                     capturedPayments.size(),
+                     "The number of payments is incorrect");
+
+        BigDecimal expectedInstallmentValue =
+            debtValue.divide(new BigDecimal(installments));
+
+        for (Integer installmentNumber = 0; installmentNumber < capturedPayments.size();
+             installmentNumber++)
+        {
+            CreditCardPayment payment = capturedPayments.get(installmentNumber);
+
+            // Check if the payment amount is correct
+            assertEquals(expectedInstallmentValue.doubleValue(),
+                         payment.GetAmount().doubleValue(),
+                         Constants.EPSILON,
+                         "The payment amount of installment " + installmentNumber +
+                             " is incorrect");
+        }
+    }
+
+    @Test
+    @DisplayName("Test if the payment is registered correctly when the debt is not "
+                 + "divided into installments")
+    public void
+    TestRegisterPaymentWithInstallmentsNotExactDivisionCase1()
+    {
+        // 100 / 3 =
+        // - 1st: 33.34
+        // - 2nd: 33.33
+        // - 3rd: 33.33
+        BigDecimal debtValue    = new BigDecimal("100.0");
+        Integer    installments = 3;
+
+        when(m_creditCardRepository.findById(m_creditCard.GetId()))
+            .thenReturn(Optional.of(m_creditCard));
+
+        when(m_categoryRepository.findById(m_category.GetId()))
+            .thenReturn(Optional.of(m_category));
+
+        when(
+            m_creditCardPaymentRepository.GetTotalPendingPayments(m_creditCard.GetId()))
+            .thenReturn(new BigDecimal("0.0"));
+
+        // Capture the payment that was saved and check if it is correct
+        ArgumentCaptor<CreditCardPayment> paymentCaptor =
+            ArgumentCaptor.forClass(CreditCardPayment.class);
+
+        m_creditCardService.RegisterDebt(m_creditCard.GetId(),
+                                         m_category,
+                                         m_registerDate,
+                                         m_invoiceMonth,
+                                         debtValue,
+                                         installments,
+                                         m_description);
+
+        // Verify if the payment was saved
+        verify(m_creditCardPaymentRepository, times(installments))
+            .save(paymentCaptor.capture());
+
+        // Get the captured payments and check if they are correct
+        List<CreditCardPayment> capturedPayments = paymentCaptor.getAllValues();
+
+        assertEquals(installments,
+                     capturedPayments.size(),
+                     "The number of payments is incorrect");
+
+        assertEquals(BigDecimal.valueOf(33.34),
+                     capturedPayments.get(0).GetAmount(),
+                     "Incorrent value of installment 1");
+        assertEquals(BigDecimal.valueOf(33.33),
+                     capturedPayments.get(1).GetAmount(),
+                     "Incorrent value of installment 2");
+        assertEquals(BigDecimal.valueOf(33.33),
+                     capturedPayments.get(2).GetAmount(),
+                     "Incorrent value of installment 3");
+    }
+
+    @Test
+    @DisplayName("Test if the payment is registered correctly when the debt is not "
+                 + "divided into installments")
+    public void
+    TestRegisterPaymentWithInstallmentsNotExactDivisionCase2()
+    {
+        // 100 / 6 =
+        // - 1st: 16.70
+        // - 2nd: 16.66
+        // - 3rd: 16.66
+        // - 5th: 16.66
+        // - 6th: 16.66
+        // - 7th: 16.66
+        BigDecimal debtValue    = new BigDecimal("100.0");
+        Integer    installments = 6;
+
+        when(m_creditCardRepository.findById(m_creditCard.GetId()))
+            .thenReturn(Optional.of(m_creditCard));
+
+        when(m_categoryRepository.findById(m_category.GetId()))
+            .thenReturn(Optional.of(m_category));
+
+        when(
+            m_creditCardPaymentRepository.GetTotalPendingPayments(m_creditCard.GetId()))
+            .thenReturn(new BigDecimal("0.0"));
+
+        // Capture the payment that was saved and check if it is correct
+        ArgumentCaptor<CreditCardPayment> paymentCaptor =
+            ArgumentCaptor.forClass(CreditCardPayment.class);
+
+        m_creditCardService.RegisterDebt(m_creditCard.GetId(),
+                                         m_category,
+                                         m_registerDate,
+                                         m_invoiceMonth,
+                                         debtValue,
+                                         installments,
+                                         m_description);
+
+        // Verify if the payment was saved
+        verify(m_creditCardPaymentRepository, times(installments))
+            .save(paymentCaptor.capture());
+
+        // Get the captured payments and check if they are correct
+        List<CreditCardPayment> capturedPayments = paymentCaptor.getAllValues();
+
+        assertEquals(installments,
+                     capturedPayments.size(),
+                     "The number of payments is incorrect");
+
+        assertEquals(new BigDecimal("16.70"),
+                     capturedPayments.get(0).GetAmount(),
+                     "Incorrent value of installment 1");
+        assertEquals(BigDecimal.valueOf(16.66),
+                     capturedPayments.get(1).GetAmount(),
+                     "Incorrent value of installment 2");
+        assertEquals(BigDecimal.valueOf(16.66),
+                     capturedPayments.get(2).GetAmount(),
+                     "Incorrent value of installment 3");
+        assertEquals(BigDecimal.valueOf(16.66),
+                     capturedPayments.get(3).GetAmount(),
+                     "Incorrent value of installment 4");
+        assertEquals(BigDecimal.valueOf(16.66),
+                     capturedPayments.get(4).GetAmount(),
+                     "Incorrent value of installment 5");
+        assertEquals(BigDecimal.valueOf(16.66),
+                     capturedPayments.get(5).GetAmount(),
+                     "Incorrent value of installment 6");
+    }
 }

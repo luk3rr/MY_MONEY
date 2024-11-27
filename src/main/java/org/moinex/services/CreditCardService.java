@@ -336,37 +336,39 @@ public class CreditCardService
         m_logger.info("Debit registered on credit card with id " + crcId +
                       " with value " + value + " and description " + description);
 
-        // Calculate the installment value
-        // If the division is not exact, the first installment absorbs the remainder
-        BigDecimal installmentValue =
-            value.divide(new BigDecimal(installments), 2, RoundingMode.HALF_UP);
+        // Divide the value exactly, with full precision
+        BigDecimal exactInstallmentValue =
+            value.divide(new BigDecimal(installments), 2, RoundingMode.FLOOR);
 
-        BigDecimal totalCalculated = installmentValue.multiply(
-            new BigDecimal(installments)); // Total without remainder
+        // Calculate the remainder
+        BigDecimal remainder = value.subtract(
+            exactInstallmentValue.multiply(new BigDecimal(installments)));
 
-        BigDecimal remainder = value.subtract(totalCalculated);
-
-        // First installment absorbs the remainder
-        BigDecimal firstInstallment = installmentValue.add(remainder);
-
+        // Iterate through the installments
         for (Integer i = 0; i < installments; i++)
         {
-            // Calculate the payment date
+            // If there is a remainder, add it to the first installment
+            BigDecimal currentInstallmentValue = exactInstallmentValue;
+            if (remainder.compareTo(BigDecimal.ZERO) > 0 && i == 0)
+            {
+                currentInstallmentValue = currentInstallmentValue.add(remainder);
+            }
+
+            // Calculate the date and save the payment
             LocalDateTime paymentDate = invoiceMonth.plusMonths(i)
                                             .atDay(creditCard.GetBillingDueDay())
                                             .atTime(23, 59);
 
-            CreditCardPayment payment =
-                new CreditCardPayment(debt,
-                                      paymentDate,
-                                      i == 0 ? firstInstallment : installmentValue,
-                                      i + 1);
+            CreditCardPayment payment = new CreditCardPayment(debt,
+                                                              paymentDate,
+                                                              currentInstallmentValue,
+                                                              i + 1);
 
             m_creditCardPaymentRepository.save(payment);
 
             m_logger.info("Payment of debt " + description +
                           " on credit card with id " + crcId +
-                          " registered with value " + installmentValue +
+                          " registered with value " + currentInstallmentValue +
                           " and due date " + paymentDate);
         }
     }
