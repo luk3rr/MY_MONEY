@@ -207,6 +207,8 @@ public final class Constants
     public static final Double  TOOLTIP_ANIMATION_DURATION     = 0.5; // s
     public static final Double  TOOLTIP_ANIMATION_DELAY        = 0.5; // s
 
+    public static final Integer SUGGESTIONS_MAX_ITEMS = 5;
+
     // Enough time for you to become poor :)
     public static final LocalDate RECURRING_TRANSACTION_DEFAULT_END_DATE =
         LocalDate.of(2100, 12, 31);

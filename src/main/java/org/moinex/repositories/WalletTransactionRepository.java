@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import org.moinex.entities.Wallet;
 import org.moinex.entities.WalletTransaction;
+import org.moinex.util.TransactionType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -419,4 +420,24 @@ public interface WalletTransactionRepository
            + "WHERE wt.id = :transactionId")
     Optional<Wallet>
     FindWalletByTransactionId(@Param("transactionId") Long transactionId);
+
+    /**
+     * Get suggestions. Suggestions are transactions with distinct descriptions
+     * and most recent date
+     * @param transactionType The type of the transaction
+     * @return A list with the suggestions
+     */
+    @Query("SELECT wt "
+           + "FROM WalletTransaction wt "
+           + "WHERE wt.type = :transactionType AND "
+           + "wt.wallet.archived = false AND "
+           + "wt.category.archived = false AND "
+           + "wt.date = (SELECT MAX(wt2.date) "
+           + "                  FROM WalletTransaction wt2 "
+           + "                  WHERE wt2.description = wt.description AND "
+           + "                        wt2.wallet.archived = false AND "
+           + "                        wt2.category.archived = false) "
+           + "ORDER BY wt.date DESC")
+    List<WalletTransaction>
+    FindSuggestions(@Param("transactionType") TransactionType transactionType);
 }

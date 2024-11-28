@@ -1002,4 +1002,24 @@ public class WalletTransactionService
                                                                   month,
                                                                   year);
     }
+
+    /**
+     * Get income suggestions. Suggestions are transactions with distinct descriptions and most
+     * recent date
+     * @return A list with the suggestions
+     */
+    public List<WalletTransaction> GetIncomeSuggestions()
+    {
+        return m_walletTransactionRepository.FindSuggestions(TransactionType.INCOME);
+    }
+
+    /**
+     * Get expense suggestions. Suggestions are transactions with distinct descriptions and most
+     * recent date
+     * @return A list with the suggestions
+     */
+    public List<WalletTransaction> GetExpenseSuggestions()
+    {
+        return m_walletTransactionRepository.FindSuggestions(TransactionType.EXPENSE);
+    }
 }
