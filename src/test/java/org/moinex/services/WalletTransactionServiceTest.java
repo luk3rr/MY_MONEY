@@ -632,6 +632,182 @@ public class WalletTransactionServiceTest
     }
 
     @Test
+    @DisplayName("Test if transaction amount is increased and wallet balance is "
+                 + "updated correctly")
+    public void
+    TestIncreaseTransactionAmount()
+    {
+        // Setup previous state
+        BigDecimal oldBalance = m_wallet1.GetBalance();
+        BigDecimal oldAmount  = m_wallet1ExpenseTransaction.GetAmount();
+        BigDecimal newAmount  = oldAmount.add(new BigDecimal("100.0"));
+
+        WalletTransaction updatedTransaction =
+            CreateWalletTransaction(m_wallet1,
+                                    m_category,
+                                    TransactionType.EXPENSE,
+                                    TransactionStatus.CONFIRMED,
+                                    m_date,
+                                    newAmount,
+                                    m_description);
+
+        when(
+            m_walletTransactionRepository.findById(m_wallet1ExpenseTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1ExpenseTransaction));
+
+        when(m_walletTransactionRepository.FindWalletByTransactionId(
+                 m_wallet1ExpenseTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1));
+
+        when(m_walletRepository.save(m_wallet1)).thenReturn(m_wallet1);
+
+        when(m_walletTransactionRepository.save(any(WalletTransaction.class)))
+            .thenReturn(updatedTransaction);
+
+        m_walletTransactionService.UpdateTransaction(updatedTransaction);
+
+        // Verify that the old amount was reverted and new amount was applied
+        BigDecimal expectedBalance = oldBalance.add(oldAmount).subtract(newAmount);
+        assertEquals(expectedBalance.doubleValue(),
+                     m_wallet1.GetBalance().doubleValue(),
+                     Constants.EPSILON);
+
+        // Verify repository interactions
+        verify(m_walletTransactionRepository)
+            .findById(m_wallet1ExpenseTransaction.GetId());
+        verify(m_walletRepository, times(1)).save(m_wallet1);
+        verify(m_walletTransactionRepository, times(2))
+            .save(any(WalletTransaction.class));
+    }
+
+    @Test
+    @DisplayName("Test if transaction amount is decreased and wallet balance is "
+                 + "updated correctly")
+    public void
+    TestDecreaseTransactionAmount()
+    {
+        // Setup previous state
+        BigDecimal oldBalance = m_wallet1.GetBalance();
+        BigDecimal oldAmount  = m_wallet1ExpenseTransaction.GetAmount();
+        BigDecimal newAmount  = oldAmount.subtract(new BigDecimal("100.0"));
+
+        WalletTransaction updatedTransaction =
+            CreateWalletTransaction(m_wallet1,
+                                    m_category,
+                                    TransactionType.EXPENSE,
+                                    TransactionStatus.CONFIRMED,
+                                    m_date,
+                                    newAmount,
+                                    m_description);
+
+        when(
+            m_walletTransactionRepository.findById(m_wallet1ExpenseTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1ExpenseTransaction));
+
+        when(m_walletTransactionRepository.FindWalletByTransactionId(
+                 m_wallet1ExpenseTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1));
+
+        when(m_walletRepository.save(m_wallet1)).thenReturn(m_wallet1);
+
+        when(m_walletTransactionRepository.save(any(WalletTransaction.class)))
+            .thenReturn(updatedTransaction);
+
+        m_walletTransactionService.UpdateTransaction(updatedTransaction);
+
+        // Verify that the old amount was reverted and new amount was applied
+        BigDecimal expectedBalance = oldBalance.add(oldAmount).subtract(newAmount);
+        assertEquals(expectedBalance.doubleValue(),
+                     m_wallet1.GetBalance().doubleValue(),
+                     Constants.EPSILON);
+
+        // Verify repository interactions
+        verify(m_walletTransactionRepository)
+            .findById(m_wallet1ExpenseTransaction.GetId());
+        verify(m_walletRepository, times(1)).save(m_wallet1);
+        verify(m_walletTransactionRepository, times(2))
+            .save(any(WalletTransaction.class));
+    }
+
+    @Test
+    @DisplayName(
+        "Test if transaction amount remains the same and wallet balance is unaffected")
+    public void
+    TestChangeTransactionAmountWithNoChange()
+    {
+        // Setup previous state
+        BigDecimal oldBalance = m_wallet1.GetBalance();
+        BigDecimal oldAmount  = m_wallet1ExpenseTransaction.GetAmount();
+
+        WalletTransaction updatedTransaction =
+            CreateWalletTransaction(m_wallet1,
+                                    m_category,
+                                    TransactionType.EXPENSE,
+                                    TransactionStatus.CONFIRMED,
+                                    m_date,
+                                    oldAmount, // Same amount as before
+                                    m_description);
+
+        when(
+            m_walletTransactionRepository.findById(m_wallet1ExpenseTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1ExpenseTransaction));
+
+        when(m_walletTransactionRepository.FindWalletByTransactionId(
+                 m_wallet1ExpenseTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1));
+
+        when(m_walletTransactionRepository.save(any(WalletTransaction.class)))
+            .thenReturn(updatedTransaction);
+
+        m_walletTransactionService.UpdateTransaction(updatedTransaction);
+
+        // Verify that the balance is unaffected
+        assertEquals(oldBalance.doubleValue(),
+                     m_wallet1.GetBalance().doubleValue(),
+                     Constants.EPSILON);
+
+        // Verify repository interactions
+        verify(m_walletTransactionRepository)
+            .findById(m_wallet1ExpenseTransaction.GetId());
+        verify(m_walletRepository, never())
+            .save(m_wallet1); // No save on wallet since no change
+        verify(m_walletTransactionRepository).save(any(WalletTransaction.class));
+    }
+
+    @Test
+    @DisplayName(
+        "Test if exception is thrown when updating transaction with amount <= 0")
+    public void
+    TestChangeTransactionAmountInvalidAmount()
+    {
+        BigDecimal invalidAmount = BigDecimal.ZERO;
+
+        WalletTransaction updatedTransaction =
+            CreateWalletTransaction(m_wallet1,
+                                    m_category,
+                                    TransactionType.EXPENSE,
+                                    TransactionStatus.CONFIRMED,
+                                    m_date,
+                                    invalidAmount,
+                                    m_description);
+
+        when(
+            m_walletTransactionRepository.findById(m_wallet1ExpenseTransaction.GetId()))
+            .thenReturn(Optional.of(m_wallet1ExpenseTransaction));
+
+        assertThrows(
+            RuntimeException.class,
+            () -> m_walletTransactionService.UpdateTransaction(updatedTransaction));
+
+        // Verify repository interactions
+        verify(m_walletTransactionRepository)
+            .findById(m_wallet1ExpenseTransaction.GetId());
+        verify(m_walletRepository, never()).save(m_wallet1);
+        verify(m_walletTransactionRepository, never())
+            .save(any(WalletTransaction.class));
+    }
+
+    @Test
     @DisplayName("Test if an exception is thrown when transaction does not exist")
     public void TestUpdateNonExistentTransaction()
     {

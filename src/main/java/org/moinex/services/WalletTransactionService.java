@@ -420,8 +420,6 @@ public class WalletTransactionService
                 {
                     wallet.SetBalance(balance.subtract(diff));
                 }
-
-                wallet.SetBalance(wallet.GetBalance().subtract(diff));
             }
             else if (oldTransaction.GetType().equals(TransactionType.INCOME))
             {
@@ -1004,8 +1002,8 @@ public class WalletTransactionService
     }
 
     /**
-     * Get income suggestions. Suggestions are transactions with distinct descriptions and most
-     * recent date
+     * Get income suggestions. Suggestions are transactions with distinct descriptions
+     * and most recent date
      * @return A list with the suggestions
      */
     public List<WalletTransaction> GetIncomeSuggestions()
@@ -1014,8 +1012,8 @@ public class WalletTransactionService
     }
 
     /**
-     * Get expense suggestions. Suggestions are transactions with distinct descriptions and most
-     * recent date
+     * Get expense suggestions. Suggestions are transactions with distinct descriptions
+     * and most recent date
      * @return A list with the suggestions
      */
     public List<WalletTransaction> GetExpenseSuggestions()
