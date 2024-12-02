@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import org.moinex.entities.CreditCardPayment;
 import org.moinex.entities.Transfer;
 import org.moinex.entities.Wallet;
 import org.moinex.entities.WalletTransaction;
@@ -116,6 +117,8 @@ public class WalletFullPaneController
 
     private BigDecimal crcPaidAmount;
 
+    private BigDecimal crcPendingAmount;
+
     private List<WalletTransaction> transactions;
 
     private List<Transfer> transfers;
@@ -171,6 +174,18 @@ public class WalletFullPaneController
         crcPaidAmount = creditCardService.GetPaidPaymentsByMonth(wallet.GetId(),
                                                                  now.getMonthValue(),
                                                                  now.getYear());
+
+        List<CreditCardPayment> pendingPayments =
+            creditCardService.GetCreditCardPayments(now.getMonthValue(), now.getYear());
+
+        crcPendingAmount = pendingPayments.stream()
+                               .filter(p
+                                       -> p.GetCreditCardDebt()
+                                                  .GetCreditCard()
+                                                  .GetDefaultBillingWallet()
+                                                  .GetId() == wallet.GetId())
+                               .map(CreditCardPayment::GetAmount)
+                               .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     /**
@@ -225,6 +240,9 @@ public class WalletFullPaneController
                 .filter(t -> t.GetStatus().equals(TransactionStatus.PENDING))
                 .map(WalletTransaction::GetAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // Consider the pending amount of the credit card
+        pendingExpensesSum = pendingExpensesSum.add(crcPendingAmount);
 
         BigDecimal creditedTransfersSum =
             transfers.stream()
