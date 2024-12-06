@@ -175,15 +175,17 @@ public class WalletFullPaneController
                                                                  now.getMonthValue(),
                                                                  now.getYear());
 
-        List<CreditCardPayment> pendingPayments =
+        List<CreditCardPayment> payments =
             creditCardService.GetCreditCardPayments(now.getMonthValue(), now.getYear());
 
-        crcPendingAmount = pendingPayments.stream()
+        // Filter payments that are related to the wallet and are not paid
+        crcPendingAmount = payments.stream()
                                .filter(p
                                        -> p.GetCreditCardDebt()
                                                   .GetCreditCard()
                                                   .GetDefaultBillingWallet()
                                                   .GetId() == wallet.GetId())
+                               .filter(p -> p.GetWallet() == null)
                                .map(CreditCardPayment::GetAmount)
                                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
