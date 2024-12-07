@@ -24,8 +24,11 @@ import org.moinex.util.Constants;
 @PrimaryKeyJoinColumn(name = "id")
 public class Goal extends Wallet
 {
-    @Column(name = "target", nullable = false, scale = 2)
-    private BigDecimal target;
+    @Column(name = "initial_balance", nullable = false)
+    private BigDecimal initialBalance;
+
+    @Column(name = "target_balance", nullable = false, scale = 2)
+    private BigDecimal targetBalance;
 
     @Column(name = "target_date", nullable = false)
     private String targetDate;
@@ -39,31 +42,67 @@ public class Goal extends Wallet
     public Goal() { }
 
     /**
+     * Constructor for testing purposes
+     * @param id The ID of the goal
+     * @param name The name of the goal
+     * @param initialBalance The initial balance of the goal
+     * @param targetBalance The target balance of the goal
+     * @param targetDate The target date of the goal
+     * @param motivation The motivation for the goal
+     * @param walletType The wallet type of the goal
+     */
+    public Goal(Long          id,
+                String        name,
+                BigDecimal    initialBalance,
+                BigDecimal    targetBalance,
+                LocalDateTime targetDate,
+                String        motivation,
+                WalletType    walletType)
+    {
+        super(id, name, initialBalance);
+        this.SetType(walletType);
+
+        this.initialBalance = initialBalance;
+        this.targetBalance = targetBalance;
+        this.targetDate    = targetDate.format(Constants.DB_DATE_FORMATTER);
+        this.motivation    = motivation;
+    }
+
+    /**
      * Constructor for Goal
      * @param name The name of the goal
      * @param initialBalance The initial balance of the goal
-     * @param target The target balance of the goal
+     * @param targetBalance The target balance of the goal
      * @param targetDate The target date of the goal
      * @param motivation The motivation for the goal
+     * @param walletType The wallet type of the goal
      */
     public Goal(String        name,
                 BigDecimal    initialBalance,
-                BigDecimal    target,
+                BigDecimal    targetBalance,
                 LocalDateTime targetDate,
-                String        motivation)
+                String        motivation,
+                WalletType    walletType)
     {
         super();
         this.SetName(name);
         this.SetBalance(initialBalance);
+        this.SetType(walletType);
 
-        this.target     = target;
-        this.targetDate = targetDate.format(Constants.DB_DATE_FORMATTER);
-        this.motivation = motivation;
+        this.initialBalance = initialBalance;
+        this.targetBalance  = targetBalance;
+        this.targetDate     = targetDate.format(Constants.DB_DATE_FORMATTER);
+        this.motivation     = motivation;
     }
 
-    public BigDecimal GetTarget()
+    public BigDecimal GetInitialBalance()
     {
-        return target;
+        return initialBalance;
+    }
+
+    public BigDecimal GetTargetBalance()
+    {
+        return targetBalance;
     }
 
     public LocalDateTime GetTargetDate()
@@ -76,9 +115,14 @@ public class Goal extends Wallet
         return motivation;
     }
 
-    public void SetTarget(BigDecimal target)
+    public void SetInitialBalance(BigDecimal initialBalance)
     {
-        this.target = target;
+        this.initialBalance = initialBalance;
+    }
+
+    public void SetTargetBalance(BigDecimal targetBalance)
+    {
+        this.targetBalance = targetBalance;
     }
 
     public void SetTargetDate(LocalDateTime targetDate)

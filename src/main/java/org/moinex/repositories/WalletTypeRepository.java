@@ -8,6 +8,8 @@ package org.moinex.repositories;
 
 import org.moinex.entities.WalletType;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -19,4 +21,11 @@ public interface WalletTypeRepository extends JpaRepository<WalletType, Long> {
      * @return List of wallet types
      */
     List<WalletType> findAllByOrderByNameAsc();
+
+    /**
+     * Find a wallet type by its name
+     * @param name The name of the wallet type
+     * @return The wallet type
+     */
+    Optional<WalletType> findByName(String name);
 }

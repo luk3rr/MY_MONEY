@@ -51,6 +51,9 @@ public class MainController
     private Button transactionButton;
 
     @FXML
+    private Button goalsButton;
+
+    @FXML
     private Button savingsButton;
 
     @FXML
@@ -76,8 +79,8 @@ public class MainController
         // when the user clicks on it or when the sidebar is toggled
         sidebarButtons =
             new Button[] { menuButton,       homeButton,        walletButton,
-                           creditCardButton, transactionButton, savingsButton,
-                           importButton,     settingsButton };
+                           creditCardButton, transactionButton, goalsButton,
+                           savingsButton,    importButton,      settingsButton };
 
         rootPane.getStylesheets().add(
             getClass().getResource(Constants.MAIN_STYLE_SHEET).toExternalForm());
@@ -102,6 +105,11 @@ public class MainController
         transactionButton.setOnAction(event -> {
             LoadContent(Constants.TRANSACTION_FXML, Constants.TRANSACTION_STYLE_SHEET);
             UpdateSelectedButton(transactionButton);
+        });
+
+        goalsButton.setOnAction(event -> {
+            LoadContent(Constants.GOALS_FXML, Constants.GOALS_STYLE_SHEET);
+            UpdateSelectedButton(goalsButton);
         });
 
         savingsButton.setOnAction(event -> {

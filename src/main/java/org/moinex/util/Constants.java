@@ -33,16 +33,17 @@ public final class Constants
     public static final String CSS_COMMON_PATH = "/css/common/";
 
     // FXML
-    public static final String MAIN_FXML        = UI_MAIN_PATH + "main.fxml";
-    public static final String HOME_FXML        = UI_MAIN_PATH + "home.fxml";
-    public static final String WALLET_FXML      = UI_MAIN_PATH + "wallet.fxml";
-    public static final String CREDIT_CARD_FXML = UI_MAIN_PATH + "credit_card.fxml";
-    public static final String TRANSACTION_FXML = UI_MAIN_PATH + "transaction.fxml";
-    public static final String SAVINGS_FXML     = UI_MAIN_PATH + "savings.fxml";
-    public static final String CSV_IMPORT_FXML  = UI_MAIN_PATH + "csv_import.fxml";
-    public static final String SETTINGS_FXML    = UI_MAIN_PATH + "settings.fxml";
-    public static final String SPLASH_SCREEN_FXML =
-        UI_MAIN_PATH + "splash_screen.fxml";
+    public static final String MAIN_FXML          = UI_MAIN_PATH + "main.fxml";
+    public static final String HOME_FXML          = UI_MAIN_PATH + "home.fxml";
+    public static final String WALLET_FXML        = UI_MAIN_PATH + "wallet.fxml";
+    public static final String CREDIT_CARD_FXML   = UI_MAIN_PATH + "credit_card.fxml";
+    public static final String TRANSACTION_FXML   = UI_MAIN_PATH + "transaction.fxml";
+    public static final String GOALS_FXML         = UI_MAIN_PATH + "goals.fxml";
+    public static final String SAVINGS_FXML       = UI_MAIN_PATH + "savings.fxml";
+    public static final String CSV_IMPORT_FXML    = UI_MAIN_PATH + "csv_import.fxml";
+    public static final String SETTINGS_FXML      = UI_MAIN_PATH + "settings.fxml";
+    public static final String SPLASH_SCREEN_FXML = UI_MAIN_PATH + ("splash_screen."
+                                                                    + "fxml");
 
     public static final String ADD_WALLET_FXML   = UI_DIALOG_PATH + "add_wallet.fxml";
     public static final String ADD_INCOME_FXML   = UI_DIALOG_PATH + "add_income.fxml";
@@ -115,6 +116,7 @@ public final class Constants
         CSS_SCENE_PATH + "credit-card.css";
     public static final String TRANSACTION_STYLE_SHEET =
         CSS_SCENE_PATH + "transaction.css";
+    public static final String GOALS_STYLE_SHEET   = CSS_SCENE_PATH + "goals.css";
     public static final String SAVINGS_STYLE_SHEET = CSS_SCENE_PATH + "savings.css";
     public static final String CSV_IMPORT_STYLE_SHEET =
         CSS_SCENE_PATH + "csv_import.css";
@@ -208,6 +210,8 @@ public final class Constants
     public static final Double  TOOLTIP_ANIMATION_DELAY        = 0.5; // s
 
     public static final Integer SUGGESTIONS_MAX_ITEMS = 5;
+
+    public static final String GOAL_DEFAULT_WALLET_TYPE_NAME = "Goal";
 
     // Enough time for you to become poor :)
     public static final LocalDate RECURRING_TRANSACTION_DEFAULT_END_DATE =
