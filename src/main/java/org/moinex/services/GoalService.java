@@ -40,7 +40,7 @@ public class GoalService
 
     private static final Logger logger = LoggerConfig.GetLogger();
 
-    private GoalService() { }
+    public GoalService() { }
 
     /**
      * Creates a new goal
