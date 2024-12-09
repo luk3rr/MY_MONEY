@@ -93,7 +93,7 @@ else
     exit 1
 fi
 
-# Copiar o JAR para /opt
+# Copiar JAR e script de execução
 if cp target/Moinex-1.0-SNAPSHOT.jar "$MOINEX_DIR/bin/moinex.jar"; then
     print_success ">> JAR copiado para $MOINEX_DIR/bin"
 else

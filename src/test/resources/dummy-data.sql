@@ -56,6 +56,12 @@ INSERT INTO wallet_transaction (id, wallet_id, category_id, type, status, date, 
 (78, 1, 6, 'EXPENSE', 'CONFIRMED', '2024-09-10T00:00:00', 2300.00, 'Aluguel'),
 (79, 1, 11, 'INCOME', 'CONFIRMED', '2024-10-05T00:00:00', 3530.00, 'Salário'),
 (80, 1, 6, 'EXPENSE', 'CONFIRMED', '2024-10-10T00:00:00', 2300.00, 'Aluguel'),
+(84, 1, 11, 'INCOME', 'CONFIRMED', '2024-11-05T00:00:00', 3530.00, 'Salário'),
+(85, 1, 6, 'EXPENSE', 'CONFIRMED', '2024-11-10T00:00:00', 2300.00, 'Aluguel'),
+(86, 1, 0, 'EXPENSE', 'CONFIRMED', '2024-11-15T00:00:00', 400.00, 'Jantar de aniversário'),
+(87, 1, 11, 'INCOME', 'CONFIRMED', '2024-12-05T00:00:00', 3630.00, 'Salário'),
+(88, 1, 6, 'EXPENSE', 'PENDING', '2024-12-10T00:00:00', 2300.00, 'Aluguel'),
+(89, 1, 0, 'EXPENSE', 'PENDING', '2024-12-20T00:00:00', 1200.00, 'Presentes e comemorações de final de ano'),
 
 -- Carteira (Wallet)
 (3, 2, 3, 'EXPENSE', 'PENDING', '2024-02-05T00:00:00', 150.00, 'Reserva de hotel para a viagem'),
@@ -99,17 +105,18 @@ INSERT INTO wallet_transaction (id, wallet_id, category_id, type, status, date, 
 (41, 4, 10, 'INCOME', 'CONFIRMED', '2024-09-15T00:00:00', 180.00, 'Rendimento de aplicação'),
 (56, 4, 9, 'INCOME', 'CONFIRMED', '2024-06-15T00:00:00', 400.00, 'Depósito de economias pessoais');
 
-INSERT INTO credit_card (id, operator_id, name, billing_due_day, closing_day, max_debt, last_four_digits) VALUES
-(1, 1, 'Visa Gold', 10, 3, 5000.00, '1234'),
-(2, 2, 'MC Platinum', 15, 7, 7500.00, '5678'),
-(3, 3, 'Amex Green', 20, 10, 3000.00, '9101'),
-(4, 4, 'Discover Cashback', 25, 20, 2000.00, '1121'),
-(5, 5, 'Diners Club Rewards', 25, 19, 4000.00, '3141'),
-(6, 6, 'JCB', 10, 2, 1000.00, '3830'),
-(7, 7, 'Elo', 11, 3,  2300.00, '4301'),
-(8, 8, 'Hipercard', 5, 1, 500.00, '9031'),
-(9, 0, 'Cartaozin', 5, 1, 1.00, '1683'),
-(10, 0, 'Cartaozin2', 5, 1, 2.00, '3031');
+
+INSERT INTO credit_card (id, operator_id, name, billing_due_day, closing_day, max_debt, last_four_digits, default_billing_wallet_id) VALUES
+(1, 1, 'Visa Gold', 10, 3, 5000.00, '1234', 1),
+(2, 2, 'MC Platinum', 15, 7, 7500.00, '5678', 1),
+(3, 3, 'Amex Green', 20, 10, 3000.00, '9101', 1),
+(4, 4, 'Discover Cashback', 25, 20, 2000.00, '1121', 1),
+(5, 5, 'Diners Club Rewards', 25, 19, 4000.00, '3141', 1),
+(6, 6, 'JCB', 10, 2, 1000.00, '3830', 1),
+(7, 7, 'Elo', 11, 3,  2300.00, '4301', 1),
+(8, 8, 'Hipercard', 5, 1, 500.00, '9031', 1),
+(9, 0, 'Cartaozin', 5, 1, 1.00, '1683', 1),
+(10, 0, 'Cartaozin2', 5, 1, 2.00, '3031', 1);
 
 -- Dívidas passadas (já pagas)
 INSERT INTO credit_card_debt (id, crc_id, category_id, date, total_amount, installments, description)
@@ -119,6 +126,7 @@ VALUES
 (3, 2, 3, '2023-07-15T00:00:00', 500.00, 2, 'Viagem de férias'),
 (4, 3, 4, '2023-08-20T00:00:00', 300.00, 2, 'Consulta médica'),
 (5, 4, 5, '2023-09-25T00:00:00', 250.00, 2, 'Material escolar');
+
 
 -- Pagamentos para as dívidas passadas
 INSERT INTO credit_card_payment (id, wallet_id, debt_id, date, amount, installment)
