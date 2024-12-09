@@ -16,6 +16,7 @@
 - **Spring Data JPA**: Facilita a interação com o banco de dados relacional, simplificando a persistência de dados.
 - **JavaFX**: Utilizado para criar a interface gráfica do usuário (GUI)
 - **SQLite**: Banco de dados leve, utilizado para armazenar as transações financeiras localmente.
+- **JUnit, Mockito e H2**: Para testar os componentes do sistema.
 
 ## Dependências
 Para compilar o programa é necessário ter o [Maven](https://maven.apache.org/) e o Java 21 instalados.
@@ -30,3 +31,10 @@ sh scripts/install.sh
 Após a execução, os diretórios necessários serão criados, e o banco de dados SQLite será armazenado em **`$HOME/.moinex/data/`**.
 
 Os logs serão armazenados no diretório **`$HOME/.local/state/moinex`**.
+
+## Desinstalação
+Para remover todos os diretórios e arquivos criados pelo script de instalação ou pelo Moinex, basta executa:
+
+```sh
+sh scripts/uninstall.sh
+```
