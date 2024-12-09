@@ -30,3 +30,10 @@ sh scripts/install.sh
 Após a execução, os diretórios necessários serão criados, e o banco de dados SQLite será armazenado em **`$HOME/.moinex/data/`**.
 
 Os logs serão armazenados no diretório **`$HOME/.local/state/moinex`**.
+
+## Desinstalação
+Para remover todos os diretórios e arquivos criados pelo script de instalação ou pelo Moinex, basta executa:
+
+```sh
+sh scripts/uninstall.sh
+```
