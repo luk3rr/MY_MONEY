@@ -4,7 +4,7 @@ Abaixo, deixo a apresentação do projeto, bem como as instruções de como exec
 
 # Repositório
 Link do github com os commits: 
-- [https://github.com/luk3rr/MOINEX.git](https://github.com/luk3rr/MOINEX.git)
+- [https://github.com/luk3rr/MOINEX/tree/submit](https://github.com/luk3rr/MOINEX/tree/submit)
 
 # Trello
 Todos os cards utilizados para guiar o desenvolvimento do programa podem ser encontrados em:
@@ -12,27 +12,27 @@ Todos os cards utilizados para guiar o desenvolvimento do programa podem ser enc
 
 # Pastas
 ## docs
-A pasta docs contém todos os diagramas utilizados durando o desenvolvimento do projeto, além dos slides das apresentações da Spring 1 e 2
+A pasta docs contém todos os diagramas utilizados durando o desenvolvimento do projeto, além dos slides das apresentações das Sprints 1 e 2
 
 ## img
 Contém algumas screenshots das telas do programa e os ícones do Moinex.
 
 ## scripts
-Nesta pasta você encontrará os scripts de instalação e desinstalação do Moinex, além de outros scripts utilizados auxiliares que foram escritos por mim para realizar tarefas específicas.
+Nesta pasta você encontrará os scripts de instalação e desinstalação do Moinex, além de outros scripts auxiliares que foram escritos por mim para realizar tarefas específicas.
 
 ## src
-Pasta padrão de projetos javas, contendo as subpastas ```main```, com a implementação do Moinex, e ```test```, com todos os testes desenvolvidos para assegurar o funcionamento correto dos componentes.
+Pasta padrão de projetos java, contendo as subpastas ```main```, com a implementação do Moinex, e ```test```, com todos os testes desenvolvidos para assegurar o funcionamento correto dos componentes.
 
 ## test_db
-Caso deseje executar o programa, criei um arquivo `.db` com dados falsos de transações na pasta `test_db`. Mova esse arquivo para o diretório `~/.moinex/data` com o nome de `moinex.db`. 
+Caso deseje executar o programa, criei um arquivo `.db` com dados falsos de transações, o qual pode ser encontrado na pasta `test_db`. Mova esse arquivo para o diretório `~/.moinex/data` com o nome de `moinex.db` após a instalação do Moinex.
 
-Como há dados de vários meses, a visualização dos gráficos temporais ficará melhor, sem precisar que você crie várias transações para avaliar as funcionalidades.
+Como há dados de vários meses, a visualização dos gráficos temporais ficará melhor, sem a necessidade de que você crie várias transações para avaliar as funcionalidades.
 
 # Dependências
 Para compilar o programa é necessário ter o [Maven](https://maven.apache.org/) e o Java 21 instalados.
 
 # Execução dos testes
-Os testes podem ser executados com o comando do Maven ```mvn test```.
+Os testes podem ser executados com o comando do Maven ```mvn test```. Ao todo, foram implementados 118 testes.
 
 # Execução do programa
 O Moinex foi desenvolvido para sistemas operacionais GNU/Linux.
@@ -74,7 +74,10 @@ Mais especificamente, o script `scripts/install.sh` faz:
    - Concede permissões de execução ao arquivo `moinex.desktop`, permitindo que ele seja usado como atalho para abrir o programa a partir do menu de aplicativos.
    - Garante que todos os diretórios criados e arquivos copiados estejam acessíveis para o usuário.
 
-Após executar o script de instalação, o Moinex estará configurado e pronto para ser iniciado, seja pelo terminal (`~/.moinex/bin/run.sh`) ou pelo menu de aplicativos do ambiente gráfico.
+Após executar o script de instalação, o Moinex estará configurado e pronto para ser iniciado, seja pelo terminal (`~/.moinex/run.sh`) ou pelo menu de aplicativos do ambiente gráfico.
 
 # Desinstalação
 Basta executar o script `scripts/uninstall.sh` que ele irá apagar todos os arquivos e diretórios criados pelo script de instalação.
+
+# Considerações Finais
+Todas as funcionalidades das telas cujas capturas de tela estão no diretório `img/screenshots` estão implementadas e operacionais, conforme planejado nas sprints anteriores. No entanto, as funcionalidades das telas `Goals`, `Savings`, `Import` e `Settings` estão em desenvolvimento e não serão concluídas até a data limite do projeto.
