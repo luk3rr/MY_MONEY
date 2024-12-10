@@ -16,6 +16,7 @@
 - **Spring Data JPA**: Facilita a interação com o banco de dados relacional, simplificando a persistência de dados.
 - **JavaFX**: Utilizado para criar a interface gráfica do usuário (GUI)
 - **SQLite**: Banco de dados leve, utilizado para armazenar as transações financeiras localmente.
+- **JUnit, Mockito e H2**: Para testar os componentes do sistema.
 
 ## Dependências
 Para compilar o programa é necessário ter o [Maven](https://maven.apache.org/) e o Java 21 instalados.
