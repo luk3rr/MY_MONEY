@@ -12,8 +12,10 @@ import java.time.LocalDateTime;
 import java.time.Year;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import org.moinex.entities.Category;
 import org.moinex.entities.RecurringTransaction;
@@ -51,57 +53,67 @@ public class RecurringTransactionService
     public RecurringTransactionService() { }
 
     /**
-     * Check if the start date and end date is valid
+     * Validate start and end dates for editing a recurring transaction
+     *
      * @param startDate The start date
      * @param endDate The end date
      * @param frequency The frequency of the recurring transaction
-     * @throws RuntimeException If the date and interval between start and end date is
-     *     invalid
+     * @throws RuntimeException If dates or intervals are invalid
      */
-    private void CheckDateAndIntervalIsValid(LocalDate                     startDate,
-                                             LocalDate                     endDate,
-                                             RecurringTransactionFrequency frequency)
+    private void ValidateDateAndIntervalForEdit(LocalDate                     startDate,
+                                                LocalDate                     endDate,
+                                                RecurringTransactionFrequency frequency)
     {
-        // Check if interval between start and end date is valid
-        if (startDate.isBefore(LocalDate.now()))
-        {
-            throw new RuntimeException("Start date cannot be before today");
-        }
-
         if (endDate.isBefore(startDate))
         {
-            throw new RuntimeException("End date cannot be before start date");
+            throw new RuntimeException("End date cannot be before start date.");
         }
 
-        // Check if any transaction can be generated
-        if (frequency == RecurringTransactionFrequency.DAILY &&
-            !(startDate.plusDays(1).isBefore(endDate) ||
-              startDate.plusDays(1).equals(endDate)))
+        Map<RecurringTransactionFrequency, TemporalUnit> frequencyUnits =
+            Map.of(RecurringTransactionFrequency.DAILY,
+                   ChronoUnit.DAYS,
+                   RecurringTransactionFrequency.WEEKLY,
+                   ChronoUnit.WEEKS,
+                   RecurringTransactionFrequency.MONTHLY,
+                   ChronoUnit.MONTHS,
+                   RecurringTransactionFrequency.YEARLY,
+                   ChronoUnit.YEARS);
+
+        TemporalUnit unit = frequencyUnits.get(frequency);
+        if (unit == null)
+        {
+            throw new RuntimeException("Invalid frequency type.");
+        }
+
+        LocalDate minimumEndDate = startDate.plus(1, unit);
+        if (!minimumEndDate.isBefore(endDate) && !minimumEndDate.equals(endDate))
         {
             throw new RuntimeException(
-                "End date must be at least one day after the start date");
+                String.format("End date must be at least one %s after the start date.",
+                              frequency.name().toLowerCase()));
         }
-        else if (frequency == RecurringTransactionFrequency.WEEKLY &&
-                 !(startDate.plusWeeks(1).isBefore(endDate) ||
-                   startDate.plusWeeks(1).equals(endDate)))
+    }
+
+    /**
+     * Validate start and end dates for creating a recurring transaction.
+     * Ensures start date is not in the past and reuses edit validation.
+     *
+     * @param startDate The start date
+     * @param endDate The end date
+     * @param frequency The frequency of the recurring transaction
+     * @throws RuntimeException If dates or intervals are invalid
+     */
+    private void
+    ValidateDateAndIntervalForCreate(LocalDate                     startDate,
+                                     LocalDate                     endDate,
+                                     RecurringTransactionFrequency frequency)
+    {
+        if (startDate.isBefore(LocalDate.now()))
         {
-            throw new RuntimeException(
-                "End date must be at least one week after the start date");
+            throw new RuntimeException("Start date cannot be before today.");
         }
-        else if (frequency == RecurringTransactionFrequency.MONTHLY &&
-                 !(startDate.plusMonths(1).isBefore(endDate) ||
-                   startDate.plusMonths(1).equals(endDate)))
-        {
-            throw new RuntimeException(
-                "End date must be at least one month after the start date");
-        }
-        else if (frequency == RecurringTransactionFrequency.YEARLY &&
-                 !(startDate.plusYears(1).isBefore(endDate) ||
-                   startDate.plusYears(1).equals(endDate)))
-        {
-            throw new RuntimeException(
-                "End date must be at least one year after the start date");
-        }
+
+        ValidateDateAndIntervalForEdit(startDate, endDate, frequency);
     }
 
     /**
@@ -190,7 +202,7 @@ public class RecurringTransactionService
             endDate.atTime(Constants.RECURRING_TRANSACTION_DEFAULT_TIME);
 
         // Ensure the date and interval between start and end date is valid
-        CheckDateAndIntervalIsValid(startDate, endDate, frequency);
+        ValidateDateAndIntervalForCreate(startDate, endDate, frequency);
 
         RecurringTransaction recurringTransaction =
             new RecurringTransaction(wt,
@@ -275,9 +287,9 @@ public class RecurringTransactionService
             rt.GetEndDate().with(Constants.RECURRING_TRANSACTION_DEFAULT_TIME));
 
         // Ensure the date and interval between start and end date is valid
-        CheckDateAndIntervalIsValid(rt.GetStartDate().toLocalDate(),
-                                    rt.GetEndDate().toLocalDate(),
-                                    rt.GetFrequency());
+        ValidateDateAndIntervalForEdit(rtToUpdate.GetStartDate().toLocalDate(),
+                                       rt.GetEndDate().toLocalDate(),
+                                       rt.GetFrequency());
 
         rtToUpdate.SetWallet(rt.GetWallet());
         rtToUpdate.SetCategory(rt.GetCategory());
@@ -421,7 +433,7 @@ public class RecurringTransactionService
                                             LocalDate                     endDate,
                                             RecurringTransactionFrequency frequency)
     {
-        CheckDateAndIntervalIsValid(startDate, endDate, frequency);
+        ValidateDateAndIntervalForCreate(startDate, endDate, frequency);
 
         Long interval = 0L;
 
@@ -508,6 +520,12 @@ public class RecurringTransactionService
         {
             LocalDateTime nextDueDate = recurring.GetNextDueDate();
 
+            // If the recurring transaction has ended, stop generating transactions
+            if (recurring.GetEndDate().isBefore(nextDueDate))
+            {
+                break;
+            }
+
             while (nextDueDate.isBefore(
                 endYear.atMonth(12).atDay(31).atTime(23, 59, 59, 59)))
             {
@@ -555,6 +573,12 @@ public class RecurringTransactionService
 
             while (nextDueDate.isBefore(endMonth.atEndOfMonth().atTime(23, 59, 59, 59)))
             {
+                // If the recurring transaction has ended, stop generating transactions
+                if (recurring.GetEndDate().isBefore(nextDueDate))
+                {
+                    break;
+                }
+
                 if (nextDueDate.isAfter(startMonth.atDay(1).atTime(0, 0, 0, 0)) ||
                     nextDueDate.equals(startMonth.atDay(1).atTime(0, 0, 0, 0)))
                 {
