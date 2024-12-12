@@ -292,7 +292,7 @@ public class EditRecurringTransactionController
         catch (RuntimeException e)
         {
             WindowUtils.ShowErrorDialog("Error",
-                                        "Error while creating recurring transaction",
+                                        "Error while editing recurring transaction",
                                         e.getMessage());
         }
     }
