@@ -21,7 +21,7 @@ import org.moinex.util.Constants;
  */
 @Entity
 @Table(name = "goal")
-@PrimaryKeyJoinColumn(name = "id")
+@PrimaryKeyJoinColumn(name = "wallet_id")
 public class Goal extends Wallet
 {
     @Column(name = "initial_balance", nullable = false)

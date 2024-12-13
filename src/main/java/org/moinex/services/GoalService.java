@@ -7,6 +7,7 @@
 package org.moinex.services;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Logger;
@@ -15,7 +16,6 @@ import org.moinex.entities.Wallet;
 import org.moinex.entities.WalletType;
 import org.moinex.repositories.GoalRepository;
 import org.moinex.repositories.WalletRepository;
-import org.moinex.repositories.WalletTransactionRepository;
 import org.moinex.repositories.WalletTypeRepository;
 import org.moinex.util.Constants;
 import org.moinex.util.LoggerConfig;
@@ -54,11 +54,11 @@ public class GoalService
      *     same name already exists or if the initial balance is negative
      */
     @Transactional
-    public Long CreateGoal(String        name,
-                           BigDecimal    initialBalance,
-                           BigDecimal    targetBalance,
-                           LocalDateTime targetDate,
-                           String        motivation)
+    public Long CreateGoal(String     name,
+                           BigDecimal initialBalance,
+                           BigDecimal targetBalance,
+                           LocalDate  targetDate,
+                           String     motivation)
     {
         // Remove leading and trailing whitespaces
         name = name.strip();
@@ -85,7 +85,9 @@ public class GoalService
                 "The target balance of the goal must be greater than zero");
         }
 
-        if (targetDate.isBefore(LocalDateTime.now()))
+        LocalDateTime targetDateTime = targetDate.atStartOfDay();
+
+        if (targetDateTime.isBefore(LocalDateTime.now()))
         {
             throw new RuntimeException(
                 "The target date of the goal cannot be in the past");
@@ -93,8 +95,8 @@ public class GoalService
 
         if (initialBalance.compareTo(targetBalance) > 0)
         {
-            throw new RuntimeException("The initial balance of the goal cannot be " +
-                                       "greater than the target balance");
+            throw new RuntimeException("The initial balance of the goal cannot be "
+                                       + "greater than the target balance");
         }
 
         // All goals has the same wallet type
@@ -105,7 +107,7 @@ public class GoalService
         Goal goal = new Goal(name,
                              initialBalance,
                              targetBalance,
-                             targetDate,
+                             targetDateTime,
                              motivation,
                              walletType);
 
@@ -322,5 +324,13 @@ public class GoalService
 
         logger.info("Goal with id " + idGoal + " motivation changed to " +
                     newMotivation);
+    }
+
+    /**
+     * Get all goals
+     */
+    public List<Goal> GetGoals()
+    {
+        return m_goalRepository.findAll();
     }
 }

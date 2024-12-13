@@ -15,6 +15,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
@@ -28,13 +29,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.moinex.entities.Goal;
-import org.moinex.entities.Wallet;
 import org.moinex.entities.WalletType;
-import org.moinex.repositories.CategoryRepository;
 import org.moinex.repositories.GoalRepository;
-import org.moinex.repositories.TransferRepository;
 import org.moinex.repositories.WalletRepository;
-import org.moinex.repositories.WalletTransactionRepository;
 import org.moinex.repositories.WalletTypeRepository;
 import org.moinex.util.Constants;
 
@@ -110,7 +107,7 @@ public class GoalServiceTest
         m_goalService.CreateGoal(m_goal.GetName(),
                                  m_goal.GetInitialBalance(),
                                  m_goal.GetTargetBalance(),
-                                 m_goal.GetTargetDate(),
+                                 m_goal.GetTargetDate().toLocalDate(),
                                  m_goal.GetMotivation());
 
         // Capture the wallet object that was saved and check if the values are correct
@@ -137,7 +134,7 @@ public class GoalServiceTest
             m_goalService.CreateGoal(m_goal.GetName(),
                                      m_goal.GetInitialBalance(),
                                      m_goal.GetTargetBalance(),
-                                     m_goal.GetTargetDate(),
+                                     m_goal.GetTargetDate().toLocalDate(),
                                      m_goal.GetMotivation());
         });
 
@@ -154,7 +151,7 @@ public class GoalServiceTest
             m_goalService.CreateGoal(m_goal.GetName(),
                                      BigDecimal.valueOf(-1.0),
                                      m_goal.GetTargetBalance(),
-                                     m_goal.GetTargetDate(),
+                                     m_goal.GetTargetDate().toLocalDate(),
                                      m_goal.GetMotivation());
         });
 
@@ -171,7 +168,7 @@ public class GoalServiceTest
             m_goalService.CreateGoal(m_goal.GetName(),
                                      m_goal.GetInitialBalance(),
                                      BigDecimal.valueOf(-1.0),
-                                     m_goal.GetTargetDate(),
+                                     m_goal.GetTargetDate().toLocalDate(),
                                      m_goal.GetMotivation());
         });
 
@@ -188,7 +185,7 @@ public class GoalServiceTest
             m_goalService.CreateGoal(m_goal.GetName(),
                                      BigDecimal.valueOf(0.0),
                                      BigDecimal.valueOf(0.0),
-                                     m_goal.GetTargetDate(),
+                                     m_goal.GetTargetDate().toLocalDate(),
                                      m_goal.GetMotivation());
         });
 
@@ -205,7 +202,7 @@ public class GoalServiceTest
             m_goalService.CreateGoal(m_goal.GetName(),
                                      m_goal.GetInitialBalance(),
                                      m_goal.GetTargetBalance(),
-                                     LocalDateTime.now().minusDays(1),
+                                     LocalDate.now().minusDays(1),
                                      m_goal.GetMotivation());
         });
 
@@ -225,7 +222,7 @@ public class GoalServiceTest
                 m_goal.GetName(),
                 m_goal.GetInitialBalance(),
                 m_goal.GetInitialBalance().subtract(BigDecimal.valueOf(1.0)),
-                m_goal.GetTargetDate(),
+                m_goal.GetTargetDate().toLocalDate(),
                 m_goal.GetMotivation());
         });
 
@@ -245,7 +242,7 @@ public class GoalServiceTest
             m_goalService.CreateGoal(m_goal.GetName(),
                                      m_goal.GetInitialBalance(),
                                      m_goal.GetTargetBalance(),
-                                     m_goal.GetTargetDate(),
+                                     m_goal.GetTargetDate().toLocalDate(),
                                      m_goal.GetMotivation());
         });
 
