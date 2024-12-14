@@ -75,5 +75,5 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
            + "WHERE t.senderWallet.id = :walletId "
            + "OR t.receiverWallet.id = :walletId")
     Long
-    GetTransferCountByWallet(Long walletId);
+    GetTransferCountByWallet(@Param("walletId") Long walletId);
 }
