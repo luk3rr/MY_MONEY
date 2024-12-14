@@ -26,6 +26,7 @@ import javafx.scene.layout.AnchorPane;
 import org.moinex.entities.Goal;
 import org.moinex.services.GoalService;
 import org.moinex.ui.dialog.AddGoalController;
+import org.moinex.ui.dialog.AddTransferController;
 import org.moinex.util.Constants;
 import org.moinex.util.LoggerConfig;
 import org.moinex.util.UIUtils;
@@ -95,7 +96,29 @@ public class GoalController
 
     @FXML
     private void handleAddDeposit()
-    { }
+    {
+        // Get the selected goal
+        Goal goal = goalTableView.getSelectionModel().getSelectedItem();
+
+        if (goal == null)
+        {
+            WindowUtils.ShowInformationDialog("Information",
+                                              "No goal selected",
+                                              "Please select a goal to add a deposit");
+            return;
+        }
+
+        WindowUtils.OpenModalWindow(
+            Constants.ADD_TRANSFER_FXML,
+            "Add new transfer",
+            springContext,
+            (AddTransferController controller)
+                -> { controller.SetReceiverWalletComboBox(goal); },
+            List.of(() -> {
+                LoadGoalsFromDatabase();
+                UpdateGoalTableView();
+            }));
+    }
 
     @FXML
     private void handleEditGoal()

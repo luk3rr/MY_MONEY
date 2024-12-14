@@ -28,4 +28,11 @@ public interface WalletTypeRepository extends JpaRepository<WalletType, Long> {
      * @return The wallet type
      */
     Optional<WalletType> findByName(String name);
+
+    /**
+     * Check if a wallet type with the given name exists
+     * @param name The name of the wallet type
+     * @return True if the wallet type exists, false otherwise
+     */
+    Boolean existsByName(String name);
 }

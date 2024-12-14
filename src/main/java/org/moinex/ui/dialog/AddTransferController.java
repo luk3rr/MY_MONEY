@@ -93,6 +93,18 @@ public class AddTransferController
         UpdateSenderWalletBalance();
     }
 
+    public void SetReceiverWalletComboBox(Wallet wt)
+    {
+        if (wallets.stream().noneMatch(w -> w.GetId() == wt.GetId()))
+        {
+            return;
+        }
+
+        receiverWalletComboBox.setValue(wt.GetName());
+
+        UpdateReceiverWalletBalance();
+    }
+
     @FXML
     private void initialize()
     {
