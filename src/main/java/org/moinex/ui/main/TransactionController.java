@@ -268,7 +268,7 @@ public class TransactionController
             return;
         }
 
-        // Create a message to show the user
+        // Create a message to show to the user
         StringBuilder message = new StringBuilder();
         message.append("Description: ")
             .append(selectedTransaction.GetDescription())
@@ -327,7 +327,6 @@ public class TransactionController
                 message.toString()))
         {
             walletTransactionService.DeleteTransaction(selectedTransaction.GetId());
-            transactionsTableView.getItems().remove(selectedTransaction);
 
             UpdateMonthResume();
             UpdateYearResume();

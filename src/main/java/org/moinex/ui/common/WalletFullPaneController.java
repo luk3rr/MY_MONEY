@@ -375,7 +375,8 @@ public class WalletFullPaneController
             WindowUtils.ShowErrorDialog(
                 "Error",
                 "Wallet has transactions",
-                "Cannot delete a wallet with associated transactions");
+                "Cannot delete a wallet with associated transactions. "
+                    + "Remove the transactions first or archive the wallet");
             return;
         }
 

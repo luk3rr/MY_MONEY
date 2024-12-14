@@ -16,6 +16,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -25,8 +26,10 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
 import org.moinex.entities.Goal;
 import org.moinex.services.GoalService;
+import org.moinex.services.WalletTransactionService;
 import org.moinex.ui.dialog.AddGoalController;
 import org.moinex.ui.dialog.AddTransferController;
+import org.moinex.ui.dialog.EditGoalController;
 import org.moinex.util.Constants;
 import org.moinex.util.LoggerConfig;
 import org.moinex.util.UIUtils;
@@ -50,6 +53,9 @@ public class GoalController
     private TableView<Goal> goalTableView;
 
     @FXML
+    private ComboBox<String> statusComboBox;
+
+    @FXML
     private TextField goalSearchField;
 
     @Autowired
@@ -57,27 +63,40 @@ public class GoalController
 
     private GoalService goalService;
 
+    private WalletTransactionService walletTransactionService;
+
     private List<Goal> goals;
 
     /**
      * Constructor
      * @param goalService The goal service
+     * @param walletTransactionService The wallet transaction service
      * @note This constructor is used for dependency injection
      */
     @Autowired
-    public GoalController(GoalService goalService)
+    public GoalController(GoalService              goalService,
+                          WalletTransactionService walletTransactionService)
     {
-        this.goalService = goalService;
+        this.goalService              = goalService;
+        this.walletTransactionService = walletTransactionService;
     }
 
     @FXML
     private void initialize()
     {
+        PopulateStatusComboBox();
+
         ConfigureTableView();
 
         LoadGoalsFromDatabase();
 
         UpdateGoalTableView();
+
+        statusComboBox.setOnAction(event -> UpdateGoalTableView());
+
+        // Add listener to the search field
+        goalSearchField.textProperty().addListener(
+            (observable, oldValue, newValue) -> { UpdateGoalTableView(); });
     }
 
     @FXML
@@ -122,11 +141,90 @@ public class GoalController
 
     @FXML
     private void handleEditGoal()
-    { }
+    {
+        // Get the selected goal
+        Goal goal = goalTableView.getSelectionModel().getSelectedItem();
+
+        if (goal == null)
+        {
+            WindowUtils.ShowInformationDialog("Information",
+                                              "No goal selected",
+                                              "Please select a goal to edit");
+            return;
+        }
+
+        WindowUtils.OpenModalWindow(Constants.EDIT_GOAL_FXML,
+                                    "Edit Goal",
+                                    springContext,
+                                    (EditGoalController controller)
+                                        -> { controller.SetGoal(goal); },
+                                    List.of(() -> {
+                                        LoadGoalsFromDatabase();
+                                        UpdateGoalTableView();
+                                    }));
+    }
 
     @FXML
     private void handleDeleteGoal()
-    { }
+    {
+        // Get the selected goal
+        Goal goal = goalTableView.getSelectionModel().getSelectedItem();
+
+        if (goal == null)
+        {
+            WindowUtils.ShowInformationDialog("Information",
+                                              "No goal selected",
+                                              "Please select a goal to delete");
+            return;
+        }
+
+        // Prevent the removal of a wallet with associated transactions
+        if (walletTransactionService.GetTransactionCountByWallet(goal.GetId()) > 0)
+        {
+            WindowUtils.ShowErrorDialog(
+                "Error",
+                "Goal wallet has transactions",
+                "Cannot delete a goal wallet with associated transactions. "
+                    + "Remove the transactions first or archive the goal");
+            return;
+        }
+
+        // Create a message to show to the user
+        StringBuilder message = new StringBuilder();
+
+        message.append("Name: ").append(goal.GetName()).append("\n");
+        message.append("Initial Amount: ")
+            .append(UIUtils.FormatCurrency(goal.GetInitialBalance()))
+            .append("\n");
+        message.append("Current Amount: ")
+            .append(UIUtils.FormatCurrency(goal.GetBalance()))
+            .append("\n");
+        message.append("Target Amount: ")
+            .append(UIUtils.FormatCurrency(goal.GetTargetBalance()))
+            .append("\n");
+        message.append("Target Date: ")
+            .append(goal.GetTargetDate().format(Constants.DATE_FORMATTER_NO_TIME))
+            .append("\n");
+
+        try
+        {
+            // Confirm the deletion
+            if (WindowUtils.ShowConfirmationDialog(
+                    "Delete Goal",
+                    "Are you sure you want to delete this goal?",
+                    message.toString()))
+            {
+                goalService.DeleteGoal(goal.GetId());
+                goals.remove(goal);
+
+                UpdateGoalTableView();
+            }
+        }
+        catch (RuntimeException e)
+        {
+            WindowUtils.ShowErrorDialog("Error", "Error deleting goal", e.getMessage());
+        }
+    }
 
     private void LoadGoalsFromDatabase()
     {
@@ -135,11 +233,85 @@ public class GoalController
 
     private void UpdateGoalTableView()
     {
+        // Get the search text
+        String searchText = goalSearchField.getText();
+
+        // Get the selected status
+        String selectedGoalStatus =
+            statusComboBox.getSelectionModel().getSelectedItem();
+
         goalTableView.getItems().clear();
 
-        for (Goal goal : goals)
+        if (searchText.isEmpty())
         {
-            goalTableView.getItems().add(goal);
+            goals.stream()
+                .filter(g -> {
+                    if (selectedGoalStatus.equals("ALL"))
+                    {
+                        return true;
+                    }
+                    else if (selectedGoalStatus.equals("ARCHIVED"))
+                    {
+                        return g.IsArchived();
+                    }
+                    else if (selectedGoalStatus.equals("ACTIVE"))
+                    {
+                        return !g.IsArchived();
+                    }
+                    return false;
+                })
+                .forEach(goalTableView.getItems()::add);
+        }
+        else
+        {
+            goals.stream()
+                .filter(g -> {
+                    if (selectedGoalStatus.equals("ALL"))
+                    {
+                        return true;
+                    }
+                    else if (selectedGoalStatus.equals("ARCHIVED"))
+                    {
+                        return g.IsArchived();
+                    }
+                    else if (selectedGoalStatus.equals("ACTIVE"))
+                    {
+                        return !g.IsArchived();
+                    }
+                    return false;
+                })
+                .filter(g -> {
+                    String name          = g.GetName().toLowerCase();
+                    String initialAmount = g.GetInitialBalance().toString();
+                    String currentAmount = g.GetBalance().toString();
+                    String targetAmount  = g.GetTargetBalance().toString();
+                    String targetDate =
+                        g.GetTargetDate().format(Constants.DATE_FORMATTER_NO_TIME);
+
+                    String monthsUntilTarget =
+                        CalculateMonthsUntilTarget(LocalDate.now(),
+                                                   g.GetTargetDate().toLocalDate())
+                            .toString();
+
+                    String recommendedMonthlyDeposit =
+                        g.GetTargetBalance()
+                            .subtract(g.GetBalance())
+                            .divide(BigDecimal.valueOf(CalculateMonthsUntilTarget(
+                                        LocalDate.now(),
+                                        g.GetTargetDate().toLocalDate())),
+                                    2,
+                                    RoundingMode.HALF_UP)
+                            .toString();
+
+                    return name.contains(searchText.toLowerCase()) ||
+                        initialAmount.contains(searchText.toLowerCase()) ||
+                        currentAmount.contains(searchText.toLowerCase()) ||
+                        targetAmount.contains(searchText.toLowerCase()) ||
+                        targetDate.contains(searchText.toLowerCase()) ||
+                        monthsUntilTarget.contains(searchText.toLowerCase()) ||
+                        recommendedMonthlyDeposit.contains(searchText.toLowerCase());
+                })
+                .forEach(goalTableView.getItems()::add);
         }
 
         goalTableView.refresh();
@@ -287,5 +459,13 @@ public class GoalController
 
         // Add one to the number of months to account for the current month
         return period.getYears() * 12 + period.getMonths() + 1;
+    }
+
+    private void PopulateStatusComboBox()
+    {
+        statusComboBox.getItems().add("ALL");
+        statusComboBox.getItems().add("ACTIVE");
+        statusComboBox.getItems().add("ARCHIVED");
+        statusComboBox.getSelectionModel().selectFirst();
     }
 }

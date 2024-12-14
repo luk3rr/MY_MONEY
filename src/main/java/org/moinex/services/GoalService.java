@@ -15,7 +15,8 @@ import org.moinex.entities.Goal;
 import org.moinex.entities.Wallet;
 import org.moinex.entities.WalletType;
 import org.moinex.repositories.GoalRepository;
-import org.moinex.repositories.WalletRepository;
+import org.moinex.repositories.TransferRepository;
+import org.moinex.repositories.WalletTransactionRepository;
 import org.moinex.repositories.WalletTypeRepository;
 import org.moinex.util.Constants;
 import org.moinex.util.LoggerConfig;
@@ -33,7 +34,10 @@ public class GoalService
     private GoalRepository m_goalRepository;
 
     @Autowired
-    private WalletRepository m_walletRepository;
+    private TransferRepository m_transfersRepository;
+
+    @Autowired
+    private WalletTransactionRepository m_walletTransactionRepository;
 
     @Autowired
     private WalletTypeRepository m_walletTypeRepository;
@@ -41,6 +45,45 @@ public class GoalService
     private static final Logger logger = LoggerConfig.GetLogger();
 
     public GoalService() { }
+
+    /**
+     * Validates the date and balances of a goal
+     * @param initialBalance The initial balance of the goal
+     * @param targetBalance The target balance of the goal
+     * @param targetDateTime The target date of the goal
+     * @throws RuntimeException If the target date is in the past, if the initial
+     *   balance is negative, if the target balance is negative or zero or if the
+     *   initial balance is greater than the target balance
+     */
+    @Transactional
+    public void ValidateDateAndBalances(BigDecimal    initialBalance,
+                                        BigDecimal    targetBalance,
+                                        LocalDateTime targetDateTime)
+    {
+        if (targetDateTime.isBefore(LocalDateTime.now()))
+        {
+            throw new RuntimeException(
+                "The target date of the goal cannot be in the past");
+        }
+
+        if (initialBalance.compareTo(BigDecimal.ZERO) < 0)
+        {
+            throw new RuntimeException(
+                "The initial balance of the goal cannot be negative");
+        }
+
+        if (targetBalance.compareTo(BigDecimal.ZERO) <= 0)
+        {
+            throw new RuntimeException(
+                "The target balance of the goal must be greater than zero");
+        }
+
+        if (initialBalance.compareTo(targetBalance) > 0)
+        {
+            throw new RuntimeException("The initial balance of the goal cannot be "
+                                       + "greater than the target balance");
+        }
+    }
 
     /**
      * Creates a new goal
@@ -73,31 +116,9 @@ public class GoalService
             throw new RuntimeException("A goal with name " + name + " already exists");
         }
 
-        if (initialBalance.compareTo(BigDecimal.ZERO) < 0)
-        {
-            throw new RuntimeException(
-                "The initial balance of the goal cannot be negative");
-        }
-
-        if (targetBalance.compareTo(BigDecimal.ZERO) <= 0)
-        {
-            throw new RuntimeException(
-                "The target balance of the goal must be greater than zero");
-        }
-
         LocalDateTime targetDateTime = targetDate.atStartOfDay();
 
-        if (targetDateTime.isBefore(LocalDateTime.now()))
-        {
-            throw new RuntimeException(
-                "The target date of the goal cannot be in the past");
-        }
-
-        if (initialBalance.compareTo(targetBalance) > 0)
-        {
-            throw new RuntimeException("The initial balance of the goal cannot be "
-                                       + "greater than the target balance");
-        }
+        ValidateDateAndBalances(initialBalance, targetBalance, targetDateTime);
 
         // All goals has the same wallet type
         WalletType walletType =
@@ -119,38 +140,78 @@ public class GoalService
     }
 
     /**
-     * Deletes a goal
+     * Delete a goal
      * @param idGoal The id of the goal to be deleted
-     * @param transferToWalletId The id of the wallet to which the remaining balance
-     *     will be transferred
-     * @throws RuntimeException If the goal does not exist or if the wallet does not
-     *    exist
+     * @throws RuntimeException If the goal does not exist or if the goal has
+     *     transactions
      */
     @Transactional
-    public void DeleteGoal(Long idGoal, Long transferToWalletId)
+    public void DeleteGoal(Long idGoal)
     {
         Goal goal = m_goalRepository.findById(idGoal).orElseThrow(
             () -> new RuntimeException("Goal with id " + idGoal + " not found"));
 
-        Wallet wallet = m_walletRepository.findById(transferToWalletId)
-                            .orElseThrow(()
-                                             -> new RuntimeException(
-                                                 "Wallet with id " +
-                                                 transferToWalletId + " not found"));
-
-        if (goal.GetBalance().compareTo(BigDecimal.ZERO) > 0)
+        if (m_walletTransactionRepository.GetTransactionCountByWallet(idGoal) > 0 ||
+            m_transfersRepository.GetTransferCountByWallet(idGoal) > 0)
         {
-            wallet.SetBalance(wallet.GetBalance().add(goal.GetBalance()));
-
-            m_walletRepository.save(wallet);
-
-            logger.info("Remaining balance of goal " + goal.GetName() +
-                        " transferred to wallet " + wallet.GetName());
+            throw new RuntimeException(
+                "Goal wallet with id " + idGoal +
+                " has transactions and cannot be deleted. Remove "
+                + "the transactions first or archive the goal");
         }
 
         m_goalRepository.delete(goal);
 
-        logger.info("Goal " + goal.GetName() + " deleted");
+        logger.info("Goal " + goal.GetName() + " was permanently deleted");
+    }
+
+    /**
+     * Updates a goal
+     * @param goal The goal to be updated
+     * @throws RuntimeException If the goal does not exist, if the name of the goal is
+     *   empty, if a goal with the same name already exists, if the initial balance
+     *   is negative, if the target balance is negative or zero, if the initial balance
+     *   is greater than the target balance or if the target date is in the past
+     */
+    @Transactional
+    public void UpdateGoal(Goal goal)
+    {
+        Goal oldGoal =
+            m_goalRepository.findById(goal.GetId())
+                .orElseThrow(()
+                                 -> new RuntimeException("Goal with id " +
+                                                         goal.GetId() + " not found"));
+
+        // Remove leading and trailing whitespaces
+        goal.SetName(goal.GetName().strip());
+
+        if (goal.GetName().isBlank())
+        {
+            throw new RuntimeException("The name of the goal cannot be empty");
+        }
+
+        if (!goal.GetName().equals(oldGoal.GetName()) &&
+            m_goalRepository.existsByName(goal.GetName()))
+        {
+            throw new RuntimeException("A goal with name " + goal.GetName() +
+                                       " already exists");
+        }
+
+        ValidateDateAndBalances(goal.GetInitialBalance(),
+                                goal.GetTargetBalance(),
+                                goal.GetTargetDate());
+
+        oldGoal.SetName(goal.GetName());
+        oldGoal.SetInitialBalance(goal.GetInitialBalance());
+        oldGoal.SetBalance(goal.GetBalance());
+        oldGoal.SetTargetBalance(goal.GetTargetBalance());
+        oldGoal.SetTargetDate(goal.GetTargetDate());
+        oldGoal.SetMotivation(goal.GetMotivation());
+        oldGoal.SetArchived(goal.IsArchived());
+
+        m_goalRepository.save(goal);
+
+        logger.info("Goal with id " + goal.GetId() + " updated successfully");
     }
 
     /**

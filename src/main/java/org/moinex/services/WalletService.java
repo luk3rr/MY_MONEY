@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import org.moinex.entities.Wallet;
 import org.moinex.entities.WalletType;
+import org.moinex.repositories.TransferRepository;
 import org.moinex.repositories.WalletRepository;
 import org.moinex.repositories.WalletTransactionRepository;
 import org.moinex.repositories.WalletTypeRepository;
@@ -27,6 +28,9 @@ public class WalletService
 {
     @Autowired
     private WalletRepository m_walletRepository;
+
+    @Autowired
+    private TransferRepository m_transfersRepository;
 
     @Autowired
     private WalletTransactionRepository m_walletTransactionRepository;
@@ -117,10 +121,13 @@ public class WalletService
                 -> new RuntimeException("Wallet with id " + id +
                                         " not found and cannot be deleted"));
 
-        if (m_walletTransactionRepository.GetTransactionCountByWallet(id) > 0)
+        if (m_walletTransactionRepository.GetTransactionCountByWallet(id) > 0 ||
+            m_transfersRepository.GetTransferCountByWallet(id) > 0)
         {
-            throw new RuntimeException("Wallet with id " + id +
-                                       " has transactions and cannot be deleted");
+            throw new RuntimeException(
+                "Wallet with id " + id +
+                " has transactions and cannot be deleted. Remove "
+                + "the transactions first or archive the wallet");
         }
 
         m_walletRepository.delete(wallet);

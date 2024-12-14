@@ -205,6 +205,11 @@ public class CreditCardService
         // Remove leading and trailing whitespaces
         crc.SetName(crc.GetName().strip());
 
+        if (crc.GetName().isBlank())
+        {
+            throw new RuntimeException("Credit card name cannot be empty");
+        }
+
         CreditCardBasicChecks(crc.GetName(),
                               crc.GetBillingDueDay(),
                               crc.GetClosingDay(),
