@@ -64,4 +64,16 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
     FindTransfersByWalletAndMonth(@Param("walletId") Long walletId,
                                   @Param("month") Integer month,
                                   @Param("year") Integer  year);
+
+    /**
+     * Get the count of transfers by wallet
+     * @param walletId The id of the wallet
+     * @return The count of transfers in the wallet
+     */
+    @Query("SELECT COUNT(t) "
+           + "FROM Transfer t "
+           + "WHERE t.senderWallet.id = :walletId "
+           + "OR t.receiverWallet.id = :walletId")
+    Long
+    GetTransferCountByWallet(@Param("walletId") Long walletId);
 }
