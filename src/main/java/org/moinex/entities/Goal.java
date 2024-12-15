@@ -33,6 +33,9 @@ public class Goal extends Wallet
     @Column(name = "target_date", nullable = false)
     private String targetDate;
 
+    @Column(name = "completion_date")
+    private String completionDate;
+
     @Column(name = "motivation", length = 500)
     private String motivation;
 
@@ -63,9 +66,9 @@ public class Goal extends Wallet
         this.SetType(walletType);
 
         this.initialBalance = initialBalance;
-        this.targetBalance = targetBalance;
-        this.targetDate    = targetDate.format(Constants.DB_DATE_FORMATTER);
-        this.motivation    = motivation;
+        this.targetBalance  = targetBalance;
+        this.targetDate     = targetDate.format(Constants.DB_DATE_FORMATTER);
+        this.motivation     = motivation;
     }
 
     /**
@@ -105,6 +108,16 @@ public class Goal extends Wallet
         return targetBalance;
     }
 
+    public LocalDateTime GetCompletionDate()
+    {
+        if (completionDate == null)
+        {
+            return null;
+        }
+
+        return LocalDateTime.parse(completionDate, Constants.DB_DATE_FORMATTER);
+    }
+
     public LocalDateTime GetTargetDate()
     {
         return LocalDateTime.parse(targetDate, Constants.DB_DATE_FORMATTER);
@@ -128,6 +141,17 @@ public class Goal extends Wallet
     public void SetTargetDate(LocalDateTime targetDate)
     {
         this.targetDate = targetDate.format(Constants.DB_DATE_FORMATTER);
+    }
+
+    public void SetCompletionDate(LocalDateTime completionDate)
+    {
+        if (completionDate == null)
+        {
+            this.completionDate = null;
+            return;
+        }
+
+        this.completionDate = completionDate.format(Constants.DB_DATE_FORMATTER);
     }
 
     public void SetMotivation(String motivation)

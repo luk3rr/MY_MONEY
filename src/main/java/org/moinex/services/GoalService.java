@@ -231,6 +231,7 @@ public class GoalService
                                         " not found and cannot be archived"));
 
         goal.SetArchived(true);
+        goal.SetCompletionDate(LocalDateTime.now());
 
         m_goalRepository.save(goal);
 
@@ -253,6 +254,7 @@ public class GoalService
                                         " not found and cannot be unarchived"));
 
         goal.SetArchived(false);
+        goal.SetCompletionDate(null);
 
         m_goalRepository.save(goal);
 
@@ -393,5 +395,17 @@ public class GoalService
     public List<Goal> GetGoals()
     {
         return m_goalRepository.findAll();
+    }
+
+    /**
+     * Get goal by id
+     * @param idGoal The id of the goal to be retrieved
+     * @return The goal with the given id
+     * @throws RuntimeException If the goal does not exist
+     */
+    public Goal GetGoalById(Long idGoal)
+    {
+        return m_goalRepository.findById(idGoal).orElseThrow(
+            () -> new RuntimeException("Goal with id " + idGoal + " not found"));
     }
 }

@@ -8,7 +8,9 @@ package org.moinex.util;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Constants used in the application
@@ -101,6 +103,9 @@ public final class Constants
 
     public static final String WALLET_FULL_PANE_FXML =
         UI_COMMON_PATH + "wallet_full_pane.fxml";
+    public static final String GOAL_FULL_PANE_FXML =
+        UI_COMMON_PATH + "goal_full_pane.fxml";
+
     public static final String RESUME_PANE_FXML = UI_COMMON_PATH + "resume_pane.fxml";
     public static final String CRC_PANE_FXML    = UI_COMMON_PATH + ("credit_card_pane."
                                                                  + "fxml");
@@ -110,6 +115,7 @@ public final class Constants
     public static final String HOME_INCOME_ICON  = COMMON_ICONS_PATH + "income.png";
     public static final String SUCCESS_ICON      = COMMON_ICONS_PATH + "success.png";
     public static final String DEFAULT_ICON      = COMMON_ICONS_PATH + "default.png";
+    public static final String TROPHY_ICON       = COMMON_ICONS_PATH + "trophy.png";
 
     // CSS
     public static final String MAIN_STYLE_SHEET   = CSS_SCENE_PATH + "main.css";
@@ -212,6 +218,10 @@ public final class Constants
     public static final Double  TOOLTIP_ANIMATION_DURATION     = 0.5; // s
     public static final Double  TOOLTIP_ANIMATION_DELAY        = 0.5; // s
 
+    // Circular progress bar on the goal pane
+    public static final Double GOAL_PANE_PROGRESS_BAR_RADIUS = 80.0;
+    public static final Double GOAL_PANE_PROGRESS_BAR_WIDTH  = 8.0;
+
     public static final Integer SUGGESTIONS_MAX_ITEMS = 5;
 
     public static final String GOAL_DEFAULT_WALLET_TYPE_NAME = "Goal";
@@ -227,15 +237,19 @@ public final class Constants
         LocalTime.of(0, 0, 0, 0);
 
     // Date formats
-    public static final String DB_DATE_FORMAT        = "yyyy-MM-dd'T'HH:mm:ss";
-    public static final String DATE_FORMAT_NO_TIME   = "yyyy-MM-dd";
-    public static final String DATE_FORMAT_WITH_TIME = "yyyy-MM-dd HH:mm:ss";
+    public static final String DB_DATE_FORMAT            = "yyyy-MM-dd'T'HH:mm:ss";
+    public static final String DATE_FORMAT_NO_TIME       = "yyyy-MM-dd";
+    public static final String SHORT_DATE_FORMAT_NO_TIME = "yy-MM-dd";
+    public static final String DATE_FORMAT_WITH_TIME     = "yyyy-MM-dd HH:mm:ss";
 
     public static final DateTimeFormatter DB_DATE_FORMATTER =
         DateTimeFormatter.ofPattern(DB_DATE_FORMAT);
 
     public static final DateTimeFormatter DATE_FORMATTER_NO_TIME =
         DateTimeFormatter.ofPattern(DATE_FORMAT_NO_TIME);
+
+    public static final DateTimeFormatter SHORT_DATE_FORMATTER_NO_TIME =
+        DateTimeFormatter.ofPattern(SHORT_DATE_FORMAT_NO_TIME);
 
     public static final DateTimeFormatter DATE_FORMATTER_WITH_TIME =
         DateTimeFormatter.ofPattern(DATE_FORMAT_WITH_TIME);
@@ -266,6 +280,30 @@ public final class Constants
         }
 
         return "\\d{0," + n + "}";
+    }
+
+    /**
+     * Calculate the number of months until the target date
+     * @param beginDate The begin date
+     * @param targetDate The target date
+     * @return The number of months until the target date
+     */
+    public static Long CalculateMonthsUntilTarget(LocalDate beginDate,
+                                                  LocalDate targetDate)
+    {
+        return ChronoUnit.MONTHS.between(beginDate, targetDate);
+    }
+
+    /**
+     * Calculate the number of days until the target date
+     * @param beginDate The begin date
+     * @param targetDate The target date
+     * @return The number of days until the target date
+     */
+    public static Long CalculateDaysUntilTarget(LocalDate beginDate,
+                                                LocalDate targetDate)
+    {
+        return ChronoUnit.DAYS.between(beginDate, targetDate);
     }
 
     // Prevent instantiation
