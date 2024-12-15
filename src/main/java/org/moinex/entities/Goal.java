@@ -21,7 +21,7 @@ import org.moinex.util.Constants;
  */
 @Entity
 @Table(name = "goal")
-@PrimaryKeyJoinColumn(name = "wallet_id")
+@PrimaryKeyJoinColumn(name = "wallet_id", referencedColumnName = "id")
 public class Goal extends Wallet
 {
     @Column(name = "initial_balance", nullable = false)
@@ -87,9 +87,7 @@ public class Goal extends Wallet
                 String        motivation,
                 WalletType    walletType)
     {
-        super();
-        this.SetName(name);
-        this.SetBalance(initialBalance);
+        super(name, initialBalance);
         this.SetType(walletType);
 
         this.initialBalance = initialBalance;

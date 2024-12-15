@@ -12,10 +12,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Logger;
 import org.moinex.entities.Goal;
-import org.moinex.entities.Wallet;
 import org.moinex.entities.WalletType;
 import org.moinex.repositories.GoalRepository;
 import org.moinex.repositories.TransferRepository;
+import org.moinex.repositories.WalletRepository;
 import org.moinex.repositories.WalletTransactionRepository;
 import org.moinex.repositories.WalletTypeRepository;
 import org.moinex.util.Constants;
@@ -32,6 +32,9 @@ public class GoalService
 {
     @Autowired
     private GoalRepository m_goalRepository;
+
+    @Autowired
+    private WalletRepository m_walletRepository;
 
     @Autowired
     private TransferRepository m_transfersRepository;
@@ -116,6 +119,11 @@ public class GoalService
             throw new RuntimeException("A goal with name " + name + " already exists");
         }
 
+        if (m_walletRepository.existsByName(name))
+        {
+            throw new RuntimeException("A wallet with name " + name + " already exists");
+        }
+
         LocalDateTime targetDateTime = targetDate.atStartOfDay();
 
         ValidateDateAndBalances(initialBalance, targetBalance, targetDateTime);
@@ -132,9 +140,9 @@ public class GoalService
                              motivation,
                              walletType);
 
-        logger.info("Goal " + name + " created with initial balance " + initialBalance);
-
         m_goalRepository.save(goal);
+
+        logger.info("Goal " + name + " created with initial balance " + initialBalance);
 
         return goal.GetId();
     }
@@ -194,6 +202,13 @@ public class GoalService
             m_goalRepository.existsByName(goal.GetName()))
         {
             throw new RuntimeException("A goal with name " + goal.GetName() +
+                                       " already exists");
+        }
+
+
+        if (m_walletRepository.existsByName(goal.GetName()))
+        {
+            throw new RuntimeException("A wallet with name " + goal.GetName() +
                                        " already exists");
         }
 
