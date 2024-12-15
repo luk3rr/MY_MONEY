@@ -121,7 +121,8 @@ public class GoalService
 
         if (m_walletRepository.existsByName(name))
         {
-            throw new RuntimeException("A wallet with name " + name + " already exists");
+            throw new RuntimeException("A wallet with name " + name +
+                                       " already exists");
         }
 
         LocalDateTime targetDateTime = targetDate.atStartOfDay();
@@ -198,18 +199,18 @@ public class GoalService
             throw new RuntimeException("The name of the goal cannot be empty");
         }
 
-        if (!goal.GetName().equals(oldGoal.GetName()) &&
-            m_goalRepository.existsByName(goal.GetName()))
+        if (!goal.GetName().equals(oldGoal.GetName()))
         {
-            throw new RuntimeException("A goal with name " + goal.GetName() +
-                                       " already exists");
-        }
-
-
-        if (m_walletRepository.existsByName(goal.GetName()))
-        {
-            throw new RuntimeException("A wallet with name " + goal.GetName() +
-                                       " already exists");
+            if (m_goalRepository.existsByName(goal.GetName()))
+            {
+                throw new RuntimeException("A goal with name " + goal.GetName() +
+                                           " already exists");
+            }
+            else if (m_walletRepository.existsByName(goal.GetName()))
+            {
+                throw new RuntimeException("A wallet with name " + goal.GetName() +
+                                           " already exists");
+            }
         }
 
         ValidateDateAndBalances(goal.GetInitialBalance(),

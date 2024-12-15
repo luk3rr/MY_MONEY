@@ -136,7 +136,7 @@
             </VBox>
          </children>
       </HBox>
-      <CheckBox fx:id="archivedCheckBox" mnemonicParsing="false" text="Archived" />
+      <CheckBox fx:id="archivedCheckBox" mnemonicParsing="false" text="Completed" />
       <HBox alignment="CENTER" spacing="10.0">
          <children>
             <JFXButton minWidth="80.0" onAction="#handleCancel" stylesheets="@../../css/component/buttons.css" text="Cancel" />

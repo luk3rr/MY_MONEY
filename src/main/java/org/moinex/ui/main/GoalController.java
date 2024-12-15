@@ -690,12 +690,24 @@ public class GoalController
                 param.getValue().GetTargetDate().toLocalDate());
 
             // Calculate the recommended monthly deposit
-            Double recommendedMonthlyDeposit =
-                param.getValue()
-                    .GetTargetBalance()
-                    .subtract(param.getValue().GetBalance())
-                    .doubleValue() /
-                BigDecimal.valueOf(monthsUntilTarget).doubleValue();
+            Double recommendedMonthlyDeposit;
+
+            if (monthsUntilTarget <= 0)
+            {
+                recommendedMonthlyDeposit = param.getValue()
+                                                .GetTargetBalance()
+                                                .subtract(param.getValue().GetBalance())
+                                                .doubleValue();
+            }
+            else
+            {
+                recommendedMonthlyDeposit =
+                    param.getValue()
+                        .GetTargetBalance()
+                        .subtract(param.getValue().GetBalance())
+                        .doubleValue() /
+                    BigDecimal.valueOf(monthsUntilTarget).doubleValue();
+            }
 
             return new SimpleObjectProperty<>(
                 UIUtils.FormatCurrency(recommendedMonthlyDeposit));

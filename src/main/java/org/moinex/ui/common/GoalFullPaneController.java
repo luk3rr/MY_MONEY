@@ -16,7 +16,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.moinex.charts.CircularProgressBar;
@@ -212,15 +211,30 @@ public class GoalFullPaneController
             // Show the current amount
             goalCurrentAmount.setText(UIUtils.FormatCurrency(goal.GetBalance()));
 
+            // Calculate the number of months until the target date
+            Long monthsUntilTarget = Constants.CalculateMonthsUntilTarget(
+                LocalDate.now(),
+                goal.GetTargetDate().toLocalDate());
+
             // Calculate the ideal amount per month
-            BigDecimal idealAmountPerMonth =
-                goal.GetTargetBalance()
-                    .subtract(goal.GetBalance())
-                    .divide(BigDecimal.valueOf(Constants.CalculateMonthsUntilTarget(
-                                LocalDate.now(),
-                                goal.GetTargetDate().toLocalDate())),
-                            2,
-                            RoundingMode.HALF_UP);
+            BigDecimal idealAmountPerMonth;
+
+            if (monthsUntilTarget <= 0)
+            {
+                idealAmountPerMonth =
+                    goal.GetTargetBalance().subtract(goal.GetBalance());
+            }
+            else
+            {
+                idealAmountPerMonth =
+                    goal.GetTargetBalance()
+                        .subtract(goal.GetBalance())
+                        .divide(BigDecimal.valueOf(Constants.CalculateMonthsUntilTarget(
+                                    LocalDate.now(),
+                                    goal.GetTargetDate().toLocalDate())),
+                                2,
+                                RoundingMode.HALF_UP);
+            }
 
             goalIdealAMountPerMonth.setText(
                 UIUtils.FormatCurrency(idealAmountPerMonth));
