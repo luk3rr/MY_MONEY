@@ -50,7 +50,7 @@
                         <MenuButton fx:id="menuButton" minWidth="30.0" mnemonicParsing="false" stylesheets="@../../css/component/menu-button.css">
                           <items>
                             <MenuItem mnemonicParsing="false" onAction="#handleRenameWallet" text="Rename" />
-                            <MenuItem mnemonicParsing="false" onAction="#handleChangeWalletType" text="Change Type" />
+                            <MenuItem fx:id="changeWalletTypeMenuItem" mnemonicParsing="false" onAction="#handleChangeWalletType" text="Change Type" />
                               <MenuItem mnemonicParsing="false" onAction="#handleChangeWalletBalance" text="Adjust Balance" />
                               <MenuItem mnemonicParsing="false" onAction="#handleArchiveWallet" text="Archive" />
                               <MenuItem mnemonicParsing="false" onAction="#handleDeleteWallet" text="Delete" />

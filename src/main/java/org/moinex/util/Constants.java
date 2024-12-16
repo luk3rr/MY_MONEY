@@ -225,6 +225,7 @@ public final class Constants
 
     public static final Integer SUGGESTIONS_MAX_ITEMS = 5;
 
+    // WARNING: Do not change this value. If you do, update too on the database
     public static final String GOAL_DEFAULT_WALLET_TYPE_NAME = "Goal";
 
     // Enough time for you to become poor :)

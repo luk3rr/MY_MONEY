@@ -11,6 +11,8 @@ import java.time.LocalDate;
 import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
@@ -100,6 +102,12 @@ public class WalletFullPaneController
 
     @FXML
     private Label foreseenBalanceValue;
+
+    @FXML
+    private MenuButton menuButton;
+
+    @FXML
+    private MenuItem changeWalletTypeMenuItem;
 
     @Autowired
     private ConfigurableApplicationContext springContext;
@@ -276,6 +284,14 @@ public class WalletFullPaneController
         SetLabelValue(debitedTransfersSign, debitedTransfersValue, debitedTransfersSum);
         SetLabelValue(currentBalanceSign, currentBalanceValue, wallet.GetBalance());
         SetLabelValue(foreseenBalanceSign, foreseenBalanceValue, foreseenBalance);
+
+        // If wallet type is Goal, remove the option to change the wallet type to
+        // prevent changing the wallet type of a Goal wallet
+        if (wallet.GetType().GetName().equals(Constants.GOAL_DEFAULT_WALLET_TYPE_NAME))
+        {
+            System.out.println("Removing change wallet type menu item: " + changeWalletTypeMenuItem.getText());
+            menuButton.getItems().remove(changeWalletTypeMenuItem);
+        }
 
         return rootVBox;
     }

@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import org.moinex.entities.Wallet;
 import org.moinex.entities.WalletType;
 import org.moinex.services.WalletService;
+import org.moinex.util.Constants;
 import org.moinex.util.WindowUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -73,8 +74,13 @@ public class ChangeWalletTypeController
         walletComboBox.getItems().addAll(
             wallets.stream().map(Wallet::GetName).toList());
 
+        // Add wallet types, but remove the default goal wallet type
         newTypeComboBox.getItems().addAll(
-            walletTypes.stream().map(WalletType::GetName).toList());
+            walletTypes.stream()
+                .filter(
+                    wt -> !wt.GetName().equals(Constants.GOAL_DEFAULT_WALLET_TYPE_NAME))
+                .map(WalletType::GetName)
+                .toList());
 
         // Set the current type label
         walletComboBox.setOnAction(e -> {
@@ -146,6 +152,23 @@ public class ChangeWalletTypeController
     private void LoadWalletTypes()
     {
         walletTypes = walletService.GetAllWalletTypes();
+
+        String nameToMove = "Others";
+
+        // Move the "Others" wallet type to the end of the list
+        if (walletTypes.stream()
+                .filter(n -> n.GetName().equals(nameToMove))
+                .findFirst()
+                .isPresent())
+        {
+            WalletType walletType = walletTypes.stream()
+                                        .filter(wt -> wt.GetName().equals(nameToMove))
+                                        .findFirst()
+                                        .get();
+
+            walletTypes.remove(walletType);
+            walletTypes.add(walletType);
+        }
     }
 
     private void UpdateCurrentTypeLabel(Wallet wt)

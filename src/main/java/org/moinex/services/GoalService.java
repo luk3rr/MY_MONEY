@@ -303,7 +303,9 @@ public class GoalService
         if (goal.GetBalance().compareTo(goal.GetTargetBalance()) < 0)
         {
             throw new RuntimeException("The goal has not been completed yet. The "
-                                       + "balance is less than the target balance.");
+                                       + "balance is less than the target balance. "
+                                       + "Deposit more money to complete the "
+                                       + "goal or change the target balance");
         }
 
         goal.SetCompletionDate(LocalDateTime.now());
