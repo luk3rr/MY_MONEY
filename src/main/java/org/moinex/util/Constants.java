@@ -228,6 +228,8 @@ public final class Constants
     public static final String GOAL_DEFAULT_WALLET_TYPE_NAME = "Goal";
 
     // Enough time for you to become poor :)
+    // Or rich, who knows?
+    // WARNING: Do not change this value. If you do, update too on the database
     public static final LocalDate RECURRING_TRANSACTION_DEFAULT_END_DATE =
         LocalDate.of(2100, 12, 31);
 

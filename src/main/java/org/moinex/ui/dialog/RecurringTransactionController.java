@@ -306,6 +306,28 @@ public class RecurringTransactionController
             -> new SimpleStringProperty(param.getValue().GetNextDueDate().format(
                 Constants.DATE_FORMATTER_NO_TIME)));
 
+        TableColumn<RecurringTransaction, String> expectedRemainingAmountColumn =
+            new TableColumn<>("Expected Remaining Amount");
+        expectedRemainingAmountColumn.setCellValueFactory(param -> {
+            RecurringTransaction rt = param.getValue();
+
+            Double expectedRemainingAmount;
+
+            try
+            {
+                expectedRemainingAmount =
+                    recurringTransactionService.CalculateExpectedRemainingAmount(
+                        rt.GetId());
+            }
+            catch (RuntimeException e)
+            {
+                expectedRemainingAmount = 0.0;
+            }
+
+            return new SimpleStringProperty(
+                UIUtils.FormatCurrency(expectedRemainingAmount));
+        });
+
         recurringTransactionTableView.getColumns().add(idColumn);
         recurringTransactionTableView.getColumns().add(descriptionColumn);
         recurringTransactionTableView.getColumns().add(amountColumn);
@@ -317,5 +339,6 @@ public class RecurringTransactionController
         recurringTransactionTableView.getColumns().add(startDateColumn);
         recurringTransactionTableView.getColumns().add(endDateColumn);
         recurringTransactionTableView.getColumns().add(nextDueDateColumn);
+        recurringTransactionTableView.getColumns().add(expectedRemainingAmountColumn);
     }
 }

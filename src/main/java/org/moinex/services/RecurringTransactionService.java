@@ -607,4 +607,35 @@ public class RecurringTransactionService
 
         return futureTransactions;
     }
+
+    public Double CalculateExpectedRemainingAmount(Long rtId)
+    {
+        RecurringTransaction rt =
+            recurringTransactionRepository.findById(rtId).orElseThrow(
+                () -> new RuntimeException("Recurring transaction not found"));
+
+        if (rt.GetEndDate().toLocalDate().equals(
+                Constants.RECURRING_TRANSACTION_DEFAULT_END_DATE))
+        {
+            return Double.POSITIVE_INFINITY;
+        }
+
+        LocalDateTime today       = LocalDateTime.now();
+        LocalDateTime nextDueDate = rt.GetNextDueDate();
+
+        if (rt.GetEndDate().isBefore(today))
+        {
+            return 0.0;
+        }
+
+        Double expectedAmount = 0.0;
+
+        while (nextDueDate.isBefore(rt.GetEndDate()))
+        {
+            expectedAmount += rt.GetAmount().doubleValue();
+            nextDueDate = CalculateNextDueDate(nextDueDate, rt.GetFrequency());
+        }
+
+        return expectedAmount;
+    }
 }
