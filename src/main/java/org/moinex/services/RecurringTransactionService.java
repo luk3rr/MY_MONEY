@@ -529,6 +529,12 @@ public class RecurringTransactionService
             while (nextDueDate.isBefore(
                 endYear.atMonth(12).atDay(31).atTime(23, 59, 59, 59)))
             {
+                // If the recurring transaction has ended, stop generating transactions
+                if (recurring.GetEndDate().isBefore(nextDueDate))
+                {
+                    break;
+                }
+
                 if (nextDueDate.isAfter(startYear.atDay(1).atTime(0, 0, 0)) ||
                     nextDueDate.equals(startYear.atDay(1).atTime(0, 0, 0)))
                 {
