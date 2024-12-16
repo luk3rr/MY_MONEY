@@ -27,6 +27,7 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -597,6 +598,8 @@ public class HomeController
         infoVbox.setAlignment(Pos.CENTER_LEFT);
 
         Label nameLabel = new Label(creditCard.GetName());
+        nameLabel.setMaxWidth(Constants.HOME_ITEM_NODE_NAME_MAX_LENGTH);
+        nameLabel.setTextOverrun(OverrunStyle.ELLIPSIS);
         nameLabel.getStyleClass().add(Constants.HOME_CREDIT_CARD_ITEM_NAME_STYLE);
         UIUtils.AddTooltipToNode(nameLabel, "Credit card name");
 
@@ -656,6 +659,8 @@ public class HomeController
         infoVbox.setAlignment(Pos.CENTER_LEFT);
 
         Label nameLabel = new Label(wallet.GetName());
+        nameLabel.setMaxWidth(Constants.HOME_ITEM_NODE_NAME_MAX_LENGTH);
+        nameLabel.setTextOverrun(OverrunStyle.ELLIPSIS);
         nameLabel.getStyleClass().add(Constants.HOME_WALLET_ITEM_NAME_STYLE);
         UIUtils.AddTooltipToNode(nameLabel, "Wallet name");
 

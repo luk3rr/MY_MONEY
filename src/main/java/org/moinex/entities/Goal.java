@@ -156,4 +156,9 @@ public class Goal extends Wallet
     {
         this.motivation = motivation;
     }
+
+    public Boolean IsCompleted()
+    {
+        return this.completionDate != null;
+    }
 }

@@ -93,6 +93,9 @@ public class GoalFullPaneController
     private MenuItem toggleArchiveGoal;
 
     @FXML
+    private MenuItem toggleCompleteGoal;
+
+    @FXML
     private HBox currentHBox;
 
     @FXML
@@ -162,7 +165,7 @@ public class GoalFullPaneController
 
         // If the goal is archived, then is finished, so show the trophy icon
         // Otherwise, show the goal icon
-        goalIcon.setImage(new Image(goal.IsArchived()
+        goalIcon.setImage(new Image(goal.IsCompleted()
                                         ? Constants.TROPHY_ICON
                                         : Constants.WALLET_TYPE_ICONS_PATH +
                                               goal.GetType().GetIcon()));
@@ -188,11 +191,17 @@ public class GoalFullPaneController
 
         if (goal.IsArchived())
         {
+            // Set the button text according to the goal status
+            toggleArchiveGoal.setText("Unarchive Goal");
+        }
+
+        if (goal.IsCompleted())
+        {
             dateTitleLabel.setText("Achieved");
             goalTargetDate.setText(
                 goal.GetCompletionDate().format(Constants.DATE_FORMATTER_NO_TIME));
 
-            daysTitleLabel.setText("Days Ahead of Target");
+            daysTitleLabel.setText("Days ahead of target");
             missingDays.setText(String.valueOf(Constants.CalculateDaysUntilTarget(
                 goal.GetCompletionDate().toLocalDate(),
                 goal.GetTargetDate().toLocalDate())));
@@ -204,7 +213,7 @@ public class GoalFullPaneController
             percentage = 100.0;
 
             // Set the button text according to the goal status
-            toggleArchiveGoal.setText("Reopen Goal");
+            toggleCompleteGoal.setText("Reopen Goal");
         }
         else
         {
@@ -272,6 +281,14 @@ public class GoalFullPaneController
     @FXML
     private void handleAddIncome()
     {
+        if (goal.IsArchived())
+        {
+            WindowUtils.ShowInformationDialog("Information",
+                                              "Goal is archived",
+                                              "Cannot add income to an archived goal");
+            return;
+        }
+
         WindowUtils.OpenModalWindow(Constants.ADD_INCOME_FXML,
                                     "Add new income",
                                     springContext,
@@ -283,6 +300,14 @@ public class GoalFullPaneController
     @FXML
     private void handleAddExpense()
     {
+        if (goal.IsArchived())
+        {
+            WindowUtils.ShowInformationDialog("Information",
+                                              "Goal is archived",
+                                              "Cannot add expense to an archived goal");
+            return;
+        }
+
         WindowUtils.OpenModalWindow(Constants.ADD_EXPENSE_FXML,
                                     "Add new expense",
                                     springContext,
@@ -294,6 +319,15 @@ public class GoalFullPaneController
     @FXML
     private void handleAddTransfer()
     {
+        if (goal.IsArchived())
+        {
+            WindowUtils.ShowInformationDialog(
+                "Information",
+                "Goal is archived",
+                "Cannot add transfer to an archived goal");
+            return;
+        }
+
         WindowUtils.OpenModalWindow(
             Constants.ADD_TRANSFER_FXML,
             "Add new transfer",
@@ -315,14 +349,55 @@ public class GoalFullPaneController
     }
 
     @FXML
+    private void handleCompleteGoal()
+    {
+        if (goal.IsCompleted())
+        {
+            if (WindowUtils.ShowConfirmationDialog(
+                    "Confirmation",
+                    "Reopen goal " + goal.GetName(),
+                    "Are you sure you want to reopen this goal?"))
+            {
+                goalService.ReopenGoal(goal.GetId());
+
+                // Update goal display in the main window
+                goalController.UpdateDisplay();
+            }
+        }
+        else
+        {
+            if (WindowUtils.ShowConfirmationDialog(
+                    "Confirmation",
+                    "Complete goal " + goal.GetName(),
+                    "Are you sure you want to complete this goal?"))
+            {
+                try
+                {
+                    goalService.CompleteGoal(goal.GetId());
+                }
+                catch (RuntimeException e)
+                {
+                    WindowUtils.ShowErrorDialog("Error",
+                                                "Error completing goal",
+                                                e.getMessage());
+                    return;
+                }
+
+                // Update goal display in the main window
+                goalController.UpdateDisplay();
+            }
+        }
+    }
+
+    @FXML
     private void handleArchiveGoal()
     {
         if (goal.IsArchived())
         {
             if (WindowUtils.ShowConfirmationDialog(
                     "Confirmation",
-                    "Reopen goal " + goal.GetName(),
-                    "Are you sure you want to reopen this goal?"))
+                    "Unarchive goal " + goal.GetName(),
+                    "Are you sure you want to unarchive this goal?"))
             {
                 goalService.UnarchiveGoal(goal.GetId());
 

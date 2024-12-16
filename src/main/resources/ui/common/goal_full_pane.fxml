@@ -51,6 +51,7 @@
                         <MenuButton fx:id="menuButton" minWidth="30.0" mnemonicParsing="false" stylesheets="@../../css/component/menu-button.css">
                           <items>
                             <MenuItem mnemonicParsing="false" onAction="#handleEditGoal" text="Edit" />
+                              <MenuItem fx:id="toggleCompleteGoal" mnemonicParsing="false" onAction="#handleCompleteGoal" text="Complete Goal" />
                               <MenuItem fx:id="toggleArchiveGoal" mnemonicParsing="false" onAction="#handleArchiveGoal" text="Archive Goal" />
                               <MenuItem mnemonicParsing="false" onAction="#handleDeleteGoal" text="Delete" />
                           </items>

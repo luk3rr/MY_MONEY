@@ -225,6 +225,19 @@ public class GoalService
         oldGoal.SetMotivation(goal.GetMotivation());
         oldGoal.SetArchived(goal.IsArchived());
 
+        // Check if the goal was completed or reopened, and update it
+        if (goal.IsCompleted() != oldGoal.IsCompleted())
+        {
+            if (goal.IsCompleted())
+            {
+                CompleteGoal(goal.GetId());
+            }
+            else
+            {
+                ReopenGoal(goal.GetId());
+            }
+        }
+
         m_goalRepository.save(goal);
 
         logger.info("Goal with id " + goal.GetId() + " updated successfully");
@@ -247,7 +260,6 @@ public class GoalService
                                         " not found and cannot be archived"));
 
         goal.SetArchived(true);
-        goal.SetCompletionDate(LocalDateTime.now());
 
         m_goalRepository.save(goal);
 
@@ -270,11 +282,53 @@ public class GoalService
                                         " not found and cannot be unarchived"));
 
         goal.SetArchived(false);
-        goal.SetCompletionDate(null);
 
         m_goalRepository.save(goal);
 
         logger.info("Goal with id " + idGoal + " unarchived");
+    }
+
+    /**
+     * Complete a goal
+     * @param idGoal The id of the goal to be completed
+     * @throws RuntimeException If the goal does not exist or if the balance is less
+     *    than the target balance
+     */
+    @Transactional
+    public void CompleteGoal(Long idGoal)
+    {
+        Goal goal = m_goalRepository.findById(idGoal).orElseThrow(
+            () -> new RuntimeException("Goal with id " + idGoal + " not found"));
+
+        if (goal.GetBalance().compareTo(goal.GetTargetBalance()) < 0)
+        {
+            throw new RuntimeException("The goal has not been completed yet. The "
+                                       + "balance is less than the target balance.");
+        }
+
+        goal.SetCompletionDate(LocalDateTime.now());
+        goal.SetTargetBalance(goal.GetBalance());
+
+        m_goalRepository.save(goal);
+
+        logger.info("Goal with id " + idGoal + " completed");
+    }
+
+    /**
+     * Reopen a goal
+     * @param idGoal The id of the goal to be reopened
+     * @throws RuntimeException If the goal does not exist
+     */
+    @Transactional
+    public void ReopenGoal(Long idGoal)
+    {
+        Goal goal = m_goalRepository.findById(idGoal).orElseThrow(
+            () -> new RuntimeException("Goal with id " + idGoal + " not found"));
+
+        goal.SetCompletionDate(null);
+        m_goalRepository.save(goal);
+
+        logger.info("Goal with id " + idGoal + " reopened");
     }
 
     /**

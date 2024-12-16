@@ -8,7 +8,6 @@ package org.moinex.util;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
@@ -217,6 +216,8 @@ public final class Constants
     public static final Double  XYBAR_CHART_ANIMATION_DURATION = 0.3; // s
     public static final Double  TOOLTIP_ANIMATION_DURATION     = 0.5; // s
     public static final Double  TOOLTIP_ANIMATION_DELAY        = 0.5; // s
+
+    public static final Integer HOME_ITEM_NODE_NAME_MAX_LENGTH = 100;
 
     // Circular progress bar on the goal pane
     public static final Double GOAL_PANE_PROGRESS_BAR_RADIUS = 80.0;

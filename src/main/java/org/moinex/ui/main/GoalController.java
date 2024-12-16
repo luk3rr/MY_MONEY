@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -22,7 +21,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -170,6 +168,15 @@ public class GoalController
             return;
         }
 
+        if (goal.IsArchived())
+        {
+            WindowUtils.ShowInformationDialog(
+                "Information",
+                "Goal is archived",
+                "Cannot add transfer to an archived goal");
+            return;
+        }
+
         WindowUtils.OpenModalWindow(
             Constants.ADD_TRANSFER_FXML,
             "Add new transfer",
@@ -303,7 +310,9 @@ public class GoalController
         inProgressPane2.getChildren().clear();
 
         List<Goal> inProgressGoals =
-            goals.stream().filter(g -> !g.IsArchived()).collect(Collectors.toList());
+            goals.stream()
+                .filter(g -> !g.IsCompleted() && !g.IsArchived())
+                .collect(Collectors.toList());
 
         Integer start = inProgressCurrentPage * inProgressItemsPerPage;
         Integer end = Math.min(start + inProgressItemsPerPage, inProgressGoals.size());
@@ -367,7 +376,7 @@ public class GoalController
         accomplishedPane2.getChildren().clear();
 
         List<Goal> accomplishedGoals =
-            goals.stream().filter(Goal::IsArchived).collect(Collectors.toList());
+            goals.stream().filter(g -> g.IsCompleted()).collect(Collectors.toList());
 
         Integer start = accomplishedCurrentPage * accomplishedItemsPerPage;
         Integer end =
@@ -444,12 +453,17 @@ public class GoalController
                     }
                     else if (selectedGoalStatus.equals("COMPLETED"))
                     {
-                        return g.IsArchived();
+                        return g.IsCompleted() && !g.IsArchived();
                     }
                     else if (selectedGoalStatus.equals("ACTIVE"))
                     {
-                        return !g.IsArchived();
+                        return !g.IsCompleted() && !g.IsArchived();
                     }
+                    else if (selectedGoalStatus.equals("ARCHIVED"))
+                    {
+                        return g.IsArchived();
+                    }
+
                     return false;
                 })
                 .forEach(goalTableView.getItems()::add);
@@ -464,12 +478,17 @@ public class GoalController
                     }
                     else if (selectedGoalStatus.equals("COMPLETED"))
                     {
-                        return g.IsArchived();
+                        return g.IsCompleted() && !g.IsArchived();
                     }
                     else if (selectedGoalStatus.equals("ACTIVE"))
                     {
-                        return !g.IsArchived();
+                        return !g.IsCompleted() && !g.IsArchived();
                     }
+                    else if (selectedGoalStatus.equals("ARCHIVED"))
+                    {
+                        return g.IsArchived();
+                    }
+
                     return false;
                 })
                 .filter(g -> {
@@ -485,7 +504,7 @@ public class GoalController
                                                       Constants.DATE_FORMATTER_NO_TIME)
                                                 : "-";
 
-                    String status = g.IsArchived() ? "completed" : "active";
+                    String status = g.IsCompleted() ? "completed" : "active";
 
                     String monthsUntilTarget =
                         Constants
@@ -525,10 +544,11 @@ public class GoalController
      */
     private void SetButtonsActions()
     {
-        Integer inProgressGoalsSize = goals.stream()
-                                          .filter(g -> !g.IsArchived())
-                                          .collect(Collectors.toList())
-                                          .size();
+        Integer inProgressGoalsSize =
+            goals.stream()
+                .filter(g -> !g.IsCompleted() && !g.IsArchived())
+                .collect(Collectors.toList())
+                .size();
 
         inProgressPrevButton.setOnAction(event -> {
             if (inProgressCurrentPage > 0)
@@ -546,8 +566,10 @@ public class GoalController
             }
         });
 
-        Integer accomplishedGoalsSize =
-            goals.stream().filter(Goal::IsArchived).collect(Collectors.toList()).size();
+        Integer accomplishedGoalsSize = goals.stream()
+                                            .filter(g -> g.IsCompleted())
+                                            .collect(Collectors.toList())
+                                            .size();
 
         accomplishedPrevButton.setOnAction(event -> {
             if (accomplishedCurrentPage > 0)
@@ -623,7 +645,7 @@ public class GoalController
         TableColumn<Goal, String> progressColumn = new TableColumn<>("Progress");
         progressColumn.setCellValueFactory(param -> {
             // If the goal is archived, return 100 %
-            if (param.getValue().IsArchived())
+            if (param.getValue().IsCompleted())
                 return new SimpleObjectProperty<>(UIUtils.FormatPercentage(100));
 
             return new SimpleObjectProperty<>(UIUtils.FormatPercentage(
@@ -645,7 +667,7 @@ public class GoalController
         completionDateColumn.setCellValueFactory(param -> {
             // If the goal is archived and has a completion date, return it
             // formatted, otherwise return an empty string
-            if (param.getValue().IsArchived() &&
+            if (param.getValue().IsCompleted() &&
                 param.getValue().GetCompletionDate() != null)
             {
                 return new SimpleStringProperty(
@@ -659,14 +681,14 @@ public class GoalController
         TableColumn<Goal, String> statusColumn = new TableColumn<>("Status");
         statusColumn.setCellValueFactory(
             param
-            -> new SimpleObjectProperty<>(param.getValue().IsArchived() ? "COMPLETED"
-                                                                        : "ACTIVE"));
+            -> new SimpleObjectProperty<>(param.getValue().IsCompleted() ? "COMPLETED"
+                                                                         : "ACTIVE"));
 
         TableColumn<Goal, String> monthsUntilTargetColumn =
             new TableColumn<>("Months Until Target");
         monthsUntilTargetColumn.setCellValueFactory(param -> {
             // If the goal is archived, return an empty string
-            if (param.getValue().IsArchived())
+            if (param.getValue().IsCompleted())
                 return new SimpleObjectProperty<>("-");
 
             // Calculate the number of months until the target date
@@ -681,7 +703,7 @@ public class GoalController
             new TableColumn<>("Recommended Monthly Deposit");
         recommendedMonthlyDepositColumn.setCellValueFactory(param -> {
             // If the goal is archived, return an empty string
-            if (param.getValue().IsArchived())
+            if (param.getValue().IsCompleted())
                 return new SimpleObjectProperty<>("-");
 
             // Calculate the number of months until the target date
@@ -745,6 +767,7 @@ public class GoalController
         statusComboBox.getItems().add("ALL");
         statusComboBox.getItems().add("ACTIVE");
         statusComboBox.getItems().add("COMPLETED");
+        statusComboBox.getItems().add("ARCHIVED");
         statusComboBox.getSelectionModel().selectFirst();
     }
 }

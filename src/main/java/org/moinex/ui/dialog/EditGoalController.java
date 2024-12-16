@@ -49,6 +49,9 @@ public class EditGoalController
     @FXML
     private CheckBox archivedCheckBox;
 
+    @FXML
+    private CheckBox completedCheckBox;
+
     private GoalService goalService;
 
     private Goal goalToUpdate;
@@ -77,6 +80,7 @@ public class EditGoalController
         targetDatePicker.setValue(goal.GetTargetDate().toLocalDate());
         motivationTextArea.setText(goal.GetMotivation());
         archivedCheckBox.setSelected(goal.IsArchived());
+        completedCheckBox.setSelected(goal.IsCompleted());
     }
 
     @FXML
@@ -129,6 +133,7 @@ public class EditGoalController
         LocalDate targetDate        = targetDatePicker.getValue();
         String    motivation        = motivationTextArea.getText();
         Boolean   archived          = archivedCheckBox.isSelected();
+        Boolean   completed         = completedCheckBox.isSelected();
 
         if (goalName.isEmpty() || initialBalanceStr.isEmpty() ||
             currentBalanceStr.isEmpty() || targetBalanceStr.isEmpty() ||
@@ -154,7 +159,8 @@ public class EditGoalController
                 goalToUpdate.GetTargetBalance().equals(targetBalance) &&
                 goalToUpdate.GetTargetDate().toLocalDate().equals(targetDate) &&
                 goalToUpdate.GetMotivation().equals(motivation) &&
-                goalToUpdate.IsArchived() == archived)
+                goalToUpdate.IsArchived() == archived &&
+                goalToUpdate.IsCompleted() == completed)
             {
                 WindowUtils.ShowInformationDialog("Information",
                                                   "No changes",
@@ -169,6 +175,19 @@ public class EditGoalController
                 goalToUpdate.SetTargetDate(targetDate.atStartOfDay());
                 goalToUpdate.SetMotivation(motivation);
                 goalToUpdate.SetArchived(archived);
+
+                // If the goal was completed and the user unchecked the completed
+                // checkbox, set the completion date to null, otherwise set the
+                // completion date to the current date This is necessary for UpdateGoal
+                // identify if the completed field was changed
+                if (completed && !goalToUpdate.IsCompleted())
+                {
+                    goalToUpdate.SetCompletionDate(LocalDate.now().atStartOfDay());
+                }
+                else
+                {
+                    goalToUpdate.SetCompletionDate(null);
+                }
 
                 goalService.UpdateGoal(goalToUpdate);
 
