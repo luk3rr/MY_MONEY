@@ -630,7 +630,8 @@ public class RecurringTransactionService
 
         Double expectedAmount = 0.0;
 
-        while (nextDueDate.isBefore(rt.GetEndDate()))
+        while (nextDueDate.isBefore(rt.GetEndDate()) ||
+               nextDueDate.equals(rt.GetEndDate()))
         {
             expectedAmount += rt.GetAmount().doubleValue();
             nextDueDate = CalculateNextDueDate(nextDueDate, rt.GetFrequency());
