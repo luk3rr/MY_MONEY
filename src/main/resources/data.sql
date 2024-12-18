@@ -52,7 +52,11 @@ SELECT * FROM (SELECT 4, 'Savings Account', 'savings.png') WHERE NOT EXISTS (SEL
 UNION ALL
 SELECT * FROM (SELECT 5, 'Wallet', 'wallet.png') WHERE NOT EXISTS (SELECT 1 FROM wallet_type)
 UNION ALL
-SELECT * FROM (SELECT 6, 'Goal', 'goal.png') WHERE NOT EXISTS (SELECT 1 FROM wallet_type);
+SELECT * FROM (SELECT 6, 'Goal', 'goal.png') WHERE NOT EXISTS (SELECT 1 FROM wallet_type)
+UNION ALL
+SELECT * FROM (SELECT 7, 'Meal Voucher', 'meal_voucher.png') WHERE NOT EXISTS (SELECT 1 FROM wallet_type)
+UNION ALL
+SELECT * FROM (SELECT 8, 'Food Voucher', 'food_voucher.png') WHERE NOT EXISTS (SELECT 1 FROM wallet_type);
 
 INSERT INTO credit_card_operator (id, name, icon)
 SELECT * FROM (SELECT 0, 'Others', 'others.png') WHERE NOT EXISTS (SELECT 1 FROM credit_card_operator)

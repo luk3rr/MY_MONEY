@@ -289,7 +289,6 @@ public class WalletFullPaneController
         // prevent changing the wallet type of a Goal wallet
         if (wallet.GetType().GetName().equals(Constants.GOAL_DEFAULT_WALLET_TYPE_NAME))
         {
-            System.out.println("Removing change wallet type menu item: " + changeWalletTypeMenuItem.getText());
             menuButton.getItems().remove(changeWalletTypeMenuItem);
         }
 
