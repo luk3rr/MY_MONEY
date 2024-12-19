@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
 import org.moinex.entities.Category;
@@ -567,6 +568,25 @@ public class CreditCardService
     public List<CreditCard> GetAllNonArchivedCreditCardsOrderedByName()
     {
         return m_creditCardRepository.findAllByArchivedFalseOrderByNameAsc();
+    }
+
+    /**
+     * Get all credit cards are not archived ordered descending by the number of
+     * transactions
+     * @return A list with all credit cards that are not archived ordered by transaction
+     *    count
+     */
+    public List<CreditCard> GetAllNonArchivedCreditCardsOrderedByTransactionCountDesc()
+    {
+        return m_creditCardRepository.findAllByArchivedFalse()
+            .stream()
+            .sorted(Comparator
+                        .comparingLong(
+                            (CreditCard c)
+                                -> m_creditCardDebtRepository.GetDebtCountByCreditCard(
+                                    c.GetId()))
+                        .reversed())
+            .toList();
     }
 
     /**

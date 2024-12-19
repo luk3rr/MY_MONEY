@@ -7,6 +7,7 @@
 package org.moinex.services;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
 import org.moinex.entities.Wallet;
@@ -327,5 +328,25 @@ public class WalletService
     public List<Wallet> GetAllNonArchivedWalletsOrderedByName()
     {
         return m_walletRepository.findAllByArchivedFalseOrderByNameAsc();
+    }
+
+    /**
+     * Get all wallets that are not archived ordered descending by the number of
+     * transactions
+     * @return A list with all wallets that are not archived
+     */
+    public List<Wallet> GetAllNonArchivedWalletsOrderedByTransactionCountDesc()
+    {
+        return m_walletRepository.findAllByArchivedFalse()
+            .stream()
+            .sorted(Comparator
+                        .comparingLong(
+                            (Wallet w)
+                                -> m_walletTransactionRepository
+                                           .GetTransactionCountByWallet(w.GetId()) +
+                                       m_transfersRepository.GetTransferCountByWallet(
+                                           w.GetId()))
+                        .reversed())
+            .toList();
     }
 }

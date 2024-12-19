@@ -345,7 +345,8 @@ public class CreditCardController
      */
     private void LoadCreditCards()
     {
-        creditCards = creditCardService.GetAllNonArchivedCreditCardsOrderedByName();
+        creditCards = creditCardService
+                          .GetAllNonArchivedCreditCardsOrderedByTransactionCountDesc();
     }
 
     /**

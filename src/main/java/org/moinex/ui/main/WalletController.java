@@ -308,7 +308,7 @@ public class WalletController
      */
     private void LoadWalletsFromDatabase()
     {
-        wallets = walletService.GetAllNonArchivedWalletsOrderedByName();
+        wallets = walletService.GetAllNonArchivedWalletsOrderedByTransactionCountDesc();
     }
 
     /**

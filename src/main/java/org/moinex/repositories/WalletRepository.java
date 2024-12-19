@@ -41,6 +41,12 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
     List<Wallet> findAllByArchivedTrue();
 
     /**
+     * Get all wallets that are not archived
+     * @return A list with all wallets that are not archived
+     */
+    List<Wallet> findAllByArchivedFalse();
+
+    /**
      * Get all wallets that are not archived ordered by name
      * @return A list with all wallets that are not archived
      */
